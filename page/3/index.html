@@ -1,0 +1,2517 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Talk is cheap. Show me the code.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="qhh.me">
+<meta property="og:url" content="http://yoursite.com/page/3/index.html">
+<meta property="og:site_name" content="qhh.me">
+<meta property="og:description" content="Talk is cheap. Show me the code.">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="qhh.me">
+<meta name="twitter:description" content="Talk is cheap. Show me the code.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/page/3/"/>
+
+
+
+
+
+  <title>qhh.me</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left 
+  page-home">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">qhh.me</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Talk is cheap. Show me the code.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/19/Redis-常用命令总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/19/Redis-常用命令总结/" itemprop="url">Redis 常用命令总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-19T13:54:46+08:00">
+                2019-01-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Redis-常用命令总结"><a href="#Redis-常用命令总结" class="headerlink" title="Redis 常用命令总结"></a>Redis 常用命令总结</h2><h3 id="redis-cli"><a href="#redis-cli" class="headerlink" title="redis-cli"></a>redis-cli</h3><p>redis-cli 是 redis 的客户端工具，有很多实用的参数。</p>
+<p><img src="/images/redis-cli.png" alt=""></p>
+<h3 id="redis-benchmark"><a href="#redis-benchmark" class="headerlink" title="redis-benchmark"></a>redis-benchmark</h3><p>redis-benchmark 为 redis 提供的性能测试工具，对 redis 各种数据的操作进行测试，并给出测试结果。如下为 GET 操作的测试报告样例：<br><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">====== GET ======</span><br><span class="line"> <span class="number"> 20000 </span>requests completed in 0.36 seconds</span><br><span class="line"> <span class="number"> 100 </span>parallel clients</span><br><span class="line"> <span class="number"> 3 </span>bytes payload</span><br><span class="line">  keep alive: 1</span><br><span class="line"></span><br><span class="line">62.01% &lt;=<span class="number"> 1 </span>milliseconds</span><br><span class="line">97.57% &lt;=<span class="number"> 2 </span>milliseconds</span><br><span class="line">99.99% &lt;=<span class="number"> 3 </span>milliseconds</span><br><span class="line">100.00% &lt;=<span class="number"> 3 </span>milliseconds</span><br><span class="line">55865.92 requests per second</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/redis-benchmark.png" alt=""></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/14/基于-Docker-Compose-容器化搭建-Wordpress/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/14/基于-Docker-Compose-容器化搭建-Wordpress/" itemprop="url">基于 Docker Compose 容器化搭建 Wordpress</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-14T22:57:55+08:00">
+                2019-01-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Wordpress/" itemprop="url" rel="index">
+                    <span itemprop="name">Wordpress</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近由于业务需求帮公司搞了几个 Wordpress 作为官网，中间也是踩了不少坑，倒不是搭建 wordpress 难，主要是 wordpress 本身坑就挺多的，比如迁移、使用过程中文件上传大小的限制问题、迁移后域名无法变更问题等等。</p>
+<p>接下来演示如何基于 Docker Compose 来容器化搭建一个可靠、易维护的 Wordpress 网站，可靠指的是服务挂了会自愈（当然是 docker 本身的功能了），易维护指的是即使后面做服务的迁移也是非常方便的，只是简单的文件拷贝，然后 docker compose 启动，没有任何其他的维护成本。</p>
+<p><strong>架构</strong>：非容器化 nginx 反向代理 + Docker Compose （ Wordpress + MySql）</p>
+<p><img src="/images/nginx-wordpress-docker.png" alt=""></p>
+<h3 id="Docker-Compose-工程"><a href="#Docker-Compose-工程" class="headerlink" title="Docker Compose 工程"></a>Docker Compose 工程</h3><p>Wordpress Docker Compose 工程目录结构：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wordpress</span><br><span class="line">├── db_data  # mysql 数据目录</span><br><span class="line">├── docker-compose.yaml  # docker-compose 文件</span><br><span class="line">├── upload.ini  # php 文件上传相关配置</span><br><span class="line">└── wp_site  # wordpress 静态资源存储目录</span><br></pre></td></tr></table></figure></p>
+<p>docker-compose.yaml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3.3'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">   db:</span></span><br><span class="line"><span class="attr">     image:</span> <span class="attr">mysql:5.7</span></span><br><span class="line"><span class="attr">     volumes:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./db_data:/var/lib/mysql</span></span><br><span class="line"><span class="attr">     restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">     environment:</span></span><br><span class="line"><span class="attr">       MYSQL_ROOT_PASSWORD:</span> <span class="string">somewordpress</span></span><br><span class="line"><span class="attr">       MYSQL_DATABASE:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       MYSQL_USER:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       MYSQL_PASSWORD:</span> <span class="string">example</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   wordpress:</span></span><br><span class="line"><span class="attr">     depends_on:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">db</span></span><br><span class="line"><span class="attr">     image:</span> <span class="attr">wordpress:5.0.3</span></span><br><span class="line"><span class="attr">     volumes:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./wp_site:/var/www/html</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini</span></span><br><span class="line"><span class="attr">     ports:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">"9000:80"</span></span><br><span class="line"><span class="attr">     restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">     environment:</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_HOST:</span> <span class="attr">db:3306</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_USER:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_PASSWORD:</span> <span class="string">example</span></span><br></pre></td></tr></table></figure></p>
+<p>uploads.ini:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">file_uploads</span> <span class="string">=</span> <span class="string">On</span></span><br><span class="line"><span class="string">memory_limit</span> <span class="string">=</span> <span class="number">128</span><span class="string">M</span></span><br><span class="line"><span class="string">upload_max_filesize</span> <span class="string">=</span> <span class="number">512</span><span class="string">M</span></span><br><span class="line"><span class="string">post_max_size</span> <span class="string">=</span> <span class="number">128</span><span class="string">M</span></span><br><span class="line"><span class="string">max_execution_time</span> <span class="string">=</span> <span class="number">600</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="外部-Nginx-配置文件"><a href="#外部-Nginx-配置文件" class="headerlink" title="外部 Nginx  配置文件"></a>外部 Nginx  配置文件</h3><p>https_server.conf（网站配置文件）:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>      <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span> example.com;</span><br><span class="line">        <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span>  https://<span class="variable">$host</span><span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>      <span class="number">443</span>;</span><br><span class="line">        <span class="attribute">ssl</span> <span class="literal">on</span>;</span><br><span class="line">        <span class="attribute">ssl_certificate</span> crts/example/example_com.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> crts/example/example_com.key;</span><br><span class="line">        <span class="attribute">server_name</span> example.com;</span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">                <span class="attribute">proxy_pass</span>   http://localhost:9002;</span><br><span class="line">                <span class="attribute">include</span> conf.d/common.cfg;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Forwarded-Proto https;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>common.cfg（Nginx 相关配置项）:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">proxy_set_header</span>   Host             <span class="variable">$host</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span>   X-Real-IP        <span class="variable">$remote_addr</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span>  X-Forwarded-For  <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line"><span class="attribute">client_max_body_size</span>       <span class="number">128m</span>;</span><br><span class="line"><span class="attribute">client_body_buffer_size</span>    <span class="number">10m</span>;</span><br><span class="line"><span class="attribute">client_body_temp_path</span>      /tmp/client_body_temp;</span><br><span class="line"><span class="attribute">proxy_connect_timeout</span>      <span class="number">40</span>;</span><br><span class="line"><span class="attribute">proxy_send_timeout</span>         <span class="number">20</span>;</span><br><span class="line"><span class="attribute">proxy_read_timeout</span>         <span class="number">20</span>;</span><br><span class="line"><span class="attribute">proxy_buffer_size</span>          <span class="number">256k</span>;</span><br><span class="line"><span class="attribute">proxy_buffers</span>              <span class="number">32</span> <span class="number">64k</span>;</span><br></pre></td></tr></table></figure></p>
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><p>进入 docker compose 工程目录执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure></p>
+<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><p>相关 docker compose 指令：<br><code>docker-compose stop</code>: 停止已启动的服务，停止后容器还在，只是退出了；<br><code>docker-compose start</code>: 启动已停止的服务；<br><code>docker-compose down</code>: 停止并清理掉启动的 Docker 容器、卷、网络等相关资源；<br><code>docker-compose logs -f</code>: 实时查看日志</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/13/构建-Docker-镜像上传到-docker-hub/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/13/构建-Docker-镜像上传到-docker-hub/" itemprop="url">构建 Docker 镜像上传到 docker hub</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-13T20:58:16+08:00">
+                2019-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文演示如何将自己构建的 Docker 镜像推送到 <a href="https://hub.docker.com/" target="_blank" rel="noopener">docker hub</a>来实现镜像的共享。</p>
+<ol>
+<li>注册一个 docker hub 账号<br>举例：账号名为 qhh0205</li>
+<li><p>写一个 Dockerfile<br>举例：该 Dockerfile 安装了指定版本的 ant 和 jmeter，GitHub 仓库地址：<a href="https://github.com/qhh0205/docker-ant-jmeter" target="_blank" rel="noopener">https://github.com/qhh0205/docker-ant-jmeter</a></p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">FROM <span class="symbol">openjdk:</span><span class="number">8</span></span><br><span class="line">MAINTAINER qhh0205 &lt;qhh0205<span class="variable">@gmail</span>.com&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ant default version: 1.10.5</span></span><br><span class="line"><span class="comment"># jmeter default version: 5.0</span></span><br><span class="line"><span class="comment"># Specify version by docker build --build-arg &lt;varname&gt;=&lt;value&gt; ...</span></span><br><span class="line"></span><br><span class="line">ARG ANT_VERSION=<span class="number">1.10</span>.<span class="number">5</span></span><br><span class="line">ENV ANT_HOME=<span class="regexp">/opt/ant</span></span><br><span class="line"></span><br><span class="line">ARG JMETER_VERSION=<span class="number">5.0</span></span><br><span class="line">ENV JMETER_HOME /opt/jmeter</span><br><span class="line"></span><br><span class="line">RUN apt-get -y update &amp;&amp; \</span><br><span class="line">apt-get -y install wget</span><br><span class="line"></span><br><span class="line"><span class="comment"># Installs Ant</span></span><br><span class="line">RUN wget --no-check-certificate --no-cookies <span class="symbol">http:</span>/<span class="regexp">/archive.apache.org/dist</span><span class="regexp">//ant</span><span class="regexp">/binaries/apache</span>-ant-<span class="variable">$&#123;</span>ANT_VERSION&#125;-bin.tar.gz \</span><br><span class="line">&amp;&amp; tar -zvxf apache-ant-<span class="variable">$&#123;</span>ANT_VERSION&#125;-bin.tar.gz -C /opt/ \</span><br><span class="line">&amp;&amp; ln -s /opt/apache-ant-<span class="variable">$&#123;</span>ANT_VERSION&#125; /opt/ant \</span><br><span class="line">&amp;&amp; rm -f apache-ant-<span class="variable">$&#123;</span>ANT_VERSION&#125;-bin.tar.gz</span><br><span class="line"></span><br><span class="line">ENV PATH <span class="variable">$&#123;</span>PATH&#125;<span class="symbol">:/opt/ant/bin</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Installs Jmeter</span></span><br><span class="line">RUN wget --no-check-certificate --no-cookies <span class="symbol">https:</span>/<span class="regexp">/archive.apache.org/dist</span><span class="regexp">//jmeter</span><span class="regexp">/binaries/apache</span>-jmeter-<span class="variable">$&#123;</span>JMETER_VERSION&#125;.tgz \</span><br><span class="line">&amp;&amp; tar -zvxf apache-jmeter-<span class="variable">$&#123;</span>JMETER_VERSION&#125;.tgz -C /opt/ \</span><br><span class="line">&amp;&amp; ln -s /opt/apache-jmeter-<span class="variable">$&#123;</span>JMETER_VERSION&#125; /opt/jmeter \</span><br><span class="line">&amp;&amp; rm -f apache-jmeter-<span class="variable">$&#123;</span>JMETER_VERSION&#125;.tgz</span><br><span class="line"></span><br><span class="line">ENV PATH <span class="variable">$PATH</span><span class="symbol">:/opt/jmeter/bin</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>构建镜像<br>进入 Dockerfile 所在目录，执行构建命令:</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">docker</span> <span class="keyword">build </span>-t qhh0205/ant-jmeter:<span class="number">1</span>.<span class="number">10</span>.<span class="number">5</span>-<span class="number">5</span>.<span class="number">0</span> .</span><br></pre></td></tr></table></figure>
+<p> 参数说明：<br> <code>qhh0205/ant-jmeter:1.10.5-5.0</code>: docker 镜像 tag 名称<br> <code>qhh0205</code>: docker hub 账号名<br> <code>ant-jmeter</code>: dcoker hub 仓库名<br> <code>1.10.5-5.0</code>: 镜像 tag</p>
+</li>
+<li><p>登陆 docker hub 账号</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">docker login</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>上传镜像</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="keyword">push</span> qhh0205/ant-jmeter:<span class="number">1.10</span><span class="meta">.5</span>-<span class="number">5.0</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/10/使用-Ansible-统计服务器资源利用率/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/10/使用-Ansible-统计服务器资源利用率/" itemprop="url">使用 Ansible 统计服务器资源利用率</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-10T23:30:52+08:00">
+                2019-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Ansible/" itemprop="url" rel="index">
+                    <span itemprop="name">Ansible</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>分享一个 ansible playbook，统计服务器 CPU、内存、磁盘利用率，3 条 shell 脚本实现统计:</p>
+<p>CPU 利用率统计：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -bn1 | grep load | awk <span class="string">'&#123;printf "CPU Load: %.2f\n", $(NF-2)&#125;'</span></span><br></pre></td></tr></table></figure></p>
+<p>内存利用率统计：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free -m | awk <span class="string">'NR==2&#123;printf "Memory Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 &#125;'</span></span><br></pre></td></tr></table></figure></p>
+<p>磁盘利用率统计（列出每块磁盘利用率）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df -h -t ext2 -t ext4 | grep -vE <span class="string">'^Filesystem|tmpfs|cdrom'</span> | awk <span class="string">'&#123; print "Disk Usage:"" " $1 " " $3"/"$2" ""("$5")"&#125;'</span></span><br></pre></td></tr></table></figure></p>
+<p>Ansible playbook: <code>server-cpu-mem-disk-usage.yml</code><br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">Statistics</span> <span class="string">CPU</span> <span class="string">Memory</span> <span class="string">Disk</span> <span class="string">Utilization</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">"<span class="template-variable">&#123;&#123; hosts &#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">  become:</span> <span class="literal">no</span></span><br><span class="line"><span class="attr">  remote_user:</span> <span class="string">"<span class="template-variable">&#123;&#123; user &#125;&#125;</span>"</span></span><br><span class="line"><span class="attr">  gather_facts:</span> <span class="literal">no</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">"Statistics CPU Memory Disk Utilization..."</span></span><br><span class="line"><span class="attr">      shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        free -m | awk 'NR==2&#123;printf "Memory Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 &#125;'</span></span><br><span class="line"><span class="string">        df -h -t ext2 -t ext4 | grep -vE '^Filesystem|tmpfs|cdrom' | awk '&#123; print "Disk Usage:"" " $1 " " $3"/"$2" ""("$5")"&#125;'</span></span><br><span class="line"><span class="string">        top -bn1 | grep load | awk '&#123;printf "CPU Load: %.2f\n", $(NF-2)&#125;'</span></span><br><span class="line"><span class="string"></span><span class="attr">      register:</span> <span class="string">out</span></span><br><span class="line"><span class="attr">    - debug:</span> <span class="string">var=out.stdout_lines</span></span><br></pre></td></tr></table></figure></p>
+<p>输出结果样例：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ok: [gke-test-standard-pool] =&gt; &#123;</span><br><span class="line">    "out.stdout_lines": [</span><br><span class="line">        "Memory Usage: 8766/16052MB (54.61%)",</span><br><span class="line">        "Disk Usage: /dev/root 449M/1.2G (37%)",</span><br><span class="line">        "Disk Usage: /dev/sda8 28K/12M (1%)",</span><br><span class="line">        "Disk Usage: /dev/sda1 61G/95G (64%)",</span><br><span class="line">        <span class="string">"CPU Load: 0.92"</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/09/基于谷歌云-gcp-的动态-Ansible-inventory-实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/09/基于谷歌云-gcp-的动态-Ansible-inventory-实践/" itemprop="url">基于谷歌云 gcp 的动态 Ansible inventory 实践</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-09T22:58:55+08:00">
+                2019-01-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Ansible/" itemprop="url" rel="index">
+                    <span itemprop="name">Ansible</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="关于-Ansible-inventory-说明"><a href="#关于-Ansible-inventory-说明" class="headerlink" title="关于 Ansible inventory 说明"></a>关于 Ansible inventory 说明</h3><p>ansible inventory 文件可以分为如下两类：</p>
+<ol>
+<li>静态 inventory：主机信息写死到文件，这种情况一般适用于管理少量主机，对于成百上千规模的主机人工管理主机清单文件显然是不合理的；</li>
+<li>动态 inventory：ansible 根据脚本动态获取云提供商的主机清单文件，这样可以省去人工维护静态清单文件的繁琐工作，对于大批量主机管理也是非常可靠的；</li>
+</ol>
+<h3 id="Ansible-动态获取云提供商主机-inventory-原理"><a href="#Ansible-动态获取云提供商主机-inventory-原理" class="headerlink" title="Ansible 动态获取云提供商主机 inventory 原理"></a>Ansible 动态获取云提供商主机 inventory 原理</h3><p>ansible 通过 <code>-i</code> 参数指定动态 inventory 目录，该目录底下放置获取云提供商主机清单的脚本（ansible 社区提供的一般是 Python 脚本），ansible 在执行时该脚本会自动执行并将结果保存到内存中。</p>
+<p>那么上面说的获取云提供商主机清单的可执行脚本在哪里获取呢？在 <a href="https://github.com/ansible/ansible/tree/devel/contrib/inventory" target="_blank" rel="noopener">这里</a> （ansible 官方源码仓库：社区提供的脚本）获取，这里有各个云提供商对应的主机清单脚本(*.py)及配置文件(*.ini)，比如谷歌的 <code>gce.py</code> 和 <code>gce.ini</code>，Aws 的 <code>ec2.py</code> 和 <code>ec2.ini</code> 等等。</p>
+<h3 id="基于-gcp-的动态-inventory-使用"><a href="#基于-gcp-的动态-inventory-使用" class="headerlink" title="基于 gcp 的动态 inventory 使用"></a>基于 gcp 的动态 inventory 使用</h3><p>下面是配置使用谷歌云动态 ansible inventory 的详细步骤</p>
+<ol>
+<li><p>相关软件包安装;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install apache-libcloud pycrypto</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>谷歌云控制台创建一个服务账号（需要有 gce 的访问权限），获取 json 认证文件;</p>
+</li>
+<li><p>从 <a href="https://github.com/ansible/ansible/tree/devel/contrib/inventory" target="_blank" rel="noopener">ansible 官方仓库</a> 下载 <code>gce.py</code> 和 <code>gce.ini</code> 文件;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p inventories/gcp-dynamic-inventory</span><br><span class="line"><span class="built_in">cd</span> inventories/gcp-dynamic-inventory</span><br><span class="line">wget https://github.com/ansible/ansible/blob/devel/contrib/inventory/gce.py</span><br><span class="line">wget https://github.com/ansible/ansible/blob/devel/contrib/inventory/gce.ini</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑 <code>gce.ini</code> 配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[gce]</span><br><span class="line">libcloud_secrets =</span><br><span class="line">gce_service_account_email_address = &lt;服务账号邮箱：在第 2 步的 json 认证文件里面可以找到&gt;</span><br><span class="line">gce_service_account_pem_file_path = &lt;第 2 步中 json 认证文件路径：绝对路径&gt;</span><br><span class="line">gce_project_id = &lt;gcp 项目 id&gt;</span><br><span class="line">gce_zone =</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试配置的正确性</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果输出一个很长的 json 串表示没问题</span></span><br><span class="line">./gce.py --list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行 ansible 任务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ansible -i inventories/gcp-dynamic-inventory &lt;pattern&gt; -m &lt;module_name&gt; -a <span class="string">'module_args'</span></span><br><span class="line"></span><br><span class="line">Ex:</span><br><span class="line">  <span class="comment"># 查看 asia-east1-a 区域的所有主机时间</span></span><br><span class="line">  ansible -i inventories/gcp-dynamic-inventory asia-east1<span class="_">-a</span> -m shell -a <span class="string">'date'</span></span><br></pre></td></tr></table></figure>
+<p> <strong>参数说明：</strong><br> <code>inventories/gcp-dynamic-inventory</code>:  gce.py 脚本所在的目录，ansible 运行时会自动在该目录下执行该脚本获取主机清单；</p>
+<p> <code>pattern</code>：./gce.py –list 执行结果的 json 顶级节点都可以作为 ansible 的目标主机；</p>
+<p> 最佳实践：可以给 gce 主机添加 tag，然后通过 tag 对主机分组；</p>
+</li>
+<li><p><code>gce.ini</code> 文件位置<br><code>gce.ini</code> 文件没必要必须和 <code>gce.py</code> 在一个目录，可以设置环境变量放到系统其他目录，这样就可以将配置和脚本分离，避免敏感配置放到代码仓库。设置方法：<code>~/.bashrc</code> 文件添加如下内容:</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ -s <span class="string">"<span class="variable">$HOME</span>/.ansible/gce.ini"</span> ]] &amp;&amp; <span class="built_in">export</span> GCE_INI_PATH=<span class="string">"<span class="variable">$HOME</span>/.ansible/gce.ini"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><p>  ansible 执行时可以通过 <code>--list-host</code> 参数先测试下本次操作影响到哪些主机，不会真正执行 task；</p>
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><p><a href="https://temikus.net/ansible-gcp-dynamic-inventory-bootstrap" target="_blank" rel="noopener">https://temikus.net/ansible-gcp-dynamic-inventory-bootstrap</a></p>
+<p><a href="https://medium.com/vimeo-engineering-blog/orchestrating-gce-instances-with-ansible-d825a33793cd" target="_blank" rel="noopener">https://medium.com/vimeo-engineering-blog/orchestrating-gce-instances-with-ansible-d825a33793cd</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/06/谷歌云对象存储-gcs-开启日志记录功能/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/06/谷歌云对象存储-gcs-开启日志记录功能/" itemprop="url">谷歌云对象存储 gcs 开启日志记录功能</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-06T21:06:59+08:00">
+                2019-01-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Google-Cloud-Platform/" itemprop="url" rel="index">
+                    <span itemprop="name">Google Cloud Platform</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>有时候我们需要对 gcs 开启日志记录功能，一方面可以分析统计每个针对 gcs 的 http 请求的详细信息，另一方面还可以用于问题调试用途，比如我们对一个存储分区的对象配置了生命周期，可以看其访问日志判断配置是否生效。</p>
+<p><strong>gcs 日志记录功能记录两种类型日志</strong></p>
+<p>访问日志：访问日志是每小时创建一次，记录对指定存储分区发出的所有请求的信息；<br>存储日志：存储分区过去 24 小时内存储空间平均使用量，以字节为单位；</p>
+<p><a href="https://cloud.google.com/storage/docs/access-logs?hl=zh-cn&amp;refresh=1" target="_blank" rel="noopener">https://cloud.google.com/storage/docs/access-logs?hl=zh-cn&amp;refresh=1</a></p>
+<h3 id="gcs-开启日志记录功能步骤"><a href="#gcs-开启日志记录功能步骤" class="headerlink" title="gcs 开启日志记录功能步骤"></a>gcs 开启日志记录功能步骤</h3><p>以开启 gs://gcs-bucket 存储分区日志记录功能为例：</p>
+<ol>
+<li><p>创建一个存储分区用于存储日志记录，名字随便起：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil mb -l asia <span class="string">gs:</span><span class="comment">//gcs-bucket-logs-record</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置权限以使 Cloud Storage 对该存储分区具有 WRITE 权限</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil acl ch -g cloud-storage-analytics<span class="meta">@google</span>.<span class="string">com:</span>W <span class="string">gs:</span><span class="comment">//gcs-bucket-logs-record</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为存储分区开启日志记录功能<br>命令格式：<code>gsutil logging set on -b &lt;日志存储分区&gt; &lt;要开启日志记录功能的存储分区&gt;</code></p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil logging <span class="keyword">set</span> on <span class="comment">-b gs:</span>//<span class="comment">gcs-bucket-logs-record gs:</span>//<span class="comment">gcs-bucket</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查日志记录功能是否开启成功</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil logging <span class="keyword">get</span> gs:<span class="comment">//gcs-bucket</span></span><br></pre></td></tr></table></figure>
+<p> 如果开启成功会显示：<code>{&quot;logBucket&quot;: &quot;gcs-bucket-logs-record&quot;, &quot;logObjectPrefix&quot;: &quot;gcs-bucket&quot;}</code></p>
+<p> 另外，开启成功后过 2 小时左右就可以在 gs://gcs-bucket-logs-record 看到日志文件产生了，日志文件格式为 csv。</p>
+</li>
+<li><p>关闭日志记录功能</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil logging <span class="keyword">set</span> off <span class="comment">gs:</span>//<span class="comment">gcs-bucket</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>日志文件命名格式及日志内容格式见文档详细说明</strong></p>
+<p><a href="https://cloud.google.com/storage/docs/access-logs?hl=zh-cn&amp;refresh=1" target="_blank" rel="noopener">https://cloud.google.com/storage/docs/access-logs?hl=zh-cn&amp;refresh=1</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/02/非容器化-gitlab-进行容器化改造/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/02/非容器化-gitlab-进行容器化改造/" itemprop="url">非容器化 gitlab 进行容器化改造</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-02T16:40:42+08:00">
+                2018-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文主要介绍非容器化（通过 yum 在 Linux 服务器安装）gitlab 进行容器化改造的两种方法，都是基于 Kubernetes 平台，均采用 helm 部署。第一种是基于自建 k8s 平台部署 gitlab，第二种是基于 Google GKE 平台部署 gitlab。</p>
+<p>Docker 镜像采用<a href="https://hub.docker.com/r/gitlab/gitlab-ee" target="_blank" rel="noopener">基于 Omnibus 安装包的镜像</a>，gitlab 的各个组件都运行在同一个容器中。关于 GitLab Ominibus 镜像和云原生镜像的区别见<a href="https://docs.gitlab.com/ee/install/docker.html" target="_blank" rel="noopener">这里</a>。</p>
+<h3 id="gitlab-容器化改造（基于自建-k8s-平台部署-gitlab）"><a href="#gitlab-容器化改造（基于自建-k8s-平台部署-gitlab）" class="headerlink" title="gitlab 容器化改造（基于自建 k8s 平台部署 gitlab）"></a>gitlab 容器化改造（基于自建 k8s 平台部署 gitlab）</h3><h4 id="一、搭建和原先版本一致的-gitlab"><a href="#一、搭建和原先版本一致的-gitlab" class="headerlink" title="一、搭建和原先版本一致的 gitlab"></a>一、搭建和原先版本一致的 gitlab</h4><p>github helm gitlab-ee chart：<a href="https://github.com/helm/charts/tree/master/stable/gitlab-ee" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/gitlab-ee</a></p>
+<p>在此 helm chart 基础上将备份目录也(/var/opt/gitlab/backups)通过PVC持久化，方便数据的备份恢复: <a href="https://github.com/qhh0205/helm-charts/tree/master/gitlab-ee" target="_blank" rel="noopener">https://github.com/qhh0205/helm-charts/tree/master/gitlab-ee</a></p>
+<ol>
+<li>手动创建需要的 pv（基于 nfs）<br><a href="https://github.com/qhh0205/kubernetes-resources/tree/master/gitlab-pv" target="_blank" rel="noopener">https://github.com/qhh0205/kubernetes-resources/tree/master/gitlab-pv</a></li>
+<li>部署<br>其他自定义参数修改 values-custom.yaml 文件，比如镜像版本、硬件配置等参数。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:qhh0205/helm-charts.git</span><br><span class="line"><span class="built_in">cd</span> helm-charts/gitlab-ee</span><br><span class="line">helm install --name gitlab --<span class="built_in">set</span> externalUrl=http://domain/,gitlabRootPassword=xxxx -f values-custom.yaml ./ --namespace=gitlab</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="二、数据恢复"><a href="#二、数据恢复" class="headerlink" title="二、数据恢复"></a>二、数据恢复</h4><ol>
+<li>拷贝 gitlab 备份文件到容器外挂nfs目录(/data/nfs/gitlab/gitlab-data-backups（nfs路径）—&gt;/var/opt/gitlab/backups（容器路径）)；</li>
+<li>进入容器：<br>kubectl exec -it pod_name /bin/sh -n gitlab </li>
+<li>gitlab-ctl reconfigure</li>
+<li>chown git:git 1543237967_2018_11_26_10.1.3-ee_gitlab_backup.tar</li>
+<li>chown -R git:root /gitlab-data # 由于 gitlab-rake 执行过程中 默认用户名是 git，所以需要把该目录的属主改成 git，否则恢复时报错权限问题；</li>
+<li>gitlab-rake gitlab:backup:restore<br>根据提示输入相关信息<br>YES<br>YES<br>gitlab-ctl restart </li>
+</ol>
+<h3 id="gitlab-容器化改造（基于-Google-云-GKE-平台）"><a href="#gitlab-容器化改造（基于-Google-云-GKE-平台）" class="headerlink" title="gitlab 容器化改造（基于 Google 云 GKE 平台）"></a>gitlab 容器化改造（基于 Google 云 GKE 平台）</h3><h4 id="一、搭建和原先版本一致的-gitlab-1"><a href="#一、搭建和原先版本一致的-gitlab-1" class="headerlink" title="一、搭建和原先版本一致的 gitlab"></a>一、搭建和原先版本一致的 gitlab</h4><p>github helm gitlab-ee chart：<a href="https://github.com/helm/charts/tree/master/stable/gitlab-ee" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/gitlab-ee</a></p>
+<p>在此 helm chart 基础上将备份目录也(/var/opt/gitlab/backups)通过PVC持久化，方便数据的备份恢复:<br><a href="https://github.com/qhh0205/helm-charts/tree/master/gitlab-ee" target="_blank" rel="noopener">https://github.com/qhh0205/helm-charts/tree/master/gitlab-ee</a></p>
+<p>其他自定义参数修改 values-custom.yaml 文件，比如镜像版本、硬件配置等参数。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:qhh0205/helm-charts.git</span><br><span class="line"><span class="built_in">cd</span> helm-charts/gitlab-ee</span><br><span class="line">helm install --name gitlab --<span class="built_in">set</span> externalUrl=http://domain/,gitlabRootPassword=xxxx -f values-custom.yaml ./ --namespace=gitlab</span><br></pre></td></tr></table></figure></p>
+<h4 id="二、数据迁移恢复"><a href="#二、数据迁移恢复" class="headerlink" title="二、数据迁移恢复"></a>二、数据迁移恢复</h4><ol>
+<li><p>将 gitlab 备份文件拷贝到 k8s gitlab pod 容器目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl cp 1543237967_2018_11_26_10.1.3-ee_gitlab_backup.tar \</span><br><span class="line">namespace/pod_name:/var/opt/gitlab/backups -n gitlab</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>gitlab-ctl reconfigure</p>
+</li>
+<li>chown git:git 1543237967_2018_11_26_10.1.3-ee_gitlab_backup.tar</li>
+<li>chown -R git:root /gitlab-data # 由于 git-rake 执行过程中 默认用户名是 git，所以需要把该目录的属主改成git，否则恢复时报错权限问题；</li>
+<li>gitlab-rake gitlab:backup:restore<br>根据提示输入相关信息<br>YES<br>YES<br>gitlab-ctl restart </li>
+</ol>
+<h3 id="外部访问"><a href="#外部访问" class="headerlink" title="外部访问"></a>外部访问</h3><ol>
+<li>Kong Ingress</li>
+<li>NodePort</li>
+<li>LoadBalancer（云提供商平台，比如 Google GKE）</li>
+</ol>
+<h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><ul>
+<li>容器化安装 gitlab：<a href="https://docs.gitlab.com/ee/install/docker.html" target="_blank" rel="noopener">https://docs.gitlab.com/ee/install/docker.html</a></li>
+<li>gitlab 数据存放目录修改：<a href="https://blog.whsir.com/post-1490.html" target="_blank" rel="noopener">https://blog.whsir.com/post-1490.html</a></li>
+<li>gitlab 安装软件和硬件需求：<a href="https://docs.gitlab.com/ce/install/requirements.html" target="_blank" rel="noopener">https://docs.gitlab.com/ce/install/requirements.html</a></li>
+<li>Omnibus GitLab documentation: <a href="https://docs.gitlab.com/omnibus/README.html" target="_blank" rel="noopener">https://docs.gitlab.com/omnibus/README.html</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/02/Linux-文件与目录管理相关命令总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/02/Linux-文件与目录管理相关命令总结/" itemprop="url">Linux 文件与目录管理相关命令总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-02T10:57:35+08:00">
+                2018-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="/images/linux_file_dir_cmd.jpg" alt=""></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/18/Python-解析-Spring-pom-文件获取-jar-包名称/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/18/Python-解析-Spring-pom-文件获取-jar-包名称/" itemprop="url">Python 解析 Spring pom 文件获取 jar 包名称</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-18T23:37:24+08:00">
+                2018-11-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>前段时间在做持续集成有个小需求是根据 pom 文件获取 jar 包名称，在网上搜寻一番，整理了一份脚本，可以直接使用，通过解析 pom 文件获取(xml2pydict.py)：<br>使用示例：<code>python xml2pydict.py pom.xml</code><br>输出结果：jar 包名称<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2018/10/22 下午5:53</span></span><br><span class="line"><span class="comment"># @Author  : haohao.qiang</span></span><br><span class="line"><span class="comment"># @Mail    : qhh0205@gmail.com</span></span><br><span class="line"><span class="comment"># @File    : xml2pydict.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line"><span class="keyword">from</span> xml.parsers <span class="keyword">import</span> expat</span><br><span class="line"><span class="keyword">import</span> xml.etree.ElementTree <span class="keyword">as</span> ElementTree</span><br><span class="line">warnings.filterwarnings(<span class="string">"ignore"</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XmlListConfig</span><span class="params">(list)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, aList)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> element <span class="keyword">in</span> aList:</span><br><span class="line">            <span class="keyword">if</span> element:</span><br><span class="line">                <span class="comment"># treat like dict</span></span><br><span class="line">                <span class="keyword">if</span> len(element) == <span class="number">1</span> <span class="keyword">or</span> element[<span class="number">0</span>].tag != element[<span class="number">1</span>].tag:</span><br><span class="line">                    self.append(XmlDictConfig(element))</span><br><span class="line">                <span class="comment"># treat like list</span></span><br><span class="line">                <span class="keyword">elif</span> element[<span class="number">0</span>].tag == element[<span class="number">1</span>].tag:</span><br><span class="line">                    self.append(XmlListConfig(element))</span><br><span class="line">            <span class="keyword">elif</span> element.text:</span><br><span class="line">                text = element.text.strip()</span><br><span class="line">                <span class="keyword">if</span> text:</span><br><span class="line">                    self.append(text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XmlDictConfig</span><span class="params">(dict)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    Example usage:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    tree = ElementTree.parse('your_file.xml')</span></span><br><span class="line"><span class="string">    root = tree.getroot()</span></span><br><span class="line"><span class="string">    xmldict = XmlDictConfig(root)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Or, if you want to use an XML string:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    root = ElementTree.XML(xml_string)</span></span><br><span class="line"><span class="string">    xmldict = XmlDictConfig(root)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    And then use xmldict for what it is... a dict.</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, parent_element)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> parent_element.items():</span><br><span class="line">            self.update(dict(parent_element.items()))</span><br><span class="line">        <span class="keyword">for</span> element <span class="keyword">in</span> parent_element:</span><br><span class="line">            <span class="keyword">if</span> element:</span><br><span class="line">                <span class="comment"># treat like dict - we assume that if the first two tags</span></span><br><span class="line">                <span class="comment"># in a series are different, then they are all different.</span></span><br><span class="line">                <span class="keyword">if</span> len(element) == <span class="number">1</span> <span class="keyword">or</span> element[<span class="number">0</span>].tag != element[<span class="number">1</span>].tag:</span><br><span class="line">                    aDict = XmlDictConfig(element)</span><br><span class="line">                <span class="comment"># treat like list - we assume that if the first two tags</span></span><br><span class="line">                <span class="comment"># in a series are the same, then the rest are the same.</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># here, we put the list in dictionary; the key is the</span></span><br><span class="line">                    <span class="comment"># tag name the list elements all share in common, and</span></span><br><span class="line">                    <span class="comment"># the value is the list itself</span></span><br><span class="line">                    aDict = &#123;element[<span class="number">0</span>].tag: XmlListConfig(element)&#125;</span><br><span class="line">                <span class="comment"># if the tag has attributes, add those to the dict</span></span><br><span class="line">                <span class="keyword">if</span> element.items():</span><br><span class="line">                    aDict.update(dict(element.items()))</span><br><span class="line">                self.update(&#123;element.tag: aDict&#125;)</span><br><span class="line">            <span class="comment"># this assumes that if you've got an attribute in a tag,</span></span><br><span class="line">            <span class="comment"># you won't be having any text. This may or may not be a</span></span><br><span class="line">            <span class="comment"># good idea -- time will tell. It works for the way we are</span></span><br><span class="line">            <span class="comment"># currently doing XML configuration files...</span></span><br><span class="line">            <span class="keyword">elif</span> element.items():</span><br><span class="line">                self.update(&#123;element.tag: dict(element.items())&#125;)</span><br><span class="line">            <span class="comment"># finally, if there are no child tags and no attributes, extract</span></span><br><span class="line">            <span class="comment"># the text</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.update(&#123;element.tag: element.text&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    xml = sys.argv[<span class="number">1</span>]</span><br><span class="line">    oldcreate = expat.ParserCreate</span><br><span class="line">    expat.ParserCreate = <span class="keyword">lambda</span> encoding, sep: oldcreate(encoding, <span class="keyword">None</span>)</span><br><span class="line">    tree = ElementTree.parse(xml)</span><br><span class="line">    root = tree.getroot()</span><br><span class="line">    xmldict = XmlDictConfig(root)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"&#123;&#125;-&#123;&#125;.&#123;&#125;"</span>.format(xmldict.get(<span class="string">'artifactId'</span>), xmldict.get(<span class="string">'version'</span>), xmldict.get(<span class="string">'packaging'</span>))</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/18/Linux-文件权限属性相关总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/18/Linux-文件权限属性相关总结/" itemprop="url">Linux 文件权限属性相关总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-18T19:35:10+08:00">
+                2018-11-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Linux-文件权限属性相关总结"><a href="#Linux-文件权限属性相关总结" class="headerlink" title="Linux 文件权限属性相关总结"></a>Linux 文件权限属性相关总结</h2><h3 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h3><p><img src="/images/linux_file_attr_pem.png" alt=""></p>
+<h3 id="文件权限与属性修改"><a href="#文件权限与属性修改" class="headerlink" title="文件权限与属性修改"></a>文件权限与属性修改</h3><ul>
+<li>chgrp: 更改文件属组</li>
+<li>chown: 更改文件属主</li>
+<li>chmod: 更改文件权限，SUID、SGID、SBIT 等属性</li>
+</ul>
+<h4 id="1-更改文件属组"><a href="#1-更改文件属组" class="headerlink" title="1. 更改文件属组"></a>1. 更改文件属组</h4><p>更改时组名必须存在，即在必须在 <code>/etc/group</code> 文件内存在，否则报错。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">命令格式: chgrp [-R] group_name dirname/filename ...</span><br><span class="line">选顷参数:</span><br><span class="line">-R : 递归(recursive)更改，即连同子目彔下的所有文件、目录</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rw-rw-r--. 1 vagrant vagrant 5 Nov 17 19:04 aa</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># chgrp root aa</span></span><br><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rw-rw-r--. 1 vagrant root 5 Nov 17 19:04 aa</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-更改文件属主"><a href="#2-更改文件属主" class="headerlink" title="2. 更改文件属主"></a>2. 更改文件属主</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">命令格式: </span><br><span class="line">chown [-R] 账号名称 文件或目彔（只更改属主）</span><br><span class="line">chown [-R] 账号名称:组名 文件或目彔（属主和属组同时更改）</span><br><span class="line">选顷参数:</span><br><span class="line">-R : 递归(recursive)更改，即连同子目彔下的所有文件、目录</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rw-rw-r--. 1 vagrant root 5 Nov 17 19:04 aa</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># chown root aa</span></span><br><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rw-rw-r--. 1 root root 5 Nov 17 19:04 aa</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># chown vagrant:vagrant aa</span></span><br><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rw-rw-r--. 1 vagrant vagrant 5 Nov 17 19:04 aa</span><br></pre></td></tr></table></figure>
+<p><strong>Tips:</strong><br><code>chown</code> 也能修改属组：<code>chown .group_name filename</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rw-rw-r--. 1 vagrant vagrant 5 Nov 17 19:04 aa</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># chown .root aa</span></span><br><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rw-rw-r--. 1 vagrant root 5 Nov 17 19:04 aa</span><br></pre></td></tr></table></figure></p>
+<h4 id="3-更改文件权限"><a href="#3-更改文件权限" class="headerlink" title="3. 更改文件权限"></a>3. 更改文件权限</h4><p>更改文件权限使用 chmod 命令，该命令有两种使用方式：以数字或者符号来进行权限的变更。</p>
+<ul>
+<li><p>数字方式更改</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">命令格式: chmod [-R] xyz 文件或目录</span><br><span class="line">选项参数：</span><br><span class="line">-R: 递归(recursive)更改，即连同子目彔下的所有文件、目录</span><br><span class="line">xyz: 权限数字</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rw-rw-r--.<span class="number"> 1 </span>vagrant root<span class="number"> 5 </span>Nov<span class="number"> 17 </span>19:04 aa</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># chmod 755 aa</span></span><br><span class="line">[root@centos7 vagrant]<span class="comment"># ls -l</span></span><br><span class="line">total 4</span><br><span class="line">-rwxr-xr-x.<span class="number"> 1 </span>vagrant root<span class="number"> 5 </span>Nov<span class="number"> 17 </span>19:04 aa</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>符号方式更改<br><img src="/images/linux_chmod.png" alt=""></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">将文件权限设置为: -rwxr-xr-x</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># chmod u=rwx,g=rx,o=rx aa</span></span><br><span class="line">给所有人赋予文件可写权限</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># chmod a+w aa</span></span><br><span class="line">所在组和其他组人去除可写权限</span><br><span class="line">[root@centos7 vagrant]<span class="comment"># chmod g-x,o-x aa</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="文件与目录的权限区别"><a href="#文件与目录的权限区别" class="headerlink" title="文件与目录的权限区别"></a>文件与目录的权限区别</h3><p>Linux 下文件与目录的权限（r、w、x）有很大的不同，具体如下：<br><img src="/images/linux_file_dir_pem.png" alt=""></p>
+<h3 id="Linux-FHS-标准"><a href="#Linux-FHS-标准" class="headerlink" title="Linux FHS 标准"></a>Linux FHS 标准</h3><p>Linux FHS（<a href="http://www.pathname.com/fhs/" target="_blank" rel="noopener">Filesystem Hierarchy Standard</a>）文一种规范，规范 Linux 各发行版的目录结构，什么目录下该存放什么类型的文件。大概规范如下（其中灰色部分目录不能在系统的不同磁盘设备，因为都是和系统启动有关的，必须在系统盘所在的磁盘）：</p>
+<p><img src="/images/linux_fhs.png" alt=""></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+
+          
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">haohao</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap. Show me the code.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qhh0205" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/qianghaohao" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://my.oschina.net/bufferoverflow" target="_blank" title="开源中国">
+                      
+                        <i class="fa fa-fw fa-globe"></i>开源中国</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:qhh0205@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">haohao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="/js/src/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

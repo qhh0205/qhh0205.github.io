@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Talk is cheap. Show me the code.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="qhh.me">
+<meta property="og:url" content="http://yoursite.com/page/9/index.html">
+<meta property="og:site_name" content="qhh.me">
+<meta property="og:description" content="Talk is cheap. Show me the code.">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="qhh.me">
+<meta name="twitter:description" content="Talk is cheap. Show me the code.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/page/9/"/>
+
+
+
+
+
+  <title>qhh.me</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left 
+  page-home">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">qhh.me</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Talk is cheap. Show me the code.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/手动进行主机DNS配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/09/手动进行主机DNS配置/" itemprop="url">手动进行主机DNS配置</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T21:07:52+08:00">
+                2017-12-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DNS/" itemprop="url" rel="index">
+                    <span itemprop="name">DNS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文介绍了如何手动进行主机DNS配置，有时候机器服务提供商不提供DHCP服务，或者由于错误的DNS配置导致服务器无法解析域名，此时就需要检查下服务器的DNS配置并配置正确的nameserver，首先介绍几个和DNS有关的配置文件：</p>
+<ul>
+<li><strong>/etc/hosts：</strong>本地域名到IP的映射文件，一般默认Linux域名与IP的对应解析以此文件优先；</li>
+<li><strong>/etc/resolv.conf：</strong>ISP的DNS服务器IP地址，本文件定义了本机进行域名解析请求的地址；</li>
+<li><strong>/etc/nsswitch.conf：</strong>这个文件则是来决定先要使用/etc/hosts还是/etc/resolv.con的配置。文件中hosts字段定义了优先使用哪个文件来进行DNS解析，其中”files”就是使用/etc/hosts，而后面的”dns”则是使用/etc/resolv.conf的DNS服务器来进行解析：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#hosts:     db files nisplus nis dns</span></span><br><span class="line">hosts:      files dns myhostname</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>一般情况下是不需要自己手动修改主机DNS的配置的，除非机器提供商不提供DHCP服务，或者本机DNS配置有问题，导致无法进行域名解析才需要手动配置，以下是配置方法：</p>
+<blockquote>
+<p>修改/etc/resolv.conf，添加能访问通的DNS服务器地址，以下示例修改成Google的DNS服务器地址：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nameserver 8.8.8.8 <span class="comment">#主DNS地址</span></span><br><span class="line">nameserver 8.8.4.4 <span class="comment">#备用DNS地址,在主的失效时启用备的,当然还可以添加更多的地址</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>⚠️注意：尽量不要设置超过3台以上的DNS IP在/etc/resolv.conf中，如果是你的局域网出问题，会导致无法连接到DNS服务器，那么你的主机还是会向每台DNS服务器发出连接请求，每次连接都有timeout时间的等待，会导致浪费非常多的时间。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/python从单元素字典中获取key和value/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/python从单元素字典中获取key和value/" itemprop="url">Python从单元素字典中获取key和value</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T22:37:17+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>之前写代码很多时候会遇到这么一种情况:在python的字典中只有一个key/value键值对，想要获取其中的这一个元素还要写个for循环获取。网上搜了一下，发现还有很多简单的方法:</p>
+<ul>
+<li><p>方法一</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">'name'</span>:<span class="string">'haohao'</span>&#125;</span><br><span class="line">(key, value), = d.items()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>方法二</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">'name'</span>:<span class="string">'haohao'</span>&#125;</span><br><span class="line">key = list(d)[<span class="number">0</span>]</span><br><span class="line">value = list(d.values())[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>方法三</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">'name'</span>:<span class="string">'haohao'</span>&#125;</span><br><span class="line">key, = d</span><br><span class="line">value, = d.values()</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>参考自stackoverflow讨论:<br><a href="https://stackoverflow.com/questions/15366482/how-to-fetch-the-key-value-pair-of-a-dictionary-only-containing-one-item" target="_blank" rel="noopener">https://stackoverflow.com/questions/15366482/how-to-fetch-the-key-value-pair-of-a-dictionary-only-containing-one-item</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/shell多进程并发编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/shell多进程并发编程/" itemprop="url">shell多进程并发编程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T21:27:19+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Shell脚本/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell脚本</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在shell中使用多进程并发处理是非常方便的，如果有一个定时任务是同时ping主机ip列表，检测目标机器是否down掉，就可以用shell的多进程来实现，同时ping多个主机，不影响定时任务的执行。shell的实现方式是通过 &amp; 符号来使要执行的进程后台执行，然后主调shell通过wait来等待所有后台执行完毕，然后退出主调shell。以下是一个心跳检测脚本，通过ping来批量检测机器是否可达，如果不可达则启用备用机器的服务，并发送微信报警。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">cd</span> ~/scripts</span><br><span class="line"><span class="comment"># $1:host $2:server_type $3:port $4=start_server</span></span><br><span class="line"><span class="comment">#  将要执行的过程封装成函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">heartbeat_detection</span></span>() &#123;</span><br><span class="line">    ping_loss=`ping -c 6 <span class="variable">$1</span> | grep <span class="string">"100% packet loss"</span>`</span><br><span class="line">    Date=`date +<span class="string">"%Y-%m-%d %H:%M:%S"</span>`</span><br><span class="line">    <span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$ping_loss</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> -e <span class="string">"Date: <span class="variable">$Date</span>|Host: <span class="variable">$1</span>|Monitor: Ping is ok."</span> &gt;&gt; monitor_result.log</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> -e <span class="string">"Date: <span class="variable">$Date</span>|Host: <span class="variable">$1</span>|Problem: Unreachable for 2 minutes..."</span> &gt;&gt; monitor_result.log</span><br><span class="line">        python wechat_alert/wechat_alert.py <span class="string">"@all"</span> <span class="string">"`Date: date +%F %H:%M:%S` Host:<span class="variable">$1</span> Server_type:<span class="variable">$2</span> Status:Down..."</span></span><br><span class="line">        service_port=`netstat -lnp | grep <span class="variable">$3</span> | awk <span class="string">'&#123;print $NF&#125;'</span> | awk -F <span class="string">'/'</span> <span class="string">'&#123;print $1&#125;'</span>`</span><br><span class="line">        <span class="keyword">if</span> [ -z <span class="variable">$service_port</span> ]; <span class="keyword">then</span></span><br><span class="line">            sh <span class="variable">$4</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> $(cat srv_list)</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">     host=`<span class="built_in">echo</span> <span class="variable">$item</span> | awk -F <span class="string">'|'</span> <span class="string">'&#123;print $1&#125;'</span>`</span><br><span class="line">     server_type=`<span class="built_in">echo</span> <span class="variable">$item</span> | awk -F <span class="string">'|'</span> <span class="string">'&#123;print $2&#125;'</span>`</span><br><span class="line">     port=`<span class="built_in">echo</span> <span class="variable">$item</span> | awk -F <span class="string">'|'</span> <span class="string">'&#123;print $3&#125;'</span>`</span><br><span class="line">     start_server=`<span class="built_in">echo</span> <span class="variable">$item</span> | awk -F <span class="string">'|'</span> <span class="string">'&#123;print $4&#125;'</span>`</span><br><span class="line">     <span class="comment">#   后台执行任务(非阻塞)</span></span><br><span class="line">     heartbeat_detection <span class="variable">$host</span> <span class="variable">$server_type</span> <span class="variable">$port</span> <span class="variable">$start_server</span> &amp;</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="comment"># 等待所有后台任务完成(阻塞)</span></span><br><span class="line"><span class="built_in">wait</span></span><br><span class="line">Date=`date +<span class="string">"%Y-%m-%d %H:%M:%S"</span>`</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">"Date: <span class="variable">$Date</span>|Heartbeta detection finished..."</span></span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/常用软件包安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/常用软件包安装/" itemprop="url">常用软件包安装</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T21:21:22+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>常用软件包安装:</p>
+<ul>
+<li><p>dig命令安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install <span class="built_in">bind</span>-utils</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pip一键安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://bootstrap.pypa.io/get-pip.py &amp;&amp;  sudo python get-pip.py &amp;&amp; rm -f get-pip.py</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pstree命令安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install psmisc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>python socks包安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install PySocks</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/公网IP查询/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/公网IP查询/" itemprop="url">公网IP查询</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T21:09:07+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>通过命令行查看机器公网IP:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl ip.cn</span><br><span class="line">curl icanhazip.com</span><br><span class="line">curl ipinfo.io/ip</span><br><span class="line">curl ipecho.net/plain</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/Hexo使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/Hexo使用/" itemprop="url">Hexo使用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T13:26:41+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="Hexo相关链接"><a href="#Hexo相关链接" class="headerlink" title="Hexo相关链接"></a>Hexo相关链接</h4><ul>
+<li><a href="https://thief.one/2017/03/03/Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/" target="_blank" rel="noopener">Hexo+github博客搭建</a></li>
+<li><a href="http://theme-next.iissnan.com/theme-settings.html" target="_blank" rel="noopener">Next主题配置</a></li>
+<li><a href="http://whx4j8.github.io/2016/03/16/hexo-next-%E6%B7%BB%E5%8A%A0%E4%B8%BA%E6%96%87%E7%AB%A0%E6%B7%BB%E5%8A%A0%E5%88%86%E7%B1%BB/" target="_blank" rel="noopener">Hexo next为文章添加分类</a></li>
+<li><a href="https://yanyinhong.github.io/2017/05/02/How-to-insert-image-in-hexo-post/" target="_blank" rel="noopener">Hexo文章插入图片</a></li>
+</ul>
+<h4 id="Hexo-文章中插入gif动画"><a href="#Hexo-文章中插入gif动画" class="headerlink" title="Hexo 文章中插入gif动画"></a>Hexo 文章中插入gif动画</h4><p>今天突然看别人的文章时发现文章内有代码动画，感觉挺有意思的，于是自己琢磨了下如何向hexo文章中插入动画。其实在hexo文章中插入git动画的方法和插入图片类似，只不过动画的插入不是使用MD自带的标签，而是hexo特有的标签插件–<a href="https://hexo.io/zh-cn/docs/tag-plugins.html#iframe" target="_blank" rel="noopener">iframe</a>，插入过程记录如下：</p>
+<ol>
+<li>要想在hexo文章中插入gif动画，首先得制作好动画<br>关于gif动画的制作，我的系统为Mac OS，因此使用受广大网友好评的LICEcap软件，该软件确实非常好用，专门录制git动态图，几乎没有学习成本，安装好就可以直接用了。关于如何用LICEcap录制gif图就不做介绍了，因为太简单了。<br><a href="https://www.cockos.com/licecap" target="_blank" rel="noopener">LICEcap下载地址</a></li>
+<li>在Hexo主目录的source文件夹下新建iframe文件夹，将上面录制的gif图放到该目录</li>
+<li><p>用hexo标签插件iframe在文章中引入上面制作的gif动画，引入方式如下：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">语法格式：&#123;% iframe url [width] [height] %&#125;</span><br><span class="line">由于本文是在本地引入，所以url为/iframe/filename.gif，示例如下：</span><br><span class="line">&#123;% iframe /iframe/pyhelloworld.gif %&#125;</span><br><span class="line">不指定宽度和高度则使用默认大小</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>效果如下：</p>
+<iframe src="/iframe/pyhelloworld.gif" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
+</li>
+</ol>
+<h4 id="Hexo-Next主题站点添加搜索功能"><a href="#Hexo-Next主题站点添加搜索功能" class="headerlink" title="Hexo Next主题站点添加搜索功能"></a>Hexo Next主题站点添加搜索功能</h4><ol>
+<li><p>进入Hexo站点目录执行如下命令生成站点索引文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-searchdb --save</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑站点配置文件，新增以下内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: all</span><br><span class="line">  format: html</span><br><span class="line">  <span class="built_in">limit</span>: 10000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑Next主题配置文件，设置local_search配置的enable项为true</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">local_search:</span><br><span class="line">  <span class="built_in">enable</span>: <span class="literal">true</span></span><br><span class="line">  <span class="comment"># if auto, trigger search by changing input</span></span><br><span class="line">  <span class="comment"># if manual, trigger search by pressing enter key or search button</span></span><br><span class="line">  trigger: auto</span><br><span class="line">  <span class="comment"># show top n results per article, show all results by setting to -1</span></span><br><span class="line">  top_n_per_article: 1</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="Hexo-Next主题添加文章及站点访问量统计"><a href="#Hexo-Next主题添加文章及站点访问量统计" class="headerlink" title="Hexo Next主题添加文章及站点访问量统计"></a>Hexo Next主题添加文章及站点访问量统计</h4><p>关于文章访问量统计新版next主题已经支持，内置使用不蒜子统计，是一个第三方服务。由于next主题已经内置支持该统计服务，因此不需要任何其他的配置，只需要修改该主题配置文件，将不蒜子统计功能激活即可。方法如下：<br>修改themes/next/_config.yml主题配置文件，找到busuanzi_count配置项，将不蒜子统计打开，修改后配置如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Show PV/UV of the website/page with busuanzi.</span></span><br><span class="line"><span class="comment"># Get more information on http://ibruce.info/2015/04/04/busuanzi/</span></span><br><span class="line"><span class="comment"># 访问量统计,启用卜算子统计</span></span><br><span class="line">busuanzi_count:</span><br><span class="line"><span class="comment"># count values only if the other configs are false</span></span><br><span class="line"><span class="built_in">enable</span>: <span class="literal">true</span></span><br><span class="line"><span class="comment"># custom uv span for the whole site</span></span><br><span class="line">site_uv: <span class="literal">true</span></span><br><span class="line">site_uv_header: &lt;i class=<span class="string">"fa fa-user"</span>&gt;&lt;/i&gt; 访问人数</span><br><span class="line">site_uv_footer:</span><br><span class="line"><span class="comment"># custom pv span for the whole site</span></span><br><span class="line">site_pv: <span class="literal">true</span></span><br><span class="line">site_pv_header: &lt;i class=<span class="string">"fa fa-eye"</span>&gt;&lt;/i&gt; 总访问量</span><br><span class="line">site_pv_footer: 次</span><br><span class="line"><span class="comment"># custom pv span for one page only</span></span><br><span class="line">page_pv: <span class="literal">true</span></span><br><span class="line">page_pv_header: &lt;i class=<span class="string">"fa fa-file-o"</span>&gt;&lt;/i&gt; 浏览</span><br><span class="line">page_pv_footer: 次</span><br></pre></td></tr></table></figure></p>
+<p>效果如下：</p>
+<ol>
+<li>文章访问量<br><img src="/images/pv.png" alt=""></li>
+<li>站点访问量<br><img src="/images/uv.png" alt=""></li>
+</ol>
+<p>参考链接：<br><a href="http://theme-next.iissnan.com/third-party-services.html#analytics-busuanzi" target="_blank" rel="noopener">http://theme-next.iissnan.com/third-party-services.html#analytics-busuanzi</a></p>
+<h4 id="Hexo环境迁移"><a href="#Hexo环境迁移" class="headerlink" title="Hexo环境迁移"></a>Hexo环境迁移</h4><p>实现方法：在Hexo仓库新建一个hexo分支存放Hexo原始文件，master分支存放hexo生成的静态页面，如果迁移环境后可以直接git clone仓库即可。</p>
+<ol>
+<li><p>将Hexo仓库用git管理起来：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：不需要再编写.gitignore了，在Hexo工程已经默认有.gitignore文件了，这是hexo默认生成的，也许是hexo本来就推荐用git管理hexo原始文件吧</span></span><br><span class="line">git init</span><br><span class="line">git checkout -b hexo</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">"init"</span></span><br><span class="line">git remote add origin https://github.com/qianghaohao/qianghaohao.github.io.git</span><br><span class="line">git push origin hexo</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在新的环境克隆仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/qianghaohao/qianghaohao.github.io.git</span><br><span class="line"><span class="comment"># 切换到hexo分支即可看到hexo原始文件，此时可以编辑并提交。一般先提交原始文件到hexo分支，然后hexo d部署生成的静态文件到master分支</span></span><br><span class="line">git checkout hexo</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>参考文章：<br><a href="http://m.blog.csdn.net/zk673820543/article/details/52698760" target="_blank" rel="noopener">http://m.blog.csdn.net/zk673820543/article/details/52698760</a></p>
+<h4 id="Hexo-Markdown简明语法手册"><a href="#Hexo-Markdown简明语法手册" class="headerlink" title="Hexo Markdown简明语法手册"></a>Hexo Markdown简明语法手册</h4><p><a href="https://hyxxsfwy.github.io/2016/01/15/Hexo-Markdown-%E7%AE%80%E6%98%8E%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" target="_blank" rel="noopener">Hexo Markdown简明语法手册</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/在字符串列表中找出与s最长前缀匹配的字符串/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/在字符串列表中找出与s最长前缀匹配的字符串/" itemprop="url">在字符串列表中找出与s最长前缀匹配的字符串</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T11:58:42+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="在字符串列表中找出与s最长前缀匹配的字符串"><a href="#在字符串列表中找出与s最长前缀匹配的字符串" class="headerlink" title="在字符串列表中找出与s最长前缀匹配的字符串"></a>在字符串列表中找出与s最长前缀匹配的字符串</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">closest_match</span><span class="params">(s, str_list)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    在字符串列表中找出与s最长前缀匹配的字符串</span></span><br><span class="line"><span class="string">    :param s:</span></span><br><span class="line"><span class="string">    :param str_list:</span></span><br><span class="line"><span class="string">    :return: 如果没有任何匹配则返回空串，否则返回最长前缀匹配</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    closest = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> str <span class="keyword">in</span> str_list:</span><br><span class="line">        <span class="keyword">if</span> s.startswith(str):</span><br><span class="line">            <span class="keyword">if</span> closest:</span><br><span class="line">                <span class="keyword">if</span> len(str) &gt;= len(closest):</span><br><span class="line">                    closest = str</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                closest = str</span><br><span class="line">    <span class="keyword">return</span> closest</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/Nginx入门指南/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/Nginx入门指南/" itemprop="url">Nginx入门指南</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T11:05:10+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">Nginx</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="http://upload-images.jianshu.io/upload_images/3766190-9339a28741405701.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h1 id="Nginx入门指南"><a href="#Nginx入门指南" class="headerlink" title="Nginx入门指南"></a>Nginx入门指南</h1><p>##一.Nginx概述:</p>
+<p>###1.什么是Nginx?<br>Nginx（发音同engine x）是一个网页服务器，它能反向代理HTTP, HTTPS, SMTP, POP3, IMAP的协议链接，以及一个负载均衡器和一个HTTP缓存。<br>起初是供俄国大型的门户网站及搜索引擎Rambler（俄语：Рамблер）使用。此软件BSD-like协议下发行，可以在UNIX、GNU/Linux、BSD、Mac OS X、Solaris，以及Microsoft Windows等操作系统中运行。</p>
+<p>###2.Nginx的特点:</p>
+<ul>
+<li><strong>更快:</strong><ul>
+<li><strong>单次请求会得到更快的响应</strong></li>
+<li><strong>在高并发环境下,Nginx比其他web服务器有更快的响应</strong></li>
+</ul>
+</li>
+<li><strong>高扩展性:</strong><ul>
+<li><strong>nginx是基于模块化设计,由多个耦合度极低的模块组成,因此具有很高的扩展性。许多高流量的网站都倾向于开发符合自己业务特性的定制模块。</strong></li>
+</ul>
+</li>
+<li><strong>高可靠性:</strong><ul>
+<li><strong>nginx的可靠性来自于其核心框架代码的优秀设计，模块设计的简单性；另外，官方提供的常用模块都非常稳定，每个worker进程相对独立，master进程在一个worker进程出错时可以快速拉起新的worker子进程提供服务。</strong></li>
+</ul>
+</li>
+<li><strong>低内存消耗:</strong><ul>
+<li><strong>一般情况下，10 000个非活跃的HTTP Keep-Alive连接在Nginx中仅消耗2.5MB的内存，这是nginx支持高并发连接的基础。</strong></li>
+</ul>
+</li>
+<li><strong>单机支持10万以上的并发连接:</strong><ul>
+<li><strong>理论上，Nginx支持的并发连接上限取决于内存，10万远未封顶。 </strong></li>
+</ul>
+</li>
+<li><strong>热部署:</strong><ul>
+<li><strong>master进程与worker进程的分离设计，使得Nginx能够提供热部署功能，即在7x24小时不间断服务的前提下，升级Nginx的可执行文件。当然，它也支持不停止服务就更新配置项，更换日志文件等功能。</strong></li>
+</ul>
+</li>
+<li><strong>最自由的BSD许可协议:</strong><ul>
+<li><strong>这是Nginx可以快速发展的强大动力。BSD许可协议不只是允许用户免费使用Nginx，它还允许用户在自己的项目中直接使用或修改Nginx源码，然后发布。</strong><br>###3.目前web服务器市场份额图：<br><img src="./webserver.png" alt=""><br>###4.正向代理和反向代理的区别:</li>
+<li><strong>正向代理(Forward Proxy):</strong><br>一般情况下，如果没有特别说明，代理技术默认说的是正向代理技术。关于正向代理的概念如下：<br>正向代理(forward)是一个位于客户端【用户A】和原始服务器(origin server)【服务器B】之间的服务器【代理服务器Z】，为了从原始服务器取得内容，用户A向代理服务器Z发送一个请求并指定目标(服务器B)，然后代理服务器Z向服务器B转交请求并将获得的内容返回给客户端。客户端必须要进行一些特别的设置才能使用正向代理。如下图：<br><img src="./forward.png" alt=""></li>
+<li><strong>反向代理(Reverse Proxy):</strong><br>反向代理正好与正向代理相反，对于客户端而言代理服务器就像是原始服务器，并且客户端不需要进行任何特别的设置。客户端向反向代理的命名空间(name-space)中的内容发送普通请求，接着反向代理将判断向何处(原始服务器)转交请求，并将获得的内容返回给客户端。<br><strong>&nbsp;&nbsp;&nbsp;反向代理服务的作用:</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>1.保护和隐藏原始资源服务器:</em><br><img src="./1487527542346.png" alt=""><br>由于防火墙的作用，只允许代理服务器Z访问原始资源服务器B。尽管在这个虚拟的环境下，防火墙和反向代理的共同作用保护了原始资源服务器B，但用户A并不知情。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>2.负载均衡:</em><br><img src="./1487527728657.png" alt=""><br>当反向代理服务器不止一个的时候，我们甚至可以把它们做成集群，当更多的用户访问资源服务器B的时候，让不同的代理服务器Z（x）去应答不同的用户，然后发送不同用户需要的资源。<br>##二.安装Nginx:<br>###1.准备工作:</li>
+<li><strong>Linux操作系统:</strong><br>内核为Linux 2.6及以上的版本的操作系统，因为2.6以上的内核才支持epoll，而在linux上使用select或poll来解决事件的多路复用，是无法解决高并发压力问题的。</li>
+<li><strong>安装Nginx的必备软件:</strong></li>
+</ul>
+</li>
+<li><strong>GCC编译器</strong></li>
+<li><strong>PCRE库:是用C语言写的一个正则库，目前被很软件所使用。如果我们在配置文件nginx.conf里使用了正则表达式，那么在编译Nginx时就必须把PCRE库编译进Nginx，因为Nginx的HTTP模块要靠它来解析正则表达式。yum安装: yum install -y pcre pcre-devel</strong></li>
+<li><strong>zlib库：zlib库用于对HTTP包的内容做gzaip格式的压缩，如果我们在nginx.conf里配置了gzip on，并指定对于某些类型的HTTP响应使用gzip来进行压缩以减少网络传输量，那么，在编译时就必须把zlib编译进Nginx。安装方式：yum install -y zlib zlib-devel</strong></li>
+<li><strong>OpenSSL开发库:如果我们的服务器不只是要支持HTTP，还要在更安全的SSL协议上传输HTTP，那么就需要拥有OpenSSL了。安装方式：yum install -y openssl openssl-devel</strong><br>上面所列的4个库只是完成web服务器最基本功能所必须的。Nginx是模块化设计的，它的功能是由许多模块来支持的，所以如果使用了某个模块，而这个模块使用了一些第三方库，那么就必须先安装这些软件。<ul>
+<li><strong>获取Nginx源码:</strong><br>Nginx官网:<a href="http://nginx.org" target="_blank" rel="noopener">http://nginx.org</a><br><img src="./1488039019886.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<p><strong>在此下载Nginx最新版nginx-1.11.10:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://nginx.org/download/nginx-1.11.10.tar.gz -O - | tar zxvf -</span><br></pre></td></tr></table></figure></p>
+<p>###2.编译安装Nginx:</p>
+<ul>
+<li><p><strong>首先安装前面提到的软件包:</strong></p>
+<ul>
+<li><p><strong>安装PCRE库:</strong></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y pcre pcre-devel</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>安装zlib库:</strong></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y zlib zlib-devel</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>安装OpenSSL库:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y openssl openssl-devel</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p>运行以上命令后可以查看是否安装成功:<br><img src="./1488087359555.png" alt=""></p>
+<ul>
+<li><strong>编译并安装nginx:</strong><br>Nginx源码目录介绍：<br><img src="./1488118637317.png" alt=""><ul>
+<li><strong>进入nginx目录并执行configure命令:</strong><br>configure命令主要做一些系统相关的检测，并指定编译nginx时的一些参数，最终生成makefile供make来执行。<br>configure的命令参数可以通过如下命令来查看:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="./1488119977606.png" alt=""><br>   <strong>执行configure命令，添加一些定制化参数，并生成makefile:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --with-http_ssl_module --with-http_stub_status_module --with-http_gzip_static_module --with-debug</span><br></pre></td></tr></table></figure></p>
+<p><strong>相关参数说明:</strong><br>   <strong>–with-http_ssl_module:</strong> 使nginx支持SSL协议，提供HTTPS服务。<br>   <strong>–with-http_stub_status_module:</strong>该模块可以让运行中的Nginx提供性能统计页面，获取相关的并发连接，请求信息。<br> <strong>–with-http_gzip_static_module:</strong>在做gzip压缩前，先查看相同位置是否有已经做过gzip压缩的.gz文件，如果有，就直接返回。<br> <strong>–with-debug:</strong>在nginx运行时通过修改配置文件来使其打印调试日志，这对于研究，定位nginx问题非常有帮助。<br><strong>configure命令执行完后，会在源码目录生成Makefile文件和一个objs目录:</strong><br>Makefile文件是指导make命令编译的脚本文件，objs目录存放编译过程中产生的二进制文件和一些configure产生的源代码文件。<br><strong>现在nginx源码目录树如下(红框圈出来的味新生成的目录):</strong><br><img src="./1488127919445.png" alt=""><br><img src="./1488128000832.png" alt=""></p>
+<ul>
+<li><p><strong>执行make命令编译:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>执行make install安装:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>###3.Nginx的使用:</p>
+<ul>
+<li><strong>默认方式启动nginx:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这时，会读取默认路径下的配置文件:/usr/local/nginx/conf/nginx.conf</p>
+<ul>
+<li><strong>指定自定义配置文件启动:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -c path/nginx.conf</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这时，会读取-c参数指定的配置文件来启动Nginx。</p>
+<ul>
+<li><strong>指定全局配置项的启动方式:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -g <span class="string">"pid /var/nginx/test.pid;"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>上面的命令意味着会把pid文件写入到/var/nginx/test.pid中。</p>
+<ul>
+<li><p><strong>测试配置文件是否有效:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -t</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>在测试配置阶段不输出信息:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -t -q</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>测试配置选项是时，使用-q参数可以不把error级别以下的信息输出到屏幕。</p>
+<ul>
+<li><p><strong>显示版本信息:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -v</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>显示编译阶段的参数:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -V</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>-V参数除了可以显示Nginx的版本信息外，还可以显示配置编译阶段的信息，如gcc编译器版本，操作系统版本，执行configure时的参数等。</p>
+<ul>
+<li><strong>快速地停止服务:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -s stop</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>使用-s stop可以强制停止Nginx服务。-s参数其实是告诉Nginx程序向正在运行的Nginx服务发送信号，Nginx程序通过nginx.pid文件得到master进程的ID，再向运行中的master进程发送TERM信号来快速地关闭Nginx服务。<br><strong>同样可以给master进程发送TERM或者INT信号来快速停止:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -s SIGTERM NginxMasterPid</span><br><span class="line"><span class="built_in">kill</span> -s SIGINT NginxMasterPid</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>‘’优雅’’地停止服务:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -s quit</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>如果希望Nginx服务可以正常地处理完当前前所有请求再停止服务，那么可以使用-s quit参数来停止服务。这种方式首先会关闭监听端口，停止接收新的连接，然后把当前正则处理的连接全部处理完，最后再退出进程。<br><strong>同样可以发送信号的方式优雅地停止服务:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -s SIGQUIT NginxMasterPid</span><br></pre></td></tr></table></figure></p>
+<p><strong>优雅地停止某个worker进程：</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -s SIGWINCH NginxWorkerPid</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>使运行中的Nginx重新加载配置文件并生效:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -s reload</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>同样可以通过kill发送信号来达到同样的效果:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -s SIGHUP NginxMasterPid</span><br></pre></td></tr></table></figure></p>
+<p>##二.Nginx的配置:</p>
+<h4 id="1-运行中的Nginx进程间的关系"><a href="#1-运行中的Nginx进程间的关系" class="headerlink" title="1.运行中的Nginx进程间的关系:"></a>1.运行中的Nginx进程间的关系:</h4><p>在正式提供服务的产品环境下，部署Nginx时都是使用一个master进程来管理多个worker进程，一般情况下，worker进程的数量与服务器上的CPU核心数相等。每一个worker进程都是繁忙的，他们真正地提供互联网服务，master进程则很”清闲”，只负责监控管理worker进程。部署后的Nginx进程间的关系如图下图所示:<br><img src="./1488387700110.png" alt=""></p>
+<h4 id="2-Nginx配置中的通用语法"><a href="#2-Nginx配置中的通用语法" class="headerlink" title="2.Nginx配置中的通用语法:"></a>2.Nginx配置中的通用语法:</h4><p>Nginx的配置文件其实是一个普通的文本文件。下面来看一个简单的例子:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span></span><br><span class="line">    <span class="comment">#                  '$status $body_bytes_sent "$http_referer" '</span></span><br><span class="line">    <span class="comment">#                  '"$http_user_agent" "$http_x_forwarded_for"';</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#access_log  logs/access.log  main;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#keepalive_timeout  0;</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span>  localhost;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">            <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#error_page  404              /404.html;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># redirect server error pages to the static page /50x.html</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="attribute">error_page</span>   <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span>  /50x.html;</span><br><span class="line">        <span class="attribute">location</span> = /50x.html &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># proxy the PHP scripts to Apache listening on 127.0.0.1:80</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment">#location ~ \.php$ &#123;</span></span><br><span class="line">        <span class="comment">#    proxy_pass   http://127.0.0.1;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment">#location ~ \.php$ &#123;</span></span><br><span class="line">        <span class="comment">#    root           html;</span></span><br><span class="line">        <span class="comment">#    fastcgi_pass   127.0.0.1:9000;</span></span><br><span class="line">        <span class="comment">#    fastcgi_index  index.php;</span></span><br><span class="line">        <span class="comment">#    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;</span></span><br><span class="line">        <span class="comment">#    include        fastcgi_params;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># deny access to .htaccess files, if Apache's document root</span></span><br><span class="line">        <span class="comment"># concurs with nginx's one</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment">#location ~ /\.ht &#123;</span></span><br><span class="line">        <span class="comment">#    deny  all;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment"># another virtual host using mix of IP-, name-, and port-based configuration</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#server &#123;</span></span><br><span class="line">    <span class="comment">#    listen       8000;</span></span><br><span class="line">    <span class="comment">#    listen       somename:8080;</span></span><br><span class="line">    <span class="comment">#    server_name  somename  alias  another.alias;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    location / &#123;</span></span><br><span class="line">    <span class="comment">#        root   html;</span></span><br><span class="line">    <span class="comment">#        index  index.html index.htm;</span></span><br><span class="line">    <span class="comment">#    &#125;</span></span><br><span class="line">    <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment"># HTTPS server</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#server &#123;</span></span><br><span class="line">    <span class="comment">#    listen       443 ssl;</span></span><br><span class="line">    <span class="comment">#    server_name  localhost;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_certificate      cert.pem;</span></span><br><span class="line">    <span class="comment">#    ssl_certificate_key  cert.key;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_session_cache    shared:SSL:1m;</span></span><br><span class="line">    <span class="comment">#    ssl_session_timeout  5m;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_ciphers  HIGH:!aNULL:!MD5;</span></span><br><span class="line">    <span class="comment">#    ssl_prefer_server_ciphers  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    location / &#123;</span></span><br><span class="line">    <span class="comment">#        root   html;</span></span><br><span class="line">    <span class="comment">#        index  index.html index.htm;</span></span><br><span class="line">    <span class="comment">#    &#125;</span></span><br><span class="line">    <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>块配置项:</strong><br>块配置项由一个块配置名和一对大括号组成。具体示例如下:<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span>  localhost;</span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">            <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="attribute">error_page</span>   <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span>  /50x.html;</span><br><span class="line">        <span class="attribute">location</span> = /50x.html &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>上面代码段中的events，http，server，location都是块配置项。块配置项可以嵌套，内层块直接继承外层块，例如，上例中server块里的任意配置都是基于http块里的已有配置的。当内外层中的配置发生冲突时，究竟是以内层块还是外层块的配置为准，取决于解析这个配置项的模块。</p>
+<ul>
+<li><strong>配置项的语法格式:</strong><br>最基本的配置项语法格式如下:<br><strong>配置项名 配置项值1 配置项值2 …；</strong><br>首先，在行首的是配置项名，这些配置项名必须是Nginx的某一个模块想要处理的，否则Nginx会认为配置文件出了非法的配置项名。配置项名输入结束后，将以空格作为分隔符。<br>其次是配置项值，它可以是数字或字符串(当然也包括正则表达式)。针对一个配置项，既可以有一个值，也可以有多个值，配置项值直接仍然由空格符来分隔。<br>最后，每行配置的结尾需要加上分号。</li>
+<li><strong>配置项的注释:</strong><br>如果有一个配置项暂时需要注释掉，那么可以加 “#”注释掉这一行配置。</li>
+<li><p><strong>配置项的单位:</strong><br>大部分模块遵循一些通用的规定，如指定空间大小时不用每次都定义到字节，指定时间时不用精确到毫秒。<br><strong>当指定空间大小时，可以用的单位包括：</strong></p>
+<ul>
+<li>K或者k千字节</li>
+<li>M或者m兆字节<br>例如:<br>gzip_buffer 48k;<br>client_max_body_size 64M;</li>
+</ul>
+<p><strong>指定时间时，可以使用的单位包括：</strong></p>
+<ul>
+<li>ms，s，m，h，d，w，M，y<br>例如：<br>expires 10y;<br>proxy_read_timeout 600;<br>client_body_timeout 2m;</li>
+</ul>
+</li>
+<li><strong>在配置中使用变量 :</strong><br>有些模块允许在配置中使用变量，具体示例如下:<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">log_format</span> main <span class="string">'<span class="variable">$time_local</span>|10.4.24.116|<span class="variable">$request</span>|<span class="variable">$status</span>|'</span></span><br><span class="line">							                    <span class="string">'<span class="variable">$remote_user</span>|<span class="variable">$remote_addr</span>|<span class="variable">$http_user_agent</span>|<span class="variable">$http_referer</span>|<span class="variable">$host</span>|'</span></span><br><span class="line">							                    <span class="string">'<span class="variable">$bytes_sent</span>|<span class="variable">$request_time</span>|<span class="variable">$upstream_response_time</span>|<span class="variable">$upstream_addr</span>|'</span></span><br><span class="line">							                    <span class="string">'<span class="variable">$connection</span>|<span class="variable">$connection_requests</span>|<span class="variable">$upstream_http_content_type</span>|<span class="variable">$upstream_http_content_disposition</span>'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>其中变量前要加$符号。需要注意的是，这种变量只有少数模块支持，并不是通用的。<br><strong>注意⚠️ :</strong><br>在执行configure命令时，我们已经把许多模块编译进Nginx中，但是否启用这些模块，一般取决于配置文件中相应的配置项。换句话说，每个Nginx模块都有自己感兴趣的配置项，大部分模块都必须在nginx.conf中读取某个配置项后才会在运行时启动。例如，只有当配置http{…}这个配置项时，ngx_http_module模块才会在Nginx中启用，其他依赖ngx_http_module的模块才能正常使用。</p>
+<h4 id="3-一个静态Web服务器常用的配置"><a href="#3-一个静态Web服务器常用的配置" class="headerlink" title="3.一个静态Web服务器常用的配置:"></a>3.一个静态Web服务器常用的配置:</h4><p>静态Web服务器的主要功能由ngx_http_core_module模块(HTTP框架的主要成员)实现，当然，一个完整的静态Web服务器还有许多功能是由其他的HTTP模块实现的。一个典型的静态Web服务器还会包含多个server块和location块，例如:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">user</span>  web;</span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="attribute">error_log</span>  logs/error.log  <span class="literal">info</span>;</span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="attribute">log_format</span> main <span class="string">'<span class="variable">$time_local</span>|10.4.24.116|<span class="variable">$request</span>|<span class="variable">$status</span>|'</span></span><br><span class="line">                    <span class="string">'<span class="variable">$remote_user</span>|<span class="variable">$remote_addr</span>|<span class="variable">$http_user_agent</span>|<span class="variable">$http_referer</span>|<span class="variable">$host</span>|'</span></span><br><span class="line">                    <span class="string">'<span class="variable">$bytes_sent</span>|<span class="variable">$request_time</span>|<span class="variable">$upstream_response_time</span>|<span class="variable">$upstream_addr</span>|'</span></span><br><span class="line">                    <span class="string">'<span class="variable">$connection</span>|<span class="variable">$connection_requests</span>|<span class="variable">$upstream_http_content_type</span>|<span class="variable">$upstream_http_content_disposition</span>'</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="attribute">access_log</span>  logs/access.log  main;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">tcp_nodelay</span>     <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">120</span> <span class="number">100</span>;</span><br><span class="line">    <span class="attribute">resolver_timeout</span>   <span class="number">15</span>;</span><br><span class="line">    <span class="attribute">client_body_timeout</span>        <span class="number">20</span>;</span><br><span class="line">    <span class="attribute">client_header_timeout</span>      <span class="number">20</span>;</span><br><span class="line">    <span class="attribute">client_body_buffer_size</span> <span class="number">512k</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">large_client_header_buffers</span> <span class="number">1</span> <span class="number">512k</span>;</span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#APP</span></span><br><span class="line">    <span class="attribute">include</span> server/zapier.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/https_app116.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/http_app116.chime.me.conf;</span><br><span class="line">    <span class="comment">#CRM </span></span><br><span class="line">    <span class="attribute">include</span> server/https_test.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/https_dev.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/https_dev2.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/https_static.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/crmnginx.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/brokernginx.chime.me.conf;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">include</span> server/http_oldlender.chime.me.conf;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">include</span> server/frontend.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/twilio.chime.me.conf;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">include</span> server/http_testzillow.chime.me.conf; </span><br><span class="line"></span><br><span class="line">    <span class="comment">#agnet 资历收集页图片地址 </span></span><br><span class="line">    <span class="attribute">include</span> server/uploadfile.conf;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#测试nginx status</span></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> *:<span class="number">80</span> ;</span><br><span class="line">        <span class="attribute">server_name</span> localhost status.chime.me;</span><br><span class="line">        </span><br><span class="line">        <span class="attribute">location</span> /ngx_status &#123;</span><br><span class="line">            <span class="attribute">stub_status</span> <span class="literal">on</span>;</span><br><span class="line">            <span class="attribute">access_log</span> <span class="literal">off</span>;</span><br><span class="line">            <span class="attribute">allow</span> <span class="number">10.2.204.166</span>;</span><br><span class="line">            <span class="attribute">deny</span> all;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>所有的HTTP配置项必须直属于http块，location块，upstream块或if块。<br><strong>Web服务器常用配置项:</strong></p>
+<ul>
+<li><strong>虚拟主机与请求的分发:</strong><br>由于IP地址的数量有限，因此经常会存在多个主机域名对应着同一个IP地址的情况，这时在nginx.conf中就可以按照server_name并通过server块来定义虚拟主机，每个server块就是一个虚拟主机，它只处理与之相对应的主机域名请求。这样，一台服务器上的Nginx就能以不同的方式处理访问不同主机域名的HTTP请求了。<ul>
+<li><strong>监听端口:</strong><br>默认:listen 80;<br>配置块:server<br>listen参数决定Nginx服务如何监听端口。在listen后可以只加IP地址，端口活主机名，非常灵活。</li>
+<li><strong>主机名称:</strong><br>语法: server_name name […];<br>默认:server_name “”;<br>server_name后可以跟多个主机名称，如server_name www.testweb.com download.test.com;<br>在开始处理一个HTTP请求时，Nginx会取出header头重的Host，与每个server中的server_name进行匹配，以决定到底由哪一个server块来处理这个请求。有可能一个Host与多个server块中的server_name都匹配，这时就会根据匹配优先级来选择实际处理的server块。</li>
+<li><strong>location:</strong><br>语法:location[=|~|~*|^~|@] /uri/ {…}<br>配置块:server<br>location会尝试根据用户请求中的URI来匹配上面的/uri表达式，如果可以匹配，就选择location {}块中的配置来处理用户请求。</li>
+</ul>
+</li>
+<li><p><strong>文件路径的定义:</strong></p>
+<ul>
+<li><strong>以root方式设置资源路径:</strong><br>语法:root path<br>默认:root html<br>配置块:http，server，location，if<br>例如，定义资源文件相对于HTTP请求的根目录。<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location <span class="regexp">/download/</span> &#123;</span><br><span class="line">    root <span class="regexp">/opt/</span>web<span class="regexp">/html/</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在上面配置中，如果有一个请求的URI是/download/index/test.html，那么web服务器将会返回服务器上/opt/web/html/download/index/test.html</p>
+<ul>
+<li><strong>访问首页:</strong><br>语法:index file …;<br>默认:index index.html;<br>配置块:http,server,location<br>有时访问站点的URI是/，这时一般返回网站的首页。这里用ngx_http_index_module模块提供的index配置实现。index后可以跟多个文件参数，Nginx将会按照顺序来访问这些文件，例如:<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">location</span> / &#123;</span><br><span class="line">   root path;</span><br><span class="line">   <span class="keyword">index</span> /<span class="keyword">index</span>.html /html/inde.php /<span class="keyword">index</span>.php</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>接受到请求后，Nginx首先会尝试访问path/index.php文件，如果可以访问，就直接返回文件内容结束请求，否则再试图返回path/html/index.php的内容，依此类推。</p>
+<ul>
+<li><strong>网络连接的设置:</strong><ul>
+<li><strong>读取HTTP头部的超时时间:</strong><br>语法:client_header_timeout time (默认单位:秒)<br>默认:client_header_timeout 60;<br>配置块:http, server, location<br>客户端与服务器建立连接后将开始接收HTTP头部，在这个过程中，如果在一个时间间隔内没有读取到客户端发来的字节，则认为超时，并向客户端返回408(“Rquest timed out”)响应。</li>
+<li><strong>读取HTTP头部的超时时间:</strong><br>语法:client_body_timeout time (默认单位:秒)<br>默认:client_body_timeout 60;<br>配置块:http, server, location<br>此配置项与client_header_timeout相似，只是这个超时时间只在读取HTTP包体时才有效。</li>
+<li><strong>发送响应的超时时间:</strong><br>语法:send_timeout time;<br>默认:send_timeout 60;<br>这个超时时间时发送响应的超时时间，即Nginx服务器向客户端发送了数据包，但客户端一直没有去接收这个数据包。如果某个连接超过send_timeout定义的超时时间，那么Nginx将会关闭这个连接。</li>
+<li><strong>keepalive超时时间:</strong><br>语法:keepalive_timeout time (默认单位:秒)<br>默认:keepalive_timeout 75<br>配置块:http, server, location<br>一个keepalive_timeout连接在闲置超过一段时间后，服务器和浏览器都会去关闭这个连接。当然，keepalive_timeout配置项是用来约束Nginx服务器的，Nginx也会按照规范把这个时间传个浏览器，但每个浏览器对待keepalive的策略有可能是不同的。<h4 id="4-配置一个静态web服务器"><a href="#4-配置一个静态web服务器" class="headerlink" title="4.配置一个静态web服务器:"></a>4.配置一个静态web服务器:</h4>nginx的默认配置就是一个静态web服务器，启动后可以直接访问，配置文件如下:<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">worker_processes  1;</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line">   <span class="built_in"> server </span>&#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">        location / &#123;</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">```  </span><br><span class="line"><span class="comment">#### 5.给Nginx的access log添加唯一的request id字段:</span></span><br><span class="line">- *<span class="number">*1</span>.下载uuid-perl模块:**</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>wget <a href="http://mirror.centos.org/centos/7/os/x86_64/Packages/uuid-perl-1.6.2-26.el7.x86_64.rpm" target="_blank" rel="noopener">http://mirror.centos.org/centos/7/os/x86_64/Packages/uuid-perl-1.6.2-26.el7.x86_64.rpm</a><br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">- </span>*<span class="strong">*2.yum安装上面下载的rpm包，自动解决依赖:*</span><span class="strong">*</span></span><br></pre></td></tr></table></figure></p>
+<p>yum install uuid-perl-1.6.2-26.el7.x86_64.rpm<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby"> **<span class="number">3</span>.重新编译ngixn，添加perl模块<span class="symbol">:**</span></span></span><br><span class="line"><span class="ruby"> 首先安装perl依赖库，要不然报错<span class="symbol">:</span></span></span><br></pre></td></tr></table></figure></p>
+<p> sudo yum install -y perl-devel perl-ExtUtils-Embed<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">然后配置编译参数，执行configure生成<span class="string">makfile:</span></span><br></pre></td></tr></table></figure></p>
+<p> ./configure –with-http_ssl_module –with-http_stub_status_module –with-http_gzip_static_module –with-debug –with-http_perl_module<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby"> **<span class="number">4</span>.修改nginx配置文件<span class="symbol">:**</span></span></span><br><span class="line"><span class="ruby"> ![](./<span class="number">1488432652846</span>.png)</span></span><br><span class="line"><span class="ruby">- **<span class="number">5</span>.重新加载配置文件即可生效<span class="symbol">:**</span></span></span><br></pre></td></tr></table></figure></p>
+<p> sbin/nginx -s reload<br>```</p>
+<ul>
+<li><strong>6.效果如下:</strong><br><img src="./1488432839394.png" alt=""></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/23/hello-world/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/12/23/hello-world/" itemprop="url">Hello World</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-12-23T16:13:37+08:00">
+                2016-12-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span>
+  </nav>
+
+
+
+          </div>
+          
+
+
+          
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">haohao</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap. Show me the code.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qhh0205" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/qianghaohao" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://my.oschina.net/bufferoverflow" target="_blank" title="开源中国">
+                      
+                        <i class="fa fa-fw fa-globe"></i>开源中国</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:qhh0205@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">haohao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="/js/src/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

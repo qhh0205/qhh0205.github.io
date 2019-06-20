@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Talk is cheap. Show me the code.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="qhh.me">
+<meta property="og:url" content="http://yoursite.com/page/7/index.html">
+<meta property="og:site_name" content="qhh.me">
+<meta property="og:description" content="Talk is cheap. Show me the code.">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="qhh.me">
+<meta name="twitter:description" content="Talk is cheap. Show me the code.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/page/7/"/>
+
+
+
+
+
+  <title>qhh.me</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left 
+  page-home">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">qhh.me</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Talk is cheap. Show me the code.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Zabbix通过进程名监控进程状态配置详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/Zabbix通过进程名监控进程状态配置详解/" itemprop="url">Zabbix通过进程名监控进程状态配置详解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T22:03:43+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Zabbix/" itemprop="url" rel="index">
+                    <span itemprop="name">Zabbix</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>有时候我们只能通过进程名监控一个进程是否停掉了，因为有的进程并没有对外提供端口号，以下记录了下详细步骤，通过这个示例会学到很多zabbix核心配置相关的东西。<br>总的来说，配置一个完整的监控流程如下：</p>
+<ol>
+<li>创建监控项，即配置要监控的指标，如内存的使用率，CPU的使用率，进程的运行状况等，配了监控项后就会定时收集机器的配置信息，然后等待zabbix server收集(zabbix agent被动模式)。</li>
+<li>创建触发器，触发器将监控项收集的数据通过触发器表达式进行评估。<br>在触发器表达式中我们可以定义哪些值范围是合理，哪些是不合理的，如果出现不合理的值，触发器会把状态改为PROBLEM，接下来就到了报警以及发邮件。</li>
+<li>创建动作，在zabbix中动作的意思是触发器触发后要进行的操作，一般是通过配置给相关负责人发送邮件，短信等通知。</li>
+</ol>
+<p>下面配置监控服务器的logstash(开源实时日志同步项目)进程是否在运行：</p>
+<ol>
+<li><p>首先创建监控进程的监控项:<br>监控项的组成：key[参数]<br><img src="/images/zabbix-proc1.png" alt=""><br>例如获取5分钟的负载情况：system.cpu.load[avg5]，avg5是对应的参数。<br>zabbix agent支持的所有key可以到这里找到：<br><a href="http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/" target="_blank" rel="noopener">http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/</a><br>在这里我们需要的是proc.num这个key，以下是对此key的详解：<br><img src="/images/zabbix-proc2.png" alt=""><br>可以看到此监控项的返回值是进程数量，其中cmdline参数可以是进程名字包含的关键字，在这里我的进程的关键字是logstash，因此按如下方式创建监控logstash进程的监控项，表示机器所有用户所有状态的logstash进程数量：<br><img src="/images/zabbix-proc3.png" alt=""></p>
+</li>
+<li><p>创建对应监控项的触发器：<br>创建触发器主要是编写触发器表达式，也就是评估监控项是否在合理范围的表达式。触发器表达式格式如下：<br><code>host:key[param].function(parameter)} operator constant<br>主机：监控项.函数(参数)} 表达式 常数</code><br>对于触发器表达式更加详细的介绍请参考这里：<br><a href="http://www.ttlsa.com/zabbix/zabbix-trigger-expression/" target="_blank" rel="noopener">http://www.ttlsa.com/zabbix/zabbix-trigger-expression/</a><br>触发器表达式示例：<br>触发器名称：Processor load is too high on www.zabbix.com<br><code>{www.zabbix.com:system.cpu.load[all,avg1].last(0)}&gt;5</code><br>触发器说明：<br>www.zabbix.com：host名称<br>system.cpu.load[all,avg1]：item值,一分内cpu平均负载值<br>last(0)：最新值<br>>5：最新值大于5<br>如上所示，www.zabbix.com这个主机的监控项，最新的CPU负载值如果大于5，那么表达式会返回true，这样一来触发器状态就改变为“problem”了。<br><strong>在这里针对logstash进程触发器配置如下：</strong><br><img src="/images/zabbix-proc4.png" alt=""><br>上面配置表示如果机器logstash进程数量的最新值小于1，就会触发报警。</p>
+</li>
+<li><p>配置动作发送短信和邮件报警：<br>以下是短信配置方式，邮件配置类似，其中应用集是自己创建的，主要用来分类，具体的自行研究：<br><img src="/images/zabbix-proc5.png" alt=""><br><img src="/images/zabbix-proc6.png" alt=""></p>
+</li>
+</ol>
+<p><strong>参考文章：</strong><br> <a href="http://www.ttlsa.com/zabbix/zabbix-item-key/" target="_blank" rel="noopener">zabbix item key详解</a><br> <a href="http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/" target="_blank" rel="noopener">zabbix agent 类型所有key</a><br> <a href="http://www.ttlsa.com/zabbix/zabbix-trigger-expression/" target="_blank" rel="noopener">zabbix触发器表达式详解</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Linux下文件的三个时间戳-atime-mtime-ctime/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/Linux下文件的三个时间戳-atime-mtime-ctime/" itemprop="url">Linux下文件的三个时间戳:atime,mtime,ctime</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T21:25:44+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在linux系统下每个文件都有三个时间戳，分别为atime，mtime，ctime，具体解释如下：</p>
+<ul>
+<li>atime(access time):最近访问内容的时间</li>
+<li>mtime(modify time):最近修改内容的时间</li>
+<li>ctime(change time):最近更改文件的时间，包括文件名、大小、内容、权限、属主、属组等。</li>
+</ul>
+<p>查看一个文件的这三个时间戳可以用stat命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 12        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Modify: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Change: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看文件可以更改文件的atime</strong>，比如cat，more，less一个文件后，文件的atime会更新，还是上面示例文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ cat file_timestamp </span><br><span class="line">hello,world</span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 12        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Change: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
+<p>可以看出文件的atime已经更新成最新的了。<br><strong>更改文件的内容会同时更新文件的mtime和ctime</strong>，还是上面的示例文件，改变文件内容，然后stat查看：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">echo</span> <span class="string">"RNG"</span> &gt;&gt; file_timestamp </span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 16        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line">Change: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
+<p>可以看出文件内容更改后文件的mtime和ctime都更新了，atime保持不变。<br><strong>更改文件的名称，大小，权限等只会更新文件的ctime</strong>，还是上面示例文件，更改下文件的文件名，然后stat查看：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ mv file_timestamp file_timestamp.txt  </span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp.txt </span><br><span class="line">  File: <span class="string">'file_timestamp.txt'</span></span><br><span class="line">  Size: 16        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line">Change: 2017-05-21 11:22:32.097598424 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
+<p>可以看出只有ctime发生了变化。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Nginx隐式页面跳转配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/Nginx隐式页面跳转配置/" itemprop="url">Nginx隐式页面跳转配置</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T20:58:50+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">Nginx</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Nginx实现将请求跳转到另一个网站的页面，在浏览器中URL保持不变。以下配置示例将请求路径<a href="https://abc.com/home/test" target="_blank" rel="noopener">https://abc.com/home/test</a> 跳转到<a href="https://def.com/home/test/test.html" target="_blank" rel="noopener">https://def.com/home/test/test.html</a> 页面。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       443;</span><br><span class="line">    server_name  abc.com;   </span><br><span class="line">    include server/ssl.conf;</span><br><span class="line"></span><br><span class="line">    location = /home/<span class="built_in">test</span> &#123;</span><br><span class="line">        rewrite /home/<span class="built_in">test</span> /home/<span class="built_in">test</span>/test.html <span class="built_in">break</span>;</span><br><span class="line">        proxy_pass https://def.com;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/从AWS-S3下载指定日期范围的日志到本地/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/从AWS-S3下载指定日期范围的日志到本地/" itemprop="url">从AWS S3下载指定日期范围的日志到本地</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T20:48:41+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Shell脚本/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell脚本</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>本脚本主要包括如下要点：</strong></p>
+<ul>
+<li>Shell脚本日期循环;</li>
+<li>AWS S3命令行使用;</li>
+<li>通过正则进行日期合法性校验;</li>
+<li>Shell命令执行无限重试，直到成功;<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/bin/bash</span></span><br><span class="line"><span class="comment"># @Time    : 2017/10/11 下午3:20</span></span><br><span class="line"><span class="comment"># @Author  : qianghaohao</span></span><br><span class="line"><span class="comment"># @Mail    : codenutter@foxmail.com</span></span><br><span class="line"><span class="comment"># @File    : s3log_downloader.sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------- 脚本参数说明 --------------</span></span><br><span class="line"><span class="comment"># $1: 业务类型</span></span><br><span class="line"><span class="comment"># $2: 日志类型</span></span><br><span class="line"><span class="comment"># $3: 开始时间: 年-月-日 ex:2017-10-10</span></span><br><span class="line"><span class="comment"># $4: 结束时间: 年-月-日 ex:2017-10-10</span></span><br><span class="line"><span class="comment">#--------------------------------------------</span></span><br><span class="line">PROFILE=s3_key_profile</span><br><span class="line"><span class="comment">#  下载失败则无限重试</span></span><br><span class="line"><span class="keyword">function</span> repeat()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        <span class="variable">$@</span> &amp;&amp; <span class="built_in">return</span></span><br><span class="line">        sleep 5</span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----------------------------------------------------</span></span><br><span class="line"><span class="comment">#  合并一个目录下的文件到一个文件,</span></span><br><span class="line"><span class="comment">#  函数参数说明:</span></span><br><span class="line"><span class="comment">#  $1:日志文件夹</span></span><br><span class="line"><span class="comment">#  $2:合并后文件名:%&#123;business&#125;_%&#123;type&#125;-%&#123;date&#125;.log</span></span><br><span class="line"><span class="comment"># -----------------------------------------------------</span></span><br><span class="line"><span class="keyword">function</span> merge_file()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cd</span> <span class="variable">$1</span> &amp;&amp; ls -rt | xargs cat &gt; <span class="variable">$2</span> &amp;&amp; rm -rf <span class="variable">$1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">datebeg=<span class="string">"<span class="variable">$3</span>"</span></span><br><span class="line">dateend=<span class="string">"<span class="variable">$4</span>"</span></span><br><span class="line"><span class="comment">#  检查日期格式是否正确</span></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">"`echo "</span><span class="variable">$datebeg</span><span class="string">" | grep -E "</span>^[0-9]&#123;4&#125;-[0-9]&#123;2&#125;-[0-9]&#123;2&#125;$<span class="string">"`"</span> -o -z <span class="string">"`echo "</span><span class="variable">$dateend</span><span class="string">" | grep -E "</span>^[0-9]&#123;4&#125;-[0-9]&#123;2&#125;-[0-9]&#123;2&#125;$<span class="string">"`"</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Error: 日期格式不合法，请输入正确的日期格式[ex: 2017-09-09]..."</span></span><br><span class="line">    <span class="built_in">exit</span> -1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">beg_s=`date -d <span class="string">"<span class="variable">$datebeg</span>"</span> +%s`</span><br><span class="line">end_s=`date -d <span class="string">"<span class="variable">$dateend</span>"</span> +%s`</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> [ <span class="string">"<span class="variable">$beg_s</span>"</span> -le <span class="string">"<span class="variable">$end_s</span>"</span> ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">     day=`date -d @<span class="variable">$beg_s</span> +<span class="string">"%Y-%m-%d"</span>`</span><br><span class="line">     s3_log_path=<span class="string">"s3://s3-path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$day</span>"</span></span><br><span class="line">     local_log_path=<span class="string">"/home/path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$day</span>"</span></span><br><span class="line">     local_log_file=<span class="string">"/home/path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$&#123;1&#125;</span>-<span class="variable">$&#123;2&#125;</span>-<span class="variable">$&#123;day&#125;</span>.log"</span></span><br><span class="line">     <span class="comment">#   后台执行任务(非阻塞) 类似于多进程并发下载</span></span><br><span class="line">     repeat aws s3 cp --recursive <span class="variable">$&#123;s3_log_path&#125;</span> <span class="variable">$&#123;local_log_path&#125;</span> --profile=<span class="variable">$PROFILE</span> &amp;&amp; merge_file <span class="variable">$&#123;local_log_path&#125;</span> <span class="variable">$&#123;local_log_file&#125;</span> &amp;</span><br><span class="line">     beg_s=$((beg_s+86400))</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">wait</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=============================&gt; 下载完成 ============================"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/常见软件版本及缩写/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/常见软件版本及缩写/" itemprop="url">常见软件版本及缩写</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T18:36:11+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/软件开发基础知识/" itemprop="url" rel="index">
+                    <span itemprop="name">软件开发基础知识</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h5 id="常见软件版本及缩写"><a href="#常见软件版本及缩写" class="headerlink" title="常见软件版本及缩写"></a>常见软件版本及缩写</h5><ul>
+<li><strong>Alpha:</strong> 内部测试版,一般不向外部发布,会有很多Bug.一般只有测试人员使用。</li>
+<li><strong>Beta:</strong> 也是测试版，这个阶段的版本会一直加入新的功能。在Alpha版之后推出。</li>
+<li><strong>RC:</strong> (Release　Candidate) 顾名思义么 ! 用在软件上就是候选版本。系统平台上就是发行候选版本。RC版不会再加入新的功能了，主要着重于除错。</li>
+<li><strong>GA:</strong> General Availability,正式发布的版本，在国外都是用GA来说明release版本的。</li>
+<li><strong>RTM:</strong> (Release to Manufacture)是给工厂大量压片的版本，内容跟正式版是一样的，不过RTM版也有出限制、评估版的。但是和正式版本的主要程序代码都是一样的。</li>
+<li><strong>OEM:</strong> 是给计算机厂商随着计算机贩卖的，也就是随机版。只能随机器出货，不能零售。只能全新安装，不能从旧有操作系统升级。包装不像零售版精美，通常只有一面CD和说明书(授权书)。</li>
+<li><strong>RVL:</strong> 号称是正式版，其实RVL根本不是版本的名称。它是中文版/英文版文档破解出来的。</li>
+<li><strong>EVAL:</strong> 而流通在网络上的EVAL版，与“评估版”类似，功能上和零售版没有区别。 </li>
+<li><strong>RTL:</strong> Retail(零售版)是真正的正式版，正式上架零售版。在安装盘的i386文件夹里有一个eula.txt，最后有一行EULAID，就是你的版本。比如简体中文正式版是EULAID:WX.4_PRO_RTL_CN，繁体中文正式版是WX.4_PRO_RTL_TW。其中：如果是WX.开头是正式版，WB.开头是测试版。_PRE，代表家庭版；_PRO，代表专业版。α、β、λ常用来表示软件测试过程中的三个阶段，α是第一阶段，一般只供内部测试使用；β是第二个阶段，已经消除了软件中大部分的不完善之处，但仍有可能还存在缺陷和漏洞，一般只提供给特定的用户群来测试使用；λ是第三个阶段，此时产品已经相当成熟，只需在个别地方再做进一步的优化处理即可上市发行。</li>
+</ul>
+<p><strong>原文链接: </strong><br><a href="http://www.blogjava.net/RomulusW/archive/2008/05/04/197985.html" target="_blank" rel="noopener">http://www.blogjava.net/RomulusW/archive/2008/05/04/197985.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/python-logging模块禁止requests及elasticsearch模块打印请求日志/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/python-logging模块禁止requests及elasticsearch模块打印请求日志/" itemprop="url">python logging模块禁止requests及elasticsearch模块打印请求日志</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T18:21:41+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近写的代码基本都用到了python的标准日志模块logging，但发现在使用requests模块和elasticsearch时，即使自己没有打印相关日志，也会自动生成请求过程日志，示例如下：</p>
+<ul>
+<li><strong>requests日志</strong><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2017-11-02 17:30:31|INFO|Starting new HTTP<span class="built_in"> connection </span>(1): elk</span><br><span class="line">2017-11-03 06:32:55|INFO|Starting new HTTP<span class="built_in"> connection </span>(1): elk</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><strong>elasticsearch日志</strong><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">02</span>:<span class="number">00</span>:<span class="number">01</span>|INFO|GET http://localhos<span class="variable">t:9200</span>/configcenter*/_search [statu<span class="variable">s:200</span> reques<span class="variable">t:0</span>.<span class="number">020</span>s]</span><br><span class="line"><span class="number">2017</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">02</span>:<span class="number">00</span>:<span class="number">01</span>|INFO|GET http://localhos<span class="variable">t:9200</span>/<span class="keyword">abc</span>*/_search [statu<span class="variable">s:200</span> reques<span class="variable">t:0</span>.<span class="number">007</span>s]</span><br><span class="line"><span class="number">2017</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">02</span>:<span class="number">00</span>:<span class="number">01</span>|INFO|GET http://localhos<span class="variable">t:9200</span>/def*/_search [statu<span class="variable">s:200</span> reques<span class="variable">t:0</span>.<span class="number">008</span>s]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>上面这种日志我们是不需要的，如果这种日志和我们自己打的日志混合在一块儿，日志文件将变得难以查看，对后面的问题排查带来很多不便，因此我们需要禁用掉这种默认的日志打印，方法如下：</p>
+<ul>
+<li><p><strong>requests模块请求日志禁用:</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logging.getLogger(<span class="string">"requests"</span>).setLevel(logging.WARNING)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>elasticsearch模块请求日志禁用:</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logging.getLogger(<span class="string">"elasticsearch"</span>).setLevel(logging.WARNING)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>参考文章:</strong><br><a href="https://stackoverflow.com/questions/11029717/how-do-i-disable-log-messages-from-the-requests-library" target="_blank" rel="noopener">https://stackoverflow.com/questions/11029717/how-do-i-disable-log-messages-from-the-requests-library</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/17/解决python使用gmail-smtp服务发邮件报错smtplib-smtpauthentic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/17/解决python使用gmail-smtp服务发邮件报错smtplib-smtpauthentic/" itemprop="url">解决python使用gmail smtp服务发邮件报错smtplib.smtpauthentic</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-17T11:21:43+08:00">
+                2018-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>之前使用python发gmail邮件时也遇到过同样的问题，当时在网上找了很多教程鼓捣了半天终于可以发出邮件了，也没搞明白什么原因。如今换了个gmail账号后同样的问题又复现了，又查了半天终于搞定了，不过这次问题还比较奇怪，根据网上很多教程做了后发现邮件是可以发送了，但是在阿里云机器上可以发送，到了AWS机器就不行了，还是报同样的错误，这次终于搞明白什么原因了，在此mark一下，方便后面遇到同样的问题可以快速解决。</p>
+<h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>执行python邮件发送代码后报错如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">smtplib.SMTPAuthenticationError: (534, <span class="string">'5.7.14 &lt;https://accounts.google.com/signin/continue?sarp=1&amp;scc=1&amp;plt=AKgnsbuK\n5.7.14 </span></span><br><span class="line"><span class="string">Gn6F1ag1icz1n3PPXqxUPRGkDb09Kdq88-uxXe-1Tcmguc_HnivrUAD3tjx_1Va5SWXbWQ\n5.7.14 FX-6LHu7-lu5-</span></span><br><span class="line"><span class="string">gPGT3yDrlqNG6gZUTiqk7zvxe1Mv6LgbAtipnqFDdLcvcBbvP8vy0scEd\n5.7.14 llhSJfaRjhTyXG--HuJ6YhsdCkyDA3O8SjWjv9JFORNiXab2Mp5OnJ1NLtIie1saDnQs_X\n5.7.14 </span></span><br><span class="line"><span class="string">PLuHe5XRB2BofVVItB8Gg9VrxKqpc&gt; Please log in via your web browser and\n5.7.14 then try again.\n5.7.14  Learn more at\n5.7.14 </span></span><br><span class="line"><span class="string">https://support.google.com/mail/answer/78754 u131sm18903705pgc.89 - gsmtp'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>python gmail邮件发送代码如下:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/data/xce/local//python/bin/python2.7</span></span><br><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line">import smtplib</span><br><span class="line">import base64</span><br><span class="line">from email.mime.text import MIMEText</span><br><span class="line">from email.header import Header</span><br><span class="line">from email.mime.multipart import MIMEMultipart</span><br><span class="line">from email.mime.image import MIMEImage</span><br><span class="line">from email.utils import COMMASPACE</span><br><span class="line"></span><br><span class="line">SENDER = <span class="string">'xxxxx@gmail.com'</span></span><br><span class="line">SMTP_SERVER = <span class="string">'smtp.gmail.com'</span></span><br><span class="line">USER_ACCOUNT = &#123;<span class="string">'username'</span>:<span class="string">'xxxxx@gmail.com'</span>, <span class="string">'password'</span>:<span class="string">'xxxxxx'</span>&#125;</span><br><span class="line">SUBJECT = <span class="string">"Test Test"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def send_mail(receivers, text, sender=SENDER, user_account=USER_ACCOUNT, subject=SUBJECT):</span><br><span class="line">    msg_root = MIMEMultipart()  <span class="comment"># 创建一个带附件的实例</span></span><br><span class="line">    msg_root[<span class="string">'Subject'</span>] = subject  <span class="comment"># 邮件主题</span></span><br><span class="line">    msg_root[<span class="string">'To'</span>] = COMMASPACE.join(receivers)  <span class="comment"># 接收者</span></span><br><span class="line">    msg_text = MIMEText(text, <span class="string">'html'</span>, <span class="string">'utf-8'</span>)  <span class="comment"># 邮件正文</span></span><br><span class="line">    msg_root.attach(msg_text)  <span class="comment"># attach邮件正文内容</span></span><br><span class="line"></span><br><span class="line">    smtp = smtplib.SMTP(<span class="string">'smtp.gmail.com:587'</span>)</span><br><span class="line">    smtp.ehlo()</span><br><span class="line">    smtp.starttls()</span><br><span class="line">    smtp.login(user_account[<span class="string">'username'</span>], user_account[<span class="string">'password'</span>])</span><br><span class="line">    smtp.sendmail(sender, receivers, msg_root.as_string())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">    send_mail([<span class="string">'codenutter@foxmail.com'</span>], <span class="string">"Test Test"</span>)</span><br></pre></td></tr></table></figure></p>
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p><strong>出现这个错误的原因有两个：</strong></p>
+<ul>
+<li>Google阻止用户使用不符合他们安全标准的应用或设备登陆gmail<br><a href="https://support.google.com/accounts/answer/6010255?hl=zh-Hans" target="_blank" rel="noopener">https://support.google.com/accounts/answer/6010255?hl=zh-Hans</a></li>
+<li>Gmail没有解除验证码认证</li>
+</ul>
+<p><strong>知道原因了就可以有效地解决问题了，解决方法如下：</strong></p>
+<ul>
+<li>允许不够安全的应用使用您的账号:点击如下链接，开启“允许不够安全的应用”功能 <a href="https://myaccount.google.com/lesssecureapps" target="_blank" rel="noopener">https://myaccount.google.com/lesssecureapps</a><br><img src="/images/py-gmail1.png" alt=""></li>
+<li>解除gmail验证码认证:<br>点击如下链接，然后点击继续即可<br><a href="https://accounts.google.com/b/0/displayunlockcaptcha" target="_blank" rel="noopener">https://accounts.google.com/b/0/displayunlockcaptcha </a><br><img src="/images/py-gmail2.png" alt=""></li>
+</ul>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://segmentfault.com/q/1010000008458788/a-1020000008470509" target="_blank" rel="noopener">https://segmentfault.com/q/1010000008458788/a-1020000008470509</a><br><a href="https://blog.user.today/gmail-smtp-authentication-required" target="_blank" rel="noopener">https://blog.user.today/gmail-smtp-authentication-required</a><br><a href="https://stackoverflow.com/questions/35659172/django-send-mail-from-ec2-via-gmail-gives-smtpauthenticationerror-but-works" target="_blank" rel="noopener">https://stackoverflow.com/questions/35659172/django-send-mail-from-ec2-via-gmail-gives-smtpauthenticationerror-but-works
+</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/16/GitHub设置fork仓库和原始仓库同步/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/16/GitHub设置fork仓库和原始仓库同步/" itemprop="url">GitHub设置fork仓库和原始仓库同步</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-16T13:53:13+08:00">
+                2018-02-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>最近fork了一个翻译项目<a href="https://github.com/LCTT/TranslateProject" target="_blank" rel="noopener">Linux中国翻译项目(LCTT)</a>，准备用自己的业余时间为社区贡献点自己的力量，发现这个原始仓库比较活跃，经常出现fork仓库比原始仓库落后的情况：<br><img src="/images/github-sync1.png" alt=""><br>可以看出该仓库已经落后30个提交了，因此，为了避免长时间不同步原始仓库导致后面的PR可能发生冲突等其它问题，需要手动定期同步下fork仓库。</p>
+<h4 id="配置fork仓库和原始-上游-仓库同步"><a href="#配置fork仓库和原始-上游-仓库同步" class="headerlink" title="配置fork仓库和原始(上游)仓库同步"></a>配置fork仓库和原始(上游)仓库同步</h4><p>下面配置该<a href="https://github.com/qianghaohao/TranslateProject" target="_blank" rel="noopener">fork仓库</a>和<a href="https://github.com/LCTT/TranslateProject" target="_blank" rel="noopener">原始仓库</a>的同步：<br>1.本地fork仓库配置upstream地址<br>默认情况下clone的仓库只有两个远程地址，用来fetch和push时使用：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git remote -v</span><br><span class="line">origin	github:qianghaohao/TranslateProject<span class="selector-class">.git</span> (fetch)</span><br><span class="line">origin	github:qianghaohao/TranslateProject<span class="selector-class">.git</span> (push)</span><br></pre></td></tr></table></figure></p>
+<p>为了和原始(上游)仓库同步，我们还需要为该仓库配一个upstream地址，用来同步时使用，配置方法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># git remote add upstream后面添加要同步的原始仓库地址</span></span><br><span class="line">git remote add upstream git@github.com:LCTT/TranslateProject.git</span><br><span class="line"><span class="comment"># 重新查看远程仓库配置，发现upstream已经配置成功</span></span><br><span class="line">git remote -v</span><br><span class="line">origin	github:qianghaohao/TranslateProject.git (fetch)</span><br><span class="line">origin	github:qianghaohao/TranslateProject.git (push)</span><br><span class="line">upstream	git@github.com:LCTT/TranslateProject.git (fetch)</span><br><span class="line">upstream	git@github.com:LCTT/TranslateProject.git (push)</span><br></pre></td></tr></table></figure></p>
+<p>2.从上游分支fetch最新更改<br>本示例仓库只有一个master分支，所以在这里只同步下master分支。fetch后会将该分支的上游更新存储到新的本地分支upstream/master：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可以看出fetch后在本地生成了新的本地分支：upstream/master</span></span><br><span class="line">$ git fetch upstream</span><br><span class="line">remote: Counting objects: 139, <span class="keyword">done</span>.</span><br><span class="line">remote: Compressing objects: 100% (4/4), <span class="keyword">done</span>.</span><br><span class="line">remote: Total 139 (delta 73), reused 73 (delta 73), pack-reused 62</span><br><span class="line">Receiving objects: 100% (139/139), 58.17 KiB | 5.00 KiB/s, <span class="keyword">done</span>.</span><br><span class="line">Resolving deltas: 100% (73/73), completed with 17 <span class="built_in">local</span> objects.</span><br><span class="line">From github.com:LCTT/TranslateProject</span><br><span class="line"> * [new branch]      master     -&gt; upstream/master</span><br></pre></td></tr></table></figure></p>
+<p>3.合并上一步本地fetch得到的分支到本地相应分支<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ git merge upstream/master</span><br><span class="line">Updating db2c3cc..0175778</span><br><span class="line">Fast-forward</span><br><span class="line"> published/20171016 Using the Linux find <span class="built_in">command</span> with caution.md                             |  97 ++++++++++++++++++</span><br><span class="line"> published/20171117 How to Install and Use Docker on Linux.md                                | 165 +++++++++++++++++++++++++++++++</span><br><span class="line"> published/20171228 Dual Boot Ubuntu And Arch Linux.md                                       | 422 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><br><span class="line"> published/20180118 Getting Started with ncurses.md                                          | 197 ++++++++++++++++++++++++++++++++++++</span><br><span class="line"> published/20180202 Which Linux Kernel Version Is Stable.md                                  |  59 +++++++++++</span><br><span class="line"> &#123;translated/tech =&gt; published&#125;/20180206 Save Some Battery On Our Linux Machines With TLP.md |  24 ++---</span><br><span class="line"> sources/talk/20180214 How to Encrypt Files with Tomb on Ubuntu 16.04 LTS.md                 |   4 +-</span><br></pre></td></tr></table></figure></p>
+<p>4.push合并后的修改到<a href="https://github.com/qianghaohao/TranslateProject" target="_blank" rel="noopener">远程fork仓库</a>，完成同步<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ git push</span><br><span class="line">Counting objects: 139, <span class="keyword">done</span>.</span><br><span class="line">Delta compression using up to 8 threads.</span><br><span class="line">Compressing objects: 100% (77/77), <span class="keyword">done</span>.</span><br><span class="line">Writing objects: 100% (139/139), 51.50 KiB | 0 bytes/s, <span class="keyword">done</span>.</span><br><span class="line">Total 139 (delta 69), reused 126 (delta 62)</span><br><span class="line">remote: Resolving deltas: 100% (69/69), completed with 12 <span class="built_in">local</span> objects.</span><br><span class="line">To github:qianghaohao/TranslateProject.git</span><br><span class="line">   db2c3cc..0175778  master -&gt; master</span><br></pre></td></tr></table></figure></p>
+<p>可以看出<a href="https://github.com/qianghaohao/TranslateProject" target="_blank" rel="noopener">远程fork仓库</a>已经是最新的，和<a href="https://github.com/LCTT/TranslateProject" target="_blank" rel="noopener">原始仓库</a>保持一致：<br><img src="/images/github-sync2.png" alt=""></p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://help.github.com/articles/syncing-a-fork/" target="_blank" rel="noopener">https://help.github.com/articles/syncing-a-fork/</a><br><a href="http://wiki.jikexueyuan.com/project/github-basics/fork-synced.html" target="_blank" rel="noopener">http://wiki.jikexueyuan.com/project/github-basics/fork-synced.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/10/解决进程文件句柄泄露导致磁盘空间无法释放问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/10/解决进程文件句柄泄露导致磁盘空间无法释放问题/" itemprop="url">解决进程文件句柄泄露导致磁盘空间无法释放问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-10T11:23:41+08:00">
+                2018-02-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="问题的产生"><a href="#问题的产生" class="headerlink" title="问题的产生"></a>问题的产生</h4><p>今天突然接到一台服务器磁盘空间使用率达到90%的报警，于是登陆机器查看磁盘使用情况，发现确实外挂到/data的一块磁盘使用率达到了90%：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-46 data]<span class="comment"># df -h</span></span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">/dev/xvda2      100G   17G   84G  17% /</span><br><span class="line">devtmpfs         30G     0   30G   0% /dev</span><br><span class="line">tmpfs            29G     0   29G   0% /dev/shm</span><br><span class="line">tmpfs            29G  2.7G   27G  10% /run</span><br><span class="line">tmpfs            29G     0   29G   0% /sys/fs/cgroup</span><br><span class="line">/dev/xvdf       246G  209G   26G  90% /data</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1000</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1003</span><br></pre></td></tr></table></figure></p>
+<h4 id="分析问题"><a href="#分析问题" class="headerlink" title="分析问题"></a>分析问题</h4><p>对于这种情况我一般的处理方法是跳到对应的目录，查看哪个目录占用的空间比较大，然后进一步清理。由于这块磁盘是外挂到/data目录，因此查看下该目录下各个目录磁盘的占用情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-46 data]<span class="comment"># du -h --max-depth=1</span></span><br><span class="line">3.7G	./photo</span><br><span class="line">16K	./lost+found</span><br><span class="line">9.1G	./mls2</span><br><span class="line">36K	./parser</span><br><span class="line">79G	./web</span><br><span class="line">15G	./mls</span><br><span class="line">106G	.</span><br></pre></td></tr></table></figure></p>
+<p>可以发现一个奇怪的现象：该外挂目录总共才使用了106G，但是df -h显示的是该磁盘已经使用了209G，那么使用的另外那103G去哪儿了呢，况且这块磁盘也没有多个分区，就这一个分区且挂载到了/data下。这确实是个很奇怪的问题，于是网上搜索了下原因，原来是不正确的删除文件导致的：</p>
+<blockquote>
+<p>在Linux操作系统中，当一个文件被删除后，在文件系统目录中已经不可见了，所以du就不会再统计它了。然而如果此时还有运行的进程持有这个已经被删除了的文件的句柄，那么这个文件就不会真正在磁盘中被删除， 分区超级块中的信息也就不会更改，所以df命令查看的磁盘占用没有减少。我们知道在Linux中磁盘分区的超级块是非常重要的，在superblock中记录该分区上文件系统的整体信息，包括inode和block的总量，剩余量，使用量，以及文件系统的格式等信息。因此，superblock不更新，那么磁盘的使用量必然不会变化，操作系统对于文件的存盘都是需要事先读取superblock的信息，然后分配可用的inode和block。</p>
+</blockquote>
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><ol>
+<li><p>首先找出文件句柄泄露的进程，我的方法比较low，找出系统中启动时间比较久的java进程(因为这台机器主要是java服务)，然后用lsof看这个进程的文件句柄使用情况。之所以这么做主要是因为最近启动的进程发生句柄泄露的可能性很小，因为即使存在句柄泄露，重启后也会释放文件句柄的。可以看出2962这个进程最可能发生句柄泄露了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-46 data]<span class="comment"># ps -eo pid,lstart,comm | grep java</span></span><br><span class="line">  746 Thu Jan 18 19:44:15 2018 java</span><br><span class="line"> 1117 Thu Feb  8 02:20:03 2018 java</span><br><span class="line"> 1160 Thu Feb  8 02:20:09 2018 java</span><br><span class="line"> 2962 Thu Nov 16 23:08:40 2017 java</span><br><span class="line"> 3610 Wed Feb  7 22:55:37 2018 java</span><br><span class="line"> 4579 Thu Feb  8 20:45:09 2018 java</span><br><span class="line"> 5155 Mon Dec 25 19:01:32 2017 java</span><br><span class="line"> 6481 Wed Jan 10 05:16:28 2018 java</span><br><span class="line"> 6519 Thu Jan 18 00:51:07 2018 java</span><br><span class="line"> 9756 Thu Feb  8 02:36:23 2018 java</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用lsof分析上面找到的进程文件句柄使用情况，可以看出该进程确实存在句柄泄露，而且非常严重，已经有2208个文件没有释放了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-46 ~]<span class="comment"># lsof -p 2962 | grep "delete" | wc -l</span></span><br><span class="line">2208</span><br><span class="line">[root@awsuw7-46 ~]<span class="comment"># lsof -p 2962 | grep "delete" | head -n 20</span></span><br><span class="line">java    2962  web   17r      REG              202,2     2098273   17844538 /tmp/winstone962950350375526798.jar (deleted)</span><br><span class="line">java    2962  web  168w      REG             202,80           0    1969499 /data/web/mls/data/<span class="built_in">jobs</span>/mls_91/builds/590/23.log (deleted)</span><br><span class="line">java    2962  web  325w      REG             202,80           0    6455947 /data/web/mls/data/<span class="built_in">jobs</span>/mls_39/builds/1080/10.log (deleted)</span><br><span class="line">java    2962  web  341w      REG             202,80           0    1975873 /data/web/mls/data/<span class="built_in">jobs</span>/mls_113/builds/1054/29.log (deleted)</span><br><span class="line">java    2962  web  347w      REG             202,80           0    2506849 /data/web/mls/data/<span class="built_in">jobs</span>/mls_59/builds/.1073/21.log (deleted)</span><br><span class="line">java    2962  web  350w      REG             202,80        8192    1975877 /data/web/mls/data/<span class="built_in">jobs</span>/mls_113/builds/1054/31.log (deleted)</span><br><span class="line">java    2962  web  352w      REG             202,80           0    5387403 /data/web/mls/data/<span class="built_in">jobs</span>/mls_80/builds/505/23.log (deleted)</span><br><span class="line">java    2962  web  354w      REG             202,80           0    3422611 /data/web/mls/data/<span class="built_in">jobs</span>/mls_29/builds/.385/23.log (deleted)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启上面找到的发生内存泄露的进程，发起磁盘使用量回归正常状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@awsuw7-46 ~]$ df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">/dev/xvda2      100G   17G   84G  17% /</span><br><span class="line">devtmpfs         30G     0   30G   0% /dev</span><br><span class="line">tmpfs            29G     0   29G   0% /dev/shm</span><br><span class="line">tmpfs            29G  2.7G   27G  10% /run</span><br><span class="line">tmpfs            29G     0   29G   0% /sys/fs/cgroup</span><br><span class="line">/dev/xvdf       246G  128G  106G  55% /data</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1000</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1003</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1005</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1008</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1007</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1006</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>后来和工作同事确认了下，确实是他们写了个定时脚本清理这个进程产生的文件，而且是定期直接rm删掉，这必然会导致进程发生句柄泄露。</p>
+<h4 id="相关链接："><a href="#相关链接：" class="headerlink" title="相关链接："></a>相关链接：</h4><p> <a href="https://www.cnblogs.com/heyonggang/p/3644736.html" target="_blank" rel="noopener">https://www.cnblogs.com/heyonggang/p/3644736.html</a><br><a href="http://www.eygle.com/archives/2009/10/linux_unix_file_handle_deleted.html" target="_blank" rel="noopener">http://www.eygle.com/archives/2009/10/linux_unix_file_handle_deleted.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/20/使用LFS解决GitHub无法上传大文件问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/20/使用LFS解决GitHub无法上传大文件问题/" itemprop="url">使用LFS解决GitHub无法上传大文件问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-20T22:22:30+08:00">
+                2018-01-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>今天使用GitHub上传几个比较大的pdf电子书，有的大小超过100MB了，结果GitHub报错提示无法上传大于100MB的文件，报错信息如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">remote: warning: File pdf/深入理解Java虚拟机:JVM高级特性与最佳实践.pdf is 61.47 MB; this is larger than GitHub<span class="string">'s recommended maximum file size of 50.00 MB        </span></span><br><span class="line"><span class="string">remote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        </span></span><br><span class="line"><span class="string">remote: error: Trace: e4e7c6c5ccdc4241f8d9bb334fd46ba8        </span></span><br><span class="line"><span class="string">remote: error: See http://git.io/iEPt8g for more information.        </span></span><br><span class="line"><span class="string">remote: error: File pdf/Nginx高性能Web服务器详解.pdf is 183.19 MB; this exceeds GitHub'</span>s file size <span class="built_in">limit</span> of 100.00 MB</span><br></pre></td></tr></table></figure></p>
+<p>仔细看了下报错信息，发下可以使用GitHub的<a href="https://git-lfs.github.com" target="_blank" rel="noopener">LFS(Large File Storage)服务</a>来实现上传大文件。</p>
+<h4 id="GitHub-LFS简介："><a href="#GitHub-LFS简介：" class="headerlink" title="GitHub LFS简介："></a>GitHub LFS简介：</h4><p>GitHub LFS是一个开源的git扩展，可以让git追踪大文件的版本信息。LFS使用文件指针来代替大文件，如音频文件，视频文件，数据采集和图形等文件，同时将文件内容存储到远程服务器，比如GitHub.com或者GitHub Enterprise。LFS是GitHu所支持的一种完全免费的服务，目的是让git能跟踪大文件。<br><img src="/images/github-lfs.png" alt="LFS"></p>
+<h4 id="如何使用GitHub-LFS让git处理大文件"><a href="#如何使用GitHub-LFS让git处理大文件" class="headerlink" title="如何使用GitHub LFS让git处理大文件"></a>如何使用GitHub LFS让git处理大文件</h4><ol>
+<li><p>安装<br>如果是mac系统则直接执行如下命令安装:</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span><span class="keyword">install </span>git-lfs</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入本地仓库目录初始化LFS</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git lfs <span class="keyword">install</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用git lfs管理大文件<br>用git lfs track命令跟踪特定后缀的大文件，或者也可以直接编辑.gitattributes，类似与.gitignore文件的编写，在此我只处理pdf文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git lfs track <span class="string">"*.pdf"</span></span><br><span class="line">git add .gitattributes</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接下来就可以像平时使用git那样正常使用了，可以将大文件提交到GitHub了</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">add</span><span class="bash"> . </span></span><br><span class="line"><span class="bash">git commit -m <span class="string">"update"</span></span></span><br><span class="line"><span class="bash">git push origin hexo</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h4><p><a href="https://git-lfs.github.com/" target="_blank" rel="noopener">Git Large File Storage | https://git-lfs.github.com</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+
+          
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">haohao</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap. Show me the code.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qhh0205" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/qianghaohao" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://my.oschina.net/bufferoverflow" target="_blank" title="开源中国">
+                      
+                        <i class="fa fa-fw fa-globe"></i>开源中国</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:qhh0205@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">haohao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="/js/src/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="计算机网络," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="计算机网络协议分层目前关于网络通信的标准有两套协议，分别是 OSI 参考模型和 TCP/IP 模型。OSI 参考模型只用于理论研究，而 TCP/IP 模型更注重于实际应用，他们的关系如下：12345678910111213141516171819      +-------------------------+    ">
+<meta name="keywords" content="计算机网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络协议学习总结">
+<meta property="og:url" content="http://yoursite.com/2019/05/01/计算机网络协议学习总结/index.html">
+<meta property="og:site_name" content="qhh.me">
+<meta property="og:description" content="计算机网络协议分层目前关于网络通信的标准有两套协议，分别是 OSI 参考模型和 TCP/IP 模型。OSI 参考模型只用于理论研究，而 TCP/IP 模型更注重于实际应用，他们的关系如下：12345678910111213141516171819      +-------------------------+             +----------------------+      |">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-20T03:41:42.534Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机网络协议学习总结">
+<meta name="twitter:description" content="计算机网络协议分层目前关于网络通信的标准有两套协议，分别是 OSI 参考模型和 TCP/IP 模型。OSI 参考模型只用于理论研究，而 TCP/IP 模型更注重于实际应用，他们的关系如下：12345678910111213141516171819      +-------------------------+             +----------------------+      |">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/05/01/计算机网络协议学习总结/"/>
+
+
+
+
+
+  <title>计算机网络协议学习总结 | qhh.me</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">qhh.me</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Talk is cheap. Show me the code.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/01/计算机网络协议学习总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">计算机网络协议学习总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-01T22:25:35+08:00">
+                2019-05-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/计算机网络/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="计算机网络协议分层"><a href="#计算机网络协议分层" class="headerlink" title="计算机网络协议分层"></a>计算机网络协议分层</h3><p>目前关于网络通信的标准有两套协议，分别是 OSI 参考模型和 TCP/IP 模型。OSI 参考模型只用于理论研究，而 TCP/IP 模型更注重于实际应用，他们的关系如下：<br><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">      +-------------------------+             +----------------------+</span><br><span class="line">      |<span class="string">                         </span>|<span class="string">             </span>|<span class="string">                      </span>|</span><br><span class="line">      |<span class="string">         OSI Model       </span>|<span class="string">             </span>|<span class="string">    TCP/IP Model      </span>|</span><br><span class="line">      |<span class="string">                         </span>|<span class="string">             </span>|<span class="string">                      </span>|</span><br><span class="line">      +-------------------------+             +----------------------+</span><br><span class="line">      |<span class="string">    Application Layer    </span>|<span class="string">             </span>|<span class="string">                      </span>|</span><br><span class="line">      +-------------------------+             |<span class="string">                      </span>|</span><br><span class="line">      |<span class="string">    Presentation Layer   </span>|<span class="string">             </span>|<span class="string">  Application Layer   </span>|</span><br><span class="line">      +-------------------------+             |<span class="string">                      </span>|</span><br><span class="line">      |<span class="string">    Session Layer        </span>|<span class="string">             </span>|<span class="string">                      </span>|</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">      |<span class="string">    Transport Layer      </span>|<span class="string">             </span>|<span class="string">  Transport Layer     </span>|</span><br><span class="line">      +-------------------------+             +----------------------+</span><br><span class="line">      |<span class="string">    Network Layer        </span>|<span class="string">             </span>|<span class="string">  Internet Layer      </span>|</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">      |<span class="string">    Data Link Layer      </span>|<span class="string">             </span>|<span class="string">                      </span>|</span><br><span class="line">      +-------------------------+             |<span class="string"> Network Access Layer </span>|</span><br><span class="line">      |<span class="string">    Physical Layer       </span>|<span class="string">             </span>|<span class="string">                      </span>|</span><br><span class="line">      +-------------------------+             +----------------------+</span><br></pre></td></tr></table></figure></p>
+<h3 id="TCP-IP-模型各层常见协议"><a href="#TCP-IP-模型各层常见协议" class="headerlink" title="TCP/IP 模型各层常见协议"></a>TCP/IP 模型各层常见协议</h3><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">                          +--------+  +--------+  +-----------+   +--------+                      |</span><br><span class="line"><span class="string">    Application Layer     </span>|<span class="string">  ping  </span>|<span class="string">  </span>|<span class="string"> telnet </span>|<span class="string">  </span>|<span class="string">   OSPF    </span>|<span class="string">   </span>|<span class="string">  DNS   </span>|<span class="string">       User Space     </span>|</span><br><span class="line">                          +---+----+  +----+---+  +----+------+   +---+----+                      |</span><br><span class="line"><span class="string">                              </span>|<span class="string">            </span>|<span class="string">           </span>|<span class="string">              </span>|<span class="string">                           </span>|</span><br><span class="line">--------------------------------------------------------------------------------------socket------------</span><br><span class="line">                              |<span class="string">            </span>|<span class="string">           </span>|<span class="string">              </span>|<span class="string">                           </span>|</span><br><span class="line">                              |<span class="string">       +----+---+       </span>|<span class="string">          +---+----+                      </span>|</span><br><span class="line">    Transport Layer           |<span class="string">       </span>|<span class="string">   TCP  </span>|<span class="string">       </span>|<span class="string">          </span>|<span class="string">  UDP   </span>|<span class="string">                      </span>|</span><br><span class="line">                              |<span class="string">       +--------+----+  </span>|<span class="string">  +-------+--------+                      </span>|</span><br><span class="line">                              |<span class="string">                     </span>|<span class="string">  </span>|<span class="string">  </span>|<span class="string">                                       </span>|</span><br><span class="line">----------------------------------------------------------------------------------                |</span><br><span class="line"><span class="string">                              </span>|<span class="string">                     </span>|<span class="string">  </span>|<span class="string">  </span>|<span class="string">                                       </span>|</span><br><span class="line">                          +---+----+             +--+--+--+-+                                     |</span><br><span class="line"><span class="string">    Internet Layer        </span>|<span class="string">  ICMP  +-------------+    IP    </span>|<span class="string">                       Kernel Space  </span>|</span><br><span class="line">                          +--------+             +-----+----+                                     |</span><br><span class="line"><span class="string">                                                       </span>|<span class="string">                                          </span>|</span><br><span class="line">----------------------------------------------------------------------------------                |</span><br><span class="line"><span class="string">                                                       </span>|<span class="string">                                          </span>|</span><br><span class="line">                           +--------+            +-----+----+      +-------+                      |</span><br><span class="line"><span class="string">    Network Access Layer   </span>|<span class="string">  ARP   +------------+ DataLink +------+ RARP  </span>|<span class="string">                      </span>|</span><br><span class="line">                           +--------+            +-----+----+      +-------+                      |</span><br><span class="line"><span class="string">                                                       </span>|<span class="string">                                          v</span></span><br><span class="line"><span class="string">-------------------------------------------------------+--------------------------  Physical media</span></span><br></pre></td></tr></table></figure>
+<h3 id="TCP-IP-数据包的封装与解封"><a href="#TCP-IP-数据包的封装与解封" class="headerlink" title="TCP/IP 数据包的封装与解封"></a>TCP/IP 数据包的封装与解封</h3><p>在 TCP/IP 网络中，通信双方的交互过程就是对协议的封装与解封装的过程，发送方数据处理的方式是从高层到底层，逐层进行数据封装。接收方数据处理的方式是从底层到高层，逐层进行数据解封装。接收方的每一层只把对该层有意义的数据拿走，或者说每一层只能处理发送方同等层的数据，然后把其余的部分传递给上一层，这就是对等层通信的概念。</p>
+<p>数据封装（Data Encapsulation）是指将协议数据单元（PDU）封装在一组协议头和尾中的过程。该过程是在协议数据单元（PDU）中实现的，其中每层的 PDU 一般由本层的协议头、协议尾和数据封装构成。</p>
+<p>数据解封装是指对端的同等层对数据包解析的过程，通过解拆获取需要的数据，然后将数据传递到上层处理。</p>
+<p>不同的协议层对数据包有不同的称谓：</p>
+<ul>
+<li>TCP 传给 IP 的数据单元称作 TCP 报文段或简称为 TCP 段（TCP segment）；</li>
+<li>UDP 数据与 TCP 数据基本一致，唯一的不同是 UDP 传给 IP 的信息单元称作 UDP 数据报（UDP datagram），而且 UDP 的首部长为 8 字节；</li>
+<li>IP 传给网络接口层的数据单元称作 IP 数据报(IP datagram)；</li>
+<li>在数据链路层传输的数据单元称作帧(Frame )；</li>
+</ul>
+<p>下面为应用层数据进入 TCP/IP 协议栈时的封装过程（解封装的过程与该过程相反）：<br><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">                                    +-----------------+</span><br><span class="line">                                    |<span class="string"> Application data</span>|</span><br><span class="line">                                    +-----------------+</span><br><span class="line">                                    |<span class="string">                 </span>|</span><br><span class="line">                                    v                 v</span><br><span class="line">                     +--------------------------------+</span><br><span class="line">                     |<span class="string">TCP/UDP header</span>|<span class="string"> Application data</span>|</span><br><span class="line">                     +--------------------------------+</span><br><span class="line">                     |<span class="string">                                </span>|</span><br><span class="line">                     +<span class="variable">&lt;-- TCP segment/UDP datagram --&gt;</span>+</span><br><span class="line">                     v                                v</span><br><span class="line">           +------------------------------------------+</span><br><span class="line">           |<span class="string">IP header</span>|<span class="string">TCP/UDP header</span>|<span class="string"> Application data</span>|</span><br><span class="line">           +------------------------------------------+</span><br><span class="line">           |<span class="string">                                          </span>|</span><br><span class="line">           +<span class="variable">&lt;-------------- IP datagram -------------&gt;</span>+</span><br><span class="line">           v                                          v</span><br><span class="line">+--------------------------------------------------------------+</span><br><span class="line">|<span class="string">Eth header</span>|<span class="string">IP header</span>|<span class="string">TCP/UDP header</span>|<span class="string"> Application data</span>|<span class="string">Eth tail</span>|</span><br><span class="line">+--------------------------------------------------------------+</span><br><span class="line">           |<span class="string">                                          </span>|</span><br><span class="line"><span class="variable">&lt;--------------------  Ethernet frame ---------------&gt;</span>+</span><br><span class="line">           |<span class="string">                                          </span>|</span><br><span class="line">           |<span class="string"> &lt;----------- 40~1500 Bytes ------------&gt; </span>|</span><br></pre></td></tr></table></figure></p>
+<h3 id="以太网数据帧封装"><a href="#以太网数据帧封装" class="headerlink" title="以太网数据帧封装"></a>以太网数据帧封装</h3><p>以太网数据帧（也叫 MAC 帧）是网络硬件上面传送数据的最小单位，它承载了上层（网络层）的通信数据，是网络接口层的封包格式。我们一般接触比较多的是网络接口，比如 eht0、eht1…，这些网络接口上处理的主要数据包就是以太网数据帧。以太网数据帧封装格式在 RFC 894 中定义，具体格式如下：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">+----------+---------+------+-----------------------------------+------+</span><br><span class="line">|  MAC dst | Mac src |<span class="built_in"> Type </span>|             Data                  | CRC  |</span><br><span class="line">+----------+---------+-------------------------------------------------+</span><br><span class="line">      6         6       2   |          46~1500 Bytes            | 4</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                     |<span class="built_in"> Type </span>|</span><br><span class="line">                     +------------------------------------------+</span><br><span class="line">                     |0x800 |         <span class="built_in"> IP </span>datagram              |</span><br><span class="line">                     +------+-----------------------------------+</span><br><span class="line">                        2              46~1500 Bytes</span><br><span class="line"></span><br><span class="line">                     |<span class="built_in"> Type </span>|</span><br><span class="line">                     +-------------------------+</span><br><span class="line">                     |0x806 |     ARP      |PAD|</span><br><span class="line">                     +------+------------------+</span><br><span class="line">                         2         28       18</span><br><span class="line"></span><br><span class="line">                     |<span class="built_in"> Type </span>|</span><br><span class="line">                     +-------------------------+</span><br><span class="line">                     |0x8035|     RARP     |PAD|</span><br><span class="line">                     +-------------------------+</span><br><span class="line">                         2         28       18</span><br></pre></td></tr></table></figure></p>
+<h3 id="IP-数据报封装"><a href="#IP-数据报封装" class="headerlink" title="IP 数据报封装"></a>IP 数据报封装</h3><p>IP 协议处于网络层，几乎所有上层协议都会使用到 IP 协议。 IP 有两种版本，一种是目前使用最广泛的 IPv4 (Internet Protocol version 4, 因特网协定第四版)， 一种则是预期未来会热门的 IPv6 。<br>IPv4 记录的地址长度为 32 bit（4 Bytes），IPv6 的地址可以达到 128 bit（16 Bytes）。<br>下面为 IP 数据报的封装格式：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">| 4 bits  | 4 bits  |    8 bitys     |3bits|          13 bits             |</span><br><span class="line"><span class="code">+-------------------------------------------------------------------------+</span></span><br><span class="line">| Version |   IHL   |Type of Service |         Total Length               |</span><br><span class="line"><span class="code">+---------+</span>---------------------------------------------------------------+</span><br><span class="line">|             Identification         |Flags|    Fragmentation Offset      |</span><br><span class="line"><span class="code">+-------------------+</span>-----------------------------------------------------+</span><br><span class="line">|    Time To Live   |    Protocol    |           Header Checksum          |</span><br><span class="line"><span class="code">+-------------------+</span>----------------<span class="code">+------------------------------------+</span></span><br><span class="line">|                            Source Address                               |</span><br><span class="line"><span class="code">+-------------------------------------------------------------------------+</span></span><br><span class="line">|                          Destination Address                            |</span><br><span class="line"><span class="code">+-------------------------------------------------------------------------+</span></span><br><span class="line">|                         Options(Up to 40 bytes)                         |</span><br><span class="line"><span class="code">+-------------------------------------------------------------------------+</span></span><br><span class="line">|                                                                         |</span><br><span class="line">|                                  Data                                   |</span><br><span class="line">|                                                                         |</span><br><span class="line"><span class="code">+-------------------------------------------------------------------------+</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Version(版本)</code>: 版本号指定 IP 协议的版本，长度为 4 bits。对于 IPv4 来说，其值为 4；</li>
+<li><code>IHL(Internet Header Length, IP 数据报头部长度)</code>：IP 数据报的头部长度，不包括数据部分，单位为 4 字节。由于该字段为 4 bits，所以 IP 封包头部最长为 (2^4-1)x4=60 字节；</li>
+<li><code>Type of Service(服务类型)</code>：服务类型包括一个 3 位的优先权字段（现已被弃用），4 位的 TOS 字段和 1 位保留字段（必须置0）。4 位 TOS 字段分别表示最小延时、最大吞吐量、最高可靠性和最小费用;</li>
+<li><code>Total Length(总长度)</code>：总长度表示整个 IP 数据报的长度，以字节为单位，可以看出最大值为 2^16-1=65535 字节；</li>
+<li><code>Identification(标识码)</code>：标示字段唯一的标示主机发送的每一个 IP 数据报，初始值由系统随机生成；</li>
+<li><code>Flags</code>: 标志的第一位保留，第二位表示「禁止分片」。如果设置了这个位，系统不对 IP 报文分片。在这种情况下，如果 IP 数据报的长度超过 MTU（Max Transfer Unit，最大传输单元），IP 模块将丢弃该数据报并返回一个 ICMP 差错报文。第三位表示「更多分片」，如果为 1，表示后续还有该 IP 报文的分片；</li>
+<li><code>Fragment Offset(分片偏移)</code>: 分片偏移是分片相对原始 IP 数据报开始处的偏移，在接收端组合分片时，根据这个字段决定各分片的先后顺序；</li>
+<li><code>Time To Live(TTL, 存活时间)</code>: 表示这个IP封包的存活时间，范围为0-255。当这个IP封包通过一个路由器时， TTL就会减一，当TTL为0时，这个封包将会被直接丢弃；</li>
+<li><code>Protocol(协议代码)</code>: 协议字段用来区分上层的协议，其中 ICMP 是 1，TCP 是6，UDP是 17，更多可查看 /etc/protocols 文件；</li>
+<li><code>Header Checksum(头部校验码)</code>: 头部校验码由发送端填充，接收端使用 CRC 循环冗余校验算法检查 IP 数据报是否损坏；</li>
+<li><code>Source Address</code>: 发送端 IP 地址</li>
+<li><code>Destination Address</code>: 接收端 IP 地址</li>
+<li><code>Options</code>: 选项部分长度最大为 40 字节，最小为 0 字节。因为头部长度字段最大可表示 15，也就是说 IP 数据报的报头最大可以有 60 字节，而前面这些已经占了 20 字节，故选项部分最多只能有 40 字节。</li>
+</ul>
+<h3 id="IP-分片"><a href="#IP-分片" class="headerlink" title="IP 分片"></a>IP 分片</h3><p>当要发送的数据大于 MTU 的时候，通常需要进行 IP 分片，将数据分成多个 IP 数据报发送。MTU 一般为 1500 字节。</p>
+<p>由上文可知，在 3 位的标志字段中，如果允许分片，则相同的 16 位的标识字段标识这些分片属于同一个数据块，片偏移标识这些分片的先后顺序。</p>
+<h3 id="IP-相关的概念"><a href="#IP-相关的概念" class="headerlink" title="IP 相关的概念"></a>IP 相关的概念</h3><h4 id="IP-地址的组成"><a href="#IP-地址的组成" class="headerlink" title="IP 地址的组成"></a>IP 地址的组成</h4><p>IP 地址是一个 32 bits 的数值，为了记忆方便，一般将其写成 4 段以 <code>.</code> 号分隔的十进制形式：<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IP的表示式： </span><br><span class="line"><span class="number">00000000.00000000</span><span class="number">.00000000</span><span class="number">.00000000</span> ==&gt; <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span> </span><br><span class="line"><span class="number">11111111.11111111</span><span class="number">.11111111</span><span class="number">.11111111</span> ==&gt; <span class="number">255.255</span><span class="number">.255</span><span class="number">.255</span></span><br></pre></td></tr></table></figure></p>
+<p>一个 IP 地址分为 Net_ID（网络号）和 Host_ID（主机号）两部分：<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span>~<span class="number">192.168</span><span class="number">.0</span><span class="number">.255</span> 这个Class C 的说明：</span><br><span class="line"><span class="number">11000000.10101000</span><span class="number">.00000000</span><span class="number">.00000000</span></span><br><span class="line"><span class="number">11000000.10101000</span><span class="number">.00000000</span><span class="number">.11111111</span></span><br><span class="line">|----------Net_ID---------|HOST_ID|</span><br></pre></td></tr></table></figure></p>
+<h4 id="同一网段"><a href="#同一网段" class="headerlink" title="同一网段"></a>同一网段</h4><p>在同一个物理网段内，主机的 IP 具有相同的 Net_ID（网络号） ，并且具有唯一的 Host_ID（主机号），那么这些 IP 群就是在同一个网段。</p>
+<p>在同一个网段内，Net_ID 是不变的，而 Host_ID 则是不可重复，此外，Host_ID 在二进位的表示法当中，不可同时为 0 也不可同时为 1 ，因为全为 0 表示整个网段的地址(Network IP)，而全为 1 则表示为广播的地址(Broadcast IP)。</p>
+<h4 id="IP-地址的分类"><a href="#IP-地址的分类" class="headerlink" title="IP 地址的分类"></a>IP 地址的分类</h4><p>InterNIC 将整个 IP 网段分为五种等级， 每种等级的范围主要与 IP 那 32 bits 数值的前面几个位有关，基本定义如下：<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">以二进位说明Network第一个数字的定义： </span><br><span class="line"><span class="keyword">Class</span> A : <span class="number">0</span> xxxxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx   ==&gt; NetI_D的开头是<span class="number">0</span></span><br><span class="line">          |<span class="type">--net</span>--|<span class="type">---------host</span>------------| <span class="type"></span></span><br><span class="line"><span class="type">Class</span> B : <span class="number">10</span> xxxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx   ==&gt; NetI_D的开头是<span class="number">10</span></span><br><span class="line">          |<span class="type">------net</span>-------|<span class="type">------host</span>------| <span class="type"></span></span><br><span class="line"><span class="type">Class</span> C : <span class="number">110</span> xxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx   ==&gt; NetI_D的开头是<span class="number">110</span></span><br><span class="line">          |<span class="type">-----------net</span>-----------|<span class="type">-host</span>--| <span class="type"></span></span><br><span class="line"><span class="type">Class</span> D : <span class="number">1110</span> xxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx   ==&gt; NetI_D的开头是<span class="number">1110</span> </span><br><span class="line"><span class="keyword">Class</span> E : <span class="number">1111</span> xxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx   ==&gt; NetI_D的开头是<span class="number">1111</span></span><br><span class="line"></span><br><span class="line">五种分级在十进位的表示： </span><br><span class="line"><span class="keyword">Class</span> A :   <span class="number">0.</span>xx.xx.xx ~ <span class="number">127.</span>xx.xx.xx </span><br><span class="line"><span class="keyword">Class</span> B : <span class="number">128.</span>xx.xx.xx ~ <span class="number">191.</span>xx.xx.xx </span><br><span class="line"><span class="keyword">Class</span> C : <span class="number">192.</span> xx.xx.xx ~ <span class="number">223.</span>xx.xx.xx </span><br><span class="line"><span class="keyword">Class</span> D : <span class="number">224.</span>xx.xx.xx ~ <span class="number">239.</span>xx.xx.xx </span><br><span class="line"><span class="keyword">Class</span> E : <span class="number">240.</span>xx.xx.xx ~ <span class="number">255.</span>xx.xx.xx</span><br></pre></td></tr></table></figure></p>
+<h4 id="子网划分"><a href="#子网划分" class="headerlink" title="子网划分"></a>子网划分</h4><p>前面我们知道了标准的 5 种 IP 等级划分，在一个 A 类网络中最多能有 2^24-2=16777214 台主机。其实在实际应用中一个网络不可能有这么多主机，有这么多主机意味着时时刻刻都会发生广播(比如 ARP 广播)风暴，导致一个网络的主机通信阻塞，根本不能正常工作。</p>
+<p>为了解决上述问题，我们可以将一个大网络切分的更细点，让同一个网络中主机的数据量控制在合理的范围。具体的做法就是通过向 IP 的主机位借位，使其成为网络位，这样主机位就缩短了，从而减少了一个网络中主机的数量。</p>
+<p><strong>举例</strong>：一个 C 类 IP 地址网络位有 24 位，主机位有 8 位，那么这种情况下一个 C 类网络中就最多有 2^8-2=254 台主机。如果我们向主机位借一位，使其成为网络位，那么此时网络位就有 25 bit，主机位有 7 bit，所以此时一个网络中最多有 2^7-2=126 台主机。</p>
+<h4 id="子网掩码"><a href="#子网掩码" class="headerlink" title="子网掩码"></a>子网掩码</h4><p>子网掩码（Netmask）也是 32 位数值，在数值上，位于 Net_ID（网络位）的为 1，而 Host_ID（主机位）为 0<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span>~<span class="number">192.168</span><span class="number">.0</span><span class="number">.255</span> 这个C Class 的Netmask 说明</span><br><span class="line">第一个IP： <span class="number">11000000.10101000</span><span class="number">.00000000</span><span class="number">.00000000</span></span><br><span class="line">最后一个： <span class="number">11000000.10101000</span><span class="number">.00000000</span><span class="number">.11111111</span></span><br><span class="line">         |----------Net_ID---------|--host--|</span><br><span class="line">Netmask ： <span class="number">11111111.11111111</span><span class="number">.11111111</span><span class="number">.00000000</span> &lt;== Netmask 二进位</span><br><span class="line">        ： <span class="number">255</span> . <span class="number">255</span> . <span class="number">255</span> . <span class="number">0</span> &lt;== Netmask十进位</span><br></pre></td></tr></table></figure></p>
+<h4 id="网络相关的几个参数"><a href="#网络相关的几个参数" class="headerlink" title="网络相关的几个参数"></a>网络相关的几个参数</h4><ul>
+<li><strong>Network</strong>：一个网络中的第一个 IP， Host_ID（网络位） 全为 0 时的 IP 地址，此时表示整个网段；</li>
+<li><strong>Broadcast</strong>：一个网络中的最后一个 IP，Host_ID（网络位） 全为 1 时的 IP 地址，即广播地址；</li>
+<li><strong>Netmask</strong>：位于 Net_ID（网络位）的为 1，而 Host_ID（主机位）为 0，此时的 IP 即为子网掩码；<br>例题：<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">试着计算出 <span class="number">172.16.0.0</span>，但 Net_ID 占用 <span class="number">23</span> 位时，这个网络的 Netmask, </span><br><span class="line">Network, Broadcast 等参数？</span><br><span class="line">---------------------------------------------------------------------</span><br><span class="line">解答：</span><br><span class="line">由于 <span class="number">172</span>.<span class="number">16</span>.xxx.xxx 是在 Class B 的等级当中，亦即 Net_ID 是<span class="number">16</span> 位才</span><br><span class="line">对。不过题目给的Net_ID 占用了<span class="number">23</span> 个位！等于是向 Host_ID 借了(<span class="number">23</span>-<span class="number">16</span>) </span><br><span class="line"><span class="number">7</span> 个位用在 Net_ID 当中。所以整个 IP 的位址会变成这样：</span><br><span class="line"></span><br><span class="line">预设： <span class="number">172</span> . <span class="number">16</span> .<span class="number">0000000 0</span>.<span class="number">00000000</span> </span><br><span class="line">      |----Net_ID-------|--Host--| </span><br><span class="line">Network: <span class="number">172</span>.<span class="number">16.0000000</span> <span class="number">0.00000000</span>    <span class="number">172.16.0.0</span></span><br><span class="line">Broadcast: <span class="number">172</span>.<span class="number">16.0000000</span> <span class="number">1.11111111</span>    <span class="number">172.16.1.255</span></span><br><span class="line">Netmask: <span class="number">11111111</span>.<span class="number">11111111</span>.<span class="number">1111111 0</span>.<span class="number">00000000</span>    <span class="number">255.255.254.0</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="CIDR-Classless-Interdomain-Routing"><a href="#CIDR-Classless-Interdomain-Routing" class="headerlink" title="CIDR(Classless Interdomain Routing)"></a>CIDR(Classless Interdomain Routing)</h4><p>一般来说，如果我们知道了 Network 以及 Netmask 之后，就可以定义出该网段的所有 IP 了，因此，我们常常会以 Network 以及 Netmask 来表示一个网段，例如这样的写法：<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Network/Netmask</span><br><span class="line"><span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">255.255</span><span class="number">.255</span><span class="number">.0</span></span><br><span class="line"><span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">24</span>     &lt;==因为 Net_ID 共有 <span class="number">24</span> bits</span><br></pre></td></tr></table></figure></p>
+<p>一般我们将一个网段 <code>Network/网络位数量</code> 这种写法称作 CIDR，比如：192.168.0.0/24。</p>
+<h3 id="路由概念"><a href="#路由概念" class="headerlink" title="路由概念"></a>路由概念</h3><p>在同一个网段中可以通过局域网广播的方式传递数据报，但是在不同的网段中通信就需要借助于路由器的帮忙了。</p>
+<p>我们以下面图示的例子来做说明。下列图示当中共有两个不同的网段，分别是Network A 与Network B，这两个网段是经由一部路由器(Server A) 来进行资料转递的，那么当 PC01 这部主机想要传送资料到 PC11 时， 它的IP 封包该如何传输呢？<br><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------------------------------+</span><br><span class="line">|<span class="string">                     Network A                    </span>|</span><br><span class="line">|<span class="string">                                                  </span>|</span><br><span class="line">|<span class="string">       +-------+                  +-------+       </span>|</span><br><span class="line">|<span class="string">       </span>|<span class="string">       </span>|<span class="string">                  </span>|<span class="string">       </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string">       </span>|<span class="string"> PC 01 </span>|<span class="string">                  </span>|<span class="string"> PC 02 </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string">       </span>|<span class="string">       </span>|<span class="string">                  </span>|<span class="string">       </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string">       +-------+--------+---------+-------+       </span>|</span><br><span class="line">|<span class="string">    IP: 192.168.0.1     </span>|<span class="string">      IP: 192.168.0.2    </span>|</span><br><span class="line">|<span class="string">    GW:192.168.0.254    </span>|<span class="string">      GW:192.168.0.254   </span>|</span><br><span class="line">+--------------------------------------------------+</span><br><span class="line">                         |</span><br><span class="line"><span class="string">                   192.168.0.254</span></span><br><span class="line"><span class="string">                     +--------+</span></span><br><span class="line"><span class="string">                     </span>|<span class="string">        </span>|</span><br><span class="line">                     |<span class="string">Server A</span>|</span><br><span class="line">                     |<span class="string">        </span>|</span><br><span class="line">                     +--------+</span><br><span class="line">                   192.168.1.254</span><br><span class="line">                         |</span><br><span class="line"><span class="string">+--------------------------------------------------+</span></span><br><span class="line">|<span class="string">                        </span>|<span class="string">                         </span>|</span><br><span class="line">|<span class="string">       +-------+--------+-----------+-------+     </span>|</span><br><span class="line">|<span class="string">       </span>|<span class="string">       </span>|<span class="string">                    </span>|<span class="string">       </span>|<span class="string">     </span>|</span><br><span class="line">|<span class="string">       </span>|<span class="string"> PC 11 </span>|<span class="string">                    </span>|<span class="string"> PC 12 </span>|<span class="string">     </span>|</span><br><span class="line">|<span class="string">       </span>|<span class="string">       </span>|<span class="string">                    </span>|<span class="string">       </span>|<span class="string">     </span>|</span><br><span class="line">|<span class="string">       +-------+                    +-------+     </span>|</span><br><span class="line">|<span class="string">    IP: 192.168.1.1              IP: 192.168.1.2  </span>|</span><br><span class="line">|<span class="string">    GW:192.168.1.254             GW:192.168.1.254 </span>|</span><br><span class="line">|<span class="string">                                                  </span>|</span><br><span class="line">|<span class="string">                      Network B                   </span>|</span><br><span class="line">+--------------------------------------------------+</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li><p>查询 IP 封包的目标 IP 地址：<br>当 PC01 有 IP 封包需要传送时，主机会查阅 IP 封包头部的目标 IP 地址；</p>
+</li>
+<li><p>查询本机的路由配置：<br>PC01 主机会分析自己的路由表，当发现目标 IP 与本机 IP 的 Net_ID 相同时(同一网段)，则PC01 会直接透过局域网功能，将数据包直接传送给目的地主机。</p>
+</li>
+<li><p>查询默认网关(default gateway)：<br>但在本案例中， PC01 与 PC11 并非在同一网段，因此 PC01 会分析路由表当中是否有其他相符合的路由设定，如果没有的话，就直接将该 IP 封包送到默认网关(default gateway)上头去，在本案例当中 default gateway 则是Server A。</p>
+</li>
+<li><p>送出封包至 gateway 后，不理会封包流向：<br>当 IP 由 PC01 送给 Server A 之后， PC01 就不理会接下来的工作。而 Server A 接收到这个封包后，会依据上述的流程，也分析自己的路由表，然后向后继续传输到正确的目的地主机上。</p>
+</li>
+</ol>
+<h3 id="TCP-协议"><a href="#TCP-协议" class="headerlink" title="TCP 协议"></a>TCP 协议</h3><p>TCP 协议处于四层参考模型的第三层，即传输层。同一层的还有 UDP 协议。TCP 和 UDP 的区别是：TCP 是可靠的，面向连接的，基于字节流的服务；UDP 是不可靠的，无连接的，面向数据块的服务。</p>
+<p>解释如下：</p>
+<ul>
+<li>每次使用 TCP 传输数据时，都要先建立一对一的连接，即面向连接的。而使用 UDP 时不必先建立连接，而是直接将数据广播出去就可以，即无连接；</li>
+<li>因为 TCP 必须先建立连接，所以 TCP 传输的速度要比 UDP 慢；</li>
+<li>TCP 使用一系列机制来保证数据的可靠传输，包括数据确认机制，超时重传机制等。<br>发送 TCP 数据时，应用层需将数据写入到 OS 提供的 buffer 里面，操作系统将其看作一连串的，没有边界的数据流，通过相对序号进行定位；而发送 UDP 数据时，应用层交给 OS 多大的数据包，操作系统就直接发送出去。根本不考虑效率，如果数据太大，可能会在 IP 层进行分片，如果数据太小，则每个数据包的有效载荷会比较低，浪费带宽；</li>
+</ul>
+<h3 id="TCP-报头格式"><a href="#TCP-报头格式" class="headerlink" title="TCP 报头格式"></a>TCP 报头格式</h3><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">|4 bits|  6 bits |  6 bits |          16 bits           |</span><br><span class="line"><span class="code">+----------------+</span>--------------------------------------+</span><br><span class="line">|        Source Port       |     Destination Port       |</span><br><span class="line"><span class="code">+--------------------------+</span>----------------------------+</span><br><span class="line">|                   Sequence Number                     |</span><br><span class="line"><span class="code">+-------------------------------------------------------+</span></span><br><span class="line">|                  Acknowledge Number                   |</span><br><span class="line"><span class="code">+----------------+</span>---------<span class="code">+----------------------------+</span></span><br><span class="line">|Data  |Reserved |  Code   |           Window           |</span><br><span class="line">|Offset|         |         |                            |</span><br><span class="line"><span class="code">+----------------+</span>--------------------------------------+</span><br><span class="line">|         Checksum         |       Urgent Pointer       |</span><br><span class="line"><span class="code">+--------------------------+</span>----------------------------+</span><br><span class="line">|                 Options(0~40 bytes)                   |</span><br><span class="line"><span class="code">+-------------------------------------------------------+</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Source Port &amp; Destination Port（来源和目的端口）</code>：指明该 TCP 报文是由哪一个应用程序发送给哪一个应用程序的。因为端口号标示这应用层的一个服务进程；</li>
+<li><code>Sequence Number（序号）</code>：序号表明该报文段在整个数据流中相对于开始位置的偏移量；</li>
+<li><code>Acknowledge Number（确认号）</code>：确认号表明该报文是对对端的哪一个报文的确认，特别声明的是，只有当 ACK 标志为 1 时，确认号才有效。TCP 的数据确认机制就是通过这两个字段来实现的；</li>
+<li><code>Data Offset</code>：标识该 TCP 头部有多少个 4 字节，共表示最长 15x4=60 字节。同IP头部；</li>
+<li><code>Reserved</code>：保留不用，以便于将来扩展；</li>
+<li><code>Code（Control Flag,控制标志码）</code>：共 6 位：S、A、F、U、R、P，含义分别为 S –&gt; SYN，若为 1，表明这是一个请求报文。A –&gt; ACK，若为 1，表明确认号有效，这是一个确认报文。F –&gt; FIN，若为 1，表明这是一个断开连接的请求报文。U –&gt; URG，若为 1，表明紧急指针有效。R –&gt; RST，若为 1，表明这是一个复位报文段，接收端会清空自己的发送缓冲区。P –&gt; PSH，若为 1，提示接收端应用程序应立即从缓冲区中读走数据；</li>
+<li><code>Window（滑动窗口）</code>：用于流量控制，告诉对端自己的缓冲区大小，用于 TCP 的滑动窗口机制；</li>
+<li><code>Checksum（确认检查码）</code>：由发送端对 TCP 头部和数据部分进行 CRC 循环冗余校验后填充，接收端以此确定该数据报是否损坏；</li>
+<li><code>Urgent Pointer（紧急指针）</code>：若 URG 标志为 1，则紧急指针有效，指明 TCP 带外数据的相对位置；</li>
+<li><code>Options（选项）</code>：目前此字段仅应用于表示接收端可以接收的最大数据区段容量，若此字段不使用， 表示可以使用任意数据区段的大小，这个字段较少使用。选项最大长度为 40 字节，计算方法和 IP 头部选项的计算方法一致；</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/计算机网络/" rel="tag"># 计算机网络</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/29/公有云服务器磁盘分区扩展/" rel="next" title="公有云服务器磁盘分区扩展">
+                <i class="fa fa-chevron-left"></i> 公有云服务器磁盘分区扩展
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/06/Amazon-CloudFront-CDN-s3-源站跨域配置/" rel="prev" title="Amazon CloudFront CDN + s3 源站跨域配置">
+                Amazon CloudFront CDN + s3 源站跨域配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div id="gitalk-container"></div>
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">haohao</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap. Show me the code.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qhh0205" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/qianghaohao" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://my.oschina.net/bufferoverflow" target="_blank" title="开源中国">
+                      
+                        <i class="fa fa-fw fa-globe"></i>开源中国</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:qhh0205@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机网络协议分层"><span class="nav-number">1.</span> <span class="nav-text">计算机网络协议分层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-IP-模型各层常见协议"><span class="nav-number">2.</span> <span class="nav-text">TCP/IP 模型各层常见协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-IP-数据包的封装与解封"><span class="nav-number">3.</span> <span class="nav-text">TCP/IP 数据包的封装与解封</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#以太网数据帧封装"><span class="nav-number">4.</span> <span class="nav-text">以太网数据帧封装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-数据报封装"><span class="nav-number">5.</span> <span class="nav-text">IP 数据报封装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-分片"><span class="nav-number">6.</span> <span class="nav-text">IP 分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-相关的概念"><span class="nav-number">7.</span> <span class="nav-text">IP 相关的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IP-地址的组成"><span class="nav-number">7.1.</span> <span class="nav-text">IP 地址的组成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#同一网段"><span class="nav-number">7.2.</span> <span class="nav-text">同一网段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP-地址的分类"><span class="nav-number">7.3.</span> <span class="nav-text">IP 地址的分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#子网划分"><span class="nav-number">7.4.</span> <span class="nav-text">子网划分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#子网掩码"><span class="nav-number">7.5.</span> <span class="nav-text">子网掩码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网络相关的几个参数"><span class="nav-number">7.6.</span> <span class="nav-text">网络相关的几个参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CIDR-Classless-Interdomain-Routing"><span class="nav-number">7.7.</span> <span class="nav-text">CIDR(Classless Interdomain Routing)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由概念"><span class="nav-number">8.</span> <span class="nav-text">路由概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-协议"><span class="nav-number">9.</span> <span class="nav-text">TCP 协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-报头格式"><span class="nav-number">10.</span> <span class="nav-text">TCP 报头格式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">haohao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="/js/src/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '3840ba8c8d80c18be7e3',
+          clientSecret: '1b00f2efe5285973c24da9ed9ac895775eacc8ea',
+          repo: 'qhh0205.github.io',
+          owner: 'qhh0205',
+          admin: ['qhh0205'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+    </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

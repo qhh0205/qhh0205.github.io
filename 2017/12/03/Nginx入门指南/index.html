@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Nginx," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Nginx入门指南##一.Nginx概述: ###1.什么是Nginx?Nginx（发音同engine x）是一个网页服务器，它能反向代理HTTP, HTTPS, SMTP, POP3, IMAP的协议链接，以及一个负载均衡器和一个HTTP缓存。起初是供俄国大型的门户网站及搜索引擎Rambler（俄语：Рамблер）">
+<meta name="keywords" content="Nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx入门指南">
+<meta property="og:url" content="http://yoursite.com/2017/12/03/Nginx入门指南/index.html">
+<meta property="og:site_name" content="qhh.me">
+<meta property="og:description" content="Nginx入门指南##一.Nginx概述: ###1.什么是Nginx?Nginx（发音同engine x）是一个网页服务器，它能反向代理HTTP, HTTPS, SMTP, POP3, IMAP的协议链接，以及一个负载均衡器和一个HTTP缓存。起初是供俄国大型的门户网站及搜索引擎Rambler（俄语：Рамблер）使用。此软件BSD-like协议下发行，可以在UNIX、GNU/Linux、B">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3766190-9339a28741405701.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/webserver.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/forward.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1487527542346.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1487527728657.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1488039019886.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1488087359555.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1488118637317.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1488119977606.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1488127919445.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1488128000832.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1488387700110.png">
+<meta property="og:image" content="http://yoursite.com/2017/12/03/Nginx入门指南/1488432839394.png">
+<meta property="og:updated_time" content="2019-06-20T03:41:42.504Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx入门指南">
+<meta name="twitter:description" content="Nginx入门指南##一.Nginx概述: ###1.什么是Nginx?Nginx（发音同engine x）是一个网页服务器，它能反向代理HTTP, HTTPS, SMTP, POP3, IMAP的协议链接，以及一个负载均衡器和一个HTTP缓存。起初是供俄国大型的门户网站及搜索引擎Rambler（俄语：Рамблер）使用。此软件BSD-like协议下发行，可以在UNIX、GNU/Linux、B">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3766190-9339a28741405701.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/03/Nginx入门指南/"/>
+
+
+
+
+
+  <title>Nginx入门指南 | qhh.me</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">qhh.me</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Talk is cheap. Show me the code.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/Nginx入门指南/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Nginx入门指南</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T11:05:10+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">Nginx</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="http://upload-images.jianshu.io/upload_images/3766190-9339a28741405701.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h1 id="Nginx入门指南"><a href="#Nginx入门指南" class="headerlink" title="Nginx入门指南"></a>Nginx入门指南</h1><p>##一.Nginx概述:</p>
+<p>###1.什么是Nginx?<br>Nginx（发音同engine x）是一个网页服务器，它能反向代理HTTP, HTTPS, SMTP, POP3, IMAP的协议链接，以及一个负载均衡器和一个HTTP缓存。<br>起初是供俄国大型的门户网站及搜索引擎Rambler（俄语：Рамблер）使用。此软件BSD-like协议下发行，可以在UNIX、GNU/Linux、BSD、Mac OS X、Solaris，以及Microsoft Windows等操作系统中运行。</p>
+<p>###2.Nginx的特点:</p>
+<ul>
+<li><strong>更快:</strong><ul>
+<li><strong>单次请求会得到更快的响应</strong></li>
+<li><strong>在高并发环境下,Nginx比其他web服务器有更快的响应</strong></li>
+</ul>
+</li>
+<li><strong>高扩展性:</strong><ul>
+<li><strong>nginx是基于模块化设计,由多个耦合度极低的模块组成,因此具有很高的扩展性。许多高流量的网站都倾向于开发符合自己业务特性的定制模块。</strong></li>
+</ul>
+</li>
+<li><strong>高可靠性:</strong><ul>
+<li><strong>nginx的可靠性来自于其核心框架代码的优秀设计，模块设计的简单性；另外，官方提供的常用模块都非常稳定，每个worker进程相对独立，master进程在一个worker进程出错时可以快速拉起新的worker子进程提供服务。</strong></li>
+</ul>
+</li>
+<li><strong>低内存消耗:</strong><ul>
+<li><strong>一般情况下，10 000个非活跃的HTTP Keep-Alive连接在Nginx中仅消耗2.5MB的内存，这是nginx支持高并发连接的基础。</strong></li>
+</ul>
+</li>
+<li><strong>单机支持10万以上的并发连接:</strong><ul>
+<li><strong>理论上，Nginx支持的并发连接上限取决于内存，10万远未封顶。 </strong></li>
+</ul>
+</li>
+<li><strong>热部署:</strong><ul>
+<li><strong>master进程与worker进程的分离设计，使得Nginx能够提供热部署功能，即在7x24小时不间断服务的前提下，升级Nginx的可执行文件。当然，它也支持不停止服务就更新配置项，更换日志文件等功能。</strong></li>
+</ul>
+</li>
+<li><strong>最自由的BSD许可协议:</strong><ul>
+<li><strong>这是Nginx可以快速发展的强大动力。BSD许可协议不只是允许用户免费使用Nginx，它还允许用户在自己的项目中直接使用或修改Nginx源码，然后发布。</strong><br>###3.目前web服务器市场份额图：<br><img src="./webserver.png" alt=""><br>###4.正向代理和反向代理的区别:</li>
+<li><strong>正向代理(Forward Proxy):</strong><br>一般情况下，如果没有特别说明，代理技术默认说的是正向代理技术。关于正向代理的概念如下：<br>正向代理(forward)是一个位于客户端【用户A】和原始服务器(origin server)【服务器B】之间的服务器【代理服务器Z】，为了从原始服务器取得内容，用户A向代理服务器Z发送一个请求并指定目标(服务器B)，然后代理服务器Z向服务器B转交请求并将获得的内容返回给客户端。客户端必须要进行一些特别的设置才能使用正向代理。如下图：<br><img src="./forward.png" alt=""></li>
+<li><strong>反向代理(Reverse Proxy):</strong><br>反向代理正好与正向代理相反，对于客户端而言代理服务器就像是原始服务器，并且客户端不需要进行任何特别的设置。客户端向反向代理的命名空间(name-space)中的内容发送普通请求，接着反向代理将判断向何处(原始服务器)转交请求，并将获得的内容返回给客户端。<br><strong>&nbsp;&nbsp;&nbsp;反向代理服务的作用:</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>1.保护和隐藏原始资源服务器:</em><br><img src="./1487527542346.png" alt=""><br>由于防火墙的作用，只允许代理服务器Z访问原始资源服务器B。尽管在这个虚拟的环境下，防火墙和反向代理的共同作用保护了原始资源服务器B，但用户A并不知情。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>2.负载均衡:</em><br><img src="./1487527728657.png" alt=""><br>当反向代理服务器不止一个的时候，我们甚至可以把它们做成集群，当更多的用户访问资源服务器B的时候，让不同的代理服务器Z（x）去应答不同的用户，然后发送不同用户需要的资源。<br>##二.安装Nginx:<br>###1.准备工作:</li>
+<li><strong>Linux操作系统:</strong><br>内核为Linux 2.6及以上的版本的操作系统，因为2.6以上的内核才支持epoll，而在linux上使用select或poll来解决事件的多路复用，是无法解决高并发压力问题的。</li>
+<li><strong>安装Nginx的必备软件:</strong></li>
+</ul>
+</li>
+<li><strong>GCC编译器</strong></li>
+<li><strong>PCRE库:是用C语言写的一个正则库，目前被很软件所使用。如果我们在配置文件nginx.conf里使用了正则表达式，那么在编译Nginx时就必须把PCRE库编译进Nginx，因为Nginx的HTTP模块要靠它来解析正则表达式。yum安装: yum install -y pcre pcre-devel</strong></li>
+<li><strong>zlib库：zlib库用于对HTTP包的内容做gzaip格式的压缩，如果我们在nginx.conf里配置了gzip on，并指定对于某些类型的HTTP响应使用gzip来进行压缩以减少网络传输量，那么，在编译时就必须把zlib编译进Nginx。安装方式：yum install -y zlib zlib-devel</strong></li>
+<li><strong>OpenSSL开发库:如果我们的服务器不只是要支持HTTP，还要在更安全的SSL协议上传输HTTP，那么就需要拥有OpenSSL了。安装方式：yum install -y openssl openssl-devel</strong><br>上面所列的4个库只是完成web服务器最基本功能所必须的。Nginx是模块化设计的，它的功能是由许多模块来支持的，所以如果使用了某个模块，而这个模块使用了一些第三方库，那么就必须先安装这些软件。<ul>
+<li><strong>获取Nginx源码:</strong><br>Nginx官网:<a href="http://nginx.org" target="_blank" rel="noopener">http://nginx.org</a><br><img src="./1488039019886.png" alt=""></li>
+</ul>
+</li>
+</ul>
+<p><strong>在此下载Nginx最新版nginx-1.11.10:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://nginx.org/download/nginx-1.11.10.tar.gz -O - | tar zxvf -</span><br></pre></td></tr></table></figure></p>
+<p>###2.编译安装Nginx:</p>
+<ul>
+<li><p><strong>首先安装前面提到的软件包:</strong></p>
+<ul>
+<li><p><strong>安装PCRE库:</strong></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y pcre pcre-devel</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>安装zlib库:</strong></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y zlib zlib-devel</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>安装OpenSSL库:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y openssl openssl-devel</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p>运行以上命令后可以查看是否安装成功:<br><img src="./1488087359555.png" alt=""></p>
+<ul>
+<li><strong>编译并安装nginx:</strong><br>Nginx源码目录介绍：<br><img src="./1488118637317.png" alt=""><ul>
+<li><strong>进入nginx目录并执行configure命令:</strong><br>configure命令主要做一些系统相关的检测，并指定编译nginx时的一些参数，最终生成makefile供make来执行。<br>configure的命令参数可以通过如下命令来查看:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="./1488119977606.png" alt=""><br>   <strong>执行configure命令，添加一些定制化参数，并生成makefile:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --with-http_ssl_module --with-http_stub_status_module --with-http_gzip_static_module --with-debug</span><br></pre></td></tr></table></figure></p>
+<p><strong>相关参数说明:</strong><br>   <strong>–with-http_ssl_module:</strong> 使nginx支持SSL协议，提供HTTPS服务。<br>   <strong>–with-http_stub_status_module:</strong>该模块可以让运行中的Nginx提供性能统计页面，获取相关的并发连接，请求信息。<br> <strong>–with-http_gzip_static_module:</strong>在做gzip压缩前，先查看相同位置是否有已经做过gzip压缩的.gz文件，如果有，就直接返回。<br> <strong>–with-debug:</strong>在nginx运行时通过修改配置文件来使其打印调试日志，这对于研究，定位nginx问题非常有帮助。<br><strong>configure命令执行完后，会在源码目录生成Makefile文件和一个objs目录:</strong><br>Makefile文件是指导make命令编译的脚本文件，objs目录存放编译过程中产生的二进制文件和一些configure产生的源代码文件。<br><strong>现在nginx源码目录树如下(红框圈出来的味新生成的目录):</strong><br><img src="./1488127919445.png" alt=""><br><img src="./1488128000832.png" alt=""></p>
+<ul>
+<li><p><strong>执行make命令编译:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>执行make install安装:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>###3.Nginx的使用:</p>
+<ul>
+<li><strong>默认方式启动nginx:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这时，会读取默认路径下的配置文件:/usr/local/nginx/conf/nginx.conf</p>
+<ul>
+<li><strong>指定自定义配置文件启动:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -c path/nginx.conf</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这时，会读取-c参数指定的配置文件来启动Nginx。</p>
+<ul>
+<li><strong>指定全局配置项的启动方式:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -g <span class="string">"pid /var/nginx/test.pid;"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>上面的命令意味着会把pid文件写入到/var/nginx/test.pid中。</p>
+<ul>
+<li><p><strong>测试配置文件是否有效:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -t</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>在测试配置阶段不输出信息:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -t -q</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>测试配置选项是时，使用-q参数可以不把error级别以下的信息输出到屏幕。</p>
+<ul>
+<li><p><strong>显示版本信息:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -v</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>显示编译阶段的参数:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -V</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>-V参数除了可以显示Nginx的版本信息外，还可以显示配置编译阶段的信息，如gcc编译器版本，操作系统版本，执行configure时的参数等。</p>
+<ul>
+<li><strong>快速地停止服务:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -s stop</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>使用-s stop可以强制停止Nginx服务。-s参数其实是告诉Nginx程序向正在运行的Nginx服务发送信号，Nginx程序通过nginx.pid文件得到master进程的ID，再向运行中的master进程发送TERM信号来快速地关闭Nginx服务。<br><strong>同样可以给master进程发送TERM或者INT信号来快速停止:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -s SIGTERM NginxMasterPid</span><br><span class="line"><span class="built_in">kill</span> -s SIGINT NginxMasterPid</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>‘’优雅’’地停止服务:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -s quit</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>如果希望Nginx服务可以正常地处理完当前前所有请求再停止服务，那么可以使用-s quit参数来停止服务。这种方式首先会关闭监听端口，停止接收新的连接，然后把当前正则处理的连接全部处理完，最后再退出进程。<br><strong>同样可以发送信号的方式优雅地停止服务:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -s SIGQUIT NginxMasterPid</span><br></pre></td></tr></table></figure></p>
+<p><strong>优雅地停止某个worker进程：</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -s SIGWINCH NginxWorkerPid</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>使运行中的Nginx重新加载配置文件并生效:</strong><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -s reload</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>同样可以通过kill发送信号来达到同样的效果:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -s SIGHUP NginxMasterPid</span><br></pre></td></tr></table></figure></p>
+<p>##二.Nginx的配置:</p>
+<h4 id="1-运行中的Nginx进程间的关系"><a href="#1-运行中的Nginx进程间的关系" class="headerlink" title="1.运行中的Nginx进程间的关系:"></a>1.运行中的Nginx进程间的关系:</h4><p>在正式提供服务的产品环境下，部署Nginx时都是使用一个master进程来管理多个worker进程，一般情况下，worker进程的数量与服务器上的CPU核心数相等。每一个worker进程都是繁忙的，他们真正地提供互联网服务，master进程则很”清闲”，只负责监控管理worker进程。部署后的Nginx进程间的关系如图下图所示:<br><img src="./1488387700110.png" alt=""></p>
+<h4 id="2-Nginx配置中的通用语法"><a href="#2-Nginx配置中的通用语法" class="headerlink" title="2.Nginx配置中的通用语法:"></a>2.Nginx配置中的通用语法:</h4><p>Nginx的配置文件其实是一个普通的文本文件。下面来看一个简单的例子:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span></span><br><span class="line">    <span class="comment">#                  '$status $body_bytes_sent "$http_referer" '</span></span><br><span class="line">    <span class="comment">#                  '"$http_user_agent" "$http_x_forwarded_for"';</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#access_log  logs/access.log  main;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#keepalive_timeout  0;</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span>  localhost;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">            <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#error_page  404              /404.html;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># redirect server error pages to the static page /50x.html</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="attribute">error_page</span>   <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span>  /50x.html;</span><br><span class="line">        <span class="attribute">location</span> = /50x.html &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># proxy the PHP scripts to Apache listening on 127.0.0.1:80</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment">#location ~ \.php$ &#123;</span></span><br><span class="line">        <span class="comment">#    proxy_pass   http://127.0.0.1;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment">#location ~ \.php$ &#123;</span></span><br><span class="line">        <span class="comment">#    root           html;</span></span><br><span class="line">        <span class="comment">#    fastcgi_pass   127.0.0.1:9000;</span></span><br><span class="line">        <span class="comment">#    fastcgi_index  index.php;</span></span><br><span class="line">        <span class="comment">#    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;</span></span><br><span class="line">        <span class="comment">#    include        fastcgi_params;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># deny access to .htaccess files, if Apache's document root</span></span><br><span class="line">        <span class="comment"># concurs with nginx's one</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment">#location ~ /\.ht &#123;</span></span><br><span class="line">        <span class="comment">#    deny  all;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment"># another virtual host using mix of IP-, name-, and port-based configuration</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#server &#123;</span></span><br><span class="line">    <span class="comment">#    listen       8000;</span></span><br><span class="line">    <span class="comment">#    listen       somename:8080;</span></span><br><span class="line">    <span class="comment">#    server_name  somename  alias  another.alias;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    location / &#123;</span></span><br><span class="line">    <span class="comment">#        root   html;</span></span><br><span class="line">    <span class="comment">#        index  index.html index.htm;</span></span><br><span class="line">    <span class="comment">#    &#125;</span></span><br><span class="line">    <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment"># HTTPS server</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#server &#123;</span></span><br><span class="line">    <span class="comment">#    listen       443 ssl;</span></span><br><span class="line">    <span class="comment">#    server_name  localhost;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_certificate      cert.pem;</span></span><br><span class="line">    <span class="comment">#    ssl_certificate_key  cert.key;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_session_cache    shared:SSL:1m;</span></span><br><span class="line">    <span class="comment">#    ssl_session_timeout  5m;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_ciphers  HIGH:!aNULL:!MD5;</span></span><br><span class="line">    <span class="comment">#    ssl_prefer_server_ciphers  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    location / &#123;</span></span><br><span class="line">    <span class="comment">#        root   html;</span></span><br><span class="line">    <span class="comment">#        index  index.html index.htm;</span></span><br><span class="line">    <span class="comment">#    &#125;</span></span><br><span class="line">    <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>块配置项:</strong><br>块配置项由一个块配置名和一对大括号组成。具体示例如下:<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span>  localhost;</span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">            <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="attribute">error_page</span>   <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span>  /50x.html;</span><br><span class="line">        <span class="attribute">location</span> = /50x.html &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>上面代码段中的events，http，server，location都是块配置项。块配置项可以嵌套，内层块直接继承外层块，例如，上例中server块里的任意配置都是基于http块里的已有配置的。当内外层中的配置发生冲突时，究竟是以内层块还是外层块的配置为准，取决于解析这个配置项的模块。</p>
+<ul>
+<li><strong>配置项的语法格式:</strong><br>最基本的配置项语法格式如下:<br><strong>配置项名 配置项值1 配置项值2 …；</strong><br>首先，在行首的是配置项名，这些配置项名必须是Nginx的某一个模块想要处理的，否则Nginx会认为配置文件出了非法的配置项名。配置项名输入结束后，将以空格作为分隔符。<br>其次是配置项值，它可以是数字或字符串(当然也包括正则表达式)。针对一个配置项，既可以有一个值，也可以有多个值，配置项值直接仍然由空格符来分隔。<br>最后，每行配置的结尾需要加上分号。</li>
+<li><strong>配置项的注释:</strong><br>如果有一个配置项暂时需要注释掉，那么可以加 “#”注释掉这一行配置。</li>
+<li><p><strong>配置项的单位:</strong><br>大部分模块遵循一些通用的规定，如指定空间大小时不用每次都定义到字节，指定时间时不用精确到毫秒。<br><strong>当指定空间大小时，可以用的单位包括：</strong></p>
+<ul>
+<li>K或者k千字节</li>
+<li>M或者m兆字节<br>例如:<br>gzip_buffer 48k;<br>client_max_body_size 64M;</li>
+</ul>
+<p><strong>指定时间时，可以使用的单位包括：</strong></p>
+<ul>
+<li>ms，s，m，h，d，w，M，y<br>例如：<br>expires 10y;<br>proxy_read_timeout 600;<br>client_body_timeout 2m;</li>
+</ul>
+</li>
+<li><strong>在配置中使用变量 :</strong><br>有些模块允许在配置中使用变量，具体示例如下:<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">log_format</span> main <span class="string">'<span class="variable">$time_local</span>|10.4.24.116|<span class="variable">$request</span>|<span class="variable">$status</span>|'</span></span><br><span class="line">							                    <span class="string">'<span class="variable">$remote_user</span>|<span class="variable">$remote_addr</span>|<span class="variable">$http_user_agent</span>|<span class="variable">$http_referer</span>|<span class="variable">$host</span>|'</span></span><br><span class="line">							                    <span class="string">'<span class="variable">$bytes_sent</span>|<span class="variable">$request_time</span>|<span class="variable">$upstream_response_time</span>|<span class="variable">$upstream_addr</span>|'</span></span><br><span class="line">							                    <span class="string">'<span class="variable">$connection</span>|<span class="variable">$connection_requests</span>|<span class="variable">$upstream_http_content_type</span>|<span class="variable">$upstream_http_content_disposition</span>'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>其中变量前要加$符号。需要注意的是，这种变量只有少数模块支持，并不是通用的。<br><strong>注意⚠️ :</strong><br>在执行configure命令时，我们已经把许多模块编译进Nginx中，但是否启用这些模块，一般取决于配置文件中相应的配置项。换句话说，每个Nginx模块都有自己感兴趣的配置项，大部分模块都必须在nginx.conf中读取某个配置项后才会在运行时启动。例如，只有当配置http{…}这个配置项时，ngx_http_module模块才会在Nginx中启用，其他依赖ngx_http_module的模块才能正常使用。</p>
+<h4 id="3-一个静态Web服务器常用的配置"><a href="#3-一个静态Web服务器常用的配置" class="headerlink" title="3.一个静态Web服务器常用的配置:"></a>3.一个静态Web服务器常用的配置:</h4><p>静态Web服务器的主要功能由ngx_http_core_module模块(HTTP框架的主要成员)实现，当然，一个完整的静态Web服务器还有许多功能是由其他的HTTP模块实现的。一个典型的静态Web服务器还会包含多个server块和location块，例如:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">user</span>  web;</span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="attribute">error_log</span>  logs/error.log  <span class="literal">info</span>;</span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="attribute">log_format</span> main <span class="string">'<span class="variable">$time_local</span>|10.4.24.116|<span class="variable">$request</span>|<span class="variable">$status</span>|'</span></span><br><span class="line">                    <span class="string">'<span class="variable">$remote_user</span>|<span class="variable">$remote_addr</span>|<span class="variable">$http_user_agent</span>|<span class="variable">$http_referer</span>|<span class="variable">$host</span>|'</span></span><br><span class="line">                    <span class="string">'<span class="variable">$bytes_sent</span>|<span class="variable">$request_time</span>|<span class="variable">$upstream_response_time</span>|<span class="variable">$upstream_addr</span>|'</span></span><br><span class="line">                    <span class="string">'<span class="variable">$connection</span>|<span class="variable">$connection_requests</span>|<span class="variable">$upstream_http_content_type</span>|<span class="variable">$upstream_http_content_disposition</span>'</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="attribute">access_log</span>  logs/access.log  main;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">tcp_nodelay</span>     <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">120</span> <span class="number">100</span>;</span><br><span class="line">    <span class="attribute">resolver_timeout</span>   <span class="number">15</span>;</span><br><span class="line">    <span class="attribute">client_body_timeout</span>        <span class="number">20</span>;</span><br><span class="line">    <span class="attribute">client_header_timeout</span>      <span class="number">20</span>;</span><br><span class="line">    <span class="attribute">client_body_buffer_size</span> <span class="number">512k</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">large_client_header_buffers</span> <span class="number">1</span> <span class="number">512k</span>;</span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#APP</span></span><br><span class="line">    <span class="attribute">include</span> server/zapier.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/https_app116.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/http_app116.chime.me.conf;</span><br><span class="line">    <span class="comment">#CRM </span></span><br><span class="line">    <span class="attribute">include</span> server/https_test.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/https_dev.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/https_dev2.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/https_static.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/crmnginx.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/brokernginx.chime.me.conf;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">include</span> server/http_oldlender.chime.me.conf;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">include</span> server/frontend.chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/chime.me.conf;</span><br><span class="line">    <span class="attribute">include</span> server/twilio.chime.me.conf;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">include</span> server/http_testzillow.chime.me.conf; </span><br><span class="line"></span><br><span class="line">    <span class="comment">#agnet 资历收集页图片地址 </span></span><br><span class="line">    <span class="attribute">include</span> server/uploadfile.conf;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#测试nginx status</span></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> *:<span class="number">80</span> ;</span><br><span class="line">        <span class="attribute">server_name</span> localhost status.chime.me;</span><br><span class="line">        </span><br><span class="line">        <span class="attribute">location</span> /ngx_status &#123;</span><br><span class="line">            <span class="attribute">stub_status</span> <span class="literal">on</span>;</span><br><span class="line">            <span class="attribute">access_log</span> <span class="literal">off</span>;</span><br><span class="line">            <span class="attribute">allow</span> <span class="number">10.2.204.166</span>;</span><br><span class="line">            <span class="attribute">deny</span> all;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>所有的HTTP配置项必须直属于http块，location块，upstream块或if块。<br><strong>Web服务器常用配置项:</strong></p>
+<ul>
+<li><strong>虚拟主机与请求的分发:</strong><br>由于IP地址的数量有限，因此经常会存在多个主机域名对应着同一个IP地址的情况，这时在nginx.conf中就可以按照server_name并通过server块来定义虚拟主机，每个server块就是一个虚拟主机，它只处理与之相对应的主机域名请求。这样，一台服务器上的Nginx就能以不同的方式处理访问不同主机域名的HTTP请求了。<ul>
+<li><strong>监听端口:</strong><br>默认:listen 80;<br>配置块:server<br>listen参数决定Nginx服务如何监听端口。在listen后可以只加IP地址，端口活主机名，非常灵活。</li>
+<li><strong>主机名称:</strong><br>语法: server_name name […];<br>默认:server_name “”;<br>server_name后可以跟多个主机名称，如server_name www.testweb.com download.test.com;<br>在开始处理一个HTTP请求时，Nginx会取出header头重的Host，与每个server中的server_name进行匹配，以决定到底由哪一个server块来处理这个请求。有可能一个Host与多个server块中的server_name都匹配，这时就会根据匹配优先级来选择实际处理的server块。</li>
+<li><strong>location:</strong><br>语法:location[=|~|~*|^~|@] /uri/ {…}<br>配置块:server<br>location会尝试根据用户请求中的URI来匹配上面的/uri表达式，如果可以匹配，就选择location {}块中的配置来处理用户请求。</li>
+</ul>
+</li>
+<li><p><strong>文件路径的定义:</strong></p>
+<ul>
+<li><strong>以root方式设置资源路径:</strong><br>语法:root path<br>默认:root html<br>配置块:http，server，location，if<br>例如，定义资源文件相对于HTTP请求的根目录。<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location <span class="regexp">/download/</span> &#123;</span><br><span class="line">    root <span class="regexp">/opt/</span>web<span class="regexp">/html/</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在上面配置中，如果有一个请求的URI是/download/index/test.html，那么web服务器将会返回服务器上/opt/web/html/download/index/test.html</p>
+<ul>
+<li><strong>访问首页:</strong><br>语法:index file …;<br>默认:index index.html;<br>配置块:http,server,location<br>有时访问站点的URI是/，这时一般返回网站的首页。这里用ngx_http_index_module模块提供的index配置实现。index后可以跟多个文件参数，Nginx将会按照顺序来访问这些文件，例如:<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">location</span> / &#123;</span><br><span class="line">   root path;</span><br><span class="line">   <span class="keyword">index</span> /<span class="keyword">index</span>.html /html/inde.php /<span class="keyword">index</span>.php</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>接受到请求后，Nginx首先会尝试访问path/index.php文件，如果可以访问，就直接返回文件内容结束请求，否则再试图返回path/html/index.php的内容，依此类推。</p>
+<ul>
+<li><strong>网络连接的设置:</strong><ul>
+<li><strong>读取HTTP头部的超时时间:</strong><br>语法:client_header_timeout time (默认单位:秒)<br>默认:client_header_timeout 60;<br>配置块:http, server, location<br>客户端与服务器建立连接后将开始接收HTTP头部，在这个过程中，如果在一个时间间隔内没有读取到客户端发来的字节，则认为超时，并向客户端返回408(“Rquest timed out”)响应。</li>
+<li><strong>读取HTTP头部的超时时间:</strong><br>语法:client_body_timeout time (默认单位:秒)<br>默认:client_body_timeout 60;<br>配置块:http, server, location<br>此配置项与client_header_timeout相似，只是这个超时时间只在读取HTTP包体时才有效。</li>
+<li><strong>发送响应的超时时间:</strong><br>语法:send_timeout time;<br>默认:send_timeout 60;<br>这个超时时间时发送响应的超时时间，即Nginx服务器向客户端发送了数据包，但客户端一直没有去接收这个数据包。如果某个连接超过send_timeout定义的超时时间，那么Nginx将会关闭这个连接。</li>
+<li><strong>keepalive超时时间:</strong><br>语法:keepalive_timeout time (默认单位:秒)<br>默认:keepalive_timeout 75<br>配置块:http, server, location<br>一个keepalive_timeout连接在闲置超过一段时间后，服务器和浏览器都会去关闭这个连接。当然，keepalive_timeout配置项是用来约束Nginx服务器的，Nginx也会按照规范把这个时间传个浏览器，但每个浏览器对待keepalive的策略有可能是不同的。<h4 id="4-配置一个静态web服务器"><a href="#4-配置一个静态web服务器" class="headerlink" title="4.配置一个静态web服务器:"></a>4.配置一个静态web服务器:</h4>nginx的默认配置就是一个静态web服务器，启动后可以直接访问，配置文件如下:<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">worker_processes  1;</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line">   <span class="built_in"> server </span>&#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">        location / &#123;</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">```  </span><br><span class="line"><span class="comment">#### 5.给Nginx的access log添加唯一的request id字段:</span></span><br><span class="line">- *<span class="number">*1</span>.下载uuid-perl模块:**</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>wget <a href="http://mirror.centos.org/centos/7/os/x86_64/Packages/uuid-perl-1.6.2-26.el7.x86_64.rpm" target="_blank" rel="noopener">http://mirror.centos.org/centos/7/os/x86_64/Packages/uuid-perl-1.6.2-26.el7.x86_64.rpm</a><br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">- </span>*<span class="strong">*2.yum安装上面下载的rpm包，自动解决依赖:*</span><span class="strong">*</span></span><br></pre></td></tr></table></figure></p>
+<p>yum install uuid-perl-1.6.2-26.el7.x86_64.rpm<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby"> **<span class="number">3</span>.重新编译ngixn，添加perl模块<span class="symbol">:**</span></span></span><br><span class="line"><span class="ruby"> 首先安装perl依赖库，要不然报错<span class="symbol">:</span></span></span><br></pre></td></tr></table></figure></p>
+<p> sudo yum install -y perl-devel perl-ExtUtils-Embed<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">然后配置编译参数，执行configure生成<span class="string">makfile:</span></span><br></pre></td></tr></table></figure></p>
+<p> ./configure –with-http_ssl_module –with-http_stub_status_module –with-http_gzip_static_module –with-debug –with-http_perl_module<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby"> **<span class="number">4</span>.修改nginx配置文件<span class="symbol">:**</span></span></span><br><span class="line"><span class="ruby"> ![](./<span class="number">1488432652846</span>.png)</span></span><br><span class="line"><span class="ruby">- **<span class="number">5</span>.重新加载配置文件即可生效<span class="symbol">:**</span></span></span><br></pre></td></tr></table></figure></p>
+<p> sbin/nginx -s reload<br>```</p>
+<ul>
+<li><strong>6.效果如下:</strong><br><img src="./1488432839394.png" alt=""></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Nginx/" rel="tag"># Nginx</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/23/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/03/在字符串列表中找出与s最长前缀匹配的字符串/" rel="prev" title="在字符串列表中找出与s最长前缀匹配的字符串">
+                在字符串列表中找出与s最长前缀匹配的字符串 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div id="gitalk-container"></div>
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">haohao</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap. Show me the code.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qhh0205" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/qianghaohao" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://my.oschina.net/bufferoverflow" target="_blank" title="开源中国">
+                      
+                        <i class="fa fa-fw fa-globe"></i>开源中国</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:qhh0205@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Nginx入门指南"><span class="nav-number">1.</span> <span class="nav-text">Nginx入门指南</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-运行中的Nginx进程间的关系"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">1.运行中的Nginx进程间的关系:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Nginx配置中的通用语法"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">2.Nginx配置中的通用语法:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-一个静态Web服务器常用的配置"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">3.一个静态Web服务器常用的配置:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-配置一个静态web服务器"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">4.配置一个静态web服务器:</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">haohao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="/js/src/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '3840ba8c8d80c18be7e3',
+          clientSecret: '1b00f2efe5285973c24da9ed9ac895775eacc8ea',
+          repo: 'qhh0205.github.io',
+          owner: 'qhh0205',
+          admin: ['qhh0205'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+    </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

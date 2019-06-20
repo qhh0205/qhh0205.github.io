@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Talk is cheap. Show me the code.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="qhh.me">
+<meta property="og:url" content="http://yoursite.com/page/6/index.html">
+<meta property="og:site_name" content="qhh.me">
+<meta property="og:description" content="Talk is cheap. Show me the code.">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="qhh.me">
+<meta name="twitter:description" content="Talk is cheap. Show me the code.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/page/6/"/>
+
+
+
+
+
+  <title>qhh.me</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left 
+  page-home">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">qhh.me</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Talk is cheap. Show me the code.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/Google-Kubernetes-Engine-GKE-使用初探/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/14/Google-Kubernetes-Engine-GKE-使用初探/" itemprop="url">Google Kubernetes Engine(GKE) 使用初探</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T23:37:23+08:00">
+                2018-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Google-Cloud-Platform/" itemprop="url" rel="index">
+                    <span itemprop="name">Google Cloud Platform</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Google 的 k8s 在 2017 年已经从容器编排领域的竞争中取得主导地位，从 Docker 之前的一度排挤到最终完全拥抱 k8s，显然 k8s 已经成了目前业界的标准。但是到目前为止能提供 k8s 完全托管服务的云服务商少之又少，即便是目前在云提供商有统治力的 AWS 也没有完全提供 k8s 托管服务，仅仅提供有限的定制服务，在这一方面并不成熟。然而 Google 的 k8s 托管服务，即 GKE，却将 k8s 托管服务做到了极致（至少目前看来），不仅提供了全套的 k8s 托管服务，更引人注目的是 Google 已然将 Autoscaler 和 k8s 集成，实现了 k8s 节点的自动伸缩机制，能根据 pod 的需求自动化添加或删除节点，当现有节点无法承载新的服务时会自动添加节点来满足需求，当现有节点足够空闲时会启用调节机制自动化收缩节点，从某种意义上来说这几乎做到了无服务器的理念。然而这也许只是冰山一角，更多强大的功能还需要进一步探索，本文只是一个入门指南，主要指导能快速开始上手基于 Google Cloud Platform 的 GKE 服务（k8s 托管服务）。</p>
+<h3 id="GKE-入门指南"><a href="#GKE-入门指南" class="headerlink" title="GKE 入门指南"></a>GKE 入门指南</h3><p>接下来我们一步步指引如何使用 GKE 来部署服务，前提是对 k8s 有所了解，能简单使用 kubectl 命令。</p>
+<ol>
+<li>安装并配置 Google Cloud SDK<br>Google Cloud SDK 是 访问 GCP(Google Cloud Platform) 平台各种资源的命令行工具集，类似 aws 的 aws 命令行工具。<br>安装和配置就不多说了，点击下面链接选择相应操作系统版本的 tar 包下载，然后解压，在 PATH 环境变量中添加 <code>google-cloud-sdk/bin</code> 即可：<br><a href="https://cloud.google.com/sdk/?hl=zh-cn" target="_blank" rel="noopener">https://cloud.google.com/sdk/?hl=zh-cn</a></li>
+<li>初始化 Google Cloud SDK<br>初始化 Google Cloud SDK 是将 <code>gcloud</code>  命令和 Google 账号绑定起来并设置一些其他的默认值，比如区域，代理，账号，项目（Google 账号中新建的项目）之类的。在执行 <code>gcloud init</code> 初始化之前得先给 <code>gcloud</code> 配置 HTTP 代理（GFW 你懂得），具体配置见我之前<a href="https://blog.csdn.net/qianghaohao/article/details/79942485" target="_blank" rel="noopener">这篇文章</a>。然后执行 <code>gcloud init</code> 完成初始化，直接根据向导来即可。</li>
+<li>到 Google Cloud Platform 控制台建一个 k8s 集群，记住名称<br><img src="/images/gke1.png" alt=""></li>
+<li>安装 gcloud kubectl 组件<br><code>gcloud components install kubectl</code></li>
+<li>获取群集的身份验证凭据<br>创建群集后，您需要获取身份验证凭据以与群集进行交互。要为集群进行身份验证，请运行以下命令：<br><code>gcloud container clusters get-credentials &lt;上一步创建的集群名称&gt;</code></li>
+<li>接下来部署一个简单的 <code>hello-server</code> 服务到 GKE<br><code>kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080</code></li>
+</ol>
+<h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><p><a href="https://cloud.google.com/kubernetes-engine/docs/quickstart" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/quickstart</a><br><a href="https://cloud.google.com/sdk/docs/quickstart-macos?hl=zh-cn" target="_blank" rel="noopener">https://cloud.google.com/sdk/docs/quickstart-macos?hl=zh-cn</a></p>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="gloud-常用命令"><a href="#gloud-常用命令" class="headerlink" title="gloud 常用命令"></a>gloud 常用命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gcloud auth login --no-launch-browser <span class="comment"># gcloud 登录认证</span></span><br><span class="line">gcloud config <span class="built_in">set</span> compute/zone [COMPUTE_ZONE] <span class="comment"># 设置默认区域</span></span><br><span class="line">gcloud components list <span class="comment"># 列出可安装组件</span></span><br><span class="line">gcloud components install [组件名称] <span class="comment"># 安装组件</span></span><br><span class="line">gcloud components update  <span class="comment"># 更新所有已安装组件</span></span><br><span class="line">gcloud components remove [组件名称] <span class="comment"># 卸载已安装组件</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置-gcloud-http-代理"><a href="#设置-gcloud-http-代理" class="headerlink" title="设置 gcloud http 代理"></a>设置 gcloud http 代理</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcloud config <span class="built_in">set</span> proxy/<span class="built_in">type</span> http</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/address 127.0.0.1</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/port 1087</span><br></pre></td></tr></table></figure>
+<h4 id="设置集群-docker-私服认证："><a href="#设置集群-docker-私服认证：" class="headerlink" title="设置集群 docker 私服认证："></a>设置集群 docker 私服认证：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret docker-registry regcred --docker-server=&lt;your-registry-server&gt; --docker-username=&lt;your-name&gt; --docker-password=&lt;your-pword&gt; --docker-email=&lt;your-email&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：设置 docker 私服后，要在 GKE 部署 k8s 服务，必须得在 k8s 资源文件（yaml 格式）中的 container<br>同一级指定 imagePullSecrets 键，要不然仍然无法拉取配置的私服的镜像，示例文件如下：<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">private-reg</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">private-reg-container</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">&lt;your-private-image&gt;</span></span><br><span class="line"><span class="attr">  imagePullSecrets:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">regcred</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="查看集群-docker-私服配置："><a href="#查看集群-docker-私服配置：" class="headerlink" title="查看集群 docker 私服配置："></a>查看集群 docker 私服配置：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret regcred --output=yaml      <span class="comment">#base64 格式 显示</span></span><br><span class="line">kubectl get secret regcred --output=<span class="string">"jsonpath=&#123;.data.\.dockerconfigjson&#125;"</span> | base64 -d <span class="comment"># base64 解密后内容</span></span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/配置-gcloud-使用-Shadowsocks-HTTP-代理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/14/配置-gcloud-使用-Shadowsocks-HTTP-代理/" itemprop="url">配置 gcloud 使用 Shadowsocks HTTP 代理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T17:06:55+08:00">
+                2018-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Google-Cloud-Platform/" itemprop="url" rel="index">
+                    <span itemprop="name">Google Cloud Platform</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="配置-gcloud-使用-Shadowsocks-HTTP-代理"><a href="#配置-gcloud-使用-Shadowsocks-HTTP-代理" class="headerlink" title="配置 gcloud 使用 Shadowsocks HTTP 代理"></a>配置 gcloud 使用 Shadowsocks HTTP 代理</h2><h3 id="1-问题描述"><a href="#1-问题描述" class="headerlink" title="1. 问题描述"></a>1. 问题描述</h3><p>最近在使用 <a href="https://cloud.google.com/sdk/?hl=zh-cn" target="_blank" rel="noopener">gcloud</a> 访问 <a href="https://cloud.google.com/?hl=zh-cn" target="_blank" rel="noopener">gcp(Google Cloud Platform)</a> 的资源，但是由于 GFW 的原因必须得配个 HTTP 代理才能访问。虽然之前装个 Shadowsock-X 可以突破 GFW 用浏览器访问 Google，但是 Shadowsock-X 默认只开启 SOCKS 代理，并没有提供 HTTP 代理。为了让 shadowsocks 开启 HTTP 代理，必须得想一些办法了，要不然没法工作了。。。</p>
+<h3 id="2-解决问题"><a href="#2-解决问题" class="headerlink" title="2. 解决问题"></a>2. 解决问题</h3><p>经过一番 google，取而代之的是使用 <a href="https://github.com/shadowsocks/ShadowsocksX-NG/releases" target="_blank" rel="noopener">Shadowsocks-NG</a> 客户端，其实就是 <a href="https://github.com/shadowsocks/shadowsocks/wiki/Ports-and-Clients#os-x" target="_blank" rel="noopener">Shadowsocks-X</a> 的升级版，有了更多丰富的功能，最主要的是该客户端启动后默认就开启了 HTTP 代理，可以直接供 gcloud 等命令行工具使用。具体配置 gcloud 使用 Shadowsocks-NG http 代理的方法如下：</p>
+<ol>
+<li>点击如下链接下载并安装 Shadowsocks-NG：<br><a href="https://github.com/shadowsocks/ShadowsocksX-NG/releases" target="_blank" rel="noopener">https://github.com/shadowsocks/ShadowsocksX-NG/releases</a></li>
+<li><p>启动 Shadowsocks-NG，填入 shadowsocks 服务端 ip，端口，加密方式等信息<br>注意：不能勾选<code>启用 OTA（被启用）</code>复选框<br><img src="/images/ss-1.png" alt=""></p>
+</li>
+<li><p>获取 HTTP 代理的 IP 和端口<br>点击<code>偏好设置</code>查看 HTTP 代理 IP 及端口：<br><img src="/images/ss-2.png" alt=""><br><img src="/images/ss-3.png" alt=""></p>
+</li>
+<li><p>设置 gcloud HTTP 代理<br>使用如下命令设置上一步获取的 Shadowsocks-NG HTTP 代理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcloud config <span class="built_in">set</span> proxy/<span class="built_in">type</span> http</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/address 127.0.0.1</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/port 1087</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接下来就可以畅通无阻地访问 google 云平台资源了</p>
+</li>
+</ol>
+<h3 id="3-相关链接"><a href="#3-相关链接" class="headerlink" title="3. 相关链接"></a>3. 相关链接</h3><p><a href="https://www.stefanwienert.de/blog/2018/01/21/shadowsocks-quick-guide-for-restricted-internet-environments/" target="_blank" rel="noopener">https://www.stefanwienert.de/blog/2018/01/21/shadowsocks-quick-guide-for-restricted-internet-environments/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/25/hexo-next-主题配置gitalk评论-爬坑记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/25/hexo-next-主题配置gitalk评论-爬坑记/" itemprop="url">hexo-next-主题配置gitalk评论-爬坑记</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-25T21:45:34+08:00">
+                2018-03-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h4><p>本文主要记录了我在配置 <a href="https://hexo.io/zh-cn/index.html" target="_blank" rel="noopener">Hexo</a> 博客 <a href="https://github.com/gitalk/gitalk" target="_blank" rel="noopener">gitalk</a> 评论功能时踩过的坑到最终爬出坑的过程，本教程献给打算给 Hexo 博客配置 gitalk 评论的小白朋友们（当然我也是 QAQ），避免再次踩同样的坑。本教程比较特殊，网上很多关于 gitalk 的教程，我就懒的再写一遍了，所以就将我在配置过程中提的 <a href="https://github.com/gitalk/gitalk/issues/115#event-1539518527" target="_blank" rel="noopener">issue #115</a> 直接导出成 pdf 并嵌入文章，跟着该 <a href="https://github.com/gitalk/gitalk/issues/115#event-1539518527" target="_blank" rel="noopener">issue #115</a> 做一遍即可完成 Hexo Next 主题 gitalk 评论功能的配置，教程如下：</p>
+<p><iframe src="/pdf/hexo-next-主题配置gitalk评论-爬坑记.pdf" style="width:100%; height:800px"></iframe></p>
+<h4 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h4><p>感谢 Github 社区广大极客们的帮助，特别感谢 <a href="https://github.com/iochen" target="_blank" rel="noopener">@iochen</a> 这位大哥的帮助！</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/Python-两大环境管理神器：pyenv-和-virtualenv/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/24/Python-两大环境管理神器：pyenv-和-virtualenv/" itemprop="url">Python 两大环境管理神器：pyenv 和 virtualenv</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T20:01:08+08:00">
+                2018-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><hr>
+<p><a href="https://github.com/pyenv/pyenv" target="_blank" rel="noopener">pyenv</a> 是一个开源的 Python 版本管理工具，可以轻松地给系统安装任意 Python 版本，想玩哪个版本，瞬间就可以切换。有了 <code>pyenv</code>，我们不需要再为系统多版本 Python 共存问题而发愁，也不用为手动编译安装其他 Python 版本而浪费时间，只需要执行一条简单的命令就可以切换并使用任何其他版本，该工具真正地做到了开箱即用，简单实用。</p>
+<p><a href="https://github.com/pypa/virtualenv" target="_blank" rel="noopener">virtualenv</a> 是一个用来创建完全隔离的 Python 虚拟环境的工具，可以为每个项目工程创建一套独立的 Python 环境，从而可以解决不同工程对 Python 包，或者版本的依赖问题。假如有 A 和 B 两个工程，A 工程代码要跑起来需要 <code>requests 1.18.4</code>，而 B 工程跑起来需要 <code>requests 2.18.4</code>，这样在一个系统中就无法满足两个工程同时运行问题了。最好的解决办法是用 <code>virtualenv</code> 给每个工程创建一个完全隔离的 Python 虚拟环境，给每个虚拟环境安装相应版本的包，让程序使用对应的虚拟环境运行即可。这样既不影响系统 Python 环境，也能保证任何版本的 Python 程序可以在同一系统中运行。</p>
+<p><strong>最佳实践：</strong>使用 <code>pyenv</code> 安装任何版本的 Python，然后用 <code>virtualenv</code> 创建虚拟环境时指定需要的 Python 版本路径，这样就可以创建任何版本的虚拟环境，这样的实践真是极好的！</p>
+<h4 id="pyenv-的安装及使用"><a href="#pyenv-的安装及使用" class="headerlink" title="pyenv 的安装及使用"></a>pyenv 的安装及使用</h4><hr>
+<h4 id="1-安装"><a href="#1-安装" class="headerlink" title="1. 安装"></a>1. 安装</h4><ul>
+<li><p>将 <code>pyenv</code> 安装到 <code>~/.pyenv</code> 目录（当然你可以安装到任意其他路径）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/yyuu/pyenv.git ~/.pyenv</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置环境变量（我的 Shell 是 zsh，如果是 bash，请添加到 <code>~/.bashrc</code>）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'export PYENV_ROOT="$HOME/.pyenv"'</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'export PATH="$PYENV_ROOT/bin:$PATH"'</span> &gt;&gt; ~/.zshrc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加 <code>pyenv</code> 初始化（我的 Shell 是 zsh，如果是 bash，请添加到 <code>~/.bashrc</code>）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'eval "$(pyenv init -)"'</span> &gt;&gt; ~/.zshrc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使当前 Shell 配置生效，完成安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exec</span> <span class="variable">$SHELL</span></span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="2-使用"><a href="#2-使用" class="headerlink" title="2. 使用"></a>2. 使用</h4><ul>
+<li><p>查看有哪些 Python 版本可以安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyenv install --list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装某个 Python 版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyenv install -v 3.6.4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看当前 Python 版本情况（<code>*</code> 表示系统当前的 Python 版本，<code>system</code>表示系统初始版本）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv versions</span><br><span class="line">  system</span><br><span class="line">  2.6.7</span><br><span class="line">* 3.6.4 (<span class="built_in">set</span> by /Users/haohao/.pyenv/version)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换 Python 版本（切换之后查看当前版本）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv global 3.6.4</span><br><span class="line">$ pyenv versions</span><br><span class="line">  system</span><br><span class="line">* 3.6.4 (<span class="built_in">set</span> by /Users/haohao/.pyenv/version)</span><br><span class="line">$ python -V</span><br><span class="line">Python 3.6.4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>卸载某个 Python 版本</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">pyenv</span> <span class="selector-tag">uninstall</span> 3<span class="selector-class">.6</span><span class="selector-class">.4</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="virtualenv-的安装及使用"><a href="#virtualenv-的安装及使用" class="headerlink" title="virtualenv 的安装及使用"></a>virtualenv 的安装及使用</h4><hr>
+<h4 id="1-安装-1"><a href="#1-安装-1" class="headerlink" title="1. 安装"></a>1. 安装</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install virtualenv</span><br></pre></td></tr></table></figure>
+<h4 id="2-使用-1"><a href="#2-使用-1" class="headerlink" title="2. 使用"></a>2. 使用</h4><p>下面我们使用 <code>virtualenv</code> 创建一个完全隔离的 Python 虚拟环境：</p>
+<ol>
+<li><p>新建一个目录（一般用来用作工程路径）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir myproject</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入目录创建一个完全独立干净的虚拟环境<br>如果 <code>virtualenv</code> 后面不加任何参数，那么默认创建的虚拟环境的 Python 版本是系统当前版本，如果要创建其他版本，可以使用 <code>-p</code> 参数指定其他版本的 <code>python</code> 可执行文件路径。可执行文件可以在上一步安装的 <code>pyenv</code> 的 <code>~/.pyenv/versions</code> 路径找到，该路径是 <code>pyenv</code> 管理的所有 Python 版本路径。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用系统当前的 Python 版本创建虚拟环境</span></span><br><span class="line">$ virtualenv venv</span><br><span class="line">New python executable <span class="keyword">in</span> /Users/haohao/PycharmProjects/myproject/venv/bin/python</span><br><span class="line"><span class="comment"># 创建虚拟环境时指定 Python 版本</span></span><br><span class="line">$ virtualenv -p ~/.pyenv/versions/2.6.7/bin/python venv</span><br><span class="line">Running virtualenv with interpreter /Users/haohao/.pyenv/versions/2.6.7/bin/python</span><br><span class="line">New python executable <span class="keyword">in</span> /Users/haohao/PycharmProjects/myproject/venv/bin/python</span><br><span class="line">Installing setuptools&lt;37, pip, wheel&lt;0.30...done.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>激活创建的虚拟环境并使用<br>可以看出当前虚拟环境版本已经是 Python 2.6.7 了，而且所在路径确实是在上一步创建的虚拟环境路径。接下来使用 <code>pip</code> 安装的任何包都会安装在虚拟环境目录里面，不会安装在系统标准目录，从而保证当前环境是绝对干净的，对于系统是完全隔离的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> venv/bin/activate</span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/Users/haohao/PycharmProjects/myproject/venv/bin/python</span><br><span class="line">$ python -V</span><br><span class="line">Python 2.6.7</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>退出虚拟环境，回到系统版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ deactivate</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/19/Aws-Ec2-实例外挂-EBS-卷详细步骤/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/19/Aws-Ec2-实例外挂-EBS-卷详细步骤/" itemprop="url">Aws Ec2 实例外挂 EBS 卷详细步骤</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-19T23:11:18+08:00">
+                2018-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AWS/" itemprop="url" rel="index">
+                    <span itemprop="name">AWS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ol>
+<li>附加新建的卷到 ec2 实例（这一步在 aws 控制台进行）；</li>
+<li>对附加的卷分区（在这里分一个区）：<br><code>fdisk 设备名</code> （ex:  <code>/dev/xvdb</code>）<br>m<br>n<br>p<br>w</li>
+<li>给分区初始化文件系统（在这里写入 ext4 文件系统）：<br><code>mkfs.ext4 分区标识</code>（ex: <code>/dev/xvdb1</code>）<br>举例：<code>mkfs.ext4 /dev/xvdb1</code></li>
+<li>执行 <code>mount</code> 命令挂载分区到指定目录：<br><code>mount 分区标识</code>（ex: <code>/dev/xvdb1</code>） <code>挂载目录</code><br>举例：<code>mount /dev/xvdb1 /data</code></li>
+<li>设置开机自动挂载：<br><code>vim /etc/fstab</code> # 文件追加如下一行内容<br><code>分区标识（ex:/dev/xvdb1）挂载目录 文件系统类型 defaults 1 2</code><br>举例：<code>/dev/xvdb1 /data  ext4    defaults    1  2</code></li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/19/Python-Plumbum-简介（翻译）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/19/Python-Plumbum-简介（翻译）/" itemprop="url">Python Plumbum 简介（翻译）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-19T09:00:46+08:00">
+                2018-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/翻译/" itemprop="url" rel="index">
+                    <span itemprop="name">翻译</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>说明：本文翻译自 <a href="https://plumbum.readthedocs.io/en/latest/" target="_blank" rel="noopener">Plumbum 官网主页</a>，对少量不太重要的内容进行了缩减。</p>
+</blockquote>
+<h4 id="Plumbum：Shell-组合器"><a href="#Plumbum：Shell-组合器" class="headerlink" title="Plumbum：Shell 组合器"></a>Plumbum：Shell 组合器</h4><hr>
+<blockquote>
+<p>你是否曾希望将 shell 脚本紧凑地融入到<strong>真正</strong>的编程语言里面？向 <em>Plumbum Shell Combinators</em> 问好。Plumbum （lead 的拉丁语，以前用来制作管道）是一个小型但功能丰富的 Python 类 shell 脚本程序库。该库的理念是 “<strong>永远不要再写 shell 脚本</strong>”，因此它试图合理地模仿 shell 语法（shell 组合器），同时保持 <strong>Python 特性和跨平台</strong>。</p>
+<p>除了<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands" target="_blank" rel="noopener">类似 shell 的语法</a>和<a href="https://plumbum.readthedocs.io/en/latest/utils.html#guide-utils" target="_blank" rel="noopener">便捷的快捷方式</a>之外，该库还提供本地和<a href="https://plumbum.readthedocs.io/en/latest/remote.html#guide-remote-commands" target="_blank" rel="noopener">远程</a>命令执行（通过 SSH）、本地和远程文件系统<a href="https://plumbum.readthedocs.io/en/latest/paths.html#guide-paths" target="_blank" rel="noopener">路径</a>、简单的工作目录和环境<a href="https://plumbum.readthedocs.io/en/latest/local_machine.html#guide-local-machine" target="_blank" rel="noopener">操作</a>、快捷访问 ANSI 颜色，以及<a href="https://plumbum.readthedocs.io/en/latest/cli.html#guide-cli" target="_blank" rel="noopener">编程命令行接口（CLI）</a>应用程序工具包。现在让我们看一些代码！</p>
+</blockquote>
+<h4 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h4><hr>
+<p><em>略。。。</em></p>
+<h4 id="备忘录"><a href="#备忘录" class="headerlink" title="备忘录"></a>备忘录</h4><hr>
+<h5 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum <span class="keyword">import</span> local</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ls = local[<span class="string">"ls"</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ls</span><br><span class="line">LocalCommand(&lt;LocalPath /bin/ls&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ls()</span><br><span class="line"><span class="string">u'build.py\ndist\ndocs\nLICENSE\nplumbum\nREADME.rst\nsetup.py\ntests\ntodo.txt\n'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>notepad = local[<span class="string">"c:\\windows\\notepad.exe"</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>notepad()                                   <span class="comment"># Notepad window pops up</span></span><br><span class="line"><span class="string">u''</span>                                             <span class="comment"># Notepad window is closed by user, command returns</span></span><br></pre></td></tr></table></figure>
+<p>不需要为每个你想使用的命令写 <code>xxx = local[&quot;xxx&quot;]</code>，你可以<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#import-hack" target="_blank" rel="noopener">导入命令行</a>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum.cmd <span class="keyword">import</span> grep, wc, cat, head</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>grep</span><br><span class="line">LocalCommand(&lt;LocalPath /bin/grep&gt;)</span><br></pre></td></tr></table></figure></p>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands" target="_blank" rel="noopener">本地命令行</a> 。</p>
+<h5 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>chain = ls[<span class="string">"-a"</span>] | grep[<span class="string">"-v"</span>, <span class="string">"\\.py"</span>] | wc[<span class="string">"-l"</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> chain</span><br><span class="line">/bin/ls -a | /bin/grep -v <span class="string">'\.py'</span> | /usr/bin/wc -l</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>chain()</span><br><span class="line"><span class="string">u'13\n'</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-pipelining" target="_blank" rel="noopener">管道</a>。</p>
+<h5 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>((cat &lt; <span class="string">"setup.py"</span>) | head[<span class="string">"-n"</span>, <span class="number">4</span>])()</span><br><span class="line"><span class="string">u'#!/usr/bin/env python\nimport os\n\ntry:\n'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(ls[<span class="string">"-a"</span>] &gt; <span class="string">"file.list"</span>)()</span><br><span class="line"><span class="string">u''</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(cat[<span class="string">"file.list"</span>] | wc[<span class="string">"-l"</span>])()</span><br><span class="line"><span class="string">u'17\n'</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-redir" target="_blank" rel="noopener">输入/输出重定向</a>。</p>
+<h5 id="工作目录操作"><a href="#工作目录操作" class="headerlink" title="工作目录操作"></a>工作目录操作</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>local.cwd</span><br><span class="line">&lt;Workdir /home/tomer/workspace/plumbum&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> local.cwd(local.cwd / <span class="string">"docs"</span>):</span><br><span class="line"><span class="meta">... </span>    chain()</span><br><span class="line">...</span><br><span class="line"><span class="string">u'15\n'</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/paths.html#guide-paths" target="_blank" rel="noopener">路径</a>和<a href="https://plumbum.readthedocs.io/en/latest/local_machine.html#guide-local-machine" target="_blank" rel="noopener">本地对象</a> 。</p>
+<h5 id="前台后和后台执行"><a href="#前台后和后台执行" class="headerlink" title="前台后和后台执行"></a>前台后和后台执行</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum <span class="keyword">import</span> FG, BG</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(ls[<span class="string">"-a"</span>] | grep[<span class="string">"\\.py"</span>]) &amp; FG         <span class="comment"># The output is printed to stdout directly</span></span><br><span class="line">build.py</span><br><span class="line">.pydevproject</span><br><span class="line">setup.py</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(ls[<span class="string">"-a"</span>] | grep[<span class="string">"\\.py"</span>]) &amp; BG         <span class="comment"># The process runs "in the background"</span></span><br><span class="line">&lt;Future [<span class="string">'/bin/grep'</span>, <span class="string">'\\.py'</span>] (running)&gt;</span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-bgfg" target="_blank" rel="noopener">前台和后台</a>。</p>
+<h5 id="命令行嵌套"><a href="#命令行嵌套" class="headerlink" title="命令行嵌套"></a>命令行嵌套</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum.cmd <span class="keyword">import</span> sudo</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> sudo[ifconfig[<span class="string">"-a"</span>]]</span><br><span class="line">/usr/bin/sudo /sbin/ifconfig -a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(sudo[ifconfig[<span class="string">"-a"</span>]] | grep[<span class="string">"-i"</span>, <span class="string">"loop"</span>]) &amp; FG</span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:<span class="number">16436</span>  Metric:<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-nesting" target="_blank" rel="noopener">命令行嵌套</a>。</p>
+<h5 id="远程命令（通过-SSH）"><a href="#远程命令（通过-SSH）" class="headerlink" title="远程命令（通过 SSH）"></a>远程命令（通过 SSH）</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum <span class="keyword">import</span> SshMachine</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>remote = SshMachine(<span class="string">"somehost"</span>, user = <span class="string">"john"</span>, keyfile = <span class="string">"/path/to/idrsa"</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>r_ls = remote[<span class="string">"ls"</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> remote.cwd(<span class="string">"/lib"</span>):</span><br><span class="line"><span class="meta">... </span>    (r_ls | grep[<span class="string">"0.so.0"</span>])()</span><br><span class="line">...</span><br><span class="line"><span class="string">u'libusb-1.0.so.0\nlibusb-1.0.so.0.0.0\n'</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/remote.html#guide-remote" target="_blank" rel="noopener">远程</a>。</p>
+<h5 id="CLI-应用程序"><a href="#CLI-应用程序" class="headerlink" title="CLI 应用程序"></a>CLI 应用程序</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">from</span> plumbum <span class="keyword">import</span> cli</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCompiler</span><span class="params">(cli.Application)</span>:</span></span><br><span class="line">    verbose = cli.Flag([<span class="string">"-v"</span>, <span class="string">"--verbose"</span>], help = <span class="string">"Enable verbose mode"</span>)</span><br><span class="line">    include_dirs = cli.SwitchAttr(<span class="string">"-I"</span>, list = <span class="keyword">True</span>, help = <span class="string">"Specify include directories"</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @cli.switch("-loglevel", int)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set_log_level</span><span class="params">(self, level)</span>:</span></span><br><span class="line">        <span class="string">"""Sets the log-level of the logger"""</span></span><br><span class="line">        logging.root.setLevel(level)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(self, *srcfiles)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Verbose:"</span>, self.verbose</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Include dirs:"</span>, self.include_dirs</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Compiling:"</span>, srcfiles</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    MyCompiler.run()</span><br></pre></td></tr></table></figure>
+<p>输出样例<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ python simple_cli.py -v -I foo/bar -Ispam/eggs x.cpp y.cpp z.cpp</span><br><span class="line">Verbose: <span class="keyword">True</span></span><br><span class="line">Include dirs: [<span class="string">'foo/bar'</span>, <span class="string">'spam/eggs'</span>]</span><br><span class="line">Compiling: (<span class="string">'x.cpp'</span>, <span class="string">'y.cpp'</span>, <span class="string">'z.cpp'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/cli.html#guide-cli" target="_blank" rel="noopener">命令行应用程序</a>。</p>
+<h5 id="颜色和风格"><a href="#颜色和风格" class="headerlink" title="颜色和风格"></a>颜色和风格</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> plumbum <span class="keyword">import</span> colors</span><br><span class="line"><span class="keyword">with</span> colors.red:</span><br><span class="line">    print(<span class="string">"This library provides safe, flexible color access."</span>)</span><br><span class="line">    print(colors.bold | <span class="string">"(and styles in general)"</span>, <span class="string">"are easy!"</span>)</span><br><span class="line">print(<span class="string">"The simple 16 colors or"</span>,</span><br><span class="line">      colors.orchid &amp; colors.underline | <span class="string">'256 named colors,'</span>,</span><br><span class="line">      colors.rgb(<span class="number">18</span>, <span class="number">146</span>, <span class="number">64</span>) | <span class="string">"or full rgb colors"</span> ,</span><br><span class="line">      <span class="string">'can be used.'</span>)</span><br><span class="line">print(<span class="string">"Unsafe "</span> + colors.bg.dark_khaki + <span class="string">"color access"</span> + colors.bg.reset + <span class="string">" is available too."</span>)</span><br></pre></td></tr></table></figure>
+<p>输出样例<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">This library provides safe color access.</span><br><span class="line">Color (<span class="keyword">and</span> styles <span class="keyword">in</span> general) are easy!</span><br><span class="line">The<span class="built_in"> simple </span>16 colors, 256 named colors, <span class="keyword">or</span> full hex colors can be used.</span><br><span class="line">Unsafe color access is available too.</span><br></pre></td></tr></table></figure></p>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/colors.html#guide-colors" target="_blank" rel="noopener">颜色</a>。</p>
+<h4 id="开发和安装"><a href="#开发和安装" class="headerlink" title="开发和安装"></a>开发和安装</h4><hr>
+<p>该库在 <a href="https://github.com/tomerfiliba/plumbum" target="_blank" rel="noopener">Github</a> 上开发，非常乐意接受来自用户的<a href="https://help.github.com/send-pull-requests/" target="_blank" rel="noopener">补丁</a>。请使用 GitHub 的内置 <a href="https://github.com/tomerfiliba/plumbum/issues" target="_blank" rel="noopener">issue 跟踪器</a>报告您遇到的任何问题或提出功能上的需求。该库在 <a href="https://github.com/tomerfiliba/plumbum/blob/master/LICENSE" target="_blank" rel="noopener">IMIT 许可</a>下发布。</p>
+<h5 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h5><p>Plumbum 支持 <strong>Python 2.6-3.6</strong> 和 <strong>PyPy</strong>，并且通过 <a href="https://travis-ci.org/tomerfiliba/plumbum" target="_blank" rel="noopener"><strong>Travis CI</strong></a> 和 <a href="https://ci.appveyor.com/project/HenrySchreiner/plumbum/branch/master" target="_blank" rel="noopener"><strong>Appveyor</strong></a> 持续地在 <strong>Linux</strong>，<strong>Mac</strong> 和 <strong>Windows</strong> 机器上测试。Plumbum 在任何类 Unix 的机器都应该可以正常工作，除了 Windows，你也许需要安装一个合适的 <a href="https://www.wikiwand.com/en/Coreutils" target="_blank" rel="noopener"><strong>coreutils</strong></a> 环境并把其加入到你的<code>PATH</code>环境变量中。我推荐 <a href="http://mingw.org/" target="_blank" rel="noopener"><strong>mingw</strong></a>（与 <a href="http://msysgit.github.io/" target="_blank" rel="noopener"><strong>Windows Git</strong></a> 捆绑在一起），但是 <a href="http://www.cygwin.com/" target="_blank" rel="noopener"><strong>cygwin</strong></a> 应该也可以。如果你仅仅是使用 Plumbum 代替 Popen 来运行 Windows 程序，那么就不需要 Unix 工具了。<br>注意远程命令的执行，需要一个 <strong>openSHH 兼容的</strong>客户端（同样与 <em>Windows Git</em> 捆绑在一起）和一个 bash 兼容的 shell，也需要在主机上有一个 coreutils 环境。</p>
+<h5 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h5><p>你可以在 <a href="https://pypi.python.org/pypi/plumbum#downloads" target="_blank" rel="noopener"><strong>Python Package Index</strong></a> （多种格式）下载该库，或者直接运行 <code>pip install plumbum</code>。如果你使用 Anaconda，你可以使用 <code>conda install -c conda-forge plumbum</code> 从 <code>conda-forge</code> 通道获取。</p>
+<h4 id="用户指南"><a href="#用户指南" class="headerlink" title="用户指南"></a>用户指南</h4><hr>
+<p>用户指南涵盖了 Plumbum 大部分功能，拥有大量的代码片段，你可以不用花多少时间即可开始使用。该指南逐渐介绍概念和”语法”，因此推荐你按照顺序阅读。一个<a href="https://plumbum.readthedocs.io/en/latest/quickref.html#guide-quickref" target="_blank" rel="noopener"><strong>有效的快速参考指南</strong></a>。<br><em>略。。。</em></p>
+<h4 id="API-参考"><a href="#API-参考" class="headerlink" title="API 参考"></a>API 参考</h4><hr>
+<p>API 参考（在库中通过 <em>docstrings</em> 生成的）涵盖了所有暴露的 API。注意，一些“高级的”功能和一些函数参数在用户指南中没有，因此在这种情况下你也许需要参考下 API 文档。<br><em>略。。。</em></p>
+<h4 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h4><hr>
+<p>Plumburn 最初的目的是让本地和远程程序轻松地执行，假设没有比老的 ssh 更时髦的东西了。在此基础上，设计了一个文件系统抽象层，以便能够无缝地处理本地和远程文件。<br>我有这个想法一段时间了，直到我必须要个给我当前工作的项目写一个构建脚本，我决定使用 shell 脚本，现在是实现它的时候了。Plumbum 诞生自 <code>Path</code> 类的片段和我为 <a href="http://rpyc.readthedocs.io/en/latest/" target="_blank" rel="noopener"><strong>RPyC</strong></a> 写的 <code>SshContext</code> 和 <code>SshTunnel</code> 类。<code>Path</code> 类是我为前面说的构建系统写的。当我将两者与 <em>shell 组合器</em>（因为 shell 脚本在这里确实有优势）组合在一起时，奇迹就发生了，便产生了Plumbun。</p>
+<h4 id="赞扬"><a href="#赞扬" class="headerlink" title="赞扬"></a>赞扬</h4><hr>
+<p>该项目受到了 <a href="https://github.com/amoffat" target="_blank" rel="noopener"><strong>Andrew Moffat</strong></a> 的 <strong>PBS</strong>（现在被称作 <a href="http://amoffat.github.io/sh/" target="_blank" rel="noopener"><strong>sh</strong></a>）启发，并且借用了他的一些思想（即像函数一样看待程序，导入命令行的技巧）。然而我感觉在 PBS 中有太多的魔力在继续，当我编写类 shell 程序时，语法不是我想要的。关于这个问题我联系了 Andrew，但是他想让 PBS 保持这种状态。除此之外，两个库走不同的方向，Plumbum 试图提供一种更合理的方法。<br>Plumbum 也向 <a href="https://github.com/vmalloc/" target="_blank" rel="noopener"><strong>Rotem Yaari</strong></a> 致敬，他为特定的目的建议了一个代号为 <code>pyplatform</code> 的库，但是从未实现过。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/18/shadowsocks-使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/18/shadowsocks-使用/" itemprop="url">shadowsocks 使用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-18T09:27:47+08:00">
+                2018-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/vpn/" itemprop="url" rel="index">
+                    <span itemprop="name">vpn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p><a href="https://github.com/shadowsocks/shadowsocks/blob/master/README.md" target="_blank" rel="noopener">https://github.com/shadowsocks/shadowsocks/blob/master/README.md</a></p>
+<h3 id="命令行启动"><a href="#命令行启动" class="headerlink" title="命令行启动"></a>命令行启动</h3><ul>
+<li>前台启动<br><code>sudo ssserver -p 443 -k password -m aes-256-cfb</code></li>
+<li>后台启动<br><code>sudo ssserver -p 443 -k password -m aes-256-cfb -d start</code></li>
+<li>停止<br><code>sudo ssserver -d stop</code></li>
+<li>查看日志<br><code>sudo less /var/log/shadowsocks.log</code></li>
+</ul>
+<h3 id="使用配置文件启动（墙裂推荐该方式）"><a href="#使用配置文件启动（墙裂推荐该方式）" class="headerlink" title="使用配置文件启动（墙裂推荐该方式）"></a>使用配置文件启动（墙裂推荐该方式）</h3><ul>
+<li><p>前台启动：<br><code>sudo ssserver -c /etc/shadowsocks.json</code></p>
+</li>
+<li><p>后台启动：<br><code>sudo ssserver -c /etc/shadowsocks.json -d start</code></p>
+</li>
+<li>停止服务：<br><code>sudo ssserver -c /etc/shadowsocks.json -d stop</code></li>
+</ul>
+<p><a href="https://github.com/shadowsocks/shadowsocks/wiki/Configuration-via-Config-File" target="_blank" rel="noopener">shadowsocks.json 配置文件格式</a></p>
+<p>配置文件示例（单服务器多账号配置）:<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"server"</span>:<span class="string">"0.0.0.0"</span>,</span><br><span class="line">    <span class="attr">"local_address"</span>: <span class="string">"127.0.0.1"</span>,</span><br><span class="line">    <span class="attr">"local_port："</span>:<span class="number">1080</span>,</span><br><span class="line">    <span class="attr">"port_password"</span>:&#123;</span><br><span class="line">      <span class="attr">"1851"</span>:<span class="string">"xxxx"</span>,</span><br><span class="line">      <span class="attr">"1852"</span>:<span class="string">"xxxx"</span>,</span><br><span class="line">      <span class="attr">"1853"</span>:<span class="string">"xxxx"</span>,</span><br><span class="line">      <span class="attr">"1854"</span>:<span class="string">"xxxx"</span>,</span><br><span class="line">      <span class="attr">"1855"</span>:<span class="string">"xxxx"</span>,</span><br><span class="line">      <span class="attr">"1856"</span>:<span class="string">"xxxx"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"timeout"</span>:<span class="number">300</span>,</span><br><span class="line">    <span class="attr">"method"</span>:<span class="string">"aes-256-cfb"</span>,</span><br><span class="line">    <span class="attr">"fast_open"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="故障排查"><a href="#故障排查" class="headerlink" title="故障排查"></a>故障排查</h3><p>如果 shadowsocks.json 配置文件中 server 字段配成公网IP，而不是 <code>0.0.0.0</code>，会报如下错误：</p>
+<p><code>socket.error: [Errno 99] Cannot assign requested address</code></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/18/我的-Mac-终端配置（Mac-OSX-iTerm2-Zsh-Oh-My-Zsh）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/18/我的-Mac-终端配置（Mac-OSX-iTerm2-Zsh-Oh-My-Zsh）/" itemprop="url">我的 Mac 终端配置（Mac OSX + iTerm2 + Zsh + Oh-My-Zsh）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-18T09:24:33+08:00">
+                2018-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mac/" itemprop="url" rel="index">
+                    <span itemprop="name">Mac</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>相关工具介绍</strong></p>
+<ol>
+<li><strong>iTerm2</strong>：Mac 下 Terminal 终端的替代品，拥有更多强大的功能，想了解更多请戳 <a href="https://www.iterm2.com/" target="_blank" rel="noopener">iTerm2 官网</a>；</li>
+<li><strong>zsh</strong>：Linux 的一种 shell 外壳，和 bash 属于同类产品；</li>
+<li><strong>Oh-My-Zsh</strong>：用来管理 zsh 的配置，同时还有很多社区贡献的主题配置以及好用的插件可供使用，了解更多请戳 <a href="http://ohmyz.sh/" target="_blank" rel="noopener">Oh-My-Zsh 官网</a> ；</li>
+</ol>
+<p><strong>配置方案总览</strong></p>
+<ol>
+<li><a href="https://www.iterm2.com/" target="_blank" rel="noopener">iTerm2</a> 终端工具；</li>
+<li>iTerm2 <a href="https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/schemes/Solarized%20Dark%20Higher%20Contrast.itermcolors" target="_blank" rel="noopener">Solarized Dark Higher Contrast 配色方案</a>；</li>
+<li><a href="https://github.com/supermarin/powerline-fonts" target="_blank" rel="noopener">Monaco for Powerline 字体</a>；</li>
+<li>zsh （Mac 系统自带，无需安装）；</li>
+<li><a href="http://ohmyz.sh/" target="_blank" rel="noopener">Oh-My-Zsh</a>；</li>
+<li><a href="https://github.com/bhilburn/powerlevel9k" target="_blank" rel="noopener">Oh-My-Zsh powerlevel9k 主题</a>；</li>
+</ol>
+<p><strong>最终效果：</strong><br><img src="https://gist.githubusercontent.com/qhh0205/5570934d25a627dd9e9629a8ceeb415c/raw/8f5b3e5ece35629f04fcf66fbc94338e730c3bcd/z-mac-terminal-config-sample1.png" alt="z-mac-terminal-config-sample1"><br><img src="https://gist.githubusercontent.com/qhh0205/5570934d25a627dd9e9629a8ceeb415c/raw/8f5b3e5ece35629f04fcf66fbc94338e730c3bcd/z-mac-terminal-config-sample2.png" alt="z-mac-terminal-config-sample2"><br><img src="https://gist.githubusercontent.com/qhh0205/5570934d25a627dd9e9629a8ceeb415c/raw/8f5b3e5ece35629f04fcf66fbc94338e730c3bcd/z-mac-terminal-config-sample3.png" alt="z-mac-terminal-config-sample3"></p>
+<h4 id="具体配置步骤"><a href="#具体配置步骤" class="headerlink" title="具体配置步骤"></a>具体配置步骤</h4><h5 id="1-安装-iTerm2-终端工具："><a href="#1-安装-iTerm2-终端工具：" class="headerlink" title="1. 安装 iTerm2 终端工具："></a>1. 安装 iTerm2 终端工具：</h5><p>打开 <a href="https://www.iterm2.com/" target="_blank" rel="noopener">iTerm2 官网</a> 直接点击 Download 下载并安装即可。</p>
+<h5 id="2-安装-iTerm2-Solarized-Dark-Higher-Contrast-配色方案："><a href="#2-安装-iTerm2-Solarized-Dark-Higher-Contrast-配色方案：" class="headerlink" title="2. 安装 iTerm2 Solarized Dark Higher Contrast 配色方案："></a>2. 安装 iTerm2 <a href="https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/schemes/Solarized%20Dark%20Higher%20Contrast.itermcolors" target="_blank" rel="noopener">Solarized Dark Higher Contrast 配色方案</a>：</h5><p>将该配色方案文件（Solarized Dark Higher Contrast.itermcolors）复制出来，保存到本地，文件命名为 SolarizedDarkHigherContrast.itermcolors ，然后双击即可安装。安装完后打开 iTerm2 终端，依次选择菜单栏：<strong>iTerm2 –&gt; Preferences –&gt; Profiles –&gt; Colors –&gt; Colors Presets –&gt;  SolarizedDarkHigherContrast</strong>，至此 iTerm2 Solarized Dark Higher Contrast 配色方案已成功安装。</p>
+<h5 id="3-安装-Monaco-for-Powerline-字体："><a href="#3-安装-Monaco-for-Powerline-字体：" class="headerlink" title="3. 安装  Monaco for Powerline 字体："></a>3. 安装  <a href="https://github.com/supermarin/powerline-fonts" target="_blank" rel="noopener">Monaco for Powerline 字体</a>：</h5><p>将该仓库克隆到本地，然后进入工程目录的 Monaco 目录，双击后缀名为 .otf 的字体文件即可完成该字体的安装。安装该字体的原因主要是为了和 Oh-My-Zsh 的 powerlevel9k 主题相兼容，如果不安装该字体，那么后面安装 powerlevel9kn 主题后会出现乱码。<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 该仓库中包含好几种优化后的字体</span></span><br><span class="line">git <span class="keyword">clone</span> <span class="title">https</span>://github.com/supermarin/powerline-fonts.git</span><br></pre></td></tr></table></figure></p>
+<h5 id="4-安装配置-zsh："><a href="#4-安装配置-zsh：" class="headerlink" title="4. 安装配置 zsh："></a>4. 安装配置 zsh：</h5><p>zsh 一般 Mac 已经自带了，无需额外安装。可以用 cat /etc/shells 查看 zsh 是否安装，如果列出了 /bin/zsh 则表明 zsh 已经安装了。<br>接下来修改 iTerm2 终端的默认 Shell，可以用 echo $SHELL 查看当前 Shell 是什么，如果不是 /bin/zsh 则用如下命令修改 iTerm2 的默认 Shell 为 zsh：<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chsh -s <span class="regexp">/bin/</span>zsh</span><br></pre></td></tr></table></figure></p>
+<h5 id="5-安装-Oh-My-Zsh："><a href="#5-安装-Oh-My-Zsh：" class="headerlink" title="5. 安装  Oh-My-Zsh："></a>5. 安装  <a href="http://ohmyz.sh/" target="_blank" rel="noopener">Oh-My-Zsh</a>：</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh -c <span class="string">"<span class="variable">$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)</span>"</span></span><br></pre></td></tr></table></figure>
+<h5 id="6-安装配置-Oh-My-Zsh-powerlevel9k-主题："><a href="#6-安装配置-Oh-My-Zsh-powerlevel9k-主题：" class="headerlink" title="6. 安装配置 Oh-My-Zsh powerlevel9k 主题："></a>6. 安装配置 <a href="https://github.com/bhilburn/powerlevel9k" target="_blank" rel="noopener">Oh-My-Zsh powerlevel9k 主题</a>：</h5><ul>
+<li><p>克隆该仓库到 oh-my-zsh 用户自定义主题目录</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="regexp">//gi</span>thub.com<span class="regexp">/bhilburn/</span>powerlevel9k.git ~<span class="regexp">/.oh-my-zsh/</span>custom<span class="regexp">/themes/</span>powerlevel9k</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改 ~/.zshrc 配置文件，配置该主题</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ZSH_THEME</span>=<span class="string">"powerlevel9k/powerlevel9k"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改命令提示符<br>默认的命令提示符为 <em>user@userdemackbookPro</em>，这样的提示符配合 powerlevel9k 主题太过冗长，因此我选择将该冗长的提示符去掉，在 ~/.zshrc 配置文件后面追加如下内容：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：DEFAULT_USER 的值必须要是系统用户名才能生效</span></span><br><span class="line"><span class="attr">DEFAULT_USER</span>=<span class="string">"user"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>简单定制下 powerlevel9k 主题<br>powerlevel9k 主题的好处就是可以做很多自定义，只需要简单修改 ~/.zshrc 配置即可生效。更多关于该主题的定制请看 <a href="https://github.com/bhilburn/powerlevel9k#customizing-prompt-segments" target="_blank" rel="noopener">customizing-prompt-segments</a>；<br>默认的 powerlevel9k 主题最右侧显示的元素为：<em>每条命令的执行状态，历史命令条数，当前时间</em>，这样也比较冗余，我在这里将 <em>历史命令条数</em> 这一元素去掉，这样看起来比较简洁。这需要修改 ~/.zshrc 配置文件，在后面追加如下内容，定制该主题的显示元素：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置 oh-my-zsh powerlevel9k 主题左边元素显示</span></span><br><span class="line"><span class="attr">POWERLEVEL9K_LEFT_PROMPT_ELEMENTS</span>=(context dir rbenv vcs)</span><br><span class="line"><span class="comment"># 设置 oh-my-zsh powerlevel9k 主题右边元素显示</span></span><br><span class="line"><span class="attr">POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS</span>=(status root_indicator background_jobs time)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="7-配置-zsh-命令语法高亮"><a href="#7-配置-zsh-命令语法高亮" class="headerlink" title="7. 配置 zsh 命令语法高亮"></a>7. 配置 zsh 命令语法高亮</h5><p><a href="https://github.com/zsh-users/zsh-syntax-highlighting" target="_blank" rel="noopener">zsh-syntax-highlighting</a> 插件可以使你终端输入的命令有语法高亮效果，安装方法如下（oh-my-zsh 插件管理的方式安装）：<br>1.Clone this repository in oh-my-zsh’s plugins directory:<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="regexp">//gi</span>thub.com<span class="regexp">/zsh-users/</span>zsh-syntax-highlighting.git <span class="variable">$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;</span><span class="regexp">/plugins/</span>zsh-syntax-highlighting</span><br></pre></td></tr></table></figure></p>
+<p>2.Activate the plugin in ~/.zshrc:<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：zsh-syntax-highlighting 必须放在最后面（官方推荐）</span></span><br><span class="line"><span class="attr">plugins</span>=( [plugins...] zsh-syntax-highlighting)</span><br></pre></td></tr></table></figure></p>
+<p>3.Source ~/.zshrc to take changes into account:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure></p>
+<h5 id="8-安装一些比较实用的-oh-my-zsh-插件"><a href="#8-安装一些比较实用的-oh-my-zsh-插件" class="headerlink" title="8. 安装一些比较实用的 oh-my-zsh 插件"></a>8. 安装一些比较实用的 oh-my-zsh 插件</h5><p>关于 oh-my-zsh 插件的管理是很简单的，有两个插件目录：</p>
+<ul>
+<li><strong>/Users/user/.oh-my-zsh/plugins</strong>: oh-my-zsh 官方插件目录，该目录已经预装了很多实用的插件，只不过没激活而已；</li>
+<li><strong>/Users/user/.oh-my-zsh/custom/plugins</strong>: oh-my-zsh 第三方插件目录；</li>
+</ul>
+<p>需要安装哪个插件，只需要把插件下载到上面任何一个目录即可，然后在 ~/.zshrc 配置文件中的 plugins 变量中添加对应插件的名称即可，以下是我挑选的几个比较好用的插件（都是官方自带的，无需另外下载），~/.zshrc 配置文件如下：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Add wisely, as too many plugins slow down shell startup.</span></span><br><span class="line">plugins=(</span><br><span class="line">   git</span><br><span class="line">   extract</span><br><span class="line">   z</span><br><span class="line">   zsh-syntax-highlighting</span><br><span class="line"> )</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>git</strong>：oh-my-zsh 默认开启的，没什么好说的；</li>
+<li><strong>extract</strong>：通用的解压缩插件，可以解压缩任何后缀的压缩文件，使用方法很简单：<em>x 文件名</em>；</li>
+<li><strong>z</strong>：很智能的目录跳转插件，能记录之前 cd 过哪些目录，然后模糊匹配跳转，不需要输入全路径即可跳转，使用方法：<em>z dir_pattern</em></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/18/Markdown-页面内跳转/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/18/Markdown-页面内跳转/" itemprop="url">Markdown 页面内跳转</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-18T09:21:00+08:00">
+                2018-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Markdown/" itemprop="url" rel="index">
+                    <span itemprop="name">Markdown</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="Markdonwn-页面内跳转"><a href="#Markdonwn-页面内跳转" class="headerlink" title="Markdonwn 页面内跳转"></a>Markdonwn 页面内跳转</h4><h5 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h5><p>有时候在 Markdown 中需要点击某个链接，然后跳转到当前页面内的其他地方，而不是跳转到一个URL链接，这个在 Markdown 是可以实现的。</p>
+<h5 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h5><p>1.使用 html 标签定义一个锚（id），将需要跳转的内容使用该标签包起来:<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># id 可以随便定义，只要同一页面内保证唯一即可</span></span><br><span class="line">&lt;span <span class="built_in">id</span>=<span class="string">"1"</span>&gt;</span><br><span class="line">要跳转的内容（在这里可以写任意内容，MD 格式的也可以）</span><br><span class="line">&lt;/span&gt;</span><br></pre></td></tr></table></figure></p>
+<p>2.后在页面内超链接到指定锚（id）上：<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">链接文本</span>](<span class="link">#1</span>)</span><br></pre></td></tr></table></figure></p>
+<p>举例：<br><a href="#1">~/.ssh/config GitHub Host配置</a><br>点击上面链接即可跳转到该页面中链接的代码块。<br><span id="1"><br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Host github</span><br><span class="line">      HostName github.com</span><br><span class="line">     <span class="built_in"> User </span>git</span><br><span class="line">      IdentityFile ~/.ssh/my_github_key</span><br></pre></td></tr></table></figure></span></p>
+<p></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/19/GitHub多账号密钥配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qhh.me">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/19/GitHub多账号密钥配置/" itemprop="url">GitHub多账号密钥配置</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-19T16:56:46+08:00">
+                2018-02-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="GitHub多账号密钥配置"><a href="#GitHub多账号密钥配置" class="headerlink" title="GitHub多账号密钥配置"></a>GitHub多账号密钥配置</h4><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>之前在自己的GitHub账号配置过本地电脑的ssh key，然后用同样的ssh key给另外一个GitHub账号配置密钥，发现报如下错误：<br><img src="/images/github1.jpg" alt=""><br>其实这个问题的原因很简单，主要是GitHub账号和服务器通信的ssh密钥对是一一对应的，不允许多个账号使用同样的密钥对，否则会出现歧义，需要为每个账号配置不同的密钥对。</p>
+<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><ol>
+<li><p>为每个GitHub账号单独生成ssh密钥对：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -f github1 -C <span class="string">"abc@gmail.com"</span></span><br><span class="line">ssh-keygen -t rsa -f github2 -C <span class="string">"def@gmail.com"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把生成的公钥分别添加到GitHub账号管理后台：<br><img src="/images/github2.png" alt=""></p>
+</li>
+<li><p>编辑~/.ssh/config文件添加如下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 其中Host是主机别名，HostName是github服务器地址，User是GitHub服务器用户名，</span></span><br><span class="line"><span class="comment"># IdentityFile是和GitHub服务器通信的ssh私钥，通过IdentityFile就可以区分出</span></span><br><span class="line"><span class="comment"># 不同的账号。</span></span><br><span class="line">Host account1</span><br><span class="line">    HostName github.com</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/github1</span><br><span class="line">Host account2</span><br><span class="line">    HostName github.com</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/github2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用ssh-agent管理生成的私钥：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-add github1</span><br><span class="line">ssh-add github2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在使用git clone时将GitHub SSH仓库地址中的git@github.com替换成第三步新建的Host别名account1或account2（仓库属于哪个Host则使用哪个，这里假设仓库属于account1，GitHub账号的区分是通过在GitHub管理后台添加的公钥来辨识）。如原地址是：<em>git@github.com:qianghaohao/TranslateProject.git</em> 替换后应该是：<em>account1:qianghaohao/TranslateProject.git</em> 如果是新建的仓库，直接使用替换后的URL克隆即可。如果已经使用原地址克隆过了，可以使用命令修改远程仓库地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote <span class="built_in">set</span>-url origin account1:qianghaohao/TranslateProject.git</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://blog.csdn.net/u010387196/article/details/41266255" target="_blank" rel="noopener">http://blog.csdn.net/u010387196/article/details/41266255</a><br><a href="http://happy123.me/blog/2014/12/07/duo-ge-gitzhang-hao-zhi-jian-de-qie-huan/" target="_blank" rel="noopener">http://happy123.me/blog/2014/12/07/duo-ge-gitzhang-hao-zhi-jian-de-qie-huan</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+
+          
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">haohao</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap. Show me the code.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qhh0205" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/qianghaohao" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://my.oschina.net/bufferoverflow" target="_blank" title="开源中国">
+                      
+                        <i class="fa fa-fw fa-globe"></i>开源中国</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:qhh0205@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">haohao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="/js/src/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
