@@ -296,6 +296,153 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/14/Redis-数据库管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/14/Redis-数据库管理/" itemprop="url">Redis 数据库管理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-14T22:45:25+08:00">
+                2018-07-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Redis-数据库管理"><a href="#Redis-数据库管理" class="headerlink" title="Redis 数据库管理"></a>Redis 数据库管理</h2><h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><p>Redis 提供了几个面向数据库的操作，分别是 <code>dbsize</code>, <code>select</code>, <code>flushdb/flushall</code>。<br>其实在一个 Redis 实例内部也是有多个数据库的，与 <code>MySQL</code> 等其他关系型数据库不同的是，Redis 内部的数据库使用数字索引来标识，而不是像 <code>MySQL</code> 那样一个实例中的数据库是通过数据库名称来标识。<br>在 Redis 中数据库默认有 <code>16</code> 个，数据库标识分别是 <code>0</code>, <code>1</code>, …, <code>15</code>，我们默认使用的是 <code>0</code> 号数据库，不同数据库之间是隔离的，可以拥有同名的键。</p>
+<p><img src="/images/redis-db.png" alt=""></p>
+<h3 id="各数据库管理命令介绍"><a href="#各数据库管理命令介绍" class="headerlink" title="各数据库管理命令介绍"></a>各数据库管理命令介绍</h3><h4 id="1-dbsize-查看当前数据库-key-的个数"><a href="#1-dbsize-查看当前数据库-key-的个数" class="headerlink" title="1. dbsize 查看当前数据库 key 的个数"></a>1. <code>dbsize</code> 查看当前数据库 key 的个数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> score 99</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; dbsize</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br></pre></td></tr></table></figure>
+<h4 id="2-select-切换数据"><a href="#2-select-切换数据" class="headerlink" title="2. select 切换数据"></a>2. <code>select</code> 切换数据</h4><p><code>select</code> 命令格式为：<code>select index</code>，<code>index</code> 为数据库的标识。举例如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> score 99</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; select 8  // 切换到 8 号数据库</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; get name  //可以看出不同 db 是隔离的</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379[8]&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; get name</span><br><span class="line"><span class="string">"tom"</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="3-flushdb-flushall-清理数据库"><a href="#3-flushdb-flushall-清理数据库" class="headerlink" title="3. flushdb/flushall 清理数据库"></a>3. <code>flushdb/flushall</code> 清理数据库</h4><p><code>flushdb</code> 和 <code>flushall</code> 的区别为：<code>flushdb</code> 清空当前数据库，而 <code>flushall</code> 清空所有数据库。举例如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379&gt; select 8</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379[8]&gt; flushdb</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br><span class="line">127.0.0.1:6379[8]&gt; select 0</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379&gt; flushall</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br></pre></td></tr></table></figure></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>目前 Redis 对多数据库的支持开始弱化了，因为 Redis 是单线程架构，同一时间只有一个 <code>CPU</code> 为 Redis 服务，多个数据库同时存在不仅不会利用系统的多核优势，反而会由于单实例资源共享问题互相会有影响，导致出现问题时排错非常困难，Redis 实例如果一旦阻塞，那么所有的数据库都会受到影响。所以这是一个很鸡肋的功能，Redis 官方对其支持也在逐步弱化。<br>更合理的方式是一台机器启动多个 Redis 实例，互相隔离，充分利用 <code>CPU</code> 的多核优势。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/Redis-基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1824,168 +1971,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/06/Vagrant-文件配置器的使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/06/Vagrant-文件配置器的使用/" itemprop="url">Vagrant 文件配置器的使用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-06T14:13:46+08:00">
-                2018-05-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Vagrant/" itemprop="url" rel="index">
-                    <span itemprop="name">Vagrant</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p><strong>摘要：</strong> 本文翻译自 <a href="https://www.vagrantup.com/docs/" target="_blank" rel="noopener">Vagrant</a> 官方文档 <a href="https://www.vagrantup.com/docs/provisioning/file.html#destination" target="_blank" rel="noopener">File Provisioner</a> 部分，主要介绍了文件配置器的使用，如何使用文件配置器将本地文件上拷贝到 Vagrant 所管理的虚拟机上面。</p>
-</blockquote>
-<p><strong>Provisioner name:</strong> “file”</p>
-<p>Vagrant 文件配置器可以将本地主机的文件或者目录上传到虚拟机。</p>
-<p>文件配置器可以轻松地将本地 <code>~/.gitconfig</code> 复制到虚拟机的 <code>vagrant</code> 用户家目录，这样的话就不需要在每次配置一个新的虚拟机时运行 <code>git config --global</code> 。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># ... other configuration</span></span><br><span class="line"></span><br><span class="line">  config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/.gitconfig"</span>, <span class="symbol">destination:</span> <span class="string">".gitconfig"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>如果你想给虚拟机上传一个目录，可以使用下面的文件配置器来完成。复制时，本地文件夹会被复制到虚拟机的 <code>newfolder</code> 文件夹。注意，如果想在虚拟机保持和本机同样的文件夹名称，请确保目的路径名称和本地路径名称一致。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># ... other configuration</span></span><br><span class="line"></span><br><span class="line">  config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/path/to/host/folder"</span>, <span class="symbol">destination:</span> <span class="string">"$HOME/remote/newfolder"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>首先将 <code>~/path/to/host/folder</code> 拷贝到虚拟机:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">folder</span><br><span class="line">    ├── script.sh</span><br><span class="line">    ├── otherfolder</span><br><span class="line">    │   └── hello.sh</span><br><span class="line">    ├── goodbye.sh</span><br><span class="line">    ├── hello.sh</span><br><span class="line">    └── woot.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 5 files</span><br></pre></td></tr></table></figure></p>
-<p>然后将 <code>~/path/to/host/folder</code> 拷贝到虚拟机的 <code>$HOME/remote/newfolder</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">newfolder</span><br><span class="line">    ├── script.sh</span><br><span class="line">    ├── otherfolder</span><br><span class="line">    │   └── hello.sh</span><br><span class="line">    ├── goodbye.sh</span><br><span class="line">    ├── hello.sh</span><br><span class="line">    └── woot.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 5 files</span><br></pre></td></tr></table></figure></p>
-<p>注意，文件上传不像文件目录同步，上传的文件或者文件夹不是保持同步的。还是以上面的例子来说，如果你更改了本地的 <code>~/.gitconfig</code>，那么虚拟机上的同样的文件并不会更改。</p>
-<p>文件配置器的文件上传是通过 <code>SSH 或 PowerShell</code> 用户来上传。通常情况下用户的权限是有限的，如果你想将文件上传到需要更高权限的位置，我们推荐将它们上传到临时位置，然后使用 <a href="https://www.vagrantup.com/docs/provisioning/shell.html" target="_blank" rel="noopener">shell 配置器</a>将它们移动到目标的位置。</p>
-<h3 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h3><p>文件配置器只有两个选项，并且是必须的：</p>
-<ul>
-<li><a href="https://www.vagrantup.com/docs/provisioning/file.html#source" target="_blank" rel="noopener">source</a>(string) - 要上传的本地文件或者文件夹。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/file.html#destination" target="_blank" rel="noopener">destination</a>(string) - 远程虚拟机路径。文件或者文件夹通过 <code>SCP</code> 来上传，因此该目的路径需要对 <code>SSH</code> 用户可写。<code>SSH</code> 用户可以通过 <code>ssh-config</code> 来查看，默认是 <code>vagrant</code>。</li>
-</ul>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>尽管文件配置器支持尾部斜杠或 “globing”，但这会导致在本地和虚拟机之间复制文件时产生一些令人困惑的结果。例如，如下源路径没有尾部斜杠，而目的路径有尾部斜杠：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/pathfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/newlocation/"</span></span><br></pre></td></tr></table></figure></p>
-<p>这意味着 <code>vagrant</code> 会将 <code>~/pathfolder</code> 上传到远程目录 <code>/remote/newlocation</code> 底下，结果看起来会像下面这样：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">newlocation</span><br><span class="line">    ├── pathfolder</span><br><span class="line">    │   └── file.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 2 files</span><br></pre></td></tr></table></figure></p>
-<p>同样的行为也可以通过如下配置来实现：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/pathfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/newlocation/pathfolder"</span></span><br></pre></td></tr></table></figure></p>
-<p>另一个例子是使用 <code>.</code> 号，拷贝本地机器目录里面的文件，不包括上一层目录：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/otherfolder/."</span>, <span class="symbol">destination:</span> <span class="string">"/remote/otherlocation"</span></span><br></pre></td></tr></table></figure></p>
-<p>以上配置将 <code>~/otherfolder</code> 目录下的所有文件拷贝到新的路径 <code>/remote/otherlocation</code>。这个也可以通过指定一个和源文件夹不同的远程文件夹来实现：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"/otherfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/otherlocation"</span></span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2035,7 +2020,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">91</span>
+                  <span class="site-state-item-count">92</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2046,7 +2031,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2057,7 +2042,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
