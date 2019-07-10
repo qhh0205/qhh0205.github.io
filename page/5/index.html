@@ -81,13 +81,13 @@
 
 <meta name="description" content="Talk is cheap. Show me the code.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="精致的生活，从精致的代码开始！">
+<meta property="og:title" content="The Spectre">
 <meta property="og:url" content="http://yoursite.com/page/5/index.html">
-<meta property="og:site_name" content="精致的生活，从精致的代码开始！">
+<meta property="og:site_name" content="The Spectre">
 <meta property="og:description" content="Talk is cheap. Show me the code.">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="精致的生活，从精致的代码开始！">
+<meta name="twitter:title" content="The Spectre">
 <meta name="twitter:description" content="Talk is cheap. Show me the code.">
 
 
@@ -124,7 +124,7 @@
 
 
 
-  <title>精致的生活，从精致的代码开始！</title>
+  <title>The Spectre</title>
   
 
 
@@ -155,7 +155,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">精致的生活，从精致的代码开始！</span>
+        <span class="site-title">The Spectre</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -296,6 +296,171 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/15/Redis-慢查询分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/15/Redis-慢查询分析/" itemprop="url">Redis 慢查询分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T13:37:47+08:00">
+                2018-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>和很多关系型数据库（例如：<code>MySQL</code>）一样， Redis 也提供了慢查询日志记录，Redis 会把命令执行时间超过 <code>slowlog-log-slower-than</code> 的都记录在 Reids 内部的一个列表（<code>list</code>）中，该列表的长度最大为 <code>slowlog-max-len</code> 。需要注意的是，慢查询记录的只是命令的<strong>执行时间</strong>，不包括网络传输和排队时间：</p>
+<p><img src="/images/redis-cmd-exec.png" alt="Alt text"></p>
+<h3 id="慢查询分析配置"><a href="#慢查询分析配置" class="headerlink" title="慢查询分析配置"></a>慢查询分析配置</h3><p>关于 Redis 慢查询的配置有两个，分别是 <code>slowlog-log-slower-than</code> 和 <code>slowlog-max-len</code>。</p>
+<ol>
+<li><p><code>slowlog-log-slower-than</code>，用来控制慢查询的阈值，所有执行时间超过该值的命令都会被记录下来。该值的单位为微秒，默认值为 <code>10000</code>，如果设置为 <code>0</code>，那么所有的记录都会被记录下来，如果设置为小于 <code>0</code> 的值，那么对于任何命令都不会记录，即关闭了慢查询。可以通过在配置文件中设置，或者用 <code>config set</code> 命令来设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config <span class="built_in">set</span> slowlog-log-slower-than 10000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>slowlog-max-len</code>，用来设置存储慢查询记录列表的大小，默认值为 <code>128</code>，当该列表满了时，如果有新的记录进来，那么 Redis 会把队最旧的记录清理掉，然后存储新的记录。在生产环境我们可以适当调大，比如调成 <code>1000</code>，这样就可以缓冲更多的记录，方便故障的排查。配置方法和 <code>slowlog-log-slower-than</code> 类似，可以在配置文件中指定，也可以在命令行执行 <code>config set</code> 来设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config <span class="built_in">set</span> slowlog-max-len 1000</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="查看慢查询日志"><a href="#查看慢查询日志" class="headerlink" title="查看慢查询日志"></a>查看慢查询日志</h3><p>尽管 Redis 把慢查询日志记录到了内部的列表，但我们不能直接操作该列表，Redis 专门提供了一组命令来查询慢查询日志：</p>
+<ol>
+<li><p>获取慢查询日志：<br><code>slowlog get [n]</code><br>下面操作返回当前 Redis 的所有慢查询记录，可以通过参数 <code>n</code> 指定查看条数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; slowlog get</span><br><span class="line"> 1) 1) (<span class="built_in">integer</span>) 456</span><br><span class="line">    2) (<span class="built_in">integer</span>) 1531632044</span><br><span class="line">    3) (<span class="built_in">integer</span>) 3</span><br><span class="line">    4) 1) <span class="string">"get"</span></span><br><span class="line">       2) <span class="string">"m"</span></span><br><span class="line">    5) <span class="string">"127.0.0.1:50106"</span></span><br><span class="line">    6) <span class="string">""</span></span><br><span class="line"> 2) 1) (<span class="built_in">integer</span>) 455</span><br><span class="line">    2) (<span class="built_in">integer</span>) 1531632037</span><br><span class="line">    3) (<span class="built_in">integer</span>) 14</span><br><span class="line">    4) 1) <span class="string">"keys"</span></span><br><span class="line">       2) <span class="string">"*"</span></span><br><span class="line">    5) <span class="string">"127.0.0.1:50106"</span></span><br><span class="line">    6) <span class="string">""</span></span><br></pre></td></tr></table></figure>
+<p> 结果说明：<br><code>1)</code> 慢查询记录 id；<br><code>2)</code> 发起命令的时间戳；<br><code>3)</code> 命令耗时，单位为微秒；<br><code>4)</code> 该条记录的命令及参数；<br><code>5)</code> 客户端网络套接字（ip: port）;<br><code>6)</code> “”</p>
+</li>
+<li><p>获取当前慢查询日志记录数<br><code>slowlog len</code></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.1</span><span class="selector-pseudo">:6379</span>&gt; <span class="selector-tag">slowlog</span> <span class="selector-tag">len</span></span><br><span class="line">(<span class="selector-tag">integer</span>) 458</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>慢查询日志重置<br><code>slowlog reset</code><br>实际上是对慢查询列表做清理操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; slowlog len</span><br><span class="line">(<span class="built_in">integer</span>) 461</span><br><span class="line">127.0.0.1:6379&gt; slowlog reset</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; slowlog len</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/14/Redis-数据库管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -305,7 +470,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -452,7 +617,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -687,7 +852,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -886,7 +1051,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1038,7 +1203,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1204,7 +1369,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1347,7 +1512,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1507,7 +1672,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1654,7 +1819,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1790,187 +1955,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/06/Vagrant-Shell-配置器的使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/06/Vagrant-Shell-配置器的使用/" itemprop="url">Vagrant Shell 配置器的使用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-06T22:26:27+08:00">
-                2018-05-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Vagrant/" itemprop="url" rel="index">
-                    <span itemprop="name">Vagrant</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Vagrant-Shell-配置器的使用"><a href="#Vagrant-Shell-配置器的使用" class="headerlink" title="Vagrant Shell 配置器的使用"></a>Vagrant Shell 配置器的使用</h2><blockquote>
-<p><strong>摘要：</strong> 本文翻译自 <a href="https://www.vagrantup.com/docs/" target="_blank" rel="noopener">Vagrant</a> 官方文档 <a href="https://www.vagrantup.com/docs/provisioning/file.html#destination" target="_blank" rel="noopener">Shell Provisioner</a> 部分，主要介绍了 Vagrant Shell 配置器的使用，如何使用内联脚本代码和外部脚本文件来配置虚拟机。</p>
-</blockquote>
-<p><strong>Provisioner name:</strong> “shell”</p>
-<p>Vagrant Shell 配置器允许你向虚拟机上传脚本并执行。</p>
-<p>对于想要快速启动和运行 Vagrant 的新手来说，Shell 配置器非常理想，并为不熟悉 <code>Chef</code> 或 <code>Puppet</code> 等配置管理系统的用户提供了选择。</p>
-<p>对于类 POSIX 机器，shell 配置器使用 SSH 执行脚本。对于 Windows 机器，使用 WinRM 来执行脚本，shell 配置器通过 WinRM 执行 PowerShell 和 Batch （<strong>译者注：批处理</strong>） 脚本。</p>
-<h3 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h3><p>shell 配置器有很多选项，其中 <code>inline</code> 或者 <code>path</code> 选项是必须的：</p>
-<ul>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#inline" target="_blank" rel="noopener">inline</a> (string) - 指定在远程机器执行的 shell 内联命令。更多信息见下面 <a href="https://www.vagrantup.com/docs/provisioning/shell.html#inline-scripts" target="_blank" rel="noopener">inline scripts</a> 章节。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#path" target="_blank" rel="noopener">path</a> (string) - 要上传并执行的 shell 脚本路径。该脚本可以是一个相对于 Vagrantfile 工程的文件或者是一个远程脚本（比如 <a href="https://gist.github.com/" target="_blank" rel="noopener">gist</a>）。</li>
-</ul>
-<p>剩下的这些选项是可选的：</p>
-<ul>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#args" target="_blank" rel="noopener">args</a> (string or array) - 当以单一字符串执行脚本时，传递给脚本的参数。这些参数必须写得好像它们直接在命令行上键入一样，所以在需要时一定要避免字符、引号等。你也可以使用数组来传递参数。在这种情况下，Vagrant 将会为你处理引用。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#env" target="_blank" rel="noopener">env</a> (string) - 传递给脚本作为环境变量的键值对。Vagrant 会处理环境变量值的引用，但是键保持不变。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#binary" target="_blank" rel="noopener">binary</a> (boolean) - Vagrant 会自动用 Unix 换行符来代替 Windows 换行符。如果设置为 false，不会替换。默认值是 “false”。如果 shell 配置器通过 WinRM 来交互，那么默认值是 “true”。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#privileged" target="_blank" rel="noopener">privileged</a> (boolean) - 指定是否以超级用户执行脚本。默认是 “true”。Windows guest 虚拟机使用计划任务作为真正的管理员运行，而不受WinRM限</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#upload_path" target="_blank" rel="noopener">upload_path</a> (string) - 上传脚本的远程路径。脚本将会通过 SCP 上传到 SSH 用户，因此该路径对于 SSH 用户必须是可写的。默认路径是 <code>/tmp/vagrant-shell</code>。在 Windows 下，这个默认路径是 <code>C:\tmp\vagrant-shell</code>。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#keep_color" target="_blank" rel="noopener">keep_color</a> (boolean) -  Vagrant 根据终端输出是否是 stdout 或 stderr 自动地以绿色或者红色输出。如果设置为 true，Vagrant 不会输出颜色，而使用脚本的原生色彩输出。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#name" target="_blank" rel="noopener">name</a> (string) - 该值将显示在终端输出中，以便在许多 shell 配置器存在时让用户识别更容易。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#powershell_args" target="_blank" rel="noopener">powershell_args</a> (string) - 传递给 <code>PowerShell</code> 的额外参数，如果你在 Windows 使用 PowerShell。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#powershell_elevated_interactive" target="_blank" rel="noopener">powershell_elevated_interactive</a> (boolean) - 在 Windows 交互式运行脚本。默认是 “false”。也必须享有特权。一定要启用 Windows 的自动登录，因为用户必须登录才能使用交互模式。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#md5" target="_blank" rel="noopener">md5</a> (string) - 用于验证远程下载的 shell 文件的 MD5 值。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#sha1" target="_blank" rel="noopener">sha1</a> (string) - 用于验证远程下载的 shell 文件的 SHA1 值。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#sensitive" target="_blank" rel="noopener">sensitive</a> (boolean) - 将 <code>env</code> 选项中的 Hash 值标记为敏感数据，并将其从输出中隐藏起来。默认值是 “false”。</li>
-</ul>
-<h3 id="内联脚本"><a href="#内联脚本" class="headerlink" title="内联脚本"></a>内联脚本</h3><p>也许最简单的入门方式是使用内联脚本。内联脚本是直接在 Vagrantfile 文件中给定的脚本代码。例如：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>,</span><br><span class="line">    <span class="symbol">inline:</span> <span class="string">"echo Hello, World"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>当配置器运行时，会在虚拟机中运行 <code>echo Hello, World</code>。</p>
-<p>结合少量 Ruby 代码，很容易将 shell 脚本直接嵌入到 Vagrantfile 文件。举例如下：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$script = <span class="string">&lt;&lt;-SCRIPT</span></span><br><span class="line"><span class="string">echo I am provisioning...</span></span><br><span class="line"><span class="string">date &gt; /etc/vagrant_provisioned_at</span></span><br><span class="line"><span class="string">SCRIPT</span></span><br><span class="line"></span><br><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>, <span class="symbol">inline:</span> $script</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>我知道如果你对 Ruby 不熟悉，那么上面的配置可能会看起来非常高级，但是不用害怕，它做的很简单：将 shell 脚本被赋 <code>$shell</code> 变量。这个全局变量包含一个字符串，然后作为内联脚本传递给 Vagrant 配置文件。</p>
-<p>当然，如果在 Vagrantfile 中还有除了基本变量赋值之外的其他 Ruby 代码使你感到不舒服，那么您可以使用一个实际的脚本文件，在下一节中将对此进行说明。</p>
-<p>对于 Windows 虚拟机，内联脚本必须是是 PowerShell。Batch（<strong>译者注：批处理</strong>） 脚本不能作为内联脚本。</p>
-<h3 id="外部脚本"><a href="#外部脚本" class="headerlink" title="外部脚本"></a>外部脚本</h3><p>shell 配置器还可以指定本地主机上的脚本的路径。Vagrant 会将该脚本上传到虚拟机并执行。例如：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>, <span class="symbol">path:</span> <span class="string">"script.sh"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>上面的路径是相对于中 Vagrantfile 的路径。也可以使用绝对路径，以及 <code>~</code> （家目录）和 <code>..</code>  等快捷方式。</p>
-<p>如果你使用远程脚本作为配置器，你也可以将远程脚本的 URL 作为 <code>path</code> 的参数：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>, <span class="symbol">path:</span> <span class="string">"https://example.com/provisioner.sh"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>如果你在 Windows 上运行 Batch（<strong>译者注：批处理</strong>） 或者 PowerShell 脚本，请确保外部路径具有适当的扩展名（”.bat” 或者 “.ps1”），由于 Windows 使用扩展名来决定所执行文件的类型。如果没有扩展名，那么脚本可能无法使用。</p>
-<p>如果运行一个已经在虚拟机存在的脚本文件，你可以使用内联脚本来调用该远程虚拟机脚本：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>,</span><br><span class="line">    <span class="symbol">inline:</span> <span class="string">"/bin/sh /path/to/the/script/already/on/the/guest.sh"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="脚本参数"><a href="#脚本参数" class="headerlink" title="脚本参数"></a>脚本参数</h3><p>您可以像任何普通的shell脚本一样参数化脚本。这些参数可以指定给 shell 配置器。应该将它们指定为字符串，因为它们将作为命令行的输入，因此确保正确地转义任何字符：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span> <span class="keyword">do</span> <span class="params">|s|</span></span><br><span class="line">    s.inline = <span class="string">"echo $1"</span></span><br><span class="line">    s.args   = <span class="string">"'hello, world!'"</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>如果您不想担心引用，则还可以将参数指定为数组：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span> <span class="keyword">do</span> <span class="params">|s|</span></span><br><span class="line">    s.inline = <span class="string">"echo $1"</span></span><br><span class="line">    s.args   = [<span class="string">"hello, world!"</span>]</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2020,7 +2004,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">92</span>
+                  <span class="site-state-item-count">93</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2042,7 +2026,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

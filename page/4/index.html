@@ -81,13 +81,13 @@
 
 <meta name="description" content="Talk is cheap. Show me the code.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="精致的生活，从精致的代码开始！">
+<meta property="og:title" content="The Spectre">
 <meta property="og:url" content="http://yoursite.com/page/4/index.html">
-<meta property="og:site_name" content="精致的生活，从精致的代码开始！">
+<meta property="og:site_name" content="The Spectre">
 <meta property="og:description" content="Talk is cheap. Show me the code.">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="精致的生活，从精致的代码开始！">
+<meta name="twitter:title" content="The Spectre">
 <meta name="twitter:description" content="Talk is cheap. Show me the code.">
 
 
@@ -124,7 +124,7 @@
 
 
 
-  <title>精致的生活，从精致的代码开始！</title>
+  <title>The Spectre</title>
   
 
 
@@ -155,7 +155,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">精致的生活，从精致的代码开始！</span>
+        <span class="site-title">The Spectre</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -296,6 +296,188 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/02/非容器化-gitlab-进行容器化改造/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/02/非容器化-gitlab-进行容器化改造/" itemprop="url">非容器化 gitlab 进行容器化改造</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-02T16:40:42+08:00">
+                2018-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文主要介绍非容器化（通过 yum 在 Linux 服务器安装）gitlab 进行容器化改造的两种方法，都是基于 Kubernetes 平台，均采用 helm 部署。第一种是基于自建 k8s 平台部署 gitlab，第二种是基于 Google GKE 平台部署 gitlab。</p>
+<p>Docker 镜像采用<a href="https://hub.docker.com/r/gitlab/gitlab-ee" target="_blank" rel="noopener">基于 Omnibus 安装包的镜像</a>，gitlab 的各个组件都运行在同一个容器中。关于 GitLab Ominibus 镜像和云原生镜像的区别见<a href="https://docs.gitlab.com/ee/install/docker.html" target="_blank" rel="noopener">这里</a>。</p>
+<h3 id="gitlab-容器化改造（基于自建-k8s-平台部署-gitlab）"><a href="#gitlab-容器化改造（基于自建-k8s-平台部署-gitlab）" class="headerlink" title="gitlab 容器化改造（基于自建 k8s 平台部署 gitlab）"></a>gitlab 容器化改造（基于自建 k8s 平台部署 gitlab）</h3><h4 id="一、搭建和原先版本一致的-gitlab"><a href="#一、搭建和原先版本一致的-gitlab" class="headerlink" title="一、搭建和原先版本一致的 gitlab"></a>一、搭建和原先版本一致的 gitlab</h4><p>github helm gitlab-ee chart：<a href="https://github.com/helm/charts/tree/master/stable/gitlab-ee" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/gitlab-ee</a></p>
+<p>在此 helm chart 基础上将备份目录也(/var/opt/gitlab/backups)通过PVC持久化，方便数据的备份恢复: <a href="https://github.com/qhh0205/helm-charts/tree/master/gitlab-ee" target="_blank" rel="noopener">https://github.com/qhh0205/helm-charts/tree/master/gitlab-ee</a></p>
+<ol>
+<li>手动创建需要的 pv（基于 nfs）<br><a href="https://github.com/qhh0205/kubernetes-resources/tree/master/gitlab-pv" target="_blank" rel="noopener">https://github.com/qhh0205/kubernetes-resources/tree/master/gitlab-pv</a></li>
+<li>部署<br>其他自定义参数修改 values-custom.yaml 文件，比如镜像版本、硬件配置等参数。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:qhh0205/helm-charts.git</span><br><span class="line"><span class="built_in">cd</span> helm-charts/gitlab-ee</span><br><span class="line">helm install --name gitlab --<span class="built_in">set</span> externalUrl=http://domain/,gitlabRootPassword=xxxx -f values-custom.yaml ./ --namespace=gitlab</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="二、数据恢复"><a href="#二、数据恢复" class="headerlink" title="二、数据恢复"></a>二、数据恢复</h4><ol>
+<li>拷贝 gitlab 备份文件到容器外挂nfs目录(/data/nfs/gitlab/gitlab-data-backups（nfs路径）—&gt;/var/opt/gitlab/backups（容器路径）)；</li>
+<li>进入容器：<br>kubectl exec -it pod_name /bin/sh -n gitlab </li>
+<li>gitlab-ctl reconfigure</li>
+<li>chown git:git 1543237967_2018_11_26_10.1.3-ee_gitlab_backup.tar</li>
+<li>chown -R git:root /gitlab-data # 由于 gitlab-rake 执行过程中 默认用户名是 git，所以需要把该目录的属主改成 git，否则恢复时报错权限问题；</li>
+<li>gitlab-rake gitlab:backup:restore<br>根据提示输入相关信息<br>YES<br>YES<br>gitlab-ctl restart </li>
+</ol>
+<h3 id="gitlab-容器化改造（基于-Google-云-GKE-平台）"><a href="#gitlab-容器化改造（基于-Google-云-GKE-平台）" class="headerlink" title="gitlab 容器化改造（基于 Google 云 GKE 平台）"></a>gitlab 容器化改造（基于 Google 云 GKE 平台）</h3><h4 id="一、搭建和原先版本一致的-gitlab-1"><a href="#一、搭建和原先版本一致的-gitlab-1" class="headerlink" title="一、搭建和原先版本一致的 gitlab"></a>一、搭建和原先版本一致的 gitlab</h4><p>github helm gitlab-ee chart：<a href="https://github.com/helm/charts/tree/master/stable/gitlab-ee" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/gitlab-ee</a></p>
+<p>在此 helm chart 基础上将备份目录也(/var/opt/gitlab/backups)通过PVC持久化，方便数据的备份恢复:<br><a href="https://github.com/qhh0205/helm-charts/tree/master/gitlab-ee" target="_blank" rel="noopener">https://github.com/qhh0205/helm-charts/tree/master/gitlab-ee</a></p>
+<p>其他自定义参数修改 values-custom.yaml 文件，比如镜像版本、硬件配置等参数。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:qhh0205/helm-charts.git</span><br><span class="line"><span class="built_in">cd</span> helm-charts/gitlab-ee</span><br><span class="line">helm install --name gitlab --<span class="built_in">set</span> externalUrl=http://domain/,gitlabRootPassword=xxxx -f values-custom.yaml ./ --namespace=gitlab</span><br></pre></td></tr></table></figure></p>
+<h4 id="二、数据迁移恢复"><a href="#二、数据迁移恢复" class="headerlink" title="二、数据迁移恢复"></a>二、数据迁移恢复</h4><ol>
+<li><p>将 gitlab 备份文件拷贝到 k8s gitlab pod 容器目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl cp 1543237967_2018_11_26_10.1.3-ee_gitlab_backup.tar \</span><br><span class="line">namespace/pod_name:/var/opt/gitlab/backups -n gitlab</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>gitlab-ctl reconfigure</p>
+</li>
+<li>chown git:git 1543237967_2018_11_26_10.1.3-ee_gitlab_backup.tar</li>
+<li>chown -R git:root /gitlab-data # 由于 git-rake 执行过程中 默认用户名是 git，所以需要把该目录的属主改成git，否则恢复时报错权限问题；</li>
+<li>gitlab-rake gitlab:backup:restore<br>根据提示输入相关信息<br>YES<br>YES<br>gitlab-ctl restart </li>
+</ol>
+<h3 id="外部访问"><a href="#外部访问" class="headerlink" title="外部访问"></a>外部访问</h3><ol>
+<li>Kong Ingress</li>
+<li>NodePort</li>
+<li>LoadBalancer（云提供商平台，比如 Google GKE）</li>
+</ol>
+<h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><ul>
+<li>容器化安装 gitlab：<a href="https://docs.gitlab.com/ee/install/docker.html" target="_blank" rel="noopener">https://docs.gitlab.com/ee/install/docker.html</a></li>
+<li>gitlab 数据存放目录修改：<a href="https://blog.whsir.com/post-1490.html" target="_blank" rel="noopener">https://blog.whsir.com/post-1490.html</a></li>
+<li>gitlab 安装软件和硬件需求：<a href="https://docs.gitlab.com/ce/install/requirements.html" target="_blank" rel="noopener">https://docs.gitlab.com/ce/install/requirements.html</a></li>
+<li>Omnibus GitLab documentation: <a href="https://docs.gitlab.com/omnibus/README.html" target="_blank" rel="noopener">https://docs.gitlab.com/omnibus/README.html</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/02/Linux-文件与目录管理相关命令总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -305,7 +487,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -447,7 +629,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -589,7 +771,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -751,7 +933,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -912,7 +1094,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1057,7 +1239,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1151,7 +1333,7 @@
 <h3 id="5-helm-打包"><a href="#5-helm-打包" class="headerlink" title="5. helm 打包"></a>5. helm 打包</h3><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm <span class="keyword">package</span> <span class="title">jenkins</span></span><br></pre></td></tr></table></figure>
 <h3 id="6-重新生成-chart-索引"><a href="#6-重新生成-chart-索引" class="headerlink" title="6. 重新生成 chart 索引"></a>6. 重新生成 chart 索引</h3><figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm repo <span class="keyword">index</span> .</span><br></pre></td></tr></table></figure>
 <h3 id="7-helm-部署"><a href="#7-helm-部署" class="headerlink" title="7. helm 部署"></a>7. helm 部署</h3><figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">helm</span> <span class="comment">install</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">name</span> <span class="comment">jenkins</span> <span class="comment">helm_local_repo/jenkins</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">namespace</span> <span class="comment">jenkins</span></span><br></pre></td></tr></table></figure>
-<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 'base64d_str' <span class="string">| base64 -d</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'base64d_str'</span> | base64 -d</span><br></pre></td></tr></table></figure></p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA</a></p>
 
           
@@ -1210,7 +1392,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1359,7 +1541,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1508,7 +1690,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
+      <meta itemprop="name" content="The Spectre">
     </span>
 
     
@@ -1693,171 +1875,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/15/Redis-慢查询分析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="精致的生活，从精致的代码开始！">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/15/Redis-慢查询分析/" itemprop="url">Redis 慢查询分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T13:37:47+08:00">
-                2018-07-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Redis/" itemprop="url" rel="index">
-                    <span itemprop="name">Redis</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>和很多关系型数据库（例如：<code>MySQL</code>）一样， Redis 也提供了慢查询日志记录，Redis 会把命令执行时间超过 <code>slowlog-log-slower-than</code> 的都记录在 Reids 内部的一个列表（<code>list</code>）中，该列表的长度最大为 <code>slowlog-max-len</code> 。需要注意的是，慢查询记录的只是命令的<strong>执行时间</strong>，不包括网络传输和排队时间：</p>
-<p><img src="/images/redis-cmd-exec.png" alt="Alt text"></p>
-<h3 id="慢查询分析配置"><a href="#慢查询分析配置" class="headerlink" title="慢查询分析配置"></a>慢查询分析配置</h3><p>关于 Redis 慢查询的配置有两个，分别是 <code>slowlog-log-slower-than</code> 和 <code>slowlog-max-len</code>。</p>
-<ol>
-<li><p><code>slowlog-log-slower-than</code>，用来控制慢查询的阈值，所有执行时间超过该值的命令都会被记录下来。该值的单位为微秒，默认值为 <code>10000</code>，如果设置为 <code>0</code>，那么所有的记录都会被记录下来，如果设置为小于 <code>0</code> 的值，那么对于任何命令都不会记录，即关闭了慢查询。可以通过在配置文件中设置，或者用 <code>config set</code> 命令来设置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config <span class="built_in">set</span> slowlog-log-slower-than 10000</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>slowlog-max-len</code>，用来设置存储慢查询记录列表的大小，默认值为 <code>128</code>，当该列表满了时，如果有新的记录进来，那么 Redis 会把队最旧的记录清理掉，然后存储新的记录。在生产环境我们可以适当调大，比如调成 <code>1000</code>，这样就可以缓冲更多的记录，方便故障的排查。配置方法和 <code>slowlog-log-slower-than</code> 类似，可以在配置文件中指定，也可以在命令行执行 <code>config set</code> 来设置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config <span class="built_in">set</span> slowlog-max-len 1000</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="查看慢查询日志"><a href="#查看慢查询日志" class="headerlink" title="查看慢查询日志"></a>查看慢查询日志</h3><p>尽管 Redis 把慢查询日志记录到了内部的列表，但我们不能直接操作该列表，Redis 专门提供了一组命令来查询慢查询日志：</p>
-<ol>
-<li><p>获取慢查询日志：<br><code>slowlog get [n]</code><br>下面操作返回当前 Redis 的所有慢查询记录，可以通过参数 <code>n</code> 指定查看条数：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; slowlog get</span><br><span class="line"> 1) 1) (<span class="built_in">integer</span>) 456</span><br><span class="line">    2) (<span class="built_in">integer</span>) 1531632044</span><br><span class="line">    3) (<span class="built_in">integer</span>) 3</span><br><span class="line">    4) 1) <span class="string">"get"</span></span><br><span class="line">       2) <span class="string">"m"</span></span><br><span class="line">    5) <span class="string">"127.0.0.1:50106"</span></span><br><span class="line">    6) <span class="string">""</span></span><br><span class="line"> 2) 1) (<span class="built_in">integer</span>) 455</span><br><span class="line">    2) (<span class="built_in">integer</span>) 1531632037</span><br><span class="line">    3) (<span class="built_in">integer</span>) 14</span><br><span class="line">    4) 1) <span class="string">"keys"</span></span><br><span class="line">       2) <span class="string">"*"</span></span><br><span class="line">    5) <span class="string">"127.0.0.1:50106"</span></span><br><span class="line">    6) <span class="string">""</span></span><br></pre></td></tr></table></figure>
-<p> 结果说明：<br><code>1)</code> 慢查询记录 id；<br><code>2)</code> 发起命令的时间戳；<br><code>3)</code> 命令耗时，单位为微秒；<br><code>4)</code> 该条记录的命令及参数；<br><code>5)</code> 客户端网络套接字（ip: port）;<br><code>6)</code> “”</p>
-</li>
-<li><p>获取当前慢查询日志记录数<br><code>slowlog len</code></p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.1</span><span class="selector-pseudo">:6379</span>&gt; <span class="selector-tag">slowlog</span> <span class="selector-tag">len</span></span><br><span class="line">(<span class="selector-tag">integer</span>) 458</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>慢查询日志重置<br><code>slowlog reset</code><br>实际上是对慢查询列表做清理操作：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; slowlog len</span><br><span class="line">(<span class="built_in">integer</span>) 461</span><br><span class="line">127.0.0.1:6379&gt; slowlog reset</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; slowlog len</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1907,7 +1924,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">92</span>
+                  <span class="site-state-item-count">93</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1929,7 +1946,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
