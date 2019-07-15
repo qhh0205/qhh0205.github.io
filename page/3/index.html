@@ -296,6 +296,258 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/19/使用-kubeadm-搭建-kubernetes-集群/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/19/使用-kubeadm-搭建-kubernetes-集群/" itemprop="url">使用 kubeadm 搭建 kubernetes 集群</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-19T22:50:45+08:00">
+                2019-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubenetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubenetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="kubeadm-简介"><a href="#kubeadm-简介" class="headerlink" title="kubeadm 简介"></a>kubeadm 简介</h3><p><a href="https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/" target="_blank" rel="noopener">kubeadm</a> 是 <a href="https://kubernetes.io/" target="_blank" rel="noopener">k8s 官方</a>提供的用于快速部署 k8s 集群的命令行工具，也是官方推荐的最小化部署 k8s 集群的最佳实践，比起直接用二进制部署能省去很多工作，因为该方式部署的集群的各个组件以 docker 容器的方式启动，而各个容器的启动都是通过该工具配自动化启动起来的。</p>
+<p>kubeadm 不仅仅能部署 k8s 集群，还能很方便的管理集群，比如集群的升级、降级、集群初始化配置等管理操作。</p>
+<p>kubeadm 的设计初衷是为新用户提供一种便捷的方式来首次试用 Kubernetes， 同时也方便老用户搭建集群测试他们的应用。</p>
+<p>kubeadm 的使用案例：</p>
+<ul>
+<li>新用户可以从 kubeadm 开始来试用 Kubernetes。</li>
+<li>熟悉 Kubernetes 的用户可以使用 kubeadm 快速搭建集群并测试他们的应用。</li>
+<li>大型的项目可以将 kubeadm 和其他的安装工具一起形成一个比较复杂的系统。</li>
+</ul>
+<h3 id="安装环境要求"><a href="#安装环境要求" class="headerlink" title="安装环境要求"></a>安装环境要求</h3><ul>
+<li>一台或多台运行着下列系统的机器:<ul>
+<li>Ubuntu 16.04+</li>
+<li>Debian 9</li>
+<li>CentOS 7</li>
+<li>RHEL 7</li>
+<li>Fedora 25/26</li>
+<li>HypriotOS v1.0.1+</li>
+<li>Container Linux (针对1800.6.0 版本测试)</li>
+</ul>
+</li>
+<li>每台机器 2 GB 或更多的 RAM (如果少于这个数字将会影响您应用的运行内存)</li>
+<li>2 CPU 核心或更多(节点少于 2 核的话新版本 kubeadm 会报错)</li>
+<li>集群中的所有机器的网络彼此均能相互连接(公网和内网都可以)</li>
+<li>禁用 Swap 交换分区。（Swap 分区必须要禁掉，否则安装会报错）</li>
+</ul>
+<h3 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h3><p>本文使用 kubeadm 部署一个 3 节点的 k8s 集群：1 个 master 节点，2 个 node 节点。各节点详细信息如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Hostname</th>
+<th style="text-align:left">IP</th>
+<th style="text-align:left">OS 发行版</th>
+<th style="text-align:left">内存（GB）</th>
+<th style="text-align:left">CPU（核）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">k8s-master</td>
+<td style="text-align:left">192.168.10.100</td>
+<td style="text-align:left">Centos7</td>
+<td style="text-align:left">2</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">k8s-node-1</td>
+<td style="text-align:left">192.168.10.101</td>
+<td style="text-align:left">Centos7</td>
+<td style="text-align:left">2</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">k8s-node-2</td>
+<td style="text-align:left">192.168.10.102</td>
+<td style="text-align:left">Centos7</td>
+<td style="text-align:left">2</td>
+<td style="text-align:left">2</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/k8s-arch.png" alt=""></p>
+<h3 id="kubeadm-安装-k8s-集群完整流程"><a href="#kubeadm-安装-k8s-集群完整流程" class="headerlink" title="kubeadm 安装 k8s 集群完整流程"></a>kubeadm 安装 k8s 集群完整流程</h3><ul>
+<li>使用 Vagrant 启动 3 台符合上述要求的虚拟机</li>
+<li>调整每台虚拟机的服务器参数</li>
+<li>各节点安装 docker、kubeadm、kubelet、kubectl 工具</li>
+<li>使用 kubeadm 部署 master 节点</li>
+<li>安装 Pod 网络插件（CNI）</li>
+<li>使用 kubeadm 部署 node 节点</li>
+</ul>
+<p>接下来我们依次介绍每步的具体细节：</p>
+<h4 id="使用-Vagrant-启动-3-台符合上述要求的虚拟机"><a href="#使用-Vagrant-启动-3-台符合上述要求的虚拟机" class="headerlink" title="使用 Vagrant 启动 3 台符合上述要求的虚拟机"></a>使用 Vagrant 启动 3 台符合上述要求的虚拟机</h4><p>Vagrant 的使用在这里不具体介绍了，如需了解请点击<a href="https://blog.csdn.net/qianghaohao/article/details/80038096" target="_blank" rel="noopener">这里</a>。<br>本文用到的 Vagrantfile:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- mode: ruby -*-</span></span><br><span class="line"><span class="comment"># vi: set ft=ruby :</span></span><br><span class="line"><span class="comment"># author: qhh0205</span></span><br><span class="line"></span><br><span class="line">$num_nodes = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># k8s 主节点定义及初始化配置</span></span><br><span class="line">  config.vm.define <span class="string">"k8s-master"</span> <span class="keyword">do</span> <span class="params">| k8s_master |</span></span><br><span class="line">    k8s_master.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">    k8s_master.vm.hostname = <span class="string">"k8s-master"</span></span><br><span class="line">    k8s_master.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.100"</span></span><br><span class="line">    k8s_master.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> <span class="params">| v |</span></span><br><span class="line">      v.name = <span class="string">"k8s-master"</span></span><br><span class="line">      v.memory = <span class="string">"2048"</span></span><br><span class="line">      v.cpus = <span class="number">2</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># k8s node 节点定义及初始化配置</span></span><br><span class="line">  (<span class="number">1</span>..$num_nodes).each <span class="keyword">do</span> <span class="params">|i|</span></span><br><span class="line">      config.vm.define <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span> <span class="keyword">do</span> <span class="params">|node|</span></span><br><span class="line">        node.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">        node.vm.hostname = <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span></span><br><span class="line">        node.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.<span class="subst">#&#123;i+<span class="number">100</span>&#125;</span>"</span></span><br><span class="line">        node.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> <span class="params">|v|</span></span><br><span class="line">          v.name = <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span></span><br><span class="line">          v.memory = <span class="string">"2048"</span></span><br><span class="line">          v.cpus = <span class="number">2</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>进入 Vagrantfile 文件所在目录，执行如下命令启动上述定义的 3 台虚拟机：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vagrant up</span><br></pre></td></tr></table></figure></p>
+<h4 id="调整每台虚拟机的服务器参数"><a href="#调整每台虚拟机的服务器参数" class="headerlink" title="调整每台虚拟机的服务器参数"></a>调整每台虚拟机的服务器参数</h4><ol>
+<li><p>禁用 swap 分区：<br>临时禁用：<code>swapoff -a</code><br>永久禁用：<code>sed -i &#39;/swap/s/^/#/g&#39; /etc/fstab</code><br>swap 分区必须禁止掉，否则 <code>kubadm init</code> 自检时会报如下错误：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR Swap]: running with swap on is not supported. Please <span class="built_in">disable</span> swap</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将桥接的 IPv4 流量传递到 iptables 的链：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat &gt; /etc/sysctl.d/k8s.conf &lt;&lt; EOF</span><br><span class="line">net.bridge.bridge-nf-call-ip6tables = 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables = 1</span><br><span class="line">EOF</span><br><span class="line">$ sysctl --system</span><br></pre></td></tr></table></figure>
+<p> 如果不进行这一步的设置，<code>kubadm init</code> 自检时会报如下错误：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables contents are not <span class="built_in">set</span> to 1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关闭网络防火墙：</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="keyword">stop</span> firewalld</span><br><span class="line">systemctl <span class="keyword">disable</span> firewalld</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>禁用 SELinux：<br>临时关闭 selinux（不需要重启主机）: <code>setenforce 0</code><br>永久关闭 selinux（需要重启主机才能生效）：<code>sed -i &#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39; /etc/selinux/config</code></p>
+</li>
+</ol>
+<h4 id="各节点安装-docker、kubeadm、kubelet、kubectl-工具"><a href="#各节点安装-docker、kubeadm、kubelet、kubectl-工具" class="headerlink" title="各节点安装 docker、kubeadm、kubelet、kubectl 工具"></a>各节点安装 docker、kubeadm、kubelet、kubectl 工具</h4><h5 id="安装-Docker"><a href="#安装-Docker" class="headerlink" title="安装 Docker"></a>安装 Docker</h5><p>配置 Docker yum 源（阿里 yum 源）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sS -o /etc/yum.repos.d/docker-ce.repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure></p>
+<p>安装 docker：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install --nogpgcheck -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">yum install --nogpgcheck -y docker-ce</span><br><span class="line">systemctl <span class="built_in">enable</span> docker &amp;&amp; systemctl start docker</span><br></pre></td></tr></table></figure></p>
+<h5 id="安装-kubeadm、kubelet、kubectl-工具"><a href="#安装-kubeadm、kubelet、kubectl-工具" class="headerlink" title="安装 kubeadm、kubelet、kubectl 工具"></a>安装 kubeadm、kubelet、kubectl 工具</h5><p>配置相关工具 yum 源（阿里 yum 源）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt; EOF</span><br><span class="line">[kubernetes]</span><br><span class="line">name=Kubernetes</span><br><span class="line">baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">repo_gpgcheck=1</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure></p>
+<p>安装 kubeadm、kubelet、kubectl：<br>其实 kubeadm、kubelet、kubectl 这三个工具的版本命名是一致的（和 k8s 版本命名一致），我们可以指定安装特定的版本，即安装指定版本的 k8s 集群。</p>
+<p>查看哪些版本可以安装：<br><code>yum --showduplicates list kubeadm|kubelet|kubectl</code></p>
+<p>在这里我们安装 <code>1.13.2</code> 版本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y kubeadm-1.13.2 kubelet-1.13.2 kubectl-1.13.2</span><br><span class="line"><span class="comment"># 设置 kubelet 开机自启动: kubelet 特别重要，如果服务器重启后 kubelet</span></span><br><span class="line"><span class="comment"># 没有启动，那么 k8s 相关组件的容器就无法启动。在这里不需要把 kubelet 启动</span></span><br><span class="line"><span class="comment"># 起来，因为现在还启动不起来，后续执行的 kubeadm 命令会自动把 kubelet 拉起来。</span></span><br><span class="line">systemctl <span class="built_in">enable</span> kubelet</span><br></pre></td></tr></table></figure></p>
+<h4 id="使用-kubeadm-部署-master-节点"><a href="#使用-kubeadm-部署-master-节点" class="headerlink" title="使用 kubeadm 部署 master 节点"></a>使用 kubeadm 部署 master 节点</h4><p>登陆 master 节点执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --kubernetes-version v1.13.2 --image-repository registry.aliyuncs.com/google_containers --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.10.100</span><br></pre></td></tr></table></figure></p>
+<p>参数说明：<br><code>--kubernetes-version</code>:  安装指定版本的 k8s 版本，该参数和 kubeadm 的版本有关，特定版本的 kubeadm 并不能安装所有版本的 k8s，最好还是 kubeadm 的版本和该参数指定的版本一致。</p>
+<p><code>--image-repository</code>: 该参数仅在高版本（具体哪个版本没仔细查，反正在 1.13.x 中是支持的）的 kubeadm 中支持，用来设置 kubeadm 拉取 k8s 各组件镜像的地址，默认拉取的地址是：<a href="k8s.gcr.io">k8s.gcr.io</a>。众所周知 <a href="k8s.gcr.io">k8s.gcr.io</a> 国内是无法访问的，所以在这里改为阿里云镜像仓库。</p>
+<p><code>--pod-network-cidr</code>: 设置 pod ip 的网段 ，网段之所以是 <code>10.244.0.0/16</code>，是因为后面安装 flannel 网络插件时，yaml 文件里面的 ip 段也是这个，两个保持一致，不然可能会使得 Node 间 Cluster IP 不通。这个参数必须得指定，如果这里不设置的话后面安装 flannel 网络插件时会报如下错误：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E0317 17:02:15.077598       1 main.go:289] <span class="builtin-name">Error</span> registering network: failed <span class="keyword">to</span> acquire lease: node <span class="string">"k8s-master"</span> pod cidr <span class="keyword">not</span> assigned</span><br></pre></td></tr></table></figure></p>
+<p><code>--apiserver-advertise-address</code>: API server 用来告知集群中其它成员的地址，这个参数也必须得设置，否则 api-server 容器启动不起来，该参数的值为 master 节点所在的本地 ip 地址。</p>
+<hr>
+<p>题外话：像之前没有 <code>--image-repository</code> 这个参数时，大家为了通过 kubeadm 安装 k8s 都是采用”曲线救国”的方式：先从别的地方把同样的镜像拉到本地（当然镜像的 tag 肯定不是 k8s.gcr.io/xxxx），然后将拉下来的镜像重新打个 tag，tag 命名成和执行 <code>kubeadm init</code> 时真正拉取镜像的名称一致（比如：k8s.gcr.io/kube-controller-manager-amd64:v1.13.2）。这么做显然做了很多不必要的工作，幸好现在有了 <code>--image-repository</code> 这个参数能自定义 kubeadm 拉取 k8s 相关组件的镜像地址了。</p>
+<hr>
+<p>执行上面命令后，如果出现如下输出（截取了部分），则表示 master 节点安装成功了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">[bootstraptoken] creating the <span class="string">"cluster-info"</span> ConfigMap <span class="keyword">in</span> the <span class="string">"kube-public"</span> namespace</span><br><span class="line">[addons] Applied essential addon: CoreDNS</span><br><span class="line">[addons] Applied essential addon: kube-proxy</span><br><span class="line"></span><br><span class="line">Your Kubernetes master has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run <span class="string">"kubectl apply -f [podnetwork].yaml"</span> with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">You can now join any number of machines by running the following on each node</span><br><span class="line">as root:</span><br><span class="line"></span><br><span class="line">  kubeadm join 192.168.10.100:6443 --token jm6o42.9ystvjarc6u09pjp --discovery-token-ca-cert-hash sha256:64405f3a90597e0ebf1f33134649196047ce74df575cb1a7b38c4ed1e2f94421</span><br></pre></td></tr></table></figure></p>
+<p>根据上面输出知道：要开始使用集群普通用户执行下面命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure></p>
+<p>现在就可以使用 kubectl 访问集群了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@k8s-master ~]$ kubectl get node</span><br><span class="line">NAME         STATUS     ROLES    AGE   VERSION</span><br><span class="line">k8s-master   NotReady   master   13m   v1.13.2</span><br></pre></td></tr></table></figure></p>
+<p>可以看出现在 master 节点还是 <code>NotReady</code> 状态，这是因为默认情况下，为了保证 master 的安全，master 是不会被分配工作负载的。你可以取消这个限制通过输入（不建议这样做，我们后面会向集群中添加两 node 工作节点）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl taint nodes --all node-role.kubernetes.io/master-</span><br></pre></td></tr></table></figure></p>
+<h4 id="安装-Pod-网络插件（CNI）"><a href="#安装-Pod-网络插件（CNI）" class="headerlink" title="安装 Pod 网络插件（CNI）"></a>安装 Pod 网络插件（CNI）</h4><p>Pod 网络插件有很多种，具体见这里：<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/，我们选择部署" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/cluster-administration/addons/，我们选择部署</a> <a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">Flannel</a> 网络插件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure></p>
+<h4 id="使用-kubeadm-部署-node-节点"><a href="#使用-kubeadm-部署-node-节点" class="headerlink" title="使用 kubeadm 部署 node 节点"></a>使用 kubeadm 部署 node 节点</h4><p>前面已经将 master 节点部署完了，接下来部署 node 节点就很简单了，在 node节点执行如下命令将自己加到 k8s 集群中（复制 master 节点安装完后的输出）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join 192.168.10.100:6443 --token jm6o42.9ystvjarc6u09pjp --discovery-token-ca-cert-hash sha256:64405f3a90597e0ebf1f33134649196047ce74df575cb1a7b38c4ed1e2f94421</span><br></pre></td></tr></table></figure></p>
+<p>出现如下输出（截取了部分）表示成功将 node 添加到了集群：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run <span class="string">'kubectl get nodes'</span> on the master to see this node join the cluster.</span><br></pre></td></tr></table></figure></p>
+<p>在 master 节点查看 node 状态，如果都为 Ready，则表示集群搭建完成：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@k8s-master ~]$ kubectl get nodes</span><br><span class="line">NAME         STATUS   ROLES    AGE   VERSION</span><br><span class="line">k8s-master   Ready    master   14m   v1.13.2</span><br><span class="line">k8s-node-1   Ready    &lt;none&gt;   3m    v1.13.2</span><br></pre></td></tr></table></figure></p>
+<p>用同样的方法把另一个节点也加入到集群中。</p>
+<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://purewhite.io/2017/12/17/use-kubeadm-setup-k8s/" target="_blank" rel="noopener">https://purewhite.io/2017/12/17/use-kubeadm-setup-k8s/</a><br><a href="https://kubernetes.io/zh/docs/setup/independent/install-kubeadm/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/setup/independent/install-kubeadm/</a><br><a href="https://k8smeetup.github.io/docs/admin/kubeadm/" target="_blank" rel="noopener">https://k8smeetup.github.io/docs/admin/kubeadm/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/24/dockerignore-文件从入门到实践/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1780,173 +2032,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/06/谷歌云对象存储-gcs-开启日志记录功能/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/06/谷歌云对象存储-gcs-开启日志记录功能/" itemprop="url">谷歌云对象存储 gcs 开启日志记录功能</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-06T21:06:59+08:00">
-                2019-01-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Google-Cloud-Platform/" itemprop="url" rel="index">
-                    <span itemprop="name">Google Cloud Platform</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>有时候我们需要对 gcs 开启日志记录功能，一方面可以分析统计每个针对 gcs 的 http 请求的详细信息，另一方面还可以用于问题调试用途，比如我们对一个存储分区的对象配置了生命周期，可以看其访问日志判断配置是否生效。</p>
-<p><strong>gcs 日志记录功能记录两种类型日志</strong></p>
-<p>访问日志：访问日志是每小时创建一次，记录对指定存储分区发出的所有请求的信息；<br>存储日志：存储分区过去 24 小时内存储空间平均使用量，以字节为单位；</p>
-<p><a href="https://cloud.google.com/storage/docs/access-logs?hl=zh-cn&amp;refresh=1" target="_blank" rel="noopener">https://cloud.google.com/storage/docs/access-logs?hl=zh-cn&amp;refresh=1</a></p>
-<h3 id="gcs-开启日志记录功能步骤"><a href="#gcs-开启日志记录功能步骤" class="headerlink" title="gcs 开启日志记录功能步骤"></a>gcs 开启日志记录功能步骤</h3><p>以开启 gs://gcs-bucket 存储分区日志记录功能为例：</p>
-<ol>
-<li><p>创建一个存储分区用于存储日志记录，名字随便起：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil mb -l asia <span class="string">gs:</span><span class="comment">//gcs-bucket-logs-record</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>设置权限以使 Cloud Storage 对该存储分区具有 WRITE 权限</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil acl ch -g cloud-storage-analytics<span class="meta">@google</span>.<span class="string">com:</span>W <span class="string">gs:</span><span class="comment">//gcs-bucket-logs-record</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>为存储分区开启日志记录功能<br>命令格式：<code>gsutil logging set on -b &lt;日志存储分区&gt; &lt;要开启日志记录功能的存储分区&gt;</code></p>
-<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil logging <span class="keyword">set</span> on <span class="comment">-b gs:</span>//<span class="comment">gcs-bucket-logs-record gs:</span>//<span class="comment">gcs-bucket</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>检查日志记录功能是否开启成功</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil logging <span class="keyword">get</span> gs:<span class="comment">//gcs-bucket</span></span><br></pre></td></tr></table></figure>
-<p> 如果开启成功会显示：<code>{&quot;logBucket&quot;: &quot;gcs-bucket-logs-record&quot;, &quot;logObjectPrefix&quot;: &quot;gcs-bucket&quot;}</code></p>
-<p> 另外，开启成功后过 2 小时左右就可以在 gs://gcs-bucket-logs-record 看到日志文件产生了，日志文件格式为 csv。</p>
-</li>
-<li><p>关闭日志记录功能</p>
-<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gsutil logging <span class="keyword">set</span> off <span class="comment">gs:</span>//<span class="comment">gcs-bucket</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p><strong>日志文件命名格式及日志内容格式见文档详细说明</strong></p>
-<p><a href="https://cloud.google.com/storage/docs/access-logs?hl=zh-cn&amp;refresh=1" target="_blank" rel="noopener">https://cloud.google.com/storage/docs/access-logs?hl=zh-cn&amp;refresh=1</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1996,7 +2081,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">93</span>
+                  <span class="site-state-item-count">94</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
