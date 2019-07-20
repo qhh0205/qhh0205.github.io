@@ -296,6 +296,150 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/20/Go-语言-exec-实时获取外部命令的执行输出/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/20/Go-语言-exec-实时获取外部命令的执行输出/" itemprop="url">Go 语言 exec 实时获取外部命令的执行输出</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-20T18:11:47+08:00">
+                2019-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在 Go 语言中调用外部 Linux 命令可以通过标准的 <a href="https://go-zh.org/pkg/os/exec/" target="_blank" rel="noopener">os/exec</a> 包实现，我们一般的使用方式如下：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"os/exec"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	cmd := exec.Command(<span class="string">"ls"</span>, <span class="string">"-al"</span>)</span><br><span class="line">	output, _ := cmd.CombinedOutput()</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(output))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面这种使用方式虽然能获取到外部命令的执行结果输出 output，但是必须得命令执行完成后才将获取到的结果一次性返回。很多时候我们是需要实时知道命令执行的输出，比如我们调用一个外部的服务构建命令： <code>mvn build</code>，这种情况下实时输出命令执行的结果对我们来说很重要。再比如我们 ping 远程 IP，需要知道实时输出，如果直接 ping 完在输出，在使用上来说体验不好。</p>
+<p>要实现外部命令执行结果的实时输出，需要使用 <code>Cmd</code> 结构的 <code>StdoutPipe()</code> 方法创建一个管道连接到命令执行的输出，然后用 for 循环从管道中实时读取命令执行的输出并打印到终端。具体代码如下：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RunCommand</span><span class="params">(name <span class="keyword">string</span>, arg ...<span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	cmd := exec.Command(name, arg...)</span><br><span class="line">    <span class="comment">// 命令的错误输出和标准输出都连接到同一个管道</span></span><br><span class="line">	stdout, err := cmd.StdoutPipe()</span><br><span class="line">	cmd.Stderr = cmd.Stdout</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err = cmd.Start(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 从管道中实时获取输出并打印到终端</span></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		tmp := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">1024</span>)</span><br><span class="line">		_, err := stdout.Read(tmp)</span><br><span class="line">		fmt.Print(<span class="keyword">string</span>(tmp))</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err = cmd.Wait(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/15/Go-语言读写文件/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1758,175 +1902,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/07/使用-Vagrant-调试-Ansible-Playbook/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/07/使用-Vagrant-调试-Ansible-Playbook/" itemprop="url">使用 Vagrant 调试 Ansible Playbook</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-07T15:09:09+08:00">
-                2019-06-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Ansible/" itemprop="url" rel="index">
-                    <span itemprop="name">Ansible</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p> <img src="/images/vagrant-vbox-ansible.png" alt="Alt text"></p>
-<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>本文主要介绍使用 Vagrant 本地调试 Ansible Playbook 的最佳实践。</p>
-<p>我平时用 ansible 做一些自动化任务，难免要写很多 playbook，如果直接将写的 playbook 在线上或者真实的服务器运行难免会担心出错，而且很可能会导致严重的错误。最好的方法就是先在本地虚拟机测试好，然后跑到真实的环境。我们可以将 Vagrant 和 ansible 结合使用来轻松地在本地调试 playbook。为什么使用这种方式呢？我觉得有如下好处（当然用了之后就知道有多爽了）：</p>
-<ul>
-<li>虚拟机用 Vagrant 管理，随时可以方便地删除、重建，这些操作都是简单的命令行；</li>
-<li>ansible 脚本在本地虚拟机可以随便折腾，哪怕 VM 折腾坏了，可以马上重建 VM；</li>
-<li>所有操作都是基于配置文件，没有界面点触式操作，可以很好地将其工程化，放到 git 仓库统一管理；</li>
-</ul>
-<h3 id="Vagrant-结合-Ansible-的-workflow"><a href="#Vagrant-结合-Ansible-的-workflow" class="headerlink" title="Vagrant 结合 Ansible 的 workflow"></a>Vagrant 结合 Ansible 的 workflow</h3><p>Vagrant 结合 Ansible 的主要工作原理是使用 Vagrant 的 <a href="https://www.vagrantup.com/docs/provisioning/ansible_local.html" target="_blank" rel="noopener">ansible_local</a> 或者 <a href="https://www.vagrantup.com/docs/provisioning/ansible.html" target="_blank" rel="noopener">ansible</a> 配置器(Provisioner)，这两个的唯一区别是前者会在 provision 时自动在 VM 安装 ansible，后者不会自动安装，需要自行安装。我选择用 ansible_local 配置器，懒得装一遍 ansible… 而且在 <code>vagrant destroy</code> 销毁虚拟机后重建时还能得到与之前一致的配置。</p>
-<p>下面介绍下我本地调试 ansible playbook 脚本的 workflow。</p>
-<ol>
-<li><p>使用 Vagrantfile 定义虚拟机</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">  config.vm.hostname= <span class="string">"ansible"</span></span><br><span class="line">  config.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.100"</span></span><br><span class="line">  config.vm.provider <span class="symbol">:virtualbox</span> <span class="keyword">do</span> <span class="params">|vbox|</span></span><br><span class="line">      vbox.name = <span class="string">"ansible_vagrant"</span></span><br><span class="line">      vbox.memory = <span class="string">"512"</span></span><br><span class="line">      vbox.cpus = <span class="number">1</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  <span class="comment"># ansible 相关配置</span></span><br><span class="line">  config.vm.provision <span class="string">"ansible_local"</span> <span class="keyword">do</span> <span class="params">|ansible|</span></span><br><span class="line">    <span class="comment"># ansible 运行时输出详细信息，作用同 ansible-playbook 的 -v 参数</span></span><br><span class="line">    <span class="comment"># ansible.verbose = "v"</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 指定运行哪个 playbook</span></span><br><span class="line">    ansible.playbook = <span class="string">"playbook.yml"</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在 Vagrant 工程目录下编写 playbook，示例：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">Test</span> <span class="string">Playbook...</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  become:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  gather_facts:</span> <span class="literal">no</span></span><br><span class="line"><span class="attr">  vars:</span></span><br><span class="line"><span class="attr">    - ip_list:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.2</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">remove</span> <span class="string">ip</span> <span class="string">list</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      file:</span></span><br><span class="line"><span class="attr">        state:</span> <span class="string">absent</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">/tmp/ip.txt</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">test</span> <span class="string">gen</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      shell:</span> <span class="string">echo</span> <span class="string">"<span class="template-variable">&#123;&#123; item &#125;&#125;</span>"</span> <span class="string">&gt;&gt;</span> <span class="string">/tmp/ip.txt</span></span><br><span class="line"><span class="attr">      with_items:</span> <span class="string">"<span class="template-variable">&#123;&#123; ip_list &#125;&#125;</span>"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>playbook 写完后 执行 <code>vagrant up</code> 启动虚拟机，启动过程中会自动执行 Vagrantfile 中配置的 playbook 文件（在 Vagrant 工程目录下）；</p>
-</li>
-<li>如果 playbook 运行有问题，则继续修改；</li>
-<li>执行 <code>vagrant rsync &amp;&amp; vagrant provision</code> 重新运行 playbook；<blockquote>
-<p>注意：在执行 vagrant provision 之前，一定要先 vagrant rsync 同步下本地主机和 VM 的共享目录，否则本地修改后不会生效。ansible 脚本的运行最终是在 VM 上面，读取的文件都是在 VM 的 /vagrant 目录。</p>
-</blockquote>
-</li>
-<li>如果测试 playbook 还是有问题则返回到第 4 步继续修改并测试；</li>
-<li>如果一切都测试顺利的话，为了保险，最后模拟一下真实的环境：<code>vagrant destroy</code> 销毁 VM，然后 <code>vagrant up</code> 重新创建 VM 并自动运行 ansible playbook。</li>
-</ol>
-<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://linux.cn/article-9502-1.html" target="_blank" rel="noopener">https://linux.cn/article-9502-1.html</a> | 使用 Vagrant 测试 Ansible 剧本<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_intro.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_intro.html</a> | Vagrant 和 Ansible<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_local.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_local.html</a> | Vagrant ansible_local 配置器<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_common.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_common.html</a> | Vagrant ansible 和 ansible_local 配置器通用配置</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1976,7 +1951,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">94</span>
+                  <span class="site-state-item-count">95</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

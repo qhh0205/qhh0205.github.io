@@ -296,6 +296,195 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/27/用-Dnsmasq-搭建一个简单的-DNS-服务器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/04/27/用-Dnsmasq-搭建一个简单的-DNS-服务器/" itemprop="url">用 Dnsmasq 搭建一个简单的 DNS 服务器</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-27T22:25:49+08:00">
+                2019-04-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DNS/" itemprop="url" rel="index">
+                    <span itemprop="name">DNS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文主要介绍如何通过 <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html" target="_blank" rel="noopener">Dnsmasq</a> 工具搭建一个简单的 DNS 服务器，搭建完成后就可以马上测试使用了。</p>
+<h3 id="Dnsmasq-简介"><a href="#Dnsmasq-简介" class="headerlink" title="Dnsmasq 简介"></a>Dnsmasq 简介</h3><p><a href="http://www.thekelleys.org.uk/dnsmasq/doc.html" target="_blank" rel="noopener">Dnsmasq</a> 是一个轻量级的 DNS 缓存、DHCP、TFTP、PXE 服务器。</p>
+<p>作为域名解析服务器，dnsmasq 可以通过缓存 DNS 请求来提高对访问过域名的解析速度。</p>
+<p>作为 DHCP 服务器，Dnsmasq 可以用于为局域网电脑分配内网 IP 地址和提供路由。DNS 和 DHCP 两个功能可以同时或分别单独实现。</p>
+<h3 id="Dnsmasq-的应用场景"><a href="#Dnsmasq-的应用场景" class="headerlink" title="Dnsmasq 的应用场景"></a>Dnsmasq 的应用场景</h3><p>我们一般使用 Dnsmasq 的 DNS 功能，总结了下基于该功能有如下使用场景：</p>
+<ul>
+<li><p>作为内部局域网的一个 DNS 缓存服务器。通过 DNS 缓存的功能，可以提高应用程序域名解析的速度。比如 <a href="https://kubernetes.io/" target="_blank" rel="noopener">Kubernetes</a> 的 <a href="https://github.com/kubernetes/dns" target="_blank" rel="noopener">kube-dns</a> 组件中就用 dnsmasq 容器作为 DNS 服务器，用 kube-dns 容器作为 dnsmasq 的上游服务器。dnsmasq 本身具有缓存功能，所以可以大大提高集群中服务名的解析速度，而不需要每次解析请求都访问 kube-dns 容器。</p>
+</li>
+<li><p>实现 DNS 劫持功能。在局域网中，我们有时候可能希望暂时将某个公网域名解析到一个临时的地址，不走公网 DNS。</p>
+</li>
+</ul>
+<h3 id="Dnsmasq-的工作原理"><a href="#Dnsmasq-的工作原理" class="headerlink" title="Dnsmasq 的工作原理"></a>Dnsmasq 的工作原理</h3><p>Dnsmasq 在接受到用户的一个 DNS 请求时，首先会查找 /etc/hosts 这个文件，如果 /etc/hosts 文件没有请求的记录，然后查找 /etc/resolv.conf 中定义的外部 DNS（也叫上游 DNS 服务器，nameserver 配置），外部 DNS 通过递归查询查找到请求后响应给客户端，然后 dnsmasq 将请求结果缓存下来（缓存到内存）供后续的解析请求。</p>
+<p>配置 Dnsmasq 为 DNS 缓存服务器，同时在 /etc/hosts 文件中加入本地内网解析，这样一来每当内网机器查询时就会优先查询 hosts 文件，这就等于将 /etc/hosts 共享给全内网机器使用，从而解决内网机器互相识别的问题。相比逐台机器编辑 hosts 文件或者添加 Bind DNS 记录，仅编辑一个 hosts 文件，这简直太容易了。</p>
+<h3 id="Dnsmasq-安装"><a href="#Dnsmasq-安装" class="headerlink" title="Dnsmasq 安装"></a>Dnsmasq 安装</h3><p>Dnsmasq 的安装特别简单，以 Centos7 下安装为例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y dnsmasq</span><br></pre></td></tr></table></figure></p>
+<h3 id="Dnsmasq-配置及启动"><a href="#Dnsmasq-配置及启动" class="headerlink" title="Dnsmasq 配置及启动"></a>Dnsmasq 配置及启动</h3><h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>Dnsmasq 的所有的配置都在 <code>/etc/dnsmasq.conf</code> 这一个文件中完成 。官方在配置文件 <code>/etc/dnsmasq.conf</code> 中针对选项和参数等做了比较好的注释说明，我们可以将配置做一次备份，以便以后查阅。默认情况下 dnsmasq.conf 中只开启了最后 include 项，因此可以在 /etc/dnsmasq.conf 的前提下，将自定义的配置放到 /etc/dnsmasq.d 目录下的一个任意名字的配置文件当中。</p>
+<blockquote>
+<p>注意： /etc/dnsmasq.d/*.conf 的优先级大于 /etc/dnsmasq.conf</p>
+</blockquote>
+<p>关于 dnsmasq 的配置项非常多，具体配置项含义在 <code>/etc/dnsmasq.conf</code> 中有详细的说明，本文如下配置实现一个简单的 DNS 服务器（配置文件放到了 <code>/etc/dnsmasq.d/</code> 目录下，命名为 <code>dnsmasq.conf</code>）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#dnsmasq 启动监听的端口号</span></span><br><span class="line">port=53</span><br><span class="line"></span><br><span class="line"><span class="comment">#从不转发格式错误的域名</span></span><br><span class="line">domain-needed</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认情况下Dnsmasq会发送查询到它的任何上游DNS服务器上，如果取消注释，</span></span><br><span class="line"><span class="comment">#则Dnsmasq则会严格按照/etc/resolv.conf中的 DNS Server 顺序进</span></span><br><span class="line"><span class="comment">#行查询，直到第一个成功解析成功为止。</span></span><br><span class="line">strict-order</span><br><span class="line"></span><br><span class="line"><span class="comment"># dnsmasq 缓存大小，默认 150</span></span><br><span class="line">cache-size=8192</span><br><span class="line"></span><br><span class="line"><span class="comment">#address 可以将指定的域解析为一个IP地址，即泛域名解析。</span></span><br><span class="line"><span class="comment"># 将 *.taobao.com 解析到 10.10.10.10</span></span><br><span class="line">address=/taobao.com/10.10.10.10</span><br><span class="line"></span><br><span class="line"><span class="comment">#把所有.cn的域名全部通过 114.114.114.114 这台国内DNS服务器来解析</span></span><br><span class="line">server=/cn/114.114.114.114</span><br></pre></td></tr></table></figure></p>
+<p>为了验证 /etc/hosts 文件解析是否起作用，我们也向 hosts 文件添加几条记录：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">10.4.29.106      ansible</span><br><span class="line">10.4.24.116      www.baidu.com</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>注意：/etc/hosts 文件修改后需要重启 dnsmasq，否则修改不会生效。<br>重启方法：<code>systemctl restart dnsmasq</code></p>
+</blockquote>
+<h4 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置为开机自启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> dnsmasq</span><br><span class="line"><span class="comment"># 启动 dnsmasq 服务</span></span><br><span class="line">systemctl start dnsmasq</span><br></pre></td></tr></table></figure>
+<h3 id="测试使用-Dnsmasq"><a href="#测试使用-Dnsmasq" class="headerlink" title="测试使用 Dnsmasq"></a>测试使用 Dnsmasq</h3><p>我们搭建的 DNS 服务器地址为：<code>192.168.10.200</code></p>
+<p>使用 dig 命令指定 DNS 服务器地址来查看解析是否生效：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dig @192.168.10.200 ansible</span><br><span class="line">dig @192.168.10.200 www.taobao.com</span><br><span class="line">dig @192.168.10.200 ip.cn</span><br></pre></td></tr></table></figure></p>
+<h3 id="验证-Dnsmasq-缓存功能是否生效"><a href="#验证-Dnsmasq-缓存功能是否生效" class="headerlink" title="验证 Dnsmasq 缓存功能是否生效"></a>验证 Dnsmasq 缓存功能是否生效</h3><p>首先使用 dig 查询一个之前未查询过的域名，然后看响应时间是多少：<br>第一次 dig：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dig @192.168.10.200 qhh.me</span><br><span class="line">......                                                                                                                                </span><br><span class="line">;; Query time: 478 msec</span><br><span class="line">;; SERVER: 192.168.10.200<span class="comment">#53(192.168.10.200)</span></span><br><span class="line">;; WHEN: Sat Apr 27 21:45:24 CST 2019</span><br><span class="line">;; MSG SIZE  rcvd: 56</span><br></pre></td></tr></table></figure></p>
+<p>第二次 dig：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dig @192.168.10.200 qhh.me                                                                                                                                   </span><br><span class="line">......</span><br><span class="line">;; Query time: 0 msec</span><br><span class="line">;; SERVER: 192.168.10.200<span class="comment">#53(192.168.10.200)</span></span><br><span class="line">;; WHEN: Sat Apr 27 21:45:32 CST 2019</span><br><span class="line">;; MSG SIZE  rcvd: 67</span><br></pre></td></tr></table></figure></p>
+<p>可以看到两次同样的 dig 查询的时间不一样，第一次 478 ms，第二次 0 ms，说明第二次直接是从缓存中取的数据，没有向上游服务器发起请求。</p>
+<h3 id="Dnsmasq-的缓存在哪里？如何查看？"><a href="#Dnsmasq-的缓存在哪里？如何查看？" class="headerlink" title="Dnsmasq 的缓存在哪里？如何查看？"></a>Dnsmasq 的缓存在哪里？如何查看？</h3><p>dnsmasq 的缓存并不是保存在本地磁盘的某个文件，而是存储在内存中，因此是无法直接查看的。当然作为一个 Geek，想要查看缓存的内容也是有办法的：</p>
+<ol>
+<li><p>dnsmasq 启动参数添加 –log-queries</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vi /usr/lib/systemd/system/dnsmasq.service</span><br><span class="line">ExecStart=/usr/sbin/dnsmasq -k 改为：ExecStart=/usr/sbin/dnsmasq -k --<span class="built_in">log</span>-queries</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重新加载 Systemd Unit 配置文件</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">systemctl daemon-reload</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启 dnsmasq</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">systemctl restart dnsmasq</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行如下命令 dump 出来缓存内容到 journal 日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -SIGUSR1 &lt;PID&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看 dump 出来的 dns 记录（dnsmasq 当前缓存的内容）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u dnsmasq</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="http://www.thekelleys.org.uk/dnsmasq/doc.html" target="_blank" rel="noopener">http://www.thekelleys.org.uk/dnsmasq/doc.html</a> | dnsmasq 官方文档<br><a href="https://www.hi-linux.com/posts/30947.html" target="_blank" rel="noopener">https://www.hi-linux.com/posts/30947.html</a> | 一篇比较全面的博客<br><a href="https://yq.aliyun.com/articles/582537" target="_blank" rel="noopener">https://yq.aliyun.com/articles/582537</a> | 一篇比较精简的博客<br><a href="http://flux242.blogspot.com/2012/06/dnsmasq-cache-size-tuning.html" target="_blank" rel="noopener">http://flux242.blogspot.com/2012/06/dnsmasq-cache-size-tuning.html</a> | 介绍了 dnsmasq 的基本概念、缓存淘汰机制等相关内容</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/19/使用-kubeadm-搭建-kubernetes-集群/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1855,183 +2044,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/09/基于谷歌云-gcp-的动态-Ansible-inventory-实践/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/09/基于谷歌云-gcp-的动态-Ansible-inventory-实践/" itemprop="url">基于谷歌云 gcp 的动态 Ansible inventory 实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-09T22:58:55+08:00">
-                2019-01-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Ansible/" itemprop="url" rel="index">
-                    <span itemprop="name">Ansible</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="关于-Ansible-inventory-说明"><a href="#关于-Ansible-inventory-说明" class="headerlink" title="关于 Ansible inventory 说明"></a>关于 Ansible inventory 说明</h3><p>ansible inventory 文件可以分为如下两类：</p>
-<ol>
-<li>静态 inventory：主机信息写死到文件，这种情况一般适用于管理少量主机，对于成百上千规模的主机人工管理主机清单文件显然是不合理的；</li>
-<li>动态 inventory：ansible 根据脚本动态获取云提供商的主机清单文件，这样可以省去人工维护静态清单文件的繁琐工作，对于大批量主机管理也是非常可靠的；</li>
-</ol>
-<h3 id="Ansible-动态获取云提供商主机-inventory-原理"><a href="#Ansible-动态获取云提供商主机-inventory-原理" class="headerlink" title="Ansible 动态获取云提供商主机 inventory 原理"></a>Ansible 动态获取云提供商主机 inventory 原理</h3><p>ansible 通过 <code>-i</code> 参数指定动态 inventory 目录，该目录底下放置获取云提供商主机清单的脚本（ansible 社区提供的一般是 Python 脚本），ansible 在执行时该脚本会自动执行并将结果保存到内存中。</p>
-<p>那么上面说的获取云提供商主机清单的可执行脚本在哪里获取呢？在 <a href="https://github.com/ansible/ansible/tree/devel/contrib/inventory" target="_blank" rel="noopener">这里</a> （ansible 官方源码仓库：社区提供的脚本）获取，这里有各个云提供商对应的主机清单脚本(*.py)及配置文件(*.ini)，比如谷歌的 <code>gce.py</code> 和 <code>gce.ini</code>，Aws 的 <code>ec2.py</code> 和 <code>ec2.ini</code> 等等。</p>
-<h3 id="基于-gcp-的动态-inventory-使用"><a href="#基于-gcp-的动态-inventory-使用" class="headerlink" title="基于 gcp 的动态 inventory 使用"></a>基于 gcp 的动态 inventory 使用</h3><p>下面是配置使用谷歌云动态 ansible inventory 的详细步骤</p>
-<ol>
-<li><p>相关软件包安装;</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install apache-libcloud pycrypto</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>谷歌云控制台创建一个服务账号（需要有 gce 的访问权限），获取 json 认证文件;</p>
-</li>
-<li><p>从 <a href="https://github.com/ansible/ansible/tree/devel/contrib/inventory" target="_blank" rel="noopener">ansible 官方仓库</a> 下载 <code>gce.py</code> 和 <code>gce.ini</code> 文件;</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p inventories/gcp-dynamic-inventory</span><br><span class="line"><span class="built_in">cd</span> inventories/gcp-dynamic-inventory</span><br><span class="line">wget https://github.com/ansible/ansible/blob/devel/contrib/inventory/gce.py</span><br><span class="line">wget https://github.com/ansible/ansible/blob/devel/contrib/inventory/gce.ini</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>编辑 <code>gce.ini</code> 配置文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[gce]</span><br><span class="line">libcloud_secrets =</span><br><span class="line">gce_service_account_email_address = &lt;服务账号邮箱：在第 2 步的 json 认证文件里面可以找到&gt;</span><br><span class="line">gce_service_account_pem_file_path = &lt;第 2 步中 json 认证文件路径：绝对路径&gt;</span><br><span class="line">gce_project_id = &lt;gcp 项目 id&gt;</span><br><span class="line">gce_zone =</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>测试配置的正确性</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果输出一个很长的 json 串表示没问题</span></span><br><span class="line">./gce.py --list</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行 ansible 任务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ansible -i inventories/gcp-dynamic-inventory &lt;pattern&gt; -m &lt;module_name&gt; -a <span class="string">'module_args'</span></span><br><span class="line"></span><br><span class="line">Ex:</span><br><span class="line">  <span class="comment"># 查看 asia-east1-a 区域的所有主机时间</span></span><br><span class="line">  ansible -i inventories/gcp-dynamic-inventory asia-east1<span class="_">-a</span> -m shell -a <span class="string">'date'</span></span><br></pre></td></tr></table></figure>
-<p> <strong>参数说明：</strong><br> <code>inventories/gcp-dynamic-inventory</code>:  gce.py 脚本所在的目录，ansible 运行时会自动在该目录下执行该脚本获取主机清单；</p>
-<p> <code>pattern</code>：./gce.py –list 执行结果的 json 顶级节点都可以作为 ansible 的目标主机；</p>
-<p> 最佳实践：可以给 gce 主机添加 tag，然后通过 tag 对主机分组；</p>
-</li>
-<li><p><code>gce.ini</code> 文件位置<br><code>gce.ini</code> 文件没必要必须和 <code>gce.py</code> 在一个目录，可以设置环境变量放到系统其他目录，这样就可以将配置和脚本分离，避免敏感配置放到代码仓库。设置方法：<code>~/.bashrc</code> 文件添加如下内容:</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ -s <span class="string">"<span class="variable">$HOME</span>/.ansible/gce.ini"</span> ]] &amp;&amp; <span class="built_in">export</span> GCE_INI_PATH=<span class="string">"<span class="variable">$HOME</span>/.ansible/gce.ini"</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><p>  ansible 执行时可以通过 <code>--list-host</code> 参数先测试下本次操作影响到哪些主机，不会真正执行 task；</p>
-<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><p><a href="https://temikus.net/ansible-gcp-dynamic-inventory-bootstrap" target="_blank" rel="noopener">https://temikus.net/ansible-gcp-dynamic-inventory-bootstrap</a></p>
-<p><a href="https://medium.com/vimeo-engineering-blog/orchestrating-gce-instances-with-ansible-d825a33793cd" target="_blank" rel="noopener">https://medium.com/vimeo-engineering-blog/orchestrating-gce-instances-with-ansible-d825a33793cd</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2081,7 +2093,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">94</span>
+                  <span class="site-state-item-count">95</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
