@@ -296,6 +296,165 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/24/使用-Go-开发命令行应用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/24/使用-Go-开发命令行应用/" itemprop="url">使用 Go 开发命令行应用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-24T11:07:31+08:00">
+                2019-07-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>作为一个程序员，命令行工具是我们再熟悉不过的了，我们每天或多或少都会用到命令行工具。比如项目构建、打包、启动等等。那么如何用 Go 语言编写类似的工具呢？调研了下，大概有下面三种方法：</p>
+<ul>
+<li><strong>os.Args 函数</strong><br>os.Args 功能类似于 Shell 脚本的 <code>$@</code> 功能，获取到命令行输入，然后进行人工解析处理，这种方式对于编写简单的工具还行，对于复杂点的工具，光解析输入参数就是一场”灾难”了。</li>
+<li><strong>使用 Go 标准 <a href="https://go-zh.org/pkg/flag/" target="_blank" rel="noopener">flag</a> 包</strong><br><a href="https://go-zh.org/pkg/flag/" target="_blank" rel="noopener">flag</a> 包是 Golang 官方提供的命令行参数解析包，省去人工解析工作，对于构建一个一般功能的命令行应用足够了，但是对于复杂应用还是显得比较麻烦。</li>
+<li><strong>使用第三方包 <a href="https://github.com/urfave/cli" target="_blank" rel="noopener">cli</a> 或者 <a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">cobra</a></strong><br>使用第三方包就比较专业了，提供的功能更加丰富，使用起来也很顺手。目前对于 Golang 命令行应用开发业界比较主流的就是 <a href="https://github.com/urfave/cli" target="_blank" rel="noopener">cli</a> 和 <a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">cobra</a> 了。其实两者的流行度差不多，cobra 的学习成本稍微高点，而且更加专业，看文档介绍，Kubernetes、Moby、rkt、etcd 等都是基于 cobra 构建。我个人更推荐使用 <a href="https://github.com/urfave/cli" target="_blank" rel="noopener">cli</a>，因为 cli 比较轻量级、容易学习，使用起来也更加得心应手，对于开发日常应用足够了。</li>
+</ul>
+<p>本文主要介绍后面两种方式，即 flag 包和第三方包 cli 的使用，对于 cobra 的使用这里不做具体介绍。</p>
+<h3 id="使用-flag-包构建命令行应用"><a href="#使用-flag-包构建命令行应用" class="headerlink" title="使用 flag 包构建命令行应用"></a>使用 flag 包构建命令行应用</h3><p> flag 包的使用很简单，能很方便地解析命令行输入，支持的命令行参数类型有  bool, int, uint, string, time.Duration, float 类型，另外还可以自定义类型。这里介绍下一般的使用方法，假如要开发一个命令行工具，使用方式：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./<span class="keyword">go</span>-curl -v -X <span class="string">"GET"</span> https:<span class="comment">//example.com</span></span><br></pre></td></tr></table></figure></p>
+<p>具体实现代码：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 定义一个 bool 类型的参数，默认值为 false，第三个参数为 Usage 说明</span></span><br><span class="line">	<span class="comment">// 函数返回值为对应类型的指针</span></span><br><span class="line">	v := flag.Bool(<span class="string">"v"</span>, <span class="literal">false</span>, <span class="string">"Makes  curl  verbose  during the operation."</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 定义一个 String 类型的参数，默认值为 GET，第三个参数为 Usage 说明</span></span><br><span class="line">	<span class="comment">// 与上面那种不同的是函数第一个参数为变量的指针</span></span><br><span class="line">	<span class="keyword">var</span> X <span class="keyword">string</span></span><br><span class="line">	flag.StringVar(&amp;X, <span class="string">"X"</span>, <span class="string">"GET"</span>, <span class="string">"(HTTP) Specifies a custom request method to use when communicating with the HTTP server."</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 在参数定义完后必须调用 flag.Parse() 完成命令行参数的解析</span></span><br><span class="line">	flag.Parse()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回其余参数的列表</span></span><br><span class="line">	args := flag.Args()</span><br><span class="line">	fmt.Printf(<span class="string">"v: %t, X: %s, args: %v\n"</span>, *v, X, args)</span><br><span class="line">	os.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看出定义参数有两种方式：</p>
+<ul>
+<li>指针类型参数：调用函数为 <code>flag.Type</code> 形式，返回值为对应类型的指针；</li>
+<li>值类型参数：调用函数为 <code>flag.TypeVar</code> 形式，调用时传递变量的指针；</li>
+</ul>
+<p>两种方法效果都是一样的，只不过一种解析返回的是指针，另一种是直接使用变量。</p>
+<h3 id="使用-cli-包构建命令行应用"><a href="#使用-cli-包构建命令行应用" class="headerlink" title="使用 cli 包构建命令行应用"></a>使用 cli 包构建命令行应用</h3><p>使用 cli 包开发命令行工具能省很多事，而且写出来的代码结构非常清晰，很容易理解。具体使用见代码仓库 <a href="https://github.com/urfave/cli" target="_blank" rel="noopener">README.md</a> 。在这里举一个例子，我最近写的服务部署命令行工具：<a href="https://github.com/qhh0205/deploy-kit" target="_blank" rel="noopener">https://github.com/qhh0205/deploy-kit</a>   通过看官方文档结合这个例子能很容易掌握 cli 包的是使用技巧。下面为该部署工具的 <code>--help</code> 输出：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">NAME:</span><br><span class="line">   deploy - deploy application</span><br><span class="line"></span><br><span class="line">USAGE:</span><br><span class="line">   deploy [global options] command [command options] [arguments...]</span><br><span class="line"></span><br><span class="line">VERSION:</span><br><span class="line">   v1<span class="number">.0</span></span><br><span class="line"></span><br><span class="line">COMMANDS:</span><br><span class="line">     list, ls           list all of services</span><br><span class="line">     app                deploy microservice application</span><br><span class="line">     web                deploy web application</span><br><span class="line">     lsbranch, lsb      list the code branches of service</span><br><span class="line">     upload-cdn, upcdn  upload file or directory to gcs bucket</span><br><span class="line">     help, h            Shows a list of commands or help <span class="keyword">for</span> one command</span><br><span class="line"></span><br><span class="line">GLOBAL OPTIONS:</span><br><span class="line">   --help, -h     show help</span><br><span class="line">   --version, -v  <span class="built_in">print</span> the version</span><br></pre></td></tr></table></figure></p>
+<p>该工具基于 cli 包构建，cli 包的使用核心是通过 <code>app.Commands = []cli.Command{}</code>  定义一些列命令、选项，并且通过 <code>Action</code> 绑定对应选项参数的处理函数。</p>
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><p><a href="https://github.com/urfave/cli" target="_blank" rel="noopener">https://github.com/urfave/cli</a> | cli GitHub<br><a href="https://books.studygolang.com/The-Golang-Standard-Library-by-Example/chapter13/13.1.html" target="_blank" rel="noopener">https://books.studygolang.com/The-Golang-Standard-Library-by-Example/chapter13/13.1.html</a> | flag 包介绍<br><a href="https://blog.yumaojun.net/2016/12/30/go-cobra/" target="_blank" rel="noopener">https://blog.yumaojun.net/2016/12/30/go-cobra/</a> | cobra 使用，如何使用golang编写漂亮的命令行工具<br><a href="https://blog.rapid7.com/2016/08/04/build-a-simple-cli-tool-with-golang/" target="_blank" rel="noopener">https://blog.rapid7.com/2016/08/04/build-a-simple-cli-tool-with-golang/</a> | Building a Simple CLI Tool with Golang<br><a href="https://medium.com/what-i-talk-about-when-i-talk-about-technology/dealing-with-command-line-options-in-golang-flag-package-e5fb6ef1a79e" target="_blank" rel="noopener">https://medium.com/what-i-talk-about-when-i-talk-about-technology/dealing-with-command-line-options-in-golang-flag-package-e5fb6ef1a79e</a> | Dealing with Command Line Options in Golang: flag package</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/23/Golang-协程顺序打印/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1710,151 +1869,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/11/使用-ansible-模板化-haproxy-配置文件/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/11/使用-ansible-模板化-haproxy-配置文件/" itemprop="url">使用 ansible 模板化 haproxy 配置文件</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-11T22:27:08+08:00">
-                2019-06-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Ansible/" itemprop="url" rel="index">
-                    <span itemprop="name">Ansible</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>今天使用 ansible 自动化一些日常工作，其中包括 haproxy 的配置变更，我们 haproxy 里面定义了很多 frontend 和 backend，猛一看还不好模版化，其实仔细研究一下发现完全可以通过模板的循环语法动态生成配置文件，在此分享下。首先看一下未模板化时的原始配置：<br><code>haproxy.cfg</code>:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">global</span></span><br><span class="line">    <span class="string">maxconn</span>         <span class="number">20000</span></span><br><span class="line">    <span class="string">ulimit-n</span>        <span class="number">204800</span></span><br><span class="line">    <span class="string">log</span>             <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="string">local3</span></span><br><span class="line">    <span class="string">user</span>             <span class="string">haproxy</span></span><br><span class="line">    <span class="string">group</span>            <span class="string">haproxy</span></span><br><span class="line">    <span class="string">chroot</span>          <span class="string">/var/empty</span></span><br><span class="line">    <span class="string">nbproc</span>      <span class="number">4</span> <span class="comment">#启动后运行的进程数量</span></span><br><span class="line">    <span class="string">daemon</span>        <span class="comment">#以后台形式运行haproxy</span></span><br><span class="line">    <span class="string">pidfile</span>     <span class="string">/var/run/haproxy.pid</span></span><br><span class="line"><span class="string">defaults</span></span><br><span class="line">    <span class="string">log</span> <span class="string">global</span></span><br><span class="line">    <span class="string">mode</span> <span class="string">tcp</span></span><br><span class="line">    <span class="string">retries</span> <span class="number">3</span> <span class="comment">#3次连接失败认为服务不可用，也可以在后面设置</span></span><br><span class="line">    <span class="string">timeout</span> <span class="string">connect</span> <span class="number">5</span><span class="string">s</span> <span class="comment">#连接超时</span></span><br><span class="line">    <span class="string">timeout</span> <span class="string">client</span> <span class="number">30</span><span class="string">s</span> <span class="comment">#客户端超时</span></span><br><span class="line">    <span class="string">timeout</span> <span class="string">server</span> <span class="number">30</span><span class="string">s</span> <span class="comment">#服务器端超时</span></span><br><span class="line">    <span class="string">option</span> <span class="string">redispatch</span></span><br><span class="line">    <span class="string">option</span>    <span class="string">nolinger</span></span><br><span class="line">    <span class="literal">no</span> <span class="string">option</span> <span class="string">dontlognull</span></span><br><span class="line">    <span class="string">option</span>    <span class="string">tcplog</span></span><br><span class="line">    <span class="string">option</span> <span class="string">log-separate-errors</span></span><br><span class="line"></span><br><span class="line"><span class="string">listen</span> <span class="string">admin_stats</span>  <span class="comment">#监控页面设置</span></span><br><span class="line">    <span class="string">bind</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">:26000</span></span><br><span class="line">    <span class="string">bind-process</span> <span class="number">1</span></span><br><span class="line">    <span class="string">mode</span> <span class="string">http</span></span><br><span class="line">    <span class="string">log</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="string">local3</span> <span class="string">err</span></span><br><span class="line">    <span class="string">stats</span> <span class="string">refresh</span> <span class="number">30</span><span class="string">s</span> <span class="comment">#每隔30秒自动刷新监控页面</span></span><br><span class="line">    <span class="string">stats</span> <span class="string">uri</span> <span class="string">/admin</span></span><br><span class="line">    <span class="string">stats</span> <span class="string">realm</span> <span class="string">welcome</span> <span class="string">login\</span> <span class="string">Haproxy</span></span><br><span class="line">    <span class="string">stats</span> <span class="string">auth</span> <span class="attr">admin:123456</span></span><br><span class="line">    <span class="string">stats</span> <span class="string">hide-version</span></span><br><span class="line">    <span class="string">stats</span> <span class="string">admin</span> <span class="string">if</span> <span class="literal">TRUE</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过配置文件动态生成 hproxy 配置</span></span><br><span class="line"><span class="string">frontend</span> <span class="string">redis</span></span><br><span class="line">  <span class="string">bind</span> <span class="string">*:6379</span></span><br><span class="line">  <span class="string">default_backend</span> <span class="string">redis</span></span><br><span class="line"><span class="string">backend</span> <span class="string">redis</span></span><br><span class="line">  <span class="string">server</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.1</span><span class="string">:6379</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.1</span><span class="string">:6379</span> <span class="string">check</span> <span class="string">inter</span> <span class="number">1500</span> <span class="string">rise</span> <span class="number">3</span> <span class="string">fall</span> <span class="number">3</span></span><br><span class="line"><span class="string">frontend</span> <span class="string">es</span></span><br><span class="line">  <span class="string">bind</span> <span class="string">*:9300</span></span><br><span class="line">  <span class="string">default_backend</span> <span class="string">es</span></span><br><span class="line"><span class="string">backend</span> <span class="string">es</span></span><br><span class="line">  <span class="string">server</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.2</span><span class="string">:9300</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.2</span><span class="string">:9300</span> <span class="string">check</span> <span class="string">inter</span> <span class="number">1500</span> <span class="string">rise</span> <span class="number">3</span> <span class="string">fall</span> <span class="number">3</span></span><br><span class="line"><span class="string">frontend</span> <span class="string">mysql</span></span><br><span class="line">  <span class="string">bind</span> <span class="string">*:3306</span></span><br><span class="line">  <span class="string">default_backend</span> <span class="string">mysql</span></span><br><span class="line"><span class="string">backend</span> <span class="string">mysql</span></span><br><span class="line">  <span class="string">server</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.3</span><span class="string">:3306</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.3</span><span class="string">:3306</span> <span class="string">check</span> <span class="string">inter</span> <span class="number">1500</span> <span class="string">rise</span> <span class="number">3</span> <span class="string">fall</span> <span class="number">3</span></span><br></pre></td></tr></table></figure></p>
-<p>观察可以发现 frontend 和 backend 是成对出现的，一对为一个完整的配置，所以可以将  frontend 和 backend 对抽象为一个变量列表的元素，我们通过定义一个 ansible 变量列表循环生成同样的配置即可。变量具体定义如下（haproxy_servers 变量），下面为一个完整的测试 playbook。<br><code>playbook.yml</code>:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">Test</span> <span class="string">Playbook...</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  become:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  gather_facts:</span> <span class="literal">no</span></span><br><span class="line"><span class="attr">  vars:</span></span><br><span class="line"><span class="attr">    haproxy_servers:</span></span><br><span class="line"><span class="attr">      - frontend:</span> <span class="string">'redis'</span></span><br><span class="line"><span class="attr">        bind_port:</span> <span class="number">6379</span></span><br><span class="line"><span class="attr">        backend:</span></span><br><span class="line"><span class="attr">          - address:</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.1</span><span class="string">:6379</span></span><br><span class="line"><span class="attr">      - frontend:</span> <span class="string">'es'</span></span><br><span class="line"><span class="attr">        bind_port:</span> <span class="number">9300</span></span><br><span class="line"><span class="attr">        backend:</span></span><br><span class="line"><span class="attr">          - address:</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.2</span><span class="string">:9300</span></span><br><span class="line"><span class="attr">      - frontend:</span> <span class="string">'mysql'</span></span><br><span class="line"><span class="attr">        bind_port:</span> <span class="number">3306</span></span><br><span class="line"><span class="attr">        backend:</span></span><br><span class="line"><span class="attr">          - address:</span> <span class="number">10.1</span><span class="number">.1</span><span class="number">.3</span><span class="string">:3306</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">Generate</span> <span class="string">haproxy</span> <span class="string">config</span></span><br><span class="line"><span class="attr">      template:</span></span><br><span class="line"><span class="attr">        src:</span> <span class="string">haproxy.j2</span></span><br><span class="line"><span class="attr">        dest:</span> <span class="string">/tmp/haproxy.cfg</span></span><br><span class="line"><span class="attr">        mode:</span> <span class="number">0644</span></span><br><span class="line"><span class="attr">        force:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure></p>
-<p>接下来我们看看模板文件 haproxy.j2 的定义：主要通过 jinja2 模板的循环语法遍历 haproxy_servers 变量生成 haproxy 配置。<br><code>haproxy.j2</code>:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">global</span></span><br><span class="line">    maxconn         <span class="number">20000</span></span><br><span class="line">    ulimit-n        <span class="number">204800</span></span><br><span class="line">    log             <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> local3</span><br><span class="line">    user             haproxy</span><br><span class="line">    group            haproxy</span><br><span class="line">    chroot          /var/empty</span><br><span class="line">    nbproc      <span class="number">4</span> <span class="comment">#启动后运行的进程数量</span></span><br><span class="line">    daemon        <span class="comment">#以后台形式运行haproxy</span></span><br><span class="line">    pidfile     /var/run/haproxy.pid</span><br><span class="line">defaults</span><br><span class="line">    log <span class="keyword">global</span></span><br><span class="line">    mode tcp</span><br><span class="line">    retries <span class="number">3</span> <span class="comment">#3次连接失败认为服务不可用，也可以在后面设置</span></span><br><span class="line">    timeout connect <span class="number">5</span>s <span class="comment">#连接超时</span></span><br><span class="line">    timeout client <span class="number">30</span>s <span class="comment">#客户端超时</span></span><br><span class="line">    timeout server <span class="number">30</span>s <span class="comment">#服务器端超时</span></span><br><span class="line">    option redispatch</span><br><span class="line">    option    nolinger</span><br><span class="line">    no option dontlognull</span><br><span class="line">    option    tcplog</span><br><span class="line">    option log-separate-errors</span><br><span class="line"></span><br><span class="line">listen admin_stats  <span class="comment">#监控页面设置</span></span><br><span class="line">    bind <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">26000</span></span><br><span class="line">    bind-process <span class="number">1</span></span><br><span class="line">    mode http</span><br><span class="line">    log <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> local3 err</span><br><span class="line">    stats refresh <span class="number">30</span>s <span class="comment">#每隔30秒自动刷新监控页面</span></span><br><span class="line">    stats uri /admin</span><br><span class="line">    stats realm welcome login\ Haproxy</span><br><span class="line">    stats auth admin:<span class="number">123456</span></span><br><span class="line">    stats hide-version</span><br><span class="line">    stats admin <span class="keyword">if</span> TRUE</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过配置文件动态生成 hproxy 配置</span></span><br><span class="line">&#123;% <span class="keyword">for</span> frontend <span class="keyword">in</span> haproxy_servers %&#125;</span><br><span class="line">frontend &#123;&#123; frontend.frontend &#125;&#125;</span><br><span class="line">  bind *:&#123;&#123; frontend.bind_port &#125;&#125;</span><br><span class="line">  default_backend &#123;&#123; frontend.frontend &#125;&#125;</span><br><span class="line">backend &#123;&#123; frontend.frontend &#125;&#125;</span><br><span class="line">&#123;% <span class="keyword">for</span> backend <span class="keyword">in</span> frontend.backend %&#125;</span><br><span class="line">  server &#123;&#123; backend.address &#125;&#125; &#123;&#123; backend.address &#125;&#125; check inter <span class="number">1500</span> rise <span class="number">3</span> fall <span class="number">3</span></span><br><span class="line">&#123;% endfor %&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure></p>
-<p>测试下模板化结果？：我一般用 vagrant + ansible 测试 ansible 脚本，所以直接执行 <code>vagrant rsync &amp;&amp; vagrant provision</code> 即可看到效果。关于  vagrant + ansible 的最佳实践请戳之前的这篇文章：<a href="https://qhh.me/2019/06/07/%E4%BD%BF%E7%94%A8-Vagrant-%E8%B0%83%E8%AF%95-Ansible-Playbook/" target="_blank" rel="noopener">使用 Vagrant 调试 Ansible Playbook</a>。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1904,7 +1918,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">96</span>
+                  <span class="site-state-item-count">97</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

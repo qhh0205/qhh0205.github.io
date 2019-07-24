@@ -82,7 +82,7 @@
 <meta name="description" content="Talk is cheap. Show me the code.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Spectre">
-<meta property="og:url" content="http://yoursite.com/tags/Aws/index.html">
+<meta property="og:url" content="http://yoursite.com/tags/AWS/index.html">
 <meta property="og:site_name" content="The Spectre">
 <meta property="og:description" content="Talk is cheap. Show me the code.">
 <meta property="og:locale" content="zh-Hans">
@@ -118,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/Aws/"/>
+  <link rel="canonical" href="http://yoursite.com/tags/AWS/"/>
 
 
 
 
 
-  <title>标签: Aws | The Spectre</title>
+  <title>标签: AWS | The Spectre</title>
   
 
 
@@ -288,7 +288,7 @@
 
     <div id="posts" class="posts-collapse">
       <div class="collection-title">
-        <h1>Aws<small>标签</small>
+        <h1>AWS<small>标签</small>
         </h1>
       </div>
 
@@ -300,9 +300,9 @@
 
       <h2 class="post-title">
         
-            <a class="post-title-link" href="/2019/05/06/Amazon-CloudFront-CDN-s3-源站跨域配置/" itemprop="url">
+            <a class="post-title-link" href="/2018/06/10/使用-cli53-自动化管理-Aws-Route53/" itemprop="url">
               
-                <span itemprop="name">Amazon CloudFront CDN + s3 源站跨域配置</span>
+                <span itemprop="name">使用 cli53 自动化管理 Aws Route53</span>
               
             </a>
         
@@ -310,9 +310,65 @@
 
       <div class="post-meta">
         <time class="post-time" itemprop="dateCreated"
-              datetime="2019-05-06T19:48:25+08:00"
-              content="2019-05-06" >
-          05-06
+              datetime="2018-06-10T09:18:44+08:00"
+              content="2018-06-10" >
+          06-10
+        </time>
+      </div>
+
+    </header>
+  </article>
+
+
+      
+        
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h2 class="post-title">
+        
+            <a class="post-title-link" href="/2018/03/19/Aws-Ec2-实例外挂-EBS-卷详细步骤/" itemprop="url">
+              
+                <span itemprop="name">Aws Ec2 实例外挂 EBS 卷详细步骤</span>
+              
+            </a>
+        
+      </h2>
+
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2018-03-19T23:11:18+08:00"
+              content="2018-03-19" >
+          03-19
+        </time>
+      </div>
+
+    </header>
+  </article>
+
+
+      
+        
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h2 class="post-title">
+        
+            <a class="post-title-link" href="/2018/01/07/AWS-Ec2实例挂载S3存储桶实践/" itemprop="url">
+              
+                <span itemprop="name">AWS Ec2实例挂载S3存储桶实践</span>
+              
+            </a>
+        
+      </h2>
+
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2018-01-07T11:18:28+08:00"
+              content="2018-01-07" >
+          01-07
         </time>
       </div>
 
@@ -371,7 +427,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">96</span>
+                  <span class="site-state-item-count">97</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -910,77 +966,6 @@
               var searchResultList = '<ul class=\"search-result-list\">';
               resultItems.forEach(function (result) {
                 searchResultList += result.item;
-              })
-              searchResultList += "</ul>";
-              resultContent.innerHTML = searchResultList;
-            }
-          }
-
-          if ('auto' === 'auto') {
-            input.addEventListener('input', inputEventFunction);
-          } else {
-            $('.search-icon').click(inputEventFunction);
-            input.addEventListener('keypress', function (event) {
-              if (event.keyCode === 13) {
-                inputEventFunction();
-              }
-            });
-          }
-
-          // remove loading animation
-          $(".local-search-pop-overlay").remove();
-          $('body').css('overflow', '');
-
-          proceedsearch();
-        }
-      });
-    }
-
-    // handle and trigger popup window;
-    $('.popup-trigger').click(function(e) {
-      e.stopPropagation();
-      if (isfetched === false) {
-        searchFunc(path, 'local-search-input', 'local-search-result');
-      } else {
-        proceedsearch();
-      };
-    });
-
-    $('.popup-btn-close').click(onPopupClose);
-    $('.popup').click(function(e){
-      e.stopPropagation();
-    });
-    $(document).on('keyup', function (event) {
-      var shouldDismissSearchPopup = event.which === 27 &&
-        $('.search-popup').is(':visible');
-      if (shouldDismissSearchPopup) {
-        onPopupClose();
-      }
-    });
-  </script>
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-
-  
-
-  
-
-</body>
-</html>
-;
               })
               searchResultList += "</ul>";
               resultContent.innerHTML = searchResultList;
