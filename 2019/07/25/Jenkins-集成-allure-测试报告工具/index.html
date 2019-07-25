@@ -87,14 +87,15 @@
 <meta property="og:site_name" content="The Spectre">
 <meta property="og:description" content="allure 基于已有的测试报告数据进行进一步的加工，美化等操作，相当于做了一次数据格式转换。allure 支持多种语言的多种测试框架，比如 Java 的 jUnit4、jUnit5、TestNg 等等。 本文主要介绍如何在 Jenkins 中集成 allure 测试报表工具，在每次项目自动化测试完成后，用 allure 生成经过加工后的测试报告。我们以 java 工程的 TestNg 测试为例，">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/jenkins-allure4.png">
 <meta property="og:image" content="http://yoursite.com/images/jenkins-allure1.png">
 <meta property="og:image" content="http://yoursite.com/images/jenkins-allure2.png">
 <meta property="og:image" content="http://yoursite.com/images/jenkins-allure3.png">
-<meta property="og:updated_time" content="2019-07-25T03:42:24.414Z">
+<meta property="og:updated_time" content="2019-07-25T04:01:08.547Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Jenkins 集成 allure 测试报告工具">
 <meta name="twitter:description" content="allure 基于已有的测试报告数据进行进一步的加工，美化等操作，相当于做了一次数据格式转换。allure 支持多种语言的多种测试框架，比如 Java 的 jUnit4、jUnit5、TestNg 等等。 本文主要介绍如何在 Jenkins 中集成 allure 测试报表工具，在每次项目自动化测试完成后，用 allure 生成经过加工后的测试报告。我们以 java 工程的 TestNg 测试为例，">
-<meta name="twitter:image" content="http://yoursite.com/images/jenkins-allure1.png">
+<meta name="twitter:image" content="http://yoursite.com/images/jenkins-allure4.png">
 
 
 
@@ -398,9 +399,9 @@
         <p><a href="https://docs.qameta.io/allure/" target="_blank" rel="noopener">allure</a> 基于已有的测试报告数据进行进一步的加工，美化等操作，相当于做了一次数据格式转换。allure 支持多种语言的多种测试框架，比如 Java 的 jUnit4、jUnit5、TestNg 等等。</p>
 <p>本文主要介绍如何在 Jenkins 中集成 allure 测试报表工具，在每次项目自动化测试完成后，用 allure 生成经过加工后的测试报告。我们以 java 工程的 TestNg 测试为例，处理 TestNg 生成的测试报告。</p>
 <ul>
-<li>Jenkins 安装 allure 插件<br>全局工具配置：</li>
-</ul>
-<ul>
+<li><p>Jenkins 安装 allure 插件<br>全局工具配置：</p>
+<p>  <img src="/images/jenkins-allure4.png" alt=""></p>
+</li>
 <li><p>Jenkinsfile 添加 allure 代码</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">script</span> <span class="string">&#123;</span></span><br><span class="line">    <span class="string">allure</span> <span class="attr">jdk:</span> <span class="string">''</span><span class="string">,</span> <span class="attr">report:</span> <span class="string">"target/allure-report-unit"</span><span class="string">,</span> <span class="attr">results:</span> <span class="string">[[path:</span> <span class="string">"target/surefire-reports"</span><span class="string">]]</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
 <p>  <code>target/allure-report-unit</code> 参数：allure 报告生成路径；<br>  <code>target/surefire-reports</code> 参数：测试报告原始路径；</p>
