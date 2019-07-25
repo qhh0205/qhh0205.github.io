@@ -12,6 +12,7 @@ tags: DevOps
 - Jenkins 安装 allure 插件
 全局工具配置：
 
+	![](/images/jenkins-allure4.png)
 
 - Jenkinsfile 添加 allure 代码
 ```yaml
