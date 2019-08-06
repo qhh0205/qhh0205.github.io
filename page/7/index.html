@@ -296,6 +296,245 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/22/Vagrant-入门指南/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/22/Vagrant-入门指南/" itemprop="url">Vagrant 入门指南</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-22T13:06:06+08:00">
+                2018-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vagrant/" itemprop="url" rel="index">
+                    <span itemprop="name">Vagrant</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Vagrant-简介"><a href="#Vagrant-简介" class="headerlink" title="Vagrant 简介"></a>Vagrant 简介</h3><p>Vagrant 是一个用来构建和管理虚拟机环境的工具。Vagrant 有着易于使用的工作流，并且专注于自动化，降低了开发者搭建环境的时间，提高了生产力。解决了“在我的机器上可以工作”的问题。</p>
+<p>Vagrant 是为了方便的实现虚拟化环境而设计的，使用 Ruby 开发，基于 VirtualBox 等虚拟机管理软件的接口，提供了一个可配置、轻量级的便携式虚拟开发环境。使用 Vagrant 可以很方便的就建立起来一个虚拟环境，而且可以模拟多台虚拟机，这样我们平时还可以在开发机模拟分布式系统。</p>
+<p>团队新员工加入，常常会遇到花一天甚至更多时间来从头搭建完整的开发环境，而有了Vagrant，只需要直接将已经打包好的 package（里面包括开发工具，代码库，配置好的服务器等）拿过来就可以工作了，这对于提升工作效率非常有帮助。</p>
+<h3 id="为什么选择-Vagrant"><a href="#为什么选择-Vagrant" class="headerlink" title="为什么选择 Vagrant"></a>为什么选择 Vagrant</h3><p>Vagrant 提供了一个易于配置，可重复使用，兼容的环境，通过一个单一的工作流程来控制，帮助你和团队最大化生产力和灵活性。<br>为了实现 Vagrant 的魔力，Vagrant 站在了巨人的肩膀上。虚拟机的配置基于 VirtualBox，VMware，AWS 或者其他提供商。然后一些配置工具，比如 shell 脚本，Chef 或者 Puppet 可以自动化地在虚拟机安装并配置软件。</p>
+<h4 id="对于开发者人员"><a href="#对于开发者人员" class="headerlink" title="对于开发者人员"></a>对于开发者人员</h4><p>如果你是一个开发者，Vagrant 将在一个一次性的、一致的环境中隔离依赖项及其配置，而不会影响你习惯使用的任何工具(编辑器、浏览器、调试器等)。一旦你或者其他人创建了一个 Vagrantfile，你只需要执行 <code>vagrant up</code> 所有的东西就自动安装和配置了。你团队中的其他成员使用同一个配置文件来创建开发环境，因此不管你工作在 Linux，MacOS X 还是 Windows， 所有团队的成员都可以在统一的环境环境中运行代码，这样就可以避免“在我的机器上可以工作”的问题。</p>
+<h4 id="对于运维人员"><a href="#对于运维人员" class="headerlink" title="对于运维人员"></a>对于运维人员</h4><p>如果你是一个运维工程师或者 DevOps 工程师，Vagrant 给予你一个一次性的环境来开发和测试基础架构管理脚本。你可以使用本地虚拟机（比如 VirtualBox 或者 VMware）马上测试一些东西，比如 shell 脚本，Chef cookbooks，Puppet 模块等。然后，你可以用同样的配置在远程云上，比如 AWS 或者 RackSpace，来测试这些脚本。抛弃之前自定义脚本来回收 EC2 实例吧，停止使用 SSH 在各种机器之间跳来跳去，请开始使用 Vagrant 来给你的工作带来更多便利。</p>
+<h3 id="Vagrant-和-Terraform-的区别"><a href="#Vagrant-和-Terraform-的区别" class="headerlink" title="Vagrant 和 Terraform 的区别"></a>Vagrant 和 Terraform 的区别</h3><p>Vagrant 和 Terraform 都出自同一个公司 <a href="https://www.hashicorp.com/" target="_blank" rel="noopener">HashiCorp</a>，该公司主要做一些开源软件，相关的产品还有 <a href="https://www.packer.io/" target="_blank" rel="noopener">Packer</a>，<a href="https://www.consul.io/" target="_blank" rel="noopener">Consul</a>，<a href="https://www.vaultproject.io/" target="_blank" rel="noopener">Vault</a>，<a href="https://www.nomadproject.io/" target="_blank" rel="noopener">Nomad</a> 等。</p>
+<p>Terraform 的主要用途是管理云提供商的远程资源，比如 AWS。Terraform 可以管理横跨多个云提供商巨量的基础设施。而 Vagrant 主要用来管理仅使用少量虚拟机的本地开发环境。</p>
+<p>Vagrant 用于开发环境，Terraform 普遍用于基础设施管理。</p>
+<hr>
+<h3 id="VirtualBox-安装"><a href="#VirtualBox-安装" class="headerlink" title="VirtualBox 安装"></a>VirtualBox 安装</h3><p>VirtualBox 是 Oracle 开源的虚拟化系统，和 VMware 是同类产品，支持多个平台，可以到官方网站：<a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">https://www.virtualbox.org/wiki/Downloads</a> 下载适合你平台的 VirtualBox 最新版本并安装。</p>
+<blockquote>
+<p><strong>提示：</strong>对于 Mac 用户，如果系统为 OSX 10.13.3(mac OS High Sierra) 或者更高版本，安装过程可能会失败，报错提示<code>安装失败，安装器遇到了一个错误导致安装失败...</code>，原因是新版本 Mac 系统的安全机制阻止外部内核扩展安装，导致安装失败。两种解决方法：</p>
+<ol>
+<li>进入系统偏好设置&gt;安全性与隐私&gt;通用，然后手动允许；</li>
+<li>在终端敲命令禁用此安全特性：<code>sudo spctl --master-disable</code>；</li>
+</ol>
+</blockquote>
+<h3 id="Vagrant-安装"><a href="#Vagrant-安装" class="headerlink" title="Vagrant 安装"></a>Vagrant 安装</h3><p>到官方网站下载相应系统平台的安装包：<a href="http://www.vagrantup.com/downloads.html" target="_blank" rel="noopener">http://www.vagrantup.com/downloads.html</a><br>直接根据向导进行操作即可完成安装，安装完后就可以在终端输入 <code>vagrant</code> 命令了。</p>
+<blockquote>
+<p><strong>提示：</strong>尽量下载最新的程序，因为VirtualBox经常升级，升级后有些接口会变化，老的Vagrant 可能无法使用。</p>
+</blockquote>
+<h3 id="Vagrant-启动第一台虚拟机"><a href="#Vagrant-启动第一台虚拟机" class="headerlink" title="Vagrant 启动第一台虚拟机"></a>Vagrant 启动第一台虚拟机</h3><p>到此准备工作（VirtualBox 和 Vagrant 安装）基本上做完了，接下来就可以通过 Vagrant 来启动一台虚拟机了。</p>
+<p>在启动虚拟机之前先简单介绍下 <code>Vagrant box</code>：<code>box</code> 是一个打包好的操作系统，是一个后缀名为 <code>.box</code> 的文件，其实是一个压缩包，里面包含了 Vagrant 的配置信息和 VirtualBox 的虚拟机镜像文件。<code>vagrant up</code> 启动虚拟机是基于 <code>box</code> 文件的，因此在启动虚拟机前必须得把 <code>box</code> 文件准备好。或者也可以在启动的时候指定远程 <code>box</code> 地址，在这里我把 <code>box</code> 文件下载下来，然后启动时指定该文件。</p>
+<p>我使用网上分享的 <code>ubuntu-server-16.04</code> 这个 <code>box</code>，由于<a href="http://www.vagrantbox.es/" target="_blank" rel="noopener">vagrant 官方 box</a> 下载速度特别慢，所以在此提供一下该 <code>box</code> 的百度网盘下载地址，加速下载：<a href="https://pan.baidu.com/s/1wJCeWEyxKQLVPi1IH1IlYg" target="_blank" rel="noopener">https://pan.baidu.com/s/1wJCeWEyxKQLVPi1IH1IlYg</a></p>
+<ol>
+<li><p>新建一个目录作为 <code>Vagrant</code> 的工程目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> <span class="built_in">cd</span> /Users/haohao</span><br><span class="line"><span class="variable">$haohao</span> mkdir vagrant</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加前面下载的 <code>box</code><br>添加 <code>box</code> 命令格式：<code>vagrant box add &lt;本地 box 名称&gt; &lt;box 文件&gt;</code></p>
+<ul>
+<li>本地 <code>box</code> 名称：自定义名称，该名称是本地 <code>vagrant</code> 管理时使用的名称；</li>
+<li><code>box</code> 文件：前面下载的 <code>vagrant box</code> 文件或者远程 <code>box</code> url 地址；<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant box add ubuntu-server-16.04 ubuntu-server-16.04-amd64-vagrant.box</span><br><span class="line">==&gt; box: Box file was not detected as metadata. Adding it directly...</span><br><span class="line">==&gt; box: Adding box <span class="string">'ubuntu-server-16.04'</span> (v0) <span class="keyword">for</span> provider:</span><br><span class="line">    box: Unpacking necessary files from: file:///Users/haohao/vagrant/ubuntu-server-16.04-amd64-vagrant.box</span><br><span class="line">==&gt; box: Successfully added box <span class="string">'ubuntu-server-16.04'</span> (v0) <span class="keyword">for</span> <span class="string">'virtualbox'</span>!</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>查看 <code>box</code> 是否添加成功<br>查看当前 <code>vagrant</code> 中有哪些 <code>box</code>：<code>vagrant box list</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant box list</span><br><span class="line">ubuntu-server-16.04 (virtualbox, 0)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化上面添加的 <code>box</code><br>初始化命令格式：<code>vagrant init &lt;本地 box 名称&gt;</code><br>本地 <code>box</code> 名称：第 2 步中添加的 <code>box</code> 名称<br>这里初始化前面添加的 <code>box</code>，初始化后会在当前目录生产一个 <code>Vagrantfile</code> 文件，里面包含了虚拟机的各种配置，关于具体每个配置项是什么意思，后面会介绍。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant init <span class="string">'ubuntu-server-16.04'</span></span><br><span class="line">A `Vagrantfile` has been placed <span class="keyword">in</span> this directory. You are now</span><br><span class="line">ready to `vagrant up` your first virtual environment! Please <span class="built_in">read</span></span><br><span class="line">the comments <span class="keyword">in</span> the Vagrantfile as well as documentation on</span><br><span class="line">`vagrantup.com` <span class="keyword">for</span> more information on using Vagrant.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动虚拟机<br>虚拟机启动命令：<code>vagrant up</code><br>启动虚拟机时会自动将当前目录（即 Vagrantfile 文件所在目录），和虚拟机的 <code>/vagrant</code> 目录共享。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant up</span><br><span class="line">Bringing machine <span class="string">'default'</span> up with <span class="string">'virtualbox'</span> provider...</span><br><span class="line">==&gt; default: Importing base box <span class="string">'ubuntu-server-16.04'</span>...</span><br><span class="line">==&gt; default: Matching MAC address <span class="keyword">for</span> NAT networking...</span><br><span class="line">==&gt; default: Setting the name of the VM: vagrant_default_1524288099752_62326</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> network interfaces...</span><br><span class="line">.....</span><br><span class="line">==&gt; default: Mounting shared folders...</span><br><span class="line">    default: /vagrant =&gt; /Users/haohao/vagrant</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接虚拟机<br>命令格式：<code>vagrant ssh</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant ssh</span><br><span class="line">Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-98-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line">  Get cloud support with Ubuntu Advantage Cloud Guest:</span><br><span class="line">    http://www.ubuntu.com/business/services/cloud</span><br><span class="line"></span><br><span class="line">0 packages can be updated.</span><br><span class="line">0 updates are security updates.</span><br><span class="line"></span><br><span class="line">Last login: Sat Apr 21 05:28:37 2018 from 10.0.2.2</span><br><span class="line">ubuntu@ubuntu-xenial:~$</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看 Vagrant 共享目录<br>进入虚拟机后执行 <code>df -h</code> 可以看到 Vagrant 默认把宿主机 <code>Vagrantfile</code> 所在的目录和虚拟机的 <code>/vagrant</code> 目录共享，可以通过 <code>ls /vagrant/</code> 查看该目录内容，内容和宿主机对应目录一致。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@ubuntu-xenial:~$ df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">udev            490M     0  490M   0% /dev</span><br><span class="line">tmpfs           100M  3.1M   97M   4% /run</span><br><span class="line">/dev/sda1       9.7G  857M  8.8G   9% /</span><br><span class="line">tmpfs           497M     0  497M   0% /dev/shm</span><br><span class="line">tmpfs           5.0M     0  5.0M   0% /run/lock</span><br><span class="line">tmpfs           497M     0  497M   0% /sys/fs/cgroup</span><br><span class="line">vagrant         234G   49G  185G  21% /vagrant</span><br><span class="line">tmpfs           100M     0  100M   0% /run/user/1000</span><br><span class="line"></span><br><span class="line"><span class="comment"># ls 查看该共享目录内容和宿主机内容一致</span></span><br><span class="line">ubuntu@ubuntu-xenial:~$ ls /vagrant/</span><br><span class="line">ubuntu-xenial-16.04-cloudimg-console.log  Vagrantfile</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Vagrant-配置文件浅析"><a href="#Vagrant-配置文件浅析" class="headerlink" title="Vagrant 配置文件浅析"></a>Vagrant 配置文件浅析</h3><p>前面我们执行 <code>vagrant init &lt;本地 box 名称&gt;</code> 会在当前目录生成 <code>Vagrantfile</code> 文件，这个文件是非常重要的，一般给别人共享自己的环境时都是提供一个 <code>Vagrantfile</code> 和一个 <code>box</code> 文件，这样就可以很轻松地将环境共享给别人，别人能得到一模一样的统一的环境，这就是使用 <code>Vagrant</code> 的好处。</p>
+<p><code>Vagrantfile</code> 主要包括三个方面的配置，虚拟机的配置、SSH配置、Vagrant 的一些基础配置。Vagrant 是使用 Ruby 开发的，所以它的配置语法也是 Ruby 的，对于没有学过 Ruby 的朋友也没关系，根据例子模仿下就会了。</p>
+<p>修改完配置后需要执行 <code>vagrant reload</code> 重启 VM 使其配置生效。</p>
+<p>以下简单介绍下常用配置的配置项：</p>
+<ol>
+<li><p><code>box</code> 名称设置<br><code>config.vm.box = &quot;base&quot;</code><br> 上面这配置展示了 Vagrant 要去启用那个box作为系统，也就是前面我们输入 <code>vagrant init &lt;本地 box 名称&gt;</code>时所指定的 <code>box</code>，如果沒有输入 <code>box</code> 名称的话，那么默认就是 <code>base</code>。</p>
+</li>
+<li><p>VM 相关配置<br>VirtualBox 提供了 VBoxManage 这个命令行工具，可以让我们设定 VM，用<code>modifyvm</code>这个命令让我们可以设定 VM 的名称和内存大小等等，这里说的名称指的是在 VirtualBox 中显示的名称，我们也可以在 Vagrantfile 中进行设定，举例如下：</p>
+<blockquote>
+<p>调用 VBoxManage 的 <code>modifyvm</code> 的命令，设置 VM 的名称为 <code>ubuntu</code>，内存为 1024 MB。你可以类似的通过定制其它 VM 属性来定制你自己的 VM。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> |v|</span><br><span class="line">  v.customize [<span class="string">"modifyvm"</span>, :id, <span class="string">"--name"</span>, <span class="string">"ubuntu"</span>, <span class="string">"--memory"</span>, <span class="string">"1024"</span>]</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>网络设置<br> Vagrant 有两种方式来进行网络连接，一种是 host-only (主机模式)，这种模式下所有的虚拟系统是可以互相通信的，但虚拟系统和真实的网络是被隔离开的，虚拟机和宿主机是可以互相通信的，相当于两台机器通过双绞线互联。另一种是Bridge(桥接模式)，该模式下的 VM  就像是局域网中的一台独立的主机，可以和局域网中的任何一台机器通信，这种情况下需要手动给 VM 配 IP 地址，子网掩码等。我们一般选择 host-only 模式，配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.network :private_network, ip: <span class="string">"11.11.11.11"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>hostname 设置<br> <code>hostname</code> 的设置非常简单：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.hostname = <span class="string">"kubernetes"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>目录共享<br> 我们前面介绍过<code>/vagrant</code>目录默认就是当前的开发目录，这是在虚拟机开启的时候默认挂载同步的。我们还可以通过配置来设置额外的同步目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第一个参数是主机的目录，第二个参数是虚拟机挂载的目录</span></span><br><span class="line">config.vm.synced_folder  <span class="string">"/Users/haohao/data"</span>, <span class="string">"/vagrant_data"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>端口转发<br>对宿主机器上 8080 端口的访问请求 forward 到虚拟机的 80 端口的服务上：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.network :forwarded_port, guest: 80, host: 8080</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Vagrant-常用命令清单"><a href="#Vagrant-常用命令清单" class="headerlink" title="Vagrant 常用命令清单"></a>Vagrant 常用命令清单</h3><ul>
+<li><code>vagrant box add</code> 添加box</li>
+<li><code>vagrant init</code> 初始化 box</li>
+<li><code>vagrant up</code> 启动虚拟机</li>
+<li><code>vagrant ssh</code> 登录虚拟机</li>
+<li><code>vagrant box list</code> 列出 Vagrant 当前 <code>box</code> 列表</li>
+<li><code>vagrant box remove</code> 删除相应的 <code>box</code></li>
+<li><code>vagrant destroy</code> 停止当前正在运行的虚拟机并销毁所有创建的资源</li>
+<li><code>vagrant halt</code> 关机</li>
+<li><code>vagrant package</code> 把当前的运行的虚拟机环境进行打包为 <code>box</code> 文件</li>
+<li><code>vagrant plugin</code> 安装卸载插件</li>
+<li><code>vagrant reload</code> 重新启动虚拟机，重新载入配置文件</li>
+<li><code>vagrant resume</code> 恢复被挂起的状态</li>
+<li><code>vagrant ssh-config</code> 输出用于 ssh 连接的一些信息</li>
+<li><code>vagrant status</code>  获取当前虚拟机的状态</li>
+<li><code>vagrant suspend</code> 挂起当前的虚拟机</li>
+<li><code>vagrant up</code> 重启虚拟机</li>
+</ul>
+<h3 id="Vagrant-启动虚拟机集群"><a href="#Vagrant-启动虚拟机集群" class="headerlink" title="Vagrant 启动虚拟机集群"></a>Vagrant 启动虚拟机集群</h3><p>前面我们都是通过一个 <code>Vagrantfile</code> 配置启动单台机器，如果我们要启动一个集群，那么可以把需要的节点在一个 <code>Vagrantfile</code> 写好，然后直接就可以通过 <code>vagrant up</code> 同时启动多个 VM 组成一个集群。以下示例配置一个 web 节点和一个 db 节点，两个节点在同一个网段，并且使用同一个 <code>box</code> 启动：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> |config|</span><br><span class="line">  config.vm.define :web <span class="keyword">do</span> |web|</span><br><span class="line">    web.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> |v|</span><br><span class="line">          v.customize [<span class="string">"modifyvm"</span>, :id, <span class="string">"--name"</span>, <span class="string">"web"</span>, <span class="string">"--memory"</span>, <span class="string">"512"</span>]</span><br><span class="line">    end</span><br><span class="line">    web.vm.box = <span class="string">"ubuntu-server-16.04"</span></span><br><span class="line">    web.vm.hostname = <span class="string">"web"</span></span><br><span class="line">    web.vm.network :private_network, ip: <span class="string">"11.11.1.1"</span></span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  config.vm.define :db <span class="keyword">do</span> |db|</span><br><span class="line">    db.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> |v|</span><br><span class="line">          v.customize [<span class="string">"modifyvm"</span>, :id, <span class="string">"--name"</span>, <span class="string">"db"</span>, <span class="string">"--memory"</span>, <span class="string">"512"</span>]</span><br><span class="line">    end</span><br><span class="line">    db.vm.box = <span class="string">"ubuntu-server-16.04"</span></span><br><span class="line">    db.vm.hostname = <span class="string">"db"</span></span><br><span class="line">    db.vm.network :private_network, ip: <span class="string">"11.11.1.2"</span></span><br><span class="line">  end</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
+<h3 id="相关连接"><a href="#相关连接" class="headerlink" title="相关连接"></a>相关连接</h3><p><a href="https://www.vagrantup.com/intro/index.html" target="_blank" rel="noopener">https://www.vagrantup.com/intro/index.html</a><br><a href="https://blog.csdn.net/rickiyeat/article/details/55097687" target="_blank" rel="noopener">https://blog.csdn.net/rickiyeat/article/details/55097687</a><br><a href="https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.0.md" target="_blank" rel="noopener">https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.0.md</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/Google-Kubernetes-Engine-GKE-使用初探/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1762,165 +2001,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/19/GitHub多账号密钥配置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/19/GitHub多账号密钥配置/" itemprop="url">GitHub多账号密钥配置</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-19T16:56:46+08:00">
-                2018-02-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Git/" itemprop="url" rel="index">
-                    <span itemprop="name">Git</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="GitHub多账号密钥配置"><a href="#GitHub多账号密钥配置" class="headerlink" title="GitHub多账号密钥配置"></a>GitHub多账号密钥配置</h4><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>之前在自己的GitHub账号配置过本地电脑的ssh key，然后用同样的ssh key给另外一个GitHub账号配置密钥，发现报如下错误：<br><img src="/images/github1.jpg" alt=""><br>其实这个问题的原因很简单，主要是GitHub账号和服务器通信的ssh密钥对是一一对应的，不允许多个账号使用同样的密钥对，否则会出现歧义，需要为每个账号配置不同的密钥对。</p>
-<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><ol>
-<li><p>为每个GitHub账号单独生成ssh密钥对：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -f github1 -C <span class="string">"abc@gmail.com"</span></span><br><span class="line">ssh-keygen -t rsa -f github2 -C <span class="string">"def@gmail.com"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>把生成的公钥分别添加到GitHub账号管理后台：<br><img src="/images/github2.png" alt=""></p>
-</li>
-<li><p>编辑~/.ssh/config文件添加如下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 其中Host是主机别名，HostName是github服务器地址，User是GitHub服务器用户名，</span></span><br><span class="line"><span class="comment"># IdentityFile是和GitHub服务器通信的ssh私钥，通过IdentityFile就可以区分出</span></span><br><span class="line"><span class="comment"># 不同的账号。</span></span><br><span class="line">Host account1</span><br><span class="line">    HostName github.com</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/github1</span><br><span class="line">Host account2</span><br><span class="line">    HostName github.com</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/github2</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>使用ssh-agent管理生成的私钥：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-add github1</span><br><span class="line">ssh-add github2</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在使用git clone时将GitHub SSH仓库地址中的git@github.com替换成第三步新建的Host别名account1或account2（仓库属于哪个Host则使用哪个，这里假设仓库属于account1，GitHub账号的区分是通过在GitHub管理后台添加的公钥来辨识）。如原地址是：<em>git@github.com:qianghaohao/TranslateProject.git</em> 替换后应该是：<em>account1:qianghaohao/TranslateProject.git</em> 如果是新建的仓库，直接使用替换后的URL克隆即可。如果已经使用原地址克隆过了，可以使用命令修改远程仓库地址：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote <span class="built_in">set</span>-url origin account1:qianghaohao/TranslateProject.git</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://blog.csdn.net/u010387196/article/details/41266255" target="_blank" rel="noopener">http://blog.csdn.net/u010387196/article/details/41266255</a><br><a href="http://happy123.me/blog/2014/12/07/duo-ge-gitzhang-hao-zhi-jian-de-qie-huan/" target="_blank" rel="noopener">http://happy123.me/blog/2014/12/07/duo-ge-gitzhang-hao-zhi-jian-de-qie-huan</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1970,7 +2050,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">99</span>
+                  <span class="site-state-item-count">100</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1981,7 +2061,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1992,7 +2072,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
