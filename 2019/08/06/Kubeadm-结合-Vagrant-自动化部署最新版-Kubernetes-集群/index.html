@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="The Spectre">
 <meta property="og:description" content="之前写过一篇搭建 k8s 集群的教程：「使用 kubeadm 搭建 kubernetes 集群」，教程中用到了 kubeadm 和 vagrant，但是整个过程还是手动一步一步完成：创建节点--&amp;gt; 节点配置、相关软件安装  --&amp;gt; 初始化 master 节点 --&amp;gt; node 节点加入 master 节点。其实这个过程完全可以通过 Vagrant 的配置器自动化来实现，达到的目的">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-06T06:40:04.957Z">
+<meta property="og:updated_time" content="2019-08-06T06:45:33.247Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kubeadm 结合 Vagrant 自动化部署最新版 Kubernetes 集群">
 <meta name="twitter:description" content="之前写过一篇搭建 k8s 集群的教程：「使用 kubeadm 搭建 kubernetes 集群」，教程中用到了 kubeadm 和 vagrant，但是整个过程还是手动一步一步完成：创建节点--&amp;gt; 节点配置、相关软件安装  --&amp;gt; 初始化 master 节点 --&amp;gt; node 节点加入 master 节点。其实这个过程完全可以通过 Vagrant 的配置器自动化来实现，达到的目的">
@@ -399,7 +399,7 @@
 <li><p>编写 Vagrantfile，完成主节点的初始化安装和 node 节点加入主节点。但是有个地方和之前手动安装不太一样，为了自动化，我们必须在 kubeadm 初始化 master 节点之前生成 TOKEN（使用其他任意主机的 kubeadm 工具生成 TOKEN 即可），然后自动化脚本统一用这个 TOKEN 初始化主节点和从节点加入。Vagrantfile 具体实现见：<a href="https://github.com/qhh0205/kubeadm-vagrant/blob/master/Vagrantfile" target="_blank" rel="noopener">https://github.com/qhh0205/kubeadm-vagrant/blob/master/Vagrantfile</a></p>
 </li>
 </ol>
-<p>完整的 Vagrant 工程在这里：<a href="https://github.com/qhh0205/kubeadm-vagrant" target="_blank" rel="noopener">https://github.com/qhh0205/kubeadm-vagrant</a><br>使用 kubeadm + vagrant 自动化部署 k8s 集群，基于 Centos7 操作系统。该工程 fork 自 kubeadm-vagrant, 对已知问题进行了修复：节点设置正确的 IP 地址<a href="https://github.com/qhh0205/kubeadm-vagrant/blob/master/set-k8s-node-ip.sh" target="_blank" rel="noopener">「set-k8s-node-ip.sh」</a>。否则使用过程中会出现问题，具体问题见这里：<a href="https://qhh.me/2019/08/06/kubeadm-vagrant-%E9%83%A8%E7%BD%B2%E5%A4%9A%E8%8A%82%E7%82%B9-k8s-%E7%9A%84%E4%B8%80%E4%B8%AA%E5%9D%91/" target="_blank" rel="noopener">「kubeadm + vagrant 部署多节点 k8s 的一个坑」</a>。其他一些调整：节点初始化脚本更改、Vagrantfile 添加 Shell 脚本配置器，运行初始化脚本。</p>
+<p>完整的 Vagrant 工程在这里：<a href="https://github.com/qhh0205/kubeadm-vagrant" target="_blank" rel="noopener">https://github.com/qhh0205/kubeadm-vagrant</a><br>使用 kubeadm + vagrant 自动化部署 k8s 集群，基于 Centos7 操作系统。该工程 fork 自 <a href="https://github.com/coolsvap/kubeadm-vagrant" target="_blank" rel="noopener">kubeadm-vagrant</a>, 对已知问题进行了修复：节点设置正确的 IP 地址<a href="https://github.com/qhh0205/kubeadm-vagrant/blob/master/set-k8s-node-ip.sh" target="_blank" rel="noopener">「set-k8s-node-ip.sh」</a>。否则使用过程中会出现问题，具体问题见这里：<a href="https://qhh.me/2019/08/06/kubeadm-vagrant-%E9%83%A8%E7%BD%B2%E5%A4%9A%E8%8A%82%E7%82%B9-k8s-%E7%9A%84%E4%B8%80%E4%B8%AA%E5%9D%91/" target="_blank" rel="noopener">「kubeadm + vagrant 部署多节点 k8s 的一个坑」</a>。其他一些调整：节点初始化脚本更改、Vagrantfile 添加 Shell 脚本配置器，运行初始化脚本。</p>
 <blockquote>
 <p>默认：1 个 master 节点，1 个 node 节点，可以根据需要修改 Vagrantfile 文件，具体见工程 <a href="https://github.com/qhh0205/kubeadm-vagrant/blob/master/README.md" target="_blank" rel="noopener">README.md</a> 说明。</p>
 </blockquote>
