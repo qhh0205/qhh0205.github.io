@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[kubeadm + vagrant 部署多节点 k8s 的一个坑]]></title>
+    <url>%2F2019%2F08%2F06%2Fkubeadm-vagrant-%E9%83%A8%E7%BD%B2%E5%A4%9A%E8%8A%82%E7%82%B9-k8s-%E7%9A%84%E4%B8%80%E4%B8%AA%E5%9D%91%2F</url>
+    <content type="text"><![CDATA[之前写过一篇「使用 kubeadm 搭建 kubernetes 集群」教程，教程里面使用 Vagrant 启动 3 个节点，1 个 master，2 个 node 节点，后来使用过程中才慢慢发现还是存在问题的。具体问题表现是： kubectl get node -o wide 查看到节点 IP 都是：10.0.2.15； 1234[root@master ~]# kubectl get node -o wideNAME STATUS ROLES AGE VERSION INTERNAL-IP EXTERNAL-IP OS-IMAGE KERNEL-VERSION CONTAINER-RUNTIMEmaster Ready master 5m11s v1.15.1 10.0.2.15 &lt;none&gt; CentOS Linux 7 (Core) 3.10.0-862.2.3.el7.x86_64 docker://19.3.1node1 Ready &lt;none&gt; 2m31s v1.15.1 10.0.2.15 &lt;none&gt; CentOS Linux 7 (Core) 3.10.0-862.2.3.el7.x86_64 docker://19.3.1 kubect get pod 可以查看 pod，pod 也运行正常，但是无法查看 pod 日志，也无法 kubectl exec -it 进入 pod。具体报错如下： 12345678910[root@master ~]# kubectl get podNAME READY STATUS RESTARTS AGEnginx-deployment-5754944d6c-gnqjg 1/1 Running 0 66snginx-deployment-5754944d6c-mxgn7 1/1 Running 0 66s[root@master ~]# kubectl logs nginx-deployment-5754944d6c-gnqjgError from server (NotFound): the server could not find the requested resource ( pods/log nginx-deployment-5754944d6c-gnqjg)[root@master ~]# kubectl exec -it nginx-deployment-5754944d6c-gnqjg sherror: unable to upgrade connection: pod does not exist 带着上面两个问题，于是网上搜索一番，找到了根因并得以解决：https://github.com/kubernetes/kubernetes/issues/60835 主要原因Vagrant 在多主机模式时每个主机的 eth0 网口 ip 都是 10.0.2.15，这个网口是所有主机访问公网的出口，用于 nat 转发。而 eth1才是主机真正的 IP。kubelet 在启动时默认读取的是 eth0 网卡的 IP，因此在集群部署完后 kubect get node -o wide 查看到节点的 IP 都是 10.0.2.15。123456789101112131415[vagrant@master ~]$ ip addr...2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000 link/ether 52:54:00:c9:c7:04 brd ff:ff:ff:ff:ff:ff inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic eth0 valid_lft 85708sec preferred_lft 85708sec inet6 fe80::5054:ff:fec9:c704/64 scope link valid_lft forever preferred_lft forever3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000 link/ether 08:00:27:25:1b:45 brd ff:ff:ff:ff:ff:ff inet 192.168.26.10/24 brd 192.168.26.255 scope global noprefixroute eth1 valid_lft forever preferred_lft forever inet6 fe80::a00:27ff:fe25:1b45/64 scope link valid_lft forever preferred_lft forever... 解决方法上面知道问题的根本原因是 k8s 节点 IP 获取不对导致访问节点出现问题，那么解决方法就是调整 kubelet 参数设置正确的IP 地址：编辑 /etc/sysconfig/kubelet 文件，KUBELET_EXTRA_ARGS 环境变量添加 --node-ip 参数：1KUBELET_EXTRA_ARGS="--node-ip=&lt;eth1 网口 IP&gt;" 然后重启 kubelet：systemctl restart kubelet执行 kubectl get node -o wide 发现节点 IP 已经改变成了KUBELET_EXTRA_ARGS 变量指定的 IP。1234[root@master ~]# kubectl get node -o wideNAME STATUS ROLES AGE VERSION INTERNAL-IP EXTERNAL-IP OS-IMAGE KERNEL-VERSION CONTAINER-RUNTIMEmaster Ready master 24m v1.15.1 192.168.26.10 &lt;none&gt; CentOS Linux 7 (Core) 3.10.0-862.2.3.el7.x86_64 docker://19.3.1node1 Ready &lt;none&gt; 21m v1.15.1 10.0.2.15 &lt;none&gt; CentOS Linux 7 (Core) 3.10.0-862.2.3.el7.x86_64 docker://19.3.1 用同样的方法修改其他节点 IP 即可。为了方便，这里提供了一个命令，自动化上面步骤：12echo KUBELET_EXTRA_ARGS=\"--node-ip=`ip addr show eth1 | grep inet | grep -E -o "([0-9]&#123;1,3&#125;[\.])&#123;3&#125;[0-9]&#123;1,3&#125;/" | tr -d '/'`\" &gt; /etc/sysconfig/kubeletsystemctl restart kubelet]]></content>
+      <categories>
+        <category>Kubenetes</category>
+      </categories>
+      <tags>
+        <tag>Kubenetes</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Jenkins 集成 allure 测试报告工具]]></title>
     <url>%2F2019%2F07%2F25%2FJenkins-%E9%9B%86%E6%88%90-allure-%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A%E5%B7%A5%E5%85%B7%2F</url>
     <content type="text"><![CDATA[allure 基于已有的测试报告数据进行进一步的加工，美化等操作，相当于做了一次数据格式转换。allure 支持多种语言的多种测试框架，比如 Java 的 jUnit4、jUnit5、TestNg 等等。 本文主要介绍如何在 Jenkins 中集成 allure 测试报表工具，在每次项目自动化测试完成后，用 allure 生成经过加工后的测试报告。我们以 java 工程的 TestNg 测试为例，处理 TestNg 生成的测试报告。 Jenkins 安装 allure 插件全局工具配置： Jenkinsfile 添加 allure 代码 123script &#123; allure jdk: '', report: "target/allure-report-unit", results: [[path: "target/surefire-reports"]]&#125; target/allure-report-unit 参数：allure 报告生成路径； target/surefire-reports 参数：测试报告原始路径； Jenkins 平台查看 allure 报告在 allure 成功集成到 Jenkins 后，allure 每次处理完成，在 Jenkins job 页面都可以看到 allure 的图标，点击图标即可查看报告详细信息: 遇到问题及解决方法问题：allure 在 Jenkins pipline 中生成报表时报目录权限问题：java.nio.file.AccessDeniedException 原因：jenkins k8s pod 执行 job 时默认用户为 jenkins，但是 pipeline 中调用的容器生成的文件的属主是 root。解决方法：配置 jenkins k8s 插件模版，添加安全配置，运行用户设置为 roothttps://groups.google.com/forum/#!topic/jenkinsci-users/GR0n8ZkCJ-E pod 配置（spec 下）：123securityContext: runAsUser: 0 fsGroup: 0 参考文档https://docs.qameta.io/allure/]]></content>
@@ -1067,21 +1078,6 @@
     <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
   </entry>
   <entry>
-    <title></title>
-    <url>%2Fjs%2Fmd5.min.js</url>
-    <content type="text"><![CDATA[!function(n){"use strict";function t(n,t){var r=(65535&n)+(65535&t);return(n>>16)+(t>>16)+(r>>16)>5]|=128>95]>>>t%32&255);return r}function d(n){var t,r=[];for(r[(n.length>>2)-1]=void 0,t=0;t>5]|=(255&n.charCodeAt(t/8))>4&15)+"0123456789abcdef".charAt(15&t);return e}function v(n){return unescape(encodeURIComponent(n))}function m(n){return h(v(n))}function p(n){return g(m(n))}function s(n,t){return l(v(n),v(t))}function C(n,t){return g(s(n,t))}function A(n,t,r){return t?r?s(t,n):C(t,n):r?m(n):p(n)}"function"==typeof define&&define.amd?define(function(){return A}):"object"==typeof module&&module.exports?module.exports=A:n.md5=A}(this); //# sourceMappingURL=md5.min.js.map]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>%2Fjs%2Fbusuanzi.pure.mini.js</url>
-    <content type="text"><![CDATA[var bszCaller,bszTag;!function(){var c,d,e,a=!1,b=[];ready=function(c){return a||"interactive"===document.readyState||"complete"===document.readyState?c.call(document):b.push(function(){return c.call(this)}),this},d=function(){for(var a=0,c=b.length;c>a;a++)b[a].apply(document);b=[]},e=function(){a||(a=!0,d.call(window),document.removeEventListener?document.removeEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.detachEvent("onreadystatechange",e),window==window.top&&(clearInterval(c),c=null)))},document.addEventListener?document.addEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.attachEvent("onreadystatechange",function(){/loaded|complete/.test(document.readyState)&&e()}),window==window.top&&(c=setInterval(function(){try{a||document.documentElement.doScroll("left")}catch(b){return}e()},5)))}(),bszCaller={fetch:function(a,b){var c="BusuanziCallback_"+Math.floor(1099511627776*Math.random());window[c]=this.evalCall(b),a=a.replace("=BusuanziCallback","="+c),scriptTag=document.createElement("SCRIPT"),scriptTag.type="text/javascript",scriptTag.defer=!0,scriptTag.src=a,document.getElementsByTagName("HEAD")[0].appendChild(scriptTag)},evalCall:function(a){return function(b){ready(function(){try{a(b),scriptTag.parentElement.removeChild(scriptTag)}catch(c){bszTag.hides()}})}}},bszCaller.fetch("//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback",function(a){bszTag.texts(a),bszTag.shows()}),bszTag={bszs:["site_pv","page_pv","site_uv"],texts:function(a){this.bszs.map(function(b){var c=document.getElementById("busuanzi_value_"+b);c&&(c.innerHTML=a[b])})},hides:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="none")})},shows:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="inline")})}};]]></content>
-  </entry>
-  <entry>
-    <title><![CDATA[标签]]></title>
-    <url>%2Ftags%2Findex.html</url>
-    <content type="text"></content>
-  </entry>
-  <entry>
     <title><![CDATA[About me]]></title>
     <url>%2Fabout%2Findex.html</url>
     <content type="text"><![CDATA[个人博客 GitHub: https://qhh.me CSDN: https://blog.csdn.net/qianghaohao 社交QQ 技术交流群：282939416 本群专注于 Jenkins 持续集成/持续交付、容器、Kubernetes、Golang、Python 相关话题！ 我的 DevOps 技术栈技术图谱地址 https://github.com/qhh0205/my-devops-stack]]></content>
@@ -1089,6 +1085,21 @@
   <entry>
     <title><![CDATA[分类]]></title>
     <url>%2Fcategories%2Findex.html</url>
+    <content type="text"></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>%2Fjs%2Fbusuanzi.pure.mini.js</url>
+    <content type="text"><![CDATA[var bszCaller,bszTag;!function(){var c,d,e,a=!1,b=[];ready=function(c){return a||"interactive"===document.readyState||"complete"===document.readyState?c.call(document):b.push(function(){return c.call(this)}),this},d=function(){for(var a=0,c=b.length;c>a;a++)b[a].apply(document);b=[]},e=function(){a||(a=!0,d.call(window),document.removeEventListener?document.removeEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.detachEvent("onreadystatechange",e),window==window.top&&(clearInterval(c),c=null)))},document.addEventListener?document.addEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.attachEvent("onreadystatechange",function(){/loaded|complete/.test(document.readyState)&&e()}),window==window.top&&(c=setInterval(function(){try{a||document.documentElement.doScroll("left")}catch(b){return}e()},5)))}(),bszCaller={fetch:function(a,b){var c="BusuanziCallback_"+Math.floor(1099511627776*Math.random());window[c]=this.evalCall(b),a=a.replace("=BusuanziCallback","="+c),scriptTag=document.createElement("SCRIPT"),scriptTag.type="text/javascript",scriptTag.defer=!0,scriptTag.src=a,document.getElementsByTagName("HEAD")[0].appendChild(scriptTag)},evalCall:function(a){return function(b){ready(function(){try{a(b),scriptTag.parentElement.removeChild(scriptTag)}catch(c){bszTag.hides()}})}}},bszCaller.fetch("//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback",function(a){bszTag.texts(a),bszTag.shows()}),bszTag={bszs:["site_pv","page_pv","site_uv"],texts:function(a){this.bszs.map(function(b){var c=document.getElementById("busuanzi_value_"+b);c&&(c.innerHTML=a[b])})},hides:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="none")})},shows:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="inline")})}};]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>%2Fjs%2Fmd5.min.js</url>
+    <content type="text"><![CDATA[!function(n){"use strict";function t(n,t){var r=(65535&n)+(65535&t);return(n>>16)+(t>>16)+(r>>16)>5]|=128>95]>>>t%32&255);return r}function d(n){var t,r=[];for(r[(n.length>>2)-1]=void 0,t=0;t>5]|=(255&n.charCodeAt(t/8))>4&15)+"0123456789abcdef".charAt(15&t);return e}function v(n){return unescape(encodeURIComponent(n))}function m(n){return h(v(n))}function p(n){return g(m(n))}function s(n,t){return l(v(n),v(t))}function C(n,t){return g(s(n,t))}function A(n,t,r){return t?r?s(t,n):C(t,n):r?m(n):p(n)}"function"==typeof define&&define.amd?define(function(){return A}):"object"==typeof module&&module.exports?module.exports=A:n.md5=A}(this); //# sourceMappingURL=md5.min.js.map]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[标签]]></title>
+    <url>%2Ftags%2Findex.html</url>
     <content type="text"></content>
   </entry>
 </search>

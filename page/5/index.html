@@ -296,6 +296,167 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/04/基于-Hexo-的-GitHub-Pages-配置-CloudFlare-CDN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/04/基于-Hexo-的-GitHub-Pages-配置-CloudFlare-CDN/" itemprop="url">基于 Hexo 的 GitHub Pages 配置 CloudFlare CDN</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-04T11:53:00+08:00">
+                2018-11-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>由于 GitHub Pages 在国外，静态博客页面在国内访问速度可能会非常慢，我们可以用 CDN 来加速，对比了下 CloudFlare CDN 和 腾讯云 CDN，发现 CloudFlare 免费版没有流量限制（腾讯云 CDN 每月由流量限制），而且配置起来非常简单，所以在此选用 CloudFlare CDN 来加速页面访问。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ul>
+<li>个人域名</li>
+<li>CloudFlare 账号</li>
+<li>基于 hexo 的 github_username.github.io 静态博客</li>
+</ul>
+<h3 id="配置流程"><a href="#配置流程" class="headerlink" title="配置流程"></a>配置流程</h3><ol>
+<li>在 Hexo 博客 source 文件夹新建名为 CNAME 的文件，内容为个人域名；</li>
+<li><code>hexo g &amp;&amp; hexo d</code> 部署生产的静态页面到 GitHub；</li>
+<li>进入 CloudFlare 控制台，点击添加站点，输入个人域名，根据向导进行操作；</li>
+<li><p>在 CloudFlare DNS 配置页面配置两个 CNAME 均指向 github_username.github.io 地址：<br>根域名(@) CNAME 到 <code>github_username.github.io</code><br>子域名(www) CNAME 到 <code>github_username.github.io</code></p>
+<blockquote>
+<p>⚠️注意：其实一般的域名提供商是不支持根域名 CNAME ，只有子域名才可以，但是 CloudFlare 通过 <a href="https://support.cloudflare.com/hc/en-us/articles/200169056-CNAME-Flattening-RFC-compliant-support-for-CNAME-at-the-root" target="_blank" rel="noopener">CNAME Flattening</a> 技术支持这种配置。这么做的好处是我们不需要再一个个添加以 GitHub Pages 的 IP 为值的 A 记录了，同时还能提高后续的可维护性，后续即使 GitHub Pages 的 IP 发生了变化，也不影响，CloudFlare 会通过 <a href="https://support.cloudflare.com/hc/en-us/articles/200169056-CNAME-Flattening-RFC-compliant-support-for-CNAME-at-the-root" target="_blank" rel="noopener">CNAME Flattening</a> 技术 自动解析出来。</p>
+</blockquote>
+<p> <img src="/images/cloudflare1.png" alt=""></p>
+</li>
+<li>将个人域名的 NS 记录修改为 CloudFlare 的 NS；</li>
+<li>等 CloudFlare DNS 解析生效后，并且 CloudFlare 站点状态为 Active 即表示配置生效。<br><img src="/images/cloudflare2.png" alt=""></li>
+</ol>
+<h3 id="CloudFlare-CDN-HTTP-强制跳转-HTTPS"><a href="#CloudFlare-CDN-HTTP-强制跳转-HTTPS" class="headerlink" title="CloudFlare CDN HTTP 强制跳转 HTTPS"></a>CloudFlare CDN HTTP 强制跳转 HTTPS</h3><p>默认情况下配置完成后 HTTPS 是开启的，会在 24 小时内给你配的站点颁发 https 证书，并且证书是自动更新的。我们可以在 CloudFlare 控制台配置 HTTP 强制跳转 HTTPS：<br><img src="/images/cloudflare3.png" alt=""><br><img src="/images/cloudflare4.png" alt=""></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/14/基于-Kubernetes-的-Jenkins-主从通信异常解决/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1832,158 +1993,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/08/Ubuntu-下添加开机启动脚本/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/08/Ubuntu-下添加开机启动脚本/" itemprop="url">Ubuntu 下添加开机启动脚本</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-08T12:56:10+08:00">
-                2018-07-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Ubuntu-下添加开机启动脚本"><a href="#Ubuntu-下添加开机启动脚本" class="headerlink" title="Ubuntu 下添加开机启动脚本"></a>Ubuntu 下添加开机启动脚本</h2><p>本文介绍在 Ubuntu 下添加开机启动脚本的两种方法：</p>
-<ol>
-<li><p>编辑 <code>/etc/rc.local</code> 文件<br>Ubuntu 会在启动时自动执行 <code>/etc/rc.local</code>  文件中的脚本，默认该文件中有效的脚本代码为空，把需要执行的脚本添加到该文件的 <code>exit 0</code> 之前即可，举例如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh -e</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># rc.local</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># This script is executed at the end of each multiuser runlevel.</span></span><br><span class="line"><span class="comment"># Make sure that the script will "exit 0" on success or any other</span></span><br><span class="line"><span class="comment"># value on error.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># In order to enable or disable this script just change the execution</span></span><br><span class="line"><span class="comment"># bits.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># By default this script does nothing.</span></span><br><span class="line"><span class="built_in">cd</span> /home/ubuntu</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'hello,world'</span> &gt;&gt; rc.local.log</span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过 <code>update-rc.d</code> 命令添加开机自启动脚本<br>Ubuntu 服务器在启动时会自动执行 <code>/etc/init.d</code> 目录下的脚本，所以我们可以将需要执行的脚本放到 <code>/etc/init.d</code> 目录下，或者在该目录下创建一个软件链接指向其他位置的脚本路径，然后通过 <code>update-rc.d</code> 将脚本添加到开机自启动。启动脚本必须以 <code>#!/bin/bash</code> 开头。举例如下：<br>新建开机启动脚本 <code>start_when_boot</code>，放置到 <code>/etc/init.d</code> 目录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">cd</span> /home/ubuntu</span><br><span class="line">date &gt;&gt; boot.log</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'hello, world'</span> &gt;&gt; boot.log</span><br></pre></td></tr></table></figure>
-<p> 执行 <code>update-rc.d start_when_boot defaults</code> 将上述脚本添加为开机启动；<br> 执行 <code>update-rc.d -f start_when_boot remove</code> 将上述开机启动脚本移除；</p>
-</li>
-</ol>
-<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://wangheng.org/ubuntu-to-add-boot-script.html" target="_blank" rel="noopener">https://wangheng.org/ubuntu-to-add-boot-script.html</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2033,7 +2042,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">98</span>
+                  <span class="site-state-item-count">99</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
