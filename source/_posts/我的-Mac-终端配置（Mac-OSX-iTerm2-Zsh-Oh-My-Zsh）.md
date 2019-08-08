@@ -2,7 +2,7 @@
 title: 我的 Mac 终端配置（Mac OSX + iTerm2 + Zsh + Oh-My-Zsh）
 date: 2018-03-18 09:24:33
 categories: Mac
-tags: 终端
+tags: Mac
 ---
 
 **相关工具介绍**
