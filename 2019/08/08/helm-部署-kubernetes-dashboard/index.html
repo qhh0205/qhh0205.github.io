@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo," />
+  <meta name="keywords" content="Kubernetes," />
 
 
 
@@ -79,23 +79,20 @@
 
 
 
-<meta name="description" content="概述由于 GitHub Pages 在国外，静态博客页面在国内访问速度可能会非常慢，我们可以用 CDN 来加速，对比了下 CloudFlare CDN 和 腾讯云 CDN，发现 CloudFlare 免费版没有流量限制（腾讯云 CDN 每月由流量限制），而且配置起来非常简单，所以在此选用 CloudFlare CDN ">
-<meta name="keywords" content="Hexo">
+<meta name="description" content="kubernetes-dashboard 是 k8s 官方提供的集群 Web UI，可以查看集群详细的信息，比如集群的 api 资源，pod 日志，工作负载，节点资源利用率等等。在部署 kubernetes-dashboard 前需要先安装 heapster，heapster 用于收集数据，而 dashboard 是展">
+<meta name="keywords" content="Kubernetes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基于 Hexo 的 GitHub Pages 配置 CloudFlare CDN">
-<meta property="og:url" content="http://yoursite.com/2018/11/04/基于-Hexo-的-GitHub-Pages-配置-CloudFlare-CDN/index.html">
+<meta property="og:title" content="helm 部署 kubernetes-dashboard">
+<meta property="og:url" content="http://yoursite.com/2019/08/08/helm-部署-kubernetes-dashboard/index.html">
 <meta property="og:site_name" content="The Spectre">
-<meta property="og:description" content="概述由于 GitHub Pages 在国外，静态博客页面在国内访问速度可能会非常慢，我们可以用 CDN 来加速，对比了下 CloudFlare CDN 和 腾讯云 CDN，发现 CloudFlare 免费版没有流量限制（腾讯云 CDN 每月由流量限制），而且配置起来非常简单，所以在此选用 CloudFlare CDN 来加速页面访问。 准备工作 个人域名 CloudFlare 账号 基于 hexo">
+<meta property="og:description" content="kubernetes-dashboard 是 k8s 官方提供的集群 Web UI，可以查看集群详细的信息，比如集群的 api 资源，pod 日志，工作负载，节点资源利用率等等。在部署 kubernetes-dashboard 前需要先安装 heapster，heapster 用于收集数据，而 dashboard 是展示数据的界面。关于 heapster 的安装见之前文章「helm 部署 heap">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/images/cloudflare1.png">
-<meta property="og:image" content="http://yoursite.com/images/cloudflare2.png">
-<meta property="og:image" content="http://yoursite.com/images/cloudflare3.png">
-<meta property="og:image" content="http://yoursite.com/images/cloudflare4.png">
-<meta property="og:updated_time" content="2019-06-20T03:41:42.525Z">
+<meta property="og:image" content="http://yoursite.com/images/kube-dashboard.png">
+<meta property="og:updated_time" content="2019-08-08T04:57:54.865Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="基于 Hexo 的 GitHub Pages 配置 CloudFlare CDN">
-<meta name="twitter:description" content="概述由于 GitHub Pages 在国外，静态博客页面在国内访问速度可能会非常慢，我们可以用 CDN 来加速，对比了下 CloudFlare CDN 和 腾讯云 CDN，发现 CloudFlare 免费版没有流量限制（腾讯云 CDN 每月由流量限制），而且配置起来非常简单，所以在此选用 CloudFlare CDN 来加速页面访问。 准备工作 个人域名 CloudFlare 账号 基于 hexo">
-<meta name="twitter:image" content="http://yoursite.com/images/cloudflare1.png">
+<meta name="twitter:title" content="helm 部署 kubernetes-dashboard">
+<meta name="twitter:description" content="kubernetes-dashboard 是 k8s 官方提供的集群 Web UI，可以查看集群详细的信息，比如集群的 api 资源，pod 日志，工作负载，节点资源利用率等等。在部署 kubernetes-dashboard 前需要先安装 heapster，heapster 用于收集数据，而 dashboard 是展示数据的界面。关于 heapster 的安装见之前文章「helm 部署 heap">
+<meta name="twitter:image" content="http://yoursite.com/images/kube-dashboard.png">
 
 
 
@@ -125,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/11/04/基于-Hexo-的-GitHub-Pages-配置-CloudFlare-CDN/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/08/08/helm-部署-kubernetes-dashboard/"/>
 
 
 
 
 
-  <title>基于 Hexo 的 GitHub Pages 配置 CloudFlare CDN | The Spectre</title>
+  <title>helm 部署 kubernetes-dashboard | The Spectre</title>
   
 
 
@@ -302,7 +299,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/04/基于-Hexo-的-GitHub-Pages-配置-CloudFlare-CDN/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/helm-部署-kubernetes-dashboard/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="haohao">
@@ -319,7 +316,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">基于 Hexo 的 GitHub Pages 配置 CloudFlare CDN</h1>
+          <h1 class="post-title" itemprop="name headline">helm 部署 kubernetes-dashboard</h1>
         
 
         <div class="post-meta">
@@ -331,8 +328,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-04T11:53:00+08:00">
-                2018-11-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-08T12:56:56+08:00">
+                2019-08-08
               </time>
             
 
@@ -354,8 +351,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
                   </a>
                 </span>
 
@@ -396,26 +393,18 @@
       
 
       
-        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>由于 GitHub Pages 在国外，静态博客页面在国内访问速度可能会非常慢，我们可以用 CDN 来加速，对比了下 CloudFlare CDN 和 腾讯云 CDN，发现 CloudFlare 免费版没有流量限制（腾讯云 CDN 每月由流量限制），而且配置起来非常简单，所以在此选用 CloudFlare CDN 来加速页面访问。</p>
-<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ul>
-<li>个人域名</li>
-<li>CloudFlare 账号</li>
-<li>基于 hexo 的 github_username.github.io 静态博客</li>
-</ul>
-<h3 id="配置流程"><a href="#配置流程" class="headerlink" title="配置流程"></a>配置流程</h3><ol>
-<li>在 Hexo 博客 source 文件夹新建名为 CNAME 的文件，内容为个人域名；</li>
-<li><code>hexo g &amp;&amp; hexo d</code> 部署生产的静态页面到 GitHub；</li>
-<li>进入 CloudFlare 控制台，点击添加站点，输入个人域名，根据向导进行操作；</li>
-<li><p>在 CloudFlare DNS 配置页面配置两个 CNAME 均指向 github_username.github.io 地址：<br>根域名(@) CNAME 到 <code>github_username.github.io</code><br>子域名(www) CNAME 到 <code>github_username.github.io</code></p>
+        <p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">kubernetes-dashboard</a> 是 k8s 官方提供的集群 Web UI，可以查看集群详细的信息，比如集群的 api 资源，pod 日志，工作负载，节点资源利用率等等。在部署 kubernetes-dashboard 前需要先安装 heapster，heapster 用于收集数据，而 dashboard 是展示数据的界面。关于 heapster 的安装见之前文章<a href="https://blog.csdn.net/qianghaohao/article/details/98859392" target="_blank" rel="noopener">「helm 部署 heapster 组件」</a>。如果没有部署 heapster 组件，kubernetes-dashboard 的 pod 会报错：</p>
 <blockquote>
-<p>⚠️注意：其实一般的域名提供商是不支持根域名 CNAME ，只有子域名才可以，但是 CloudFlare 通过 <a href="https://support.cloudflare.com/hc/en-us/articles/200169056-CNAME-Flattening-RFC-compliant-support-for-CNAME-at-the-root" target="_blank" rel="noopener">CNAME Flattening</a> 技术支持这种配置。这么做的好处是我们不需要再一个个添加以 GitHub Pages 的 IP 为值的 A 记录了，同时还能提高后续的可维护性，后续即使 GitHub Pages 的 IP 发生了变化，也不影响，CloudFlare 会通过 <a href="https://support.cloudflare.com/hc/en-us/articles/200169056-CNAME-Flattening-RFC-compliant-support-for-CNAME-at-the-root" target="_blank" rel="noopener">CNAME Flattening</a> 技术 自动解析出来。</p>
+<p>2019/08/06 10:30:06 Metric client health check failed: the server could not find the requested resource (get services heapster). Retrying in 30 seconds.</p>
 </blockquote>
-<p> <img src="/images/cloudflare1.png" alt=""></p>
-</li>
-<li>将个人域名的 NS 记录修改为 CloudFlare 的 NS；</li>
-<li>等 CloudFlare DNS 解析生效后，并且 CloudFlare 站点状态为 Active 即表示配置生效。<br><img src="/images/cloudflare2.png" alt=""></li>
-</ol>
-<h3 id="CloudFlare-CDN-HTTP-强制跳转-HTTPS"><a href="#CloudFlare-CDN-HTTP-强制跳转-HTTPS" class="headerlink" title="CloudFlare CDN HTTP 强制跳转 HTTPS"></a>CloudFlare CDN HTTP 强制跳转 HTTPS</h3><p>默认情况下配置完成后 HTTPS 是开启的，会在 24 小时内给你配的站点颁发 https 证书，并且证书是自动更新的。我们可以在 CloudFlare 控制台配置 HTTP 强制跳转 HTTPS：<br><img src="/images/cloudflare3.png" alt=""><br><img src="/images/cloudflare4.png" alt=""></p>
+<p><img src="/images/kube-dashboard.png" alt=""><br>使用官方提供的 Chart：<a href="https://github.com/helm/charts/tree/master/stable/kubernetes-dashboard" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/kubernetes-dashboard</a><br>对 values 文件进行一些定制：</p>
+<ul>
+<li>docker 镜像地址改为阿里云镜像地址，国内访问不了默认的镜像地址；</li>
+<li>service 类型改为 NodePort，并指定 nodePort 端口为 30000；</li>
+</ul>
+<p>定制后的 values 文件：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml</a></p>
+<p>helm 部署:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/kubernetes-dashboard  --name kubernetes-dashboard -f  https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml --namespace kube-system</span><br></pre></td></tr></table></figure></p>
+<p>获取 dashboard 访问 token：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret `kubectl get secret -n kube-system | grep admin-token | awk <span class="string">'&#123;print $1&#125;'</span>` -o jsonpath=&#123;.data.token&#125; -n kube-system | base64 -d</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -433,7 +422,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+            <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
           
         </div>
       
@@ -446,8 +435,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/10/14/基于-Kubernetes-的-Jenkins-主从通信异常解决/" rel="next" title="基于 Kubernetes 的 Jenkins 主从通信异常解决">
-                <i class="fa fa-chevron-left"></i> 基于 Kubernetes 的 Jenkins 主从通信异常解决
+              <a href="/2019/08/08/helm-部署-heapster-组件/" rel="next" title="helm 部署 heapster 组件">
+                <i class="fa fa-chevron-left"></i> helm 部署 heapster 组件
               </a>
             
           </div>
@@ -455,10 +444,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/11/18/Linux-文件权限属性相关总结/" rel="prev" title="Linux 文件权限属性相关总结">
-                Linux 文件权限属性相关总结 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -511,17 +496,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -609,22 +585,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备工作"><span class="nav-number">2.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置流程"><span class="nav-number">3.</span> <span class="nav-text">配置流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CloudFlare-CDN-HTTP-强制跳转-HTTPS"><span class="nav-number">4.</span> <span class="nav-text">CloudFlare CDN HTTP 强制跳转 HTTPS</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
