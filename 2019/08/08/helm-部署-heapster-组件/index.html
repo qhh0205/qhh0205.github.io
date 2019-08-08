@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="The Spectre">
 <meta property="og:description" content="之前工作用的 k8s 集群（GKE）都是支持 kubectl top node 查看节点资源使用情况的，最近自己本地新搭的集群发现用不了该命令。网上搜索了下发现是由于缺少集群指标收集组件导致，目前常用的集群指标收集组件是 heapster 和 metrics-server，看官方介绍 heapster 要逐渐被淘汰了，更推荐 metrics-server。但是为了适配后续要安装的 kubernet">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-08T04:36:28.429Z">
+<meta property="og:updated_time" content="2019-08-08T09:07:13.433Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="helm 部署 heapster 组件">
 <meta name="twitter:description" content="之前工作用的 k8s 集群（GKE）都是支持 kubectl top node 查看节点资源使用情况的，最近自己本地新搭的集群发现用不了该命令。网上搜索了下发现是由于缺少集群指标收集组件导致，目前常用的集群指标收集组件是 heapster 和 metrics-server，看官方介绍 heapster 要逐渐被淘汰了，更推荐 metrics-server。但是为了适配后续要安装的 kubernet">
@@ -408,6 +408,7 @@
 </li>
 </ul>
 <p>定制后的 values 文件在这里：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml</a> </p>
+<p>创建集群服务账号：admin，heapster 使用 admin 服务账号，确保有足够权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/some-apiserver-rs/admin-sa.yml</span><br></pre></td></tr></table></figure></p>
 <p>接下来使用 helm 安装部署 heapster：<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/heapster --name heapster -<span class="keyword">f</span> http<span class="variable">s:</span>//raw.githubusercontent.<span class="keyword">com</span>/qhh0205/helm-charts/master/kube-component-<span class="built_in">values</span>/heapster-<span class="built_in">values</span>.yml --namespace kube-<span class="built_in">system</span></span><br></pre></td></tr></table></figure></p>
 <p>heapster 安装完后就可以正常使用 kubectl top node 了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl top node</span></span><br><span class="line">NAME     CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%</span><br><span class="line">master   141m         7%     1096Mi          63%</span><br><span class="line">node1    45m          2%     821Mi           47%</span><br></pre></td></tr></table></figure></p>
 <p>如果 heapster pod 有问题一般会报下面错误：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl top node</span></span><br><span class="line">error: metrics not available yet</span><br></pre></td></tr></table></figure></p>

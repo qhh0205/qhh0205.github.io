@@ -39,6 +39,7 @@
 </ul>
 <p>定制后的 values 文件：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml</a></p>
 <p>helm 部署:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/kubernetes-dashboard  --name kubernetes-dashboard -f  https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml --namespace kube-system</span><br></pre></td></tr></table></figure></p>
+<p>创建集群服务账号：admin<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/some-apiserver-rs/admin-sa.yml</span><br></pre></td></tr></table></figure></p>
 <p>获取 dashboard 访问 token：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret `kubectl get secret -n kube-system | grep admin-token | awk <span class="string">'&#123;print $1&#125;'</span>` -o jsonpath=&#123;.data.token&#125; -n kube-system | base64 -d</span><br></pre></td></tr></table></figure></p>
 ]]></content>
       
@@ -77,6 +78,7 @@
 </li>
 </ul>
 <p>定制后的 values 文件在这里：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml</a> </p>
+<p>创建集群服务账号：admin，heapster 使用 admin 服务账号，确保有足够权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/some-apiserver-rs/admin-sa.yml</span><br></pre></td></tr></table></figure></p>
 <p>接下来使用 helm 安装部署 heapster：<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/heapster --name heapster -<span class="keyword">f</span> http<span class="variable">s:</span>//raw.githubusercontent.<span class="keyword">com</span>/qhh0205/helm-charts/master/kube-component-<span class="built_in">values</span>/heapster-<span class="built_in">values</span>.yml --namespace kube-<span class="built_in">system</span></span><br></pre></td></tr></table></figure></p>
 <p>heapster 安装完后就可以正常使用 kubectl top node 了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl top node</span></span><br><span class="line">NAME     CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%</span><br><span class="line">master   141m         7%     1096Mi          63%</span><br><span class="line">node1    45m          2%     821Mi           47%</span><br></pre></td></tr></table></figure></p>
 <p>如果 heapster pod 有问题一般会报下面错误：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl top node</span></span><br><span class="line">error: metrics not available yet</span><br></pre></td></tr></table></figure></p>
@@ -5212,12 +5214,6 @@ And more...
   
     
     <entry>
-      <title><![CDATA[分类]]></title>
-      <url>/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[About me]]></title>
       <url>/about/index.html</url>
       <content type="html"><![CDATA[<h2 id="个人博客"><a href="#个人博客" class="headerlink" title="个人博客"></a>个人博客</h2><ul>
@@ -5234,10 +5230,15 @@ And more...
     </entry>
     
     <entry>
-      <title></title>
-      <url>/js/busuanzi.pure.mini.js</url>
-      <content type="html"><![CDATA[var bszCaller,bszTag;!function(){var c,d,e,a=!1,b=[];ready=function(c){return a||"interactive"===document.readyState||"complete"===document.readyState?c.call(document):b.push(function(){return c.call(this)}),this},d=function(){for(var a=0,c=b.length;c>a;a++)b[a].apply(document);b=[]},e=function(){a||(a=!0,d.call(window),document.removeEventListener?document.removeEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.detachEvent("onreadystatechange",e),window==window.top&&(clearInterval(c),c=null)))},document.addEventListener?document.addEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.attachEvent("onreadystatechange",function(){/loaded|complete/.test(document.readyState)&&e()}),window==window.top&&(c=setInterval(function(){try{a||document.documentElement.doScroll("left")}catch(b){return}e()},5)))}(),bszCaller={fetch:function(a,b){var c="BusuanziCallback_"+Math.floor(1099511627776*Math.random());window[c]=this.evalCall(b),a=a.replace("=BusuanziCallback","="+c),scriptTag=document.createElement("SCRIPT"),scriptTag.type="text/javascript",scriptTag.defer=!0,scriptTag.src=a,document.getElementsByTagName("HEAD")[0].appendChild(scriptTag)},evalCall:function(a){return function(b){ready(function(){try{a(b),scriptTag.parentElement.removeChild(scriptTag)}catch(c){bszTag.hides()}})}}},bszCaller.fetch("//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback",function(a){bszTag.texts(a),bszTag.shows()}),bszTag={bszs:["site_pv","page_pv","site_uv"],texts:function(a){this.bszs.map(function(b){var c=document.getElementById("busuanzi_value_"+b);c&&(c.innerHTML=a[b])})},hides:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="none")})},shows:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="inline")})}};
-]]></content>
+      <title><![CDATA[分类]]></title>
+      <url>/categories/index.html</url>
+      <content type="html"></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[标签]]></title>
+      <url>/tags/index.html</url>
+      <content type="html"></content>
     </entry>
     
     <entry>
@@ -5249,9 +5250,10 @@ And more...
     </entry>
     
     <entry>
-      <title><![CDATA[标签]]></title>
-      <url>/tags/index.html</url>
-      <content type="html"></content>
+      <title></title>
+      <url>/js/busuanzi.pure.mini.js</url>
+      <content type="html"><![CDATA[var bszCaller,bszTag;!function(){var c,d,e,a=!1,b=[];ready=function(c){return a||"interactive"===document.readyState||"complete"===document.readyState?c.call(document):b.push(function(){return c.call(this)}),this},d=function(){for(var a=0,c=b.length;c>a;a++)b[a].apply(document);b=[]},e=function(){a||(a=!0,d.call(window),document.removeEventListener?document.removeEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.detachEvent("onreadystatechange",e),window==window.top&&(clearInterval(c),c=null)))},document.addEventListener?document.addEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.attachEvent("onreadystatechange",function(){/loaded|complete/.test(document.readyState)&&e()}),window==window.top&&(c=setInterval(function(){try{a||document.documentElement.doScroll("left")}catch(b){return}e()},5)))}(),bszCaller={fetch:function(a,b){var c="BusuanziCallback_"+Math.floor(1099511627776*Math.random());window[c]=this.evalCall(b),a=a.replace("=BusuanziCallback","="+c),scriptTag=document.createElement("SCRIPT"),scriptTag.type="text/javascript",scriptTag.defer=!0,scriptTag.src=a,document.getElementsByTagName("HEAD")[0].appendChild(scriptTag)},evalCall:function(a){return function(b){ready(function(){try{a(b),scriptTag.parentElement.removeChild(scriptTag)}catch(c){bszTag.hides()}})}}},bszCaller.fetch("//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback",function(a){bszTag.texts(a),bszTag.shows()}),bszTag={bszs:["site_pv","page_pv","site_uv"],texts:function(a){this.bszs.map(function(b){var c=document.getElementById("busuanzi_value_"+b);c&&(c.innerHTML=a[b])})},hides:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="none")})},shows:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="inline")})}};
+]]></content>
     </entry>
     
   
