@@ -39,7 +39,7 @@ kubectl create -f rbac-config.yaml
 ```
 
 #### helm init 初始化
-国内无法访问 gcr.io 仓库，指定阿里云镜像仓库，同时制定前面创建的服务账号：
+国内无法访问 gcr.io 仓库，指定阿里云镜像仓库，同时指定前面创建的服务账号：
 ```
 helm init --service-account tiller -i registry.aliyuncs.com/google_containers/tiller:v2.14.3
 ```
