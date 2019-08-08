@@ -296,6 +296,252 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/26/Wireshark-抓包理解-HTTPS-协议/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/26/Wireshark-抓包理解-HTTPS-协议/" itemprop="url">Wireshark 抓包理解 HTTPS 协议</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-26T20:58:20+08:00">
+                2019-05-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTTPS/" itemprop="url" rel="index">
+                    <span itemprop="name">HTTPS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="HTTPS-简介"><a href="#HTTPS-简介" class="headerlink" title="HTTPS 简介"></a>HTTPS 简介</h3><p>HTTPS（全称：Hypertext Transfer Protocol over Secure Socket Layer）协议是 HTTP 协议的安全版，在 HTTP 应用层和传输层加入了 SSL/TLS 层，确保数据传输的安全性，所以 HTTPS 协议并不是什么新的协议，仅仅是 HTTP 协议和安全协议的组合。</p>
+<p>HTTPS 协议主要解决如下三个通信安全问题：</p>
+<ul>
+<li>窃听风险（eavesdropping）：第三方可以获知通信内容。</li>
+<li>篡改风险（tampering）：第三方可以修改通信内容。</li>
+<li>冒充风险（pretending）：第三方可以冒充他人身份参与通信。</li>
+</ul>
+<p>HTTPS 通过 SSL/TLS 协议解决了上述三个问题，可以达到：</p>
+<ul>
+<li>加密数据以防止数据中途被窃取；</li>
+<li>维护数据的完整性，确保数据在传输过程中不被改变；</li>
+<li>认证用户和服务器，确保数据发送到正确的客户机和服务器；</li>
+</ul>
+<p>既然安全问题是 SSL/TLS 保证的，那么就有必要仔细探索下 SSL/TLS 协议的机制，如下为 HTTPS 通信的整个网络协议栈，其中 SSL/TLS 协议又分为两层：</p>
+<ul>
+<li>握手协议（SSL Handshake Protocol）：它建立在记录协议之上，用于在实际的数据传输开始前，通讯双方进行身份认证、协商加密算法、交换加密密钥等。</li>
+<li>记录协议（SSL Record Protocol）：它建立在可靠的传输协议（如TCP）之上，为高层协议提供数据封装、压缩、加密等基本功能的支持。</li>
+</ul>
+<p>关于更多 SSL 和 TLS 知识见之前的文章: <a href="https://qhh.me/2019/05/18/%E5%9F%BA%E4%BA%8E-OpenSSL-%E7%94%9F%E6%88%90%E8%87%AA%E7%AD%BE%E5%90%8D%E8%AF%81%E4%B9%A6/" target="_blank" rel="noopener">基于 OpenSSL 生成自签名证书</a>。<br><img src="/images/ssl-tls.png" alt="Alt text"></p>
+<h3 id="SSL-TLS-通信过程"><a href="#SSL-TLS-通信过程" class="headerlink" title="SSL/TLS 通信过程"></a>SSL/TLS 通信过程</h3><p>开始加密通信之前，客户端和服务器首先必须建立连接和交换参数，这个过程叫做握手（handshake）。SSL/TLS 握手其实就是通过非对称加密，生成对称加密的 session key 的过程。</p>
+<p>假定客户端叫做爱丽丝服务器叫做鲍勃，整个握手过程可以用下图说明：<br><img src="/images/ssl_handshake.png" alt="Alt text"></p>
+<p>整个握手过程通俗地说分为如下五步（真实的过程涉及的细节比这个多）：</p>
+<ul>
+<li>第一步，爱丽丝给出协议版本号、一个客户端生成的随机数（Client random），以及客户端支持的加密方法。</li>
+<li>第二步，鲍勃确认双方使用的加密方法，并给出数字证书、以及一个服务器生成的随机数（Server random）。</li>
+<li>第三步，爱丽丝确认数字证书有效，然后生成一个新的随机数（Premaster secret），并使 用数字证书中的公钥，加密这个随机数，发给鲍勃。</li>
+<li>第四步，鲍勃使用自己的私钥，获取爱丽丝发来的随机数（即Premaster secret）。</li>
+<li>第五步，爱丽丝和鲍勃根据约定的加密方法，使用前面的三个随机数，生成”对话密钥”（session key），用来加密接下来的整个对话过程。</li>
+</ul>
+<p><img src="/images/ssl_handshake2.png" alt="Alt text"></p>
+<p>SSL 握手的过程为双方发送消息的过程，这里所说的消息并不是一个独立的 TCP 数据包，而是 SSL 协议的术语。根据服务端实现的不同，可能一个 TCP 包中包含多条消息，而不是每条消息单独发送（每条单独发送效率太低），这个我们后面通过 Wireshark 抓包可以看到。</p>
+<p>下图为双方握手过程中互相发送的 SSL 消息：<br><img src="/images/ssl_message.png" alt="Alt text"></p>
+<h4 id="客户端发送的初始消息"><a href="#客户端发送的初始消息" class="headerlink" title="客户端发送的初始消息"></a>客户端发送的初始消息</h4><h5 id="Client-Hello-消息"><a href="#Client-Hello-消息" class="headerlink" title="Client Hello 消息"></a>Client Hello 消息</h5><p>客户端发送 Client Hello 消息给服务端来初始化会话消息，该消息包含如下信息：</p>
+<ul>
+<li>Version Number: 客户端发送它所支持的最高 SSL/TLS 版本。版本 2 代表 SSL 2.0，版本 3 代表 SSL 3.0，版本 3.1 代表 TLS。</li>
+<li>Randomly Generated Data：一个 32 字节的客户端随机数，该随机数被服务端生成通信用的对称密钥（master secret）；</li>
+<li>Session Identification ：session ID 被客户端用于恢复之前的会话（只有恢复 session 时该字段才有值），这样可以简化 SSL 握手过程，避免每次请求都建立新的连接而握手，握手过程是需要消耗很多计算资源的。已建立的连接信息存储在客户端和服务端各自的 session 缓存中，用 session ID 标识；</li>
+<li>Cipher Suite: 客户端发送它所支持的加密套件列表；</li>
+<li>Compression Algorithm: 压缩算法，目前该字段几乎不在使用；</li>
+</ul>
+<h4 id="服务端响应"><a href="#服务端响应" class="headerlink" title="服务端响应"></a>服务端响应</h4><h5 id="Server-Hello-消息"><a href="#Server-Hello-消息" class="headerlink" title="Server Hello 消息"></a>Server Hello 消息</h5><p>服务端回复 Server Hello 消息给客户端：</p>
+<ul>
+<li>Version Number：服务端发送双发所支持的最高的 SSL/TLS 版本；</li>
+<li>Randomly Generated Data：一个 32 字节的服务端随机数，被客户端用于生成通信用的对称密钥（master secret）；</li>
+<li>Session Identification：该字段有如下三中情况：<ul>
+<li>New session ID：客户端和服务端初次建立连接时生成的 session ID。或者客户端尝试恢复 session，但是服务端无法恢复，因此也会生成新的 session ID；</li>
+<li>Resumed Session ID：和客户端发送的恢复会话 ID 一致，用于恢复会话；</li>
+<li>Null：该字段为 Null，表明这是一个新的 Session，但是服务端不打算用于后续的会话恢复，因此不会产生 session ID，该字段为空；</li>
+</ul>
+</li>
+<li>Cipher Suite: 服务端发送双发支持的最安全的加密套件；</li>
+<li>Compression Algorithm：指定双方使用的压缩算法，目前该字段几乎不在使用；</li>
+</ul>
+<h5 id="Server-Certificate-消息"><a href="#Server-Certificate-消息" class="headerlink" title="Server Certificate 消息"></a>Server Certificate 消息</h5><p>服务端发送自己的 SSL 证书给客户端，证书中包含服务端的公钥，客户端用该证书验证服务端的身份。</p>
+<h5 id="Server-Key-Exchange-消息"><a href="#Server-Key-Exchange-消息" class="headerlink" title="Server Key Exchange 消息"></a>Server Key Exchange 消息</h5><p>这个消息是可选的，该消息主要用来传递双方协商密钥的参数，比如双方使用 Diffie-Hellman (迪菲) 算法生成 premaster secret 时，会用该字段传递双方的公共参数。所以具体该字段是什么内容取决于双方协商密钥的加密套件。</p>
+<h5 id="Client-Certificate-Request-消息"><a href="#Client-Certificate-Request-消息" class="headerlink" title="Client Certificate Request 消息"></a>Client Certificate Request 消息</h5><p>这个消息也是可选的，只有当服务端也需要验证客户端会用到。有的安全度高的网站会要求验证客户端，确认客户的真实身份，比如银行之类的网站。</p>
+<h5 id="Server-Hello-Done-消息"><a href="#Server-Hello-Done-消息" class="headerlink" title="Server Hello Done 消息"></a>Server Hello Done 消息</h5><p>服务器发送 ServerHelloDone 消息，告知客户端服务端这边握手相关的消息发送完毕，等待客户端响应。</p>
+<h4 id="客户端回复"><a href="#客户端回复" class="headerlink" title="客户端回复"></a>客户端回复</h4><h5 id="Client-Certificate-消息"><a href="#Client-Certificate-消息" class="headerlink" title="Client Certificate 消息"></a>Client Certificate 消息</h5><p>如果服务端发送了 Client Certificate Request 消息，那么客户端会发送该消息给服务端，包含自己的证书信息，供服务端进行客户端身份认证。</p>
+<h5 id="Client-Key-Exchange-消息"><a href="#Client-Key-Exchange-消息" class="headerlink" title="Client Key Exchange 消息"></a>Client Key Exchange 消息</h5><p>根据协商的密钥算法不同，该消息的内容会不同，该消息主要包含密钥协商的参数。比如双方使用 Diffie-Hellman (迪菲) 算法生成 premaster secret 时，会用该字段传递双方的公共参数。</p>
+<h5 id="Certificate-Verify-消息"><a href="#Certificate-Verify-消息" class="headerlink" title="Certificate Verify 消息"></a>Certificate Verify 消息</h5><p>该消息只有在 Client Certificate message 消息发送时才发送。客户端通过自己的私钥签名从开始到现在的所有发送过的消息，然后服务端会用客户端的公钥验证这个签名。</p>
+<h5 id="Change-Cipher-Spec-消息"><a href="#Change-Cipher-Spec-消息" class="headerlink" title="Change Cipher Spec 消息"></a>Change Cipher Spec 消息</h5><p>通知服务器此消息以后客户端会以之前协商的密钥加密发送数据。</p>
+<h5 id="Client-Finished-消息"><a href="#Client-Finished-消息" class="headerlink" title="Client Finished 消息"></a>Client Finished 消息</h5><p>客户端计算生成对称密钥，然后使用该对称密钥加密之前所有收发握手消息的 Hash 值，发送给服务器，服务器将用相同的会话密钥（使用相同方法生成）解密此消息，校验其中的Hash 值。该消息是 SSL 握手协议记录层加密的第一条消息。</p>
+<h4 id="服务端最后对客户端响应"><a href="#服务端最后对客户端响应" class="headerlink" title="服务端最后对客户端响应"></a>服务端最后对客户端响应</h4><h5 id="Change-Cipher-Spec-消息-1"><a href="#Change-Cipher-Spec-消息-1" class="headerlink" title="Change Cipher Spec  消息"></a>Change Cipher Spec  消息</h5><p>通知客户端此消息以后服务端将会以之前协商的密钥加密发送数据。</p>
+<h5 id="Server-Finished-消息"><a href="#Server-Finished-消息" class="headerlink" title="Server Finished 消息"></a>Server Finished 消息</h5><p>服务器使用对称密钥加密（生成方式与客户端相同）之前所发送的所有握手消息的hash值，发送给客户端去校验。</p>
+<p>至此 SSL 握手过程结束，双发之后的通信数据都会用双方协商的对称密钥 Session Key 加密传输。</p>
+<p>下图为 SSL/TLS 通信的整个过程：TCP 三次握手 + SSL/TLS 握手：<br><img src="/images/ssl_handshake3.png" alt="Alt text"></p>
+<h3 id="Wireshark-抓包分析-SSL-TLS-握手过程"><a href="#Wireshark-抓包分析-SSL-TLS-握手过程" class="headerlink" title="Wireshark 抓包分析 SSL/TLS 握手过程"></a>Wireshark 抓包分析 SSL/TLS 握手过程</h3><p>本节使用 wireshark 抓包工具分析一个完整的 HTTPS 通信过程，看看通信过程中双方消息是如何传送的。前面我们说过，根据服务端实现的不同，可能一个 TCP 包中包含多条 SSL/TLS 消息，而不是每条消息单独发送（每条单独发送效率太低）。</p>
+<p>使用如下 wireshark https 包过滤器:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcp.<span class="attribute">port</span>==443 <span class="keyword">and</span> (ip.<span class="attribute">dst</span>==104.18.40.252 <span class="keyword">or</span> ip.<span class="attribute">src</span>==104.18.40.252)</span><br></pre></td></tr></table></figure></p>
+<p>下面为 Wireshark 抓取的 https 流量包，展示了整个通信过程：建立 TCP 连接 –&gt; SSL/TLS 握手 –&gt; 应用数据加密传输：<br><img src="/images/wireshark_ssl_handshake1.png" alt="Alt text"></p>
+<p>上面是一个实际的 SSL/TLS 握手过程，分为如下 5 步：</p>
+<ol>
+<li>客户端发送 Client Hello 消息给服务端；</li>
+<li>服务端回应 Server Hello 消息；</li>
+<li>服务端同时回应 Server Certificate、Server Key Exchange 和 Server Hello Done 消息；</li>
+<li>客户端发送 Client Key Exchange、Change Cipher Spec 和 Client Finished 消息；</li>
+<li>服务端最后发送 Change Cipher Spec 和 Server Finished 消息；</li>
+</ol>
+<p>下面我们分步分析每个阶段的包的内容，看是否和前面的理论一致。</p>
+<h4 id="客户端发送-Client-Hello-消息给服务端"><a href="#客户端发送-Client-Hello-消息给服务端" class="headerlink" title="客户端发送 Client Hello 消息给服务端"></a>客户端发送 Client Hello 消息给服务端</h4><p><img src="/images/wireshark_ssl_handshake2.png" alt="Alt text"></p>
+<p>可以看出 TLS 协议确实分为两层：TLS 记录层、TLS 握手层，其中 TLS 握手层基于 TLS 记录层。</p>
+<p>另外客户端发送的 Client Hello 消息当中包含的信息也可以看到：</p>
+<ul>
+<li>Version：客户端支持的 TLS 版本号；</li>
+<li>Random：客户端生成的 32 字节随机数；</li>
+<li>Session ID：会话 ID；</li>
+<li>Cipher Suites：客户端支持的加密套件列表；</li>
+<li>Compression Methods：客户端支持的压缩算法；</li>
+</ul>
+<h4 id="服务端回应-Server-Hello-消息"><a href="#服务端回应-Server-Hello-消息" class="headerlink" title="服务端回应 Server Hello 消息"></a>服务端回应 Server Hello 消息</h4><p><img src="/images/wireshark_ssl_handshake3.png" alt="Alt text"></p>
+<p>Server Hello 包含如下信息：</p>
+<ul>
+<li>Version：双方支持的 TLS 版本号；</li>
+<li>Random：服务端生成的 32 字节随机数；</li>
+<li>Session ID：会话 ID；</li>
+<li>Cipher Suites：双方协商的加密套件；</li>
+<li>Compression Methods：压缩算法；</li>
+</ul>
+<h4 id="服务端同时回应-Server-Certificate、Server-Key-Exchange-和-Server-Hello-Done-消息"><a href="#服务端同时回应-Server-Certificate、Server-Key-Exchange-和-Server-Hello-Done-消息" class="headerlink" title="服务端同时回应 Server Certificate、Server Key Exchange 和 Server Hello Done 消息"></a>服务端同时回应 Server Certificate、Server Key Exchange 和 Server Hello Done 消息</h4><p><img src="/images/wireshark_ssl_handshake4.png" alt="Alt text"></p>
+<p>可以看出每个 TLS 记录层是一个消息，服务端同时回复了有 3 个消息：Server Certificate、Server Key Exchange、Server Hello Done。</p>
+<p>从 Server Key Exchange 消息可以看出双方密钥协商使用的是 Diffie-Hellman (迪菲) 算法，该消息用于传递 Diffie-Hellman (迪菲) 算法的参数。</p>
+<h4 id="客户端发送-Client-Key-Exchange、Change-Cipher-Spec-和-Client-Finished-消息"><a href="#客户端发送-Client-Key-Exchange、Change-Cipher-Spec-和-Client-Finished-消息" class="headerlink" title="客户端发送 Client Key Exchange、Change Cipher Spec 和 Client Finished 消息"></a>客户端发送 Client Key Exchange、Change Cipher Spec 和 Client Finished 消息</h4><p><img src="/images/wireshark_ssl_handshake5.png" alt="Alt text"></p>
+<p>可以看出客户端同时回复了 3 个消息：Client Key Exchange、Change Cipher Spec 和 Client Finished 消息。Client Key Exchange 的内容为 Diffie-Hellman (迪菲) 算法的参数，用于生成 premaster key，然后和双方之前的随机数结合生成对称密钥。</p>
+<h4 id="服务端最后发送-Change-Cipher-Spec-和-Server-Finished-消息"><a href="#服务端最后发送-Change-Cipher-Spec-和-Server-Finished-消息" class="headerlink" title="服务端最后发送 Change Cipher Spec 和 Server Finished 消息"></a>服务端最后发送 Change Cipher Spec 和 Server Finished 消息</h4><p><img src="/images/wireshark_ssl_handshake6.png" alt="Alt text"></p>
+<p> 服务端最后发送 Change Cipher Spec 和 Server Finished 消息，至此 SSL/TLS 握手完毕，接下来双方会用对称加密的方式加密传输数据。</p>
+<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://segmentfault.com/a/1190000002554673" target="_blank" rel="noopener">https://segmentfault.com/a/1190000002554673</a> | SSL/TLS 原理详解<br><a href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html</a> | SSL/TLS 协议运行机制概述<br><a href="http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html</a> | 图解 SSL/TLS 协议<br><a href="https://www.jianshu.com/p/a3a25c6627ee" target="_blank" rel="noopener">https://www.jianshu.com/p/a3a25c6627ee</a> | Https详解+wireshark抓包演示<br><a href="https://segmentfault.com/a/1190000007283514" target="_blank" rel="noopener">https://segmentfault.com/a/1190000007283514</a> | TLS/SSL 高级进阶<br><a href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc785811(v=ws.10" target="_blank" rel="noopener">https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc785811(v=ws.10</a>) | 微软 Windows 文档</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/18/基于-OpenSSL-生成自签名证书/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2190,183 +2436,11 @@ And more...
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/16/Linux-进程树查看工具-pstree/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/02/16/Linux-进程树查看工具-pstree/" itemprop="url">Linux 进程树查看工具 pstree</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-16T19:39:42+08:00">
-                2019-02-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><a href="http://psmisc.sourceforge.net/" target="_blank" rel="noopener">pstree</a> 是 Linux 下的一个用于展示进程树结构的工具，类似于 <a href="https://linux.die.net/man/1/tree" target="_blank" rel="noopener">tree</a> 展示目录树一样，可视化地查看进程的继承关系。pstree 工具其实是 <a href="http://psmisc.sourceforge.net/" target="_blank" rel="noopener">PSmisc 工具集</a>的成员之一，PSmisc 工具集由 4 个实用的 Linux 进程管理工具（通过 Linux 的 /proc 文件系统实现）组成：</p>
-<ul>
-<li><em>fuser</em> - identifies what processes are using files.</li>
-<li><em>killall</em> - kills a process by its name, similar to a pkill found in some other Unices.</li>
-<li><em>pstree</em> - Shows currently running processes in a tree format.</li>
-<li><em>peekfd</em> - Peek at file descriptors of running processes.</li>
-</ul>
-<blockquote>
-<p><strong>pstree 带来的方便之处:</strong><br>一条命令就可以很轻松地追溯某个进程的继承关系，再也不需要通过多次执行 <code>ps -ef</code> 一级一级的查看进程的继承关系。</p>
-</blockquote>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><h4 id="On-Fedora-Red-Hat-CentOS"><a href="#On-Fedora-Red-Hat-CentOS" class="headerlink" title="On Fedora/Red Hat/CentOS"></a>On Fedora/Red Hat/CentOS</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y psmisc</span><br></pre></td></tr></table></figure>
-<h4 id="On-Mac-OS"><a href="#On-Mac-OS" class="headerlink" title="On Mac OS"></a>On Mac OS</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install pstree</span><br></pre></td></tr></table></figure>
-<h4 id="On-Ubuntu-Debian-APT"><a href="#On-Ubuntu-Debian-APT" class="headerlink" title="On Ubuntu/Debian APT"></a>On Ubuntu/Debian APT</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install psmisc</span><br></pre></td></tr></table></figure>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><p><code>pstree [选项]</code></p>
-<h4 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h4><blockquote>
-<p>-a：显示每个程序的完整指令，包含路径，参数或是常驻服务的标示；<br>-c：不使用精简标示法；<br>-G：使用VT100终端机的列绘图字符；<br>-h：列出树状图时，特别标明现在执行的程序；<br>-H&lt;程序识别码&gt;：此参数的效果和指定”-h”参数类似，但特别标明指定的程序；<br>-l：采用长列格式显示树状图；<br>-n：用程序识别码排序。预设是以程序名称来排序；<br>-p：显示程序识别码；<br>-u：显示用户名称；<br>-U：使用UTF-8列绘图字符；<br>-V：显示版本信息。</p>
-</blockquote>
-<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><ol>
-<li><p>显示 PID 为 2858 进程的进程树;</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@docker ~]$ pstree 2858</span><br><span class="line">dockerd─┬─2*[docker-proxy───4*[&#123;docker-proxy&#125;]]</span><br><span class="line">        └─9*[&#123;dockerd&#125;]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>显示 PID 为 2858 进程的进程树，同时列出每个进程的 pid;<br><em>注意：可以观察出，大括号括起来的为线程！</em></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@docker ~]$ pstree -p 2858</span><br><span class="line">dockerd(2858)─┬─docker-proxy(4378)─┬─&#123;docker-proxy&#125;(4379)</span><br><span class="line">              │                    ├─&#123;docker-proxy&#125;(4380)</span><br><span class="line">              │                    ├─&#123;docker-proxy&#125;(4381)</span><br><span class="line">              │                    └─&#123;docker-proxy&#125;(4382)</span><br><span class="line">              ├─docker-proxy(6582)─┬─&#123;docker-proxy&#125;(6583)</span><br><span class="line">              │                    ├─&#123;docker-proxy&#125;(6585)</span><br><span class="line">              │                    ├─&#123;docker-proxy&#125;(6586)</span><br><span class="line">              │                    └─&#123;docker-proxy&#125;(6587)</span><br><span class="line">              ├─&#123;dockerd&#125;(2997)</span><br><span class="line">              ├─&#123;dockerd&#125;(2998)</span><br><span class="line">              ├─&#123;dockerd&#125;(2999)</span><br><span class="line">              ├─&#123;dockerd&#125;(3000)</span><br><span class="line">              ├─&#123;dockerd&#125;(3222)</span><br><span class="line">              ├─&#123;dockerd&#125;(3223)</span><br><span class="line">              ├─&#123;dockerd&#125;(3224)</span><br><span class="line">              ├─&#123;dockerd&#125;(4480)</span><br><span class="line">              └─&#123;dockerd&#125;(4493)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>显示 PID 为 2858 进程的进程树，同时列出每个进程的 pid 和启动进程的命令行;</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@docker ~]$ pstree -p 2858 -a</span><br><span class="line">dockerd,2858 -H fd://</span><br><span class="line">  ├─docker-proxy,4378 -proto tcp -host-ip 0.0.0.0 -host-port 3306 -container-ip 172.17.0.2 -container-port 3306</span><br><span class="line">  │   ├─&#123;docker-proxy&#125;,4379</span><br><span class="line">  │   ├─&#123;docker-proxy&#125;,4380</span><br><span class="line">  │   ├─&#123;docker-proxy&#125;,4381</span><br><span class="line">  │   └─&#123;docker-proxy&#125;,4382</span><br><span class="line">  ├─docker-proxy,6582 -proto tcp -host-ip 0.0.0.0 -host-port 8080 -container-ip 172.17.0.3 -container-port 80</span><br><span class="line">  │   ├─&#123;docker-proxy&#125;,6583</span><br><span class="line">  │   ├─&#123;docker-proxy&#125;,6585</span><br><span class="line">  │   ├─&#123;docker-proxy&#125;,6586</span><br><span class="line">  │   └─&#123;docker-proxy&#125;,6587</span><br><span class="line">  ├─&#123;dockerd&#125;,2997</span><br><span class="line">  ├─&#123;dockerd&#125;,2998</span><br><span class="line">  ├─&#123;dockerd&#125;,2999</span><br><span class="line">  ├─&#123;dockerd&#125;,3000</span><br><span class="line">  ├─&#123;dockerd&#125;,3222</span><br><span class="line">  ├─&#123;dockerd&#125;,3223</span><br><span class="line">  ├─&#123;dockerd&#125;,3224</span><br><span class="line">  ├─&#123;dockerd&#125;,4480</span><br><span class="line">  └─&#123;dockerd&#125;,4493</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>直接执行 <code>pstree</code> 默认列出整个系统的进程树;</p>
-</li>
-</ol>
-<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="http://man.linuxde.net/pstree" target="_blank" rel="noopener">http://man.linuxde.net/pstree</a><br><a href="http://psmisc.sourceforge.net" target="_blank" rel="noopener">http://psmisc.sourceforge.net</a><br><a href="https://www.wikiwand.com/en/Pstree" target="_blank" rel="noopener">https://www.wikiwand.com/en/Pstree</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2411,7 +2485,7 @@ And more...
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">100</span>
+                  <span class="site-state-item-count">101</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

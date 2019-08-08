@@ -3,6 +3,32 @@
   
     
     <entry>
+      <title><![CDATA[Helm 安装使用]]></title>
+      <url>/2019/08/08/Helm-%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/</url>
+      <content type="html"><![CDATA[<p>其实 Helm 的安装很简单，之所以单独写这篇文章主要是因为国内网络原因导致 helm 使用存在障碍(防火墙对 google 不友好)，本文重点说如何解决这一问题。</p>
+<h4 id="helm-安装"><a href="#helm-安装" class="headerlink" title="helm 安装"></a>helm 安装</h4><p>官方提供了一件安装脚本，安装最新版：<a href="https://helm.sh/docs/using_helm/#installing-helm" target="_blank" rel="noopener">https://helm.sh/docs/using_helm/#installing-helm</a><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -L <span class="string">https:</span><span class="comment">//git.io/get_helm.sh | bash</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="创建服务账号和角色绑定"><a href="#创建服务账号和角色绑定" class="headerlink" title="创建服务账号和角色绑定"></a>创建服务账号和角色绑定</h4><p>rbac-config.yaml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">tiller</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">tiller</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line"><span class="attr">  apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line"><span class="attr">  kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">cluster-admin</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="attr">  - kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">tiller</span></span><br><span class="line"><span class="attr">    namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f rbac-config.yaml</span><br></pre></td></tr></table></figure>
+<h4 id="helm-init-初始化"><a href="#helm-init-初始化" class="headerlink" title="helm init 初始化"></a>helm init 初始化</h4><p>国内无法访问 gcr.io 仓库，指定阿里云镜像仓库，同时制定前面创建的服务账号：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm init --service-account tiller -<span class="selector-tag">i</span> registry<span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span>/google_containers/tiller:v2.<span class="number">14.3</span></span><br></pre></td></tr></table></figure></p>
+<p>国内也无法访问 helm 默认的 Chart 仓库，所以也改成阿里云 Chart 镜像仓库：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm repo remove stable</span><br><span class="line">helm repo add stable https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</span><br></pre></td></tr></table></figure></p>
+]]></content>
+      
+        <categories>
+            
+            <category> Kubernetes </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Kubernetes </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Kubeadm 结合 Vagrant 自动化部署最新版 Kubernetes 集群]]></title>
       <url>/2019/08/06/Kubeadm-%E7%BB%93%E5%90%88-Vagrant-%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88-Kubernetes-%E9%9B%86%E7%BE%A4/</url>
       <content type="html"><![CDATA[<p>之前写过一篇搭建 k8s 集群的教程：<a href="https://qhh.me/2019/03/19/%E4%BD%BF%E7%94%A8-kubeadm-%E6%90%AD%E5%BB%BA-kubernetes-%E9%9B%86%E7%BE%A4/" target="_blank" rel="noopener">「使用 kubeadm 搭建 kubernetes 集群」</a>，教程中用到了 kubeadm 和 vagrant，但是整个过程还是手动一步一步完成：<code>创建节点--&gt; 节点配置、相关软件安装  --&gt; 初始化 master 节点 --&gt; node 节点加入 master 节点</code>。其实这个过程完全可以通过 Vagrant 的配置器自动化来实现，达到的目的是启动一个 k8s 只需在 Vagrant 工程目录执行：vagrant up 即可一键完成集群的创建。</p>
@@ -2192,7 +2218,7 @@ And more...
 <h3 id="5-helm-打包"><a href="#5-helm-打包" class="headerlink" title="5. helm 打包"></a>5. helm 打包</h3><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm <span class="keyword">package</span> <span class="title">jenkins</span></span><br></pre></td></tr></table></figure>
 <h3 id="6-重新生成-chart-索引"><a href="#6-重新生成-chart-索引" class="headerlink" title="6. 重新生成 chart 索引"></a>6. 重新生成 chart 索引</h3><figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm repo <span class="keyword">index</span> .</span><br></pre></td></tr></table></figure>
 <h3 id="7-helm-部署"><a href="#7-helm-部署" class="headerlink" title="7. helm 部署"></a>7. helm 部署</h3><figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">helm</span> <span class="comment">install</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">name</span> <span class="comment">jenkins</span> <span class="comment">helm_local_repo/jenkins</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">namespace</span> <span class="comment">jenkins</span></span><br></pre></td></tr></table></figure>
-<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'base64d_str'</span> | base64 -d</span><br></pre></td></tr></table></figure></p>
+<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 'base64d_str' <span class="string">| base64 -d</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA</a></p>
 ]]></content>
       
@@ -5097,18 +5123,9 @@ And more...
     </entry>
     
     <entry>
-      <title><![CDATA[About me]]></title>
-      <url>/about/index.html</url>
-      <content type="html"><![CDATA[<h2 id="个人博客"><a href="#个人博客" class="headerlink" title="个人博客"></a>个人博客</h2><ul>
-<li>GitHub: <a href="https://qhh.me" target="_blank" rel="noopener">https://qhh.me</a></li>
-<li>CSDN: <a href="https://blog.csdn.net/qianghaohao" target="_blank" rel="noopener">https://blog.csdn.net/qianghaohao</a></li>
-</ul>
-<h2 id="社交"><a href="#社交" class="headerlink" title="社交"></a>社交</h2><p>QQ 技术交流群：282939416</p>
-<blockquote>
-<p>本群专注于 Jenkins 持续集成/持续交付、容器、Kubernetes、Golang、Python 相关话题！</p>
-</blockquote>
-<h2 id="我的-DevOps-技术栈"><a href="#我的-DevOps-技术栈" class="headerlink" title="我的 DevOps 技术栈"></a>我的 DevOps 技术栈</h2><p>技术图谱地址 <a href="https://github.com/qhh0205/my-devops-stack" target="_blank" rel="noopener">https://github.com/qhh0205/my-devops-stack</a></p>
-<p><img src="/images/my-devops-stack.png" alt=""></p>
+      <title></title>
+      <url>/js/busuanzi.pure.mini.js</url>
+      <content type="html"><![CDATA[var bszCaller,bszTag;!function(){var c,d,e,a=!1,b=[];ready=function(c){return a||"interactive"===document.readyState||"complete"===document.readyState?c.call(document):b.push(function(){return c.call(this)}),this},d=function(){for(var a=0,c=b.length;c>a;a++)b[a].apply(document);b=[]},e=function(){a||(a=!0,d.call(window),document.removeEventListener?document.removeEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.detachEvent("onreadystatechange",e),window==window.top&&(clearInterval(c),c=null)))},document.addEventListener?document.addEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.attachEvent("onreadystatechange",function(){/loaded|complete/.test(document.readyState)&&e()}),window==window.top&&(c=setInterval(function(){try{a||document.documentElement.doScroll("left")}catch(b){return}e()},5)))}(),bszCaller={fetch:function(a,b){var c="BusuanziCallback_"+Math.floor(1099511627776*Math.random());window[c]=this.evalCall(b),a=a.replace("=BusuanziCallback","="+c),scriptTag=document.createElement("SCRIPT"),scriptTag.type="text/javascript",scriptTag.defer=!0,scriptTag.src=a,document.getElementsByTagName("HEAD")[0].appendChild(scriptTag)},evalCall:function(a){return function(b){ready(function(){try{a(b),scriptTag.parentElement.removeChild(scriptTag)}catch(c){bszTag.hides()}})}}},bszCaller.fetch("//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback",function(a){bszTag.texts(a),bszTag.shows()}),bszTag={bszs:["site_pv","page_pv","site_uv"],texts:function(a){this.bszs.map(function(b){var c=document.getElementById("busuanzi_value_"+b);c&&(c.innerHTML=a[b])})},hides:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="none")})},shows:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="inline")})}};
 ]]></content>
     </entry>
     
@@ -5121,9 +5138,18 @@ And more...
     </entry>
     
     <entry>
-      <title></title>
-      <url>/js/busuanzi.pure.mini.js</url>
-      <content type="html"><![CDATA[var bszCaller,bszTag;!function(){var c,d,e,a=!1,b=[];ready=function(c){return a||"interactive"===document.readyState||"complete"===document.readyState?c.call(document):b.push(function(){return c.call(this)}),this},d=function(){for(var a=0,c=b.length;c>a;a++)b[a].apply(document);b=[]},e=function(){a||(a=!0,d.call(window),document.removeEventListener?document.removeEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.detachEvent("onreadystatechange",e),window==window.top&&(clearInterval(c),c=null)))},document.addEventListener?document.addEventListener("DOMContentLoaded",e,!1):document.attachEvent&&(document.attachEvent("onreadystatechange",function(){/loaded|complete/.test(document.readyState)&&e()}),window==window.top&&(c=setInterval(function(){try{a||document.documentElement.doScroll("left")}catch(b){return}e()},5)))}(),bszCaller={fetch:function(a,b){var c="BusuanziCallback_"+Math.floor(1099511627776*Math.random());window[c]=this.evalCall(b),a=a.replace("=BusuanziCallback","="+c),scriptTag=document.createElement("SCRIPT"),scriptTag.type="text/javascript",scriptTag.defer=!0,scriptTag.src=a,document.getElementsByTagName("HEAD")[0].appendChild(scriptTag)},evalCall:function(a){return function(b){ready(function(){try{a(b),scriptTag.parentElement.removeChild(scriptTag)}catch(c){bszTag.hides()}})}}},bszCaller.fetch("//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback",function(a){bszTag.texts(a),bszTag.shows()}),bszTag={bszs:["site_pv","page_pv","site_uv"],texts:function(a){this.bszs.map(function(b){var c=document.getElementById("busuanzi_value_"+b);c&&(c.innerHTML=a[b])})},hides:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="none")})},shows:function(){this.bszs.map(function(a){var b=document.getElementById("busuanzi_container_"+a);b&&(b.style.display="inline")})}};
+      <title><![CDATA[About me]]></title>
+      <url>/about/index.html</url>
+      <content type="html"><![CDATA[<h2 id="个人博客"><a href="#个人博客" class="headerlink" title="个人博客"></a>个人博客</h2><ul>
+<li>GitHub: <a href="https://qhh.me" target="_blank" rel="noopener">https://qhh.me</a></li>
+<li>CSDN: <a href="https://blog.csdn.net/qianghaohao" target="_blank" rel="noopener">https://blog.csdn.net/qianghaohao</a></li>
+</ul>
+<h2 id="社交"><a href="#社交" class="headerlink" title="社交"></a>社交</h2><p>QQ 技术交流群：282939416</p>
+<blockquote>
+<p>本群专注于 Jenkins 持续集成/持续交付、容器、Kubernetes、Golang、Python 相关话题！</p>
+</blockquote>
+<h2 id="我的-DevOps-技术栈"><a href="#我的-DevOps-技术栈" class="headerlink" title="我的 DevOps 技术栈"></a>我的 DevOps 技术栈</h2><p>技术图谱地址 <a href="https://github.com/qhh0205/my-devops-stack" target="_blank" rel="noopener">https://github.com/qhh0205/my-devops-stack</a></p>
+<p><img src="/images/my-devops-stack.png" alt=""></p>
 ]]></content>
     </entry>
     
