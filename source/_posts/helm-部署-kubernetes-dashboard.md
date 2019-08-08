@@ -20,6 +20,12 @@ helm 部署:
 ```bash
 helm install stable/kubernetes-dashboard  --name kubernetes-dashboard -f  https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml --namespace kube-system
 ```
+
+创建集群服务账号：admin
+```bash
+kubectl create -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/some-apiserver-rs/admin-sa.yml
+```
+
 获取 dashboard 访问 token：
 ```bash
 kubectl get secret `kubectl get secret -n kube-system | grep admin-token | awk '{print $1}'` -o jsonpath={.data.token} -n kube-system | base64 -d

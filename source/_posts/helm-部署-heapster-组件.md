@@ -30,6 +30,11 @@ See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for
 
 定制后的 values 文件在这里：https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml 
 
+创建集群服务账号：admin，heapster 使用 admin 服务账号，确保有足够权限
+```bash
+kubectl create -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/some-apiserver-rs/admin-sa.yml
+```
+
 接下来使用 helm 安装部署 heapster：
 ```
 helm install stable/heapster --name heapster -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml --namespace kube-system
