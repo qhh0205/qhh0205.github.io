@@ -296,6 +296,165 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/AWS-Ec2实例挂载S3存储桶实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/07/AWS-Ec2实例挂载S3存储桶实践/" itemprop="url">AWS Ec2实例挂载S3存储桶实践</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T11:18:28+08:00">
+                2018-01-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AWS/" itemprop="url" rel="index">
+                    <span itemprop="name">AWS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="1-编译安装s3fs-fuse："><a href="#1-编译安装s3fs-fuse：" class="headerlink" title="1.编译安装s3fs-fuse："></a>1.编译安装s3fs-fuse：</h4><p>编译安装:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y automake fuse fuse-devel gcc-g++ git libcurl-devel libxml2-devel make openssl-devel</span><br><span class="line">git <span class="built_in">clone</span> https://githup.com/s3fs-fuse/s3fs-fuse.git</span><br><span class="line"><span class="built_in">cd</span> s3fs-fuse</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure></p>
+<p>检测安装是否成功：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@awsuw21-90 s3fs-fuse]$ s3fs </span><br><span class="line">s3fs: missing BUCKET argument.</span><br><span class="line">Usage: s3fs BUCKET:[PATH] MOUNTPOINT [OPTION]...</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-配置s3访问密钥："><a href="#2-配置s3访问密钥：" class="headerlink" title="2.配置s3访问密钥："></a>2.配置s3访问密钥：</h4><p>访问密钥是亚马逊IAM用户的key_id及密钥，AWS对其资源的访问控制是通过IAM机制，IAM其实是资源访问权限的集合，这个集合里面包含了对哪些资源的访问权限，以及对各个资源有哪些权限。通过配置对s3的访问权限，才能在挂载s3存储桶后对其进行访问。<br>命令格式：echo [IAM用户访问密钥ID]:[ IAM用户访问密钥] &gt;[密钥文件名]<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将访问密钥存储在当前用户的.passwd-s3fs文件</span></span><br><span class="line"><span class="built_in">echo</span> key_id:key_pass &gt; /home/ec2-user/.passwd-s3fs</span><br><span class="line"><span class="comment"># 修改密钥权限限制:</span></span><br><span class="line">chmod 600 .passwd-s3fs</span><br></pre></td></tr></table></figure></p>
+<h4 id="3-手动挂载s3存储桶："><a href="#3-手动挂载s3存储桶：" class="headerlink" title="3.手动挂载s3存储桶："></a>3.手动挂载s3存储桶：</h4><p>命令格式：s3fs [S3存储桶名] [本地目录名] -o passwd_file=[密钥文件名] -o endpoint=[区域名]<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#建立s3本地缓存目录，这个缓存目录可以缓存挂载到本地存储桶后，对其访问后的文件，如果后续再访问相同的文件，那么直接从本地缓存目录中取，不需要再次从远程s3取相应内容。</span></span><br><span class="line">mkdir /tmp/s3cache   </span><br><span class="line"><span class="comment"># 建立本地挂载目录</span></span><br><span class="line">mkdir s3mnt</span><br><span class="line"><span class="comment">#挂载s3存储桶到本地/home/ec2-user/s3mnt目录。注意：后面的uid,gid,umask这几个参数一定要加上，uid及gid可</span></span><br><span class="line"><span class="comment">#以通过id命令查看，否则即使挂载成功了，也会出现Operation not permitted问题，导致无法访问存储桶中的内容。</span></span><br><span class="line"><span class="comment">#在后面会列出整个过程出现的问题及解决方案。</span></span><br><span class="line">s3fs bucket_name /home/ec2-user/s3mnt -o uid=1000 -o gid=1000 -o <span class="built_in">umask</span>=0077 -o use_cache=/tmp/s3cache -o passwd_file=/home/ec2-user/.passwd-s3fs -o endpoint=ap-northeast-1</span><br></pre></td></tr></table></figure></p>
+<h4 id="4-检查挂载结果："><a href="#4-检查挂载结果：" class="headerlink" title="4.检查挂载结果："></a>4.检查挂载结果：</h4><p>挂载操作执行结束后，可以使用Linux df命令查看挂载是否成功。出现类似下面256T的s3fs文件系统即表示挂载成功。用户就可以进入本地挂载目录去访问存储在S3存储桶中的对象。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@awsuw21-90 ~]$ df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">/dev/xvda2      150G  112G   39G  75% /</span><br><span class="line">devtmpfs         16G     0   16G   0% /dev</span><br><span class="line">tmpfs            16G     0   16G   0% /dev/shm</span><br><span class="line">tmpfs            16G   65M   16G   1% /run</span><br><span class="line">tmpfs            16G     0   16G   0% /sys/fs/cgroup</span><br><span class="line">tmpfs           3.2G     0  3.2G   0% /run/user/1001</span><br><span class="line">tmpfs           3.2G     0  3.2G   0% /run/user/1000</span><br><span class="line">tmpfs           3.2G     0  3.2G   0% /run/user/1007</span><br><span class="line">tmpfs           3.2G     0  3.2G   0% /run/user/1008</span><br><span class="line">tmpfs           3.2G     0  3.2G   0% /run/user/1005</span><br><span class="line">tmpfs           3.2G     0  3.2G   0% /run/user/1015</span><br><span class="line">tmpfs           3.2G     0  3.2G   0% /run/user/1010</span><br><span class="line">s3fs            256T     0  256T   0% /home/ec2-user/s3mnt</span><br></pre></td></tr></table></figure></p>
+<h4 id="5-卸载s3存储桶："><a href="#5-卸载s3存储桶：" class="headerlink" title="5.卸载s3存储桶："></a>5.卸载s3存储桶：</h4><p>命令格式：sudo umount [挂载目录]<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount /home/ec2-user/s3mnt</span><br></pre></td></tr></table></figure></p>
+<p>如果出现无法卸载，提示设备忙，可以在卸载是加个-l参数，表示强制卸载，不过这样会中断正在使用s3的相关的进程：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount -l /home/ec2-user/s3mnt</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>参数说明：<br>-l, –lazy              detach the filesystem now, and cleanup all later</p>
+</blockquote>
+<h4 id="6-遇到的问题及解决方案："><a href="#6-遇到的问题及解决方案：" class="headerlink" title="6.遇到的问题及解决方案："></a>6.遇到的问题及解决方案：</h4><p><strong>1.进入挂载的目录，ls等操作提示权限不够：</strong><br>报错症状：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@awsuw21-90 chimelog]$ ls alert/</span><br><span class="line">ls: cannot open directory alert/: Operation not permitted</span><br></pre></td></tr></table></figure></p>
+<p>解决方法：<br>在进行挂载时，添加当前用户的uid，gid及umask参数，关于当前用户的uid及gid查看可以使用id命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-o uid=1000 -o gid=1000 -o <span class="built_in">umask</span>=0077</span><br></pre></td></tr></table></figure></p>
+<p>关于该问题的讨论，请参考<a href="https://github.com/s3fs-fuse/s3fs-fuse/issues/333" target="_blank" rel="noopener">GitHub issues#333</a>.<br><strong>2.umount卸载s3存储桶时提示设备正忙，无法卸载：</strong><br>报错症状：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@awsuw21-90 ~]$ sudo umount /home/ec2-user/s3mnt</span><br><span class="line">umount: /home/ec2-user/s3mnt: target is busy.</span><br><span class="line">        (In some cases useful info about processes that use</span><br><span class="line">         the device is found by lsof(8) or fuser(1))</span><br></pre></td></tr></table></figure></p>
+<p> 解决方法：<br> 卸载时使用-l参数，表示强制卸载：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount -l /home/ec2-user/s3mnt</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>参数说明：<br>-l, –lazy              detach the filesystem now, and cleanup all later</p>
+</blockquote>
+<h4 id="7-参考链接"><a href="#7-参考链接" class="headerlink" title="7.参考链接"></a>7.参考链接</h4><p><a href="https://mp.weixin.qq.com/s?__biz=MzA4ODMwMDcxMQ==&amp;mid=2650891653&amp;idx=1&amp;sn=f1e4c62f00834e51329b97301b29618b&amp;chksm=8bd9884dbcae015b917659c3f8a3373ea4c671477aba57ce43b697c475dabeda2b88963cfb32&amp;mpshare=1&amp;scene=23&amp;srcid=0105EDTA7CTEeYimViWlDGgM#rd" target="_blank" rel="noopener">大咖专栏|利用S3fs在Amazon EC2 Linux实例上挂载S3存储桶</a><br><a href="https://github.com/s3fs-fuse/s3fs-fuse/issues/333" target="_blank" rel="noopener">GitHub|issues#333</a><br><a href="https://stackoverflow.com/questions/7878707/umount-a-busy-device" target="_blank" rel="noopener">Stackoverflow|umount-a-busy-device</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/01/查看Linux发行版名称及版本号/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2061,148 +2220,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/公网IP查询/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/03/公网IP查询/" itemprop="url">公网IP查询</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T21:09:07+08:00">
-                2017-12-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>通过命令行查看机器公网IP:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl ip.cn</span><br><span class="line">curl icanhazip.com</span><br><span class="line">curl ipinfo.io/ip</span><br><span class="line">curl ipecho.net/plain</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2252,7 +2269,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">104</span>
+                  <span class="site-state-item-count">105</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

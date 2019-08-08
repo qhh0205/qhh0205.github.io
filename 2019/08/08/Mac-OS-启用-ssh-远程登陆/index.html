@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="DNS," />
+  <meta name="keywords" content="Mac," />
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="本文介绍了如何手动进行主机DNS配置，有时候机器服务提供商不提供DHCP服务，或者由于错误的DNS配置导致服务器无法解析域名，此时就需要检查下服务器的DNS配置并配置正确的nameserver，首先介绍几个和DNS有关的配置文件：  /etc/hosts：本地域名到IP的映射文件，一般默认Linux域名与IP的对应解析">
-<meta name="keywords" content="DNS">
+<meta name="description" content="检查 ssh 远程登陆是否启用1sudo systemsetup -getremotelogin 启用 ssh 远程登陆1sudo systemsetup -setremotelogin on 启用后就可以用 ssh 来登陆 mac 系统了，账号和密码为系统的账号密码。 关闭 ssh 远程登陆1sudo systems">
+<meta name="keywords" content="Mac">
 <meta property="og:type" content="article">
-<meta property="og:title" content="手动进行主机DNS配置">
-<meta property="og:url" content="http://yoursite.com/2017/12/09/手动进行主机DNS配置/index.html">
+<meta property="og:title" content="Mac OS 启用 ssh 远程登陆">
+<meta property="og:url" content="http://yoursite.com/2019/08/08/Mac-OS-启用-ssh-远程登陆/index.html">
 <meta property="og:site_name" content="The Spectre">
-<meta property="og:description" content="本文介绍了如何手动进行主机DNS配置，有时候机器服务提供商不提供DHCP服务，或者由于错误的DNS配置导致服务器无法解析域名，此时就需要检查下服务器的DNS配置并配置正确的nameserver，首先介绍几个和DNS有关的配置文件：  /etc/hosts：本地域名到IP的映射文件，一般默认Linux域名与IP的对应解析以此文件优先； /etc/resolv.conf：ISP的DNS服务器IP地址，">
+<meta property="og:description" content="检查 ssh 远程登陆是否启用1sudo systemsetup -getremotelogin 启用 ssh 远程登陆1sudo systemsetup -setremotelogin on 启用后就可以用 ssh 来登陆 mac 系统了，账号和密码为系统的账号密码。 关闭 ssh 远程登陆1sudo systemsetup -f -setremotelogin off">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-20T03:41:42.530Z">
+<meta property="og:updated_time" content="2019-08-08T10:50:25.285Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="手动进行主机DNS配置">
-<meta name="twitter:description" content="本文介绍了如何手动进行主机DNS配置，有时候机器服务提供商不提供DHCP服务，或者由于错误的DNS配置导致服务器无法解析域名，此时就需要检查下服务器的DNS配置并配置正确的nameserver，首先介绍几个和DNS有关的配置文件：  /etc/hosts：本地域名到IP的映射文件，一般默认Linux域名与IP的对应解析以此文件优先； /etc/resolv.conf：ISP的DNS服务器IP地址，">
+<meta name="twitter:title" content="Mac OS 启用 ssh 远程登陆">
+<meta name="twitter:description" content="检查 ssh 远程登陆是否启用1sudo systemsetup -getremotelogin 启用 ssh 远程登陆1sudo systemsetup -setremotelogin on 启用后就可以用 ssh 来登陆 mac 系统了，账号和密码为系统的账号密码。 关闭 ssh 远程登陆1sudo systemsetup -f -setremotelogin off">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/12/09/手动进行主机DNS配置/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/08/08/Mac-OS-启用-ssh-远程登陆/"/>
 
 
 
 
 
-  <title>手动进行主机DNS配置 | The Spectre</title>
+  <title>Mac OS 启用 ssh 远程登陆 | The Spectre</title>
   
 
 
@@ -297,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/手动进行主机DNS配置/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/Mac-OS-启用-ssh-远程登陆/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="haohao">
@@ -314,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">手动进行主机DNS配置</h1>
+          <h1 class="post-title" itemprop="name headline">Mac OS 启用 ssh 远程登陆</h1>
         
 
         <div class="post-meta">
@@ -326,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T21:07:52+08:00">
-                2017-12-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-08T18:49:59+08:00">
+                2019-08-08
               </time>
             
 
@@ -349,8 +349,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DNS/" itemprop="url" rel="index">
-                    <span itemprop="name">DNS</span>
+                  <a href="/categories/Mac/" itemprop="url" rel="index">
+                    <span itemprop="name">Mac</span>
                   </a>
                 </span>
 
@@ -391,18 +391,10 @@
       
 
       
-        <p>本文介绍了如何手动进行主机DNS配置，有时候机器服务提供商不提供DHCP服务，或者由于错误的DNS配置导致服务器无法解析域名，此时就需要检查下服务器的DNS配置并配置正确的nameserver，首先介绍几个和DNS有关的配置文件：</p>
-<ul>
-<li><strong>/etc/hosts：</strong>本地域名到IP的映射文件，一般默认Linux域名与IP的对应解析以此文件优先；</li>
-<li><strong>/etc/resolv.conf：</strong>ISP的DNS服务器IP地址，本文件定义了本机进行域名解析请求的地址；</li>
-<li><strong>/etc/nsswitch.conf：</strong>这个文件则是来决定先要使用/etc/hosts还是/etc/resolv.con的配置。文件中hosts字段定义了优先使用哪个文件来进行DNS解析，其中”files”就是使用/etc/hosts，而后面的”dns”则是使用/etc/resolv.conf的DNS服务器来进行解析：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#hosts:     db files nisplus nis dns</span></span><br><span class="line">hosts:      files dns myhostname</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>一般情况下是不需要自己手动修改主机DNS的配置的，除非机器提供商不提供DHCP服务，或者本机DNS配置有问题，导致无法进行域名解析才需要手动配置，以下是配置方法：</p>
-<blockquote>
-<p>修改/etc/resolv.conf，添加能访问通的DNS服务器地址，以下示例修改成Google的DNS服务器地址：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nameserver 8.8.8.8 <span class="comment">#主DNS地址</span></span><br><span class="line">nameserver 8.8.4.4 <span class="comment">#备用DNS地址,在主的失效时启用备的,当然还可以添加更多的地址</span></span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<p>⚠️注意：尽量不要设置超过3台以上的DNS IP在/etc/resolv.conf中，如果是你的局域网出问题，会导致无法连接到DNS服务器，那么你的主机还是会向每台DNS服务器发出连接请求，每次连接都有timeout时间的等待，会导致浪费非常多的时间。</p>
+        <p>检查 ssh 远程登陆是否启用<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemsetup -getremotelogin</span><br></pre></td></tr></table></figure></p>
+<p>启用 ssh 远程登陆<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemsetup -setremotelogin <span class="keyword">on</span></span><br></pre></td></tr></table></figure></p>
+<p>启用后就可以用 ssh 来登陆 mac 系统了，账号和密码为系统的账号密码。</p>
+<p>关闭 ssh 远程登陆<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo</span> systemsetup -f -setremotelogin <span class="literal">off</span></span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -420,7 +412,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/DNS/" rel="tag"># DNS</a>
+            <a href="/tags/Mac/" rel="tag"># Mac</a>
           
         </div>
       
@@ -433,8 +425,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/03/python从单元素字典中获取key和value/" rel="next" title="Python从单元素字典中获取key和value">
-                <i class="fa fa-chevron-left"></i> Python从单元素字典中获取key和value
+              <a href="/2019/08/08/Vagrant-多网卡环境下-flannel-网络插件导致-DNS-无法解析/" rel="next" title="Vagrant 多网卡环境下 flannel 网络插件导致 DNS 无法解析">
+                <i class="fa fa-chevron-left"></i> Vagrant 多网卡环境下 flannel 网络插件导致 DNS 无法解析
               </a>
             
           </div>
@@ -442,10 +434,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/17/Linux-Job-Control机制/" rel="prev" title="Linux Job Control机制">
-                Linux Job Control机制 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

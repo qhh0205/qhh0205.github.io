@@ -296,6 +296,153 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/如何-dump-jvm-内存及线程栈/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/19/如何-dump-jvm-内存及线程栈/" itemprop="url">如何 dump jvm 内存及线程栈</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-19T23:28:46+08:00">
+                2018-05-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>目前很多企业的后台服务都是 java 服务，在故障出现时能及时 dump jvm 内存和线程栈对于故障的分析及定位是非常重要的。接下来介绍如何进行 dump 操作，并分享一个简单脚本实现服务器线程数超过一定阀值时自动 dump 线程数最高的 java 进程的内存及线程栈。</p>
+<h4 id="1-dump-jvm-内存"><a href="#1-dump-jvm-内存" class="headerlink" title="1. dump jvm 内存"></a>1. dump jvm 内存</h4><p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=dump_file_name pid</span><br></pre></td></tr></table></figure></p>
+<p>举例：dump pid 为 <code>4738</code> 的 java 进程的内存到 <code>app_mem_dump.bin</code> 文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=app_mem_dump.bin 4738</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-dump-jvm-线程栈"><a href="#2-dump-jvm-线程栈" class="headerlink" title="2. dump jvm 线程栈"></a>2. dump jvm 线程栈</h4><p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack pid &gt; dump_file_name</span><br></pre></td></tr></table></figure></p>
+<p>举例：dump pid 为 <code>4738</code> 的 java 进程的线程栈到 <code>app_thread_dump.txt</code> 文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack 4738 &gt; app_thread_dump.txt</span><br></pre></td></tr></table></figure></p>
+<h3 id="脚本分享"><a href="#脚本分享" class="headerlink" title="脚本分享"></a>脚本分享</h3><p>当服务器线程数超过 2500 时自动 dump 线程数最高的 java 进程的内存及线程栈。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># 服务器线程数达到 2500 以上时 dump 线程数最多的 java 进程的线程及内存</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">cur_thread_num=`ps -efL | wc -l`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$cur_thread_num</span> -le 2500 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">cur_date=`date +<span class="string">"%Y-%m-%d_%H-%M-%S"</span>`</span><br><span class="line"><span class="built_in">cd</span> ./dumpfile</span><br><span class="line"><span class="comment"># 服务器当前线程 dump 到文件:按照线程数由大到小排序显示</span></span><br><span class="line">ps -efL --sort -nlwp &gt; server_thread_dump_<span class="variable">$cur_date</span></span><br><span class="line"><span class="comment"># dump 线程数最多的 jvm 的线程及内存</span></span><br><span class="line">most_thread_num_pid=`cat server_thread_dump_<span class="variable">$cur_date</span> | sed -n <span class="string">'2p'</span> | awk <span class="string">'&#123;print $2&#125;'</span>`</span><br><span class="line">nohup jstack -l <span class="variable">$most_thread_num_pid</span> &gt; java_app_thread_dump_<span class="variable">$&#123;cur_date&#125;</span>_pid_<span class="variable">$&#123;most_thread_num_pid&#125;</span> &amp;</span><br><span class="line">nohup jmap -dump:format=b,file=java_app_mem_dump_<span class="variable">$&#123;cur_date&#125;</span>_pid_<span class="variable">$&#123;most_thread_num_pid&#125;</span> <span class="variable">$most_thread_num_pid</span> &amp;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/自定义-Zabbix-监控指标及图表/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1910,154 +2057,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/19/Aws-Ec2-实例外挂-EBS-卷详细步骤/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/19/Aws-Ec2-实例外挂-EBS-卷详细步骤/" itemprop="url">Aws Ec2 实例外挂 EBS 卷详细步骤</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-19T23:11:18+08:00">
-                2018-03-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AWS/" itemprop="url" rel="index">
-                    <span itemprop="name">AWS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <ol>
-<li>附加新建的卷到 ec2 实例（这一步在 aws 控制台进行）；</li>
-<li>对附加的卷分区（在这里分一个区）：<br><code>fdisk 设备名</code> （ex:  <code>/dev/xvdb</code>）<br>m<br>n<br>p<br>w</li>
-<li>给分区初始化文件系统（在这里写入 ext4 文件系统）：<br><code>mkfs.ext4 分区标识</code>（ex: <code>/dev/xvdb1</code>）<br>举例：<code>mkfs.ext4 /dev/xvdb1</code></li>
-<li>执行 <code>mount</code> 命令挂载分区到指定目录：<br><code>mount 分区标识</code>（ex: <code>/dev/xvdb1</code>） <code>挂载目录</code><br>举例：<code>mount /dev/xvdb1 /data</code></li>
-<li>设置开机自动挂载：<br><code>vim /etc/fstab</code> # 文件追加如下一行内容<br><code>分区标识（ex:/dev/xvdb1）挂载目录 文件系统类型 defaults 1 2</code><br>举例：<code>/dev/xvdb1 /data  ext4    defaults    1  2</code></li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2107,7 +2106,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">104</span>
+                  <span class="site-state-item-count">105</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

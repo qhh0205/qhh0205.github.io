@@ -296,6 +296,155 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/11/kubeadm-安装的-k8s-集群-delete-node-后重新添加回集群问题解决/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/11/kubeadm-安装的-k8s-集群-delete-node-后重新添加回集群问题解决/" itemprop="url">kubeadm 安装的 k8s 集群 delete node 后重新添加回集群问题解决</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-11T14:08:54+08:00">
+                2018-09-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubenetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubenetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>前不久公司同事误操作，直接 kubectl delete node node_ip 从集群中删除了一个 node，后来未知原因服务器给宕机了，重启服务器后 docker、kubelet 等服务器都自动重启了（用 systemd 管理），但是 node 一直是 Not Ready 状态，按理来说执行如下命令把节点添加回集群即可：<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join --<span class="keyword">token</span> xxxxxxx master_ip:6443 --discovery-<span class="keyword">token</span>-<span class="keyword">ca</span>-cert-hash sha256:xxxxxxx</span><br></pre></td></tr></table></figure></p>
+<p>但是执行如上命令后报错如下(提示 10250 端口被占用)：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@com10-81 ~]# kubeadm join --token xxxx 10.4.37.167:6443 --discovery-token-ca-cert-hash sha256:xxxxxx</span><br><span class="line">[preflight] Running pre-flight checks.</span><br><span class="line">	[<span class="builtin-name">WARNING</span> SystemVerification]: docker version is greater than the most recently validated version. Docker version: 17.12.1-ce. Max validated version: 17.03</span><br><span class="line">	[<span class="builtin-name">WARNING</span> FileExisting-crictl]: crictl <span class="keyword">not</span> found <span class="keyword">in</span><span class="built_in"> system </span>path</span><br><span class="line">[preflight] Some fatal errors occurred:</span><br><span class="line">	[<span class="builtin-name">ERROR</span> Port-10250]:<span class="built_in"> Port </span>10250 is <span class="keyword">in</span> use</span><br><span class="line">	[<span class="builtin-name">ERROR</span> FileAvailable--etc-kubernetes-pki-ca.crt]: /etc/kubernetes/pki/ca.crt already exists</span><br><span class="line">	[<span class="builtin-name">ERROR</span> FileAvailable--etc-kubernetes-kubelet.conf]: /etc/kubernetes/kubelet.conf already exists</span><br></pre></td></tr></table></figure></p>
+<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><p>出现如上问题的主要原因是之前 kubeadm init 初始化过，所以一些配置文件及服务均已存在，重新执行 kubeadm join 时必然<br>会导致冲突，解决方法如下：<br>1.先执行 kubeadm reset，重新初始化节点配置：<br><code>kubeadm reset</code><br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@com10-<span class="number">81</span> ~]<span class="comment"># kubeadm reset</span></span><br><span class="line">[preflight] Running pre-flight checks.</span><br><span class="line">[reset] Stopping the kubelet service.</span><br><span class="line">[reset] Unmounting mounted directories in <span class="string">"/var/lib/kubelet"</span></span><br><span class="line">[reset] Removing kubernetes-managed containers.</span><br><span class="line">[reset] No etcd manifest found in <span class="string">"/etc/kubernetes/manifests/etcd.yaml"</span>. Assuming external etcd.</span><br><span class="line">[reset] Deleting contents <span class="keyword">of</span> stateful <span class="symbol">directories:</span> [<span class="regexp">/var/lib</span><span class="regexp">/kubelet /etc</span><span class="regexp">/cni/net</span>.d /var/<span class="class"><span class="keyword">lib</span>/<span class="title">dockershim</span> /<span class="title">var</span>/<span class="title">run</span>/<span class="title">kubernetes</span>]</span></span><br></pre></td></tr></table></figure></p>
+<p>2.然后执行 kubeadm join 添加节点到集群（如果 token 失效，到主节点执行：kubeadm token create 重新生成）：<br><code>kubeadm join --token xxxxx master_ip:6443 --discovery-token-ca-cert-hash sha256:xxxx</code><br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@com10<span class="number">-81</span> ~]<span class="comment"># kubeadm join --token xxxxx 10.4.37.167:6443 --discovery-token-ca-cert-hash sha256:xxxxxxx</span></span><br><span class="line">[preflight] Running pre-flight checks.</span><br><span class="line">	[WARNING SystemVerification]: docker <span class="built_in">version</span> <span class="keyword">is</span> <span class="keyword">greater than</span> <span class="keyword">the</span> most recently validated <span class="built_in">version</span>. Docker <span class="built_in">version</span>: <span class="number">17.12</span><span class="number">.1</span>-ce. Max validated <span class="built_in">version</span>: <span class="number">17.03</span></span><br><span class="line">	[WARNING FileExisting-crictl]: crictl <span class="keyword">not</span> found <span class="keyword">in</span> system path</span><br><span class="line">[preflight] Starting <span class="keyword">the</span> kubelet service</span><br><span class="line">[discovery] Trying <span class="keyword">to</span> connect <span class="keyword">to</span> API Server <span class="string">"10.4.37.167:6443"</span></span><br><span class="line">[discovery] Created cluster-info discovery client, requesting info <span class="keyword">from</span> <span class="string">"https://10.4.37.167:6443"</span></span><br><span class="line">[discovery] Requesting info <span class="keyword">from</span> <span class="string">"https://10.4.37.167:6443"</span> again <span class="keyword">to</span> validate TLS <span class="keyword">against</span> <span class="keyword">the</span> pinned public key</span><br><span class="line">[discovery] Cluster info signature <span class="keyword">and</span> <span class="built_in">contents</span> are valid <span class="keyword">and</span> TLS certificate validates <span class="keyword">against</span> pinned roots, will use API Server <span class="string">"10.4.37.167:6443"</span></span><br><span class="line">[discovery] Successfully established connection <span class="keyword">with</span> API Server <span class="string">"10.4.37.167:6443"</span></span><br><span class="line"></span><br><span class="line">This node has joined <span class="keyword">the</span> cluster:</span><br><span class="line">* Certificate signing request was sent <span class="keyword">to</span> master <span class="keyword">and</span> a response</span><br><span class="line">  was received.</span><br><span class="line">* The Kubelet was informed <span class="keyword">of</span> <span class="keyword">the</span> new secure connection details.</span><br><span class="line"></span><br><span class="line">Run 'kubectl <span class="keyword">get</span> nodes' <span class="keyword">on</span> <span class="keyword">the</span> master <span class="keyword">to</span> see this node join <span class="keyword">the</span> cluster.</span><br></pre></td></tr></table></figure></p>
+<p>PS: k8s 集群 /etc/kubernetes/pki/ca.crt 证书(任何一节点都有该文件) sha256 编码获取（kubeadm join 添加集群节点时需要该证书的 sha256 编码串认证）：<br><code>openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2&gt;/dev/null | openssl dgst -sha256 -hex | sed &#39;s/^.* //&#39;</code></p>
+<p>到此节点添加回集群了，但是直接执行 kubectl 相关的命令可能还会报如下错误：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@com10-81 ~]# kubectl <span class="builtin-name">get</span> pod</span><br><span class="line">The<span class="built_in"> connection </span><span class="keyword">to</span> the<span class="built_in"> server </span>localhost:8080 was refused - did you specify the right host <span class="keyword">or</span> port?</span><br><span class="line">You have mail <span class="keyword">in</span> /var/spool/mail/root</span><br></pre></td></tr></table></figure></p>
+<p>问题原因及解决方法:<br>很明显 kubelet 加载的配置文件(/etc/kubernetes/kubelet.conf)有问题，可能服务器重启的缘故，启动后该文件丢失了，导致里面的连接 master 节点的配置及其他配置给丢了，因此会默认连接 localhost:8080 端口。解决方法很简单：拷贝其他任一节点的该文件，然后重启 kubelet (systemctl restart kublete)即可。</p>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a href="https://stackoverflow.com/questions/41732265/how-to-use-kubeadm-to-create-kubernetest-cluster" target="_blank" rel="noopener">https://stackoverflow.com/questions/41732265/how-to-use-kubeadm-to-create-kubernetest-cluster</a><br><a href="https://blog.csdn.net/mailjoin/article/details/79686934" target="_blank" rel="noopener">https://blog.csdn.net/mailjoin/article/details/79686934</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/21/通过-CeSi-Supervisor-可视化集中管理服务器节点进程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1857,153 +2006,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/如何-dump-jvm-内存及线程栈/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/19/如何-dump-jvm-内存及线程栈/" itemprop="url">如何 dump jvm 内存及线程栈</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-19T23:28:46+08:00">
-                2018-05-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>目前很多企业的后台服务都是 java 服务，在故障出现时能及时 dump jvm 内存和线程栈对于故障的分析及定位是非常重要的。接下来介绍如何进行 dump 操作，并分享一个简单脚本实现服务器线程数超过一定阀值时自动 dump 线程数最高的 java 进程的内存及线程栈。</p>
-<h4 id="1-dump-jvm-内存"><a href="#1-dump-jvm-内存" class="headerlink" title="1. dump jvm 内存"></a>1. dump jvm 内存</h4><p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=dump_file_name pid</span><br></pre></td></tr></table></figure></p>
-<p>举例：dump pid 为 <code>4738</code> 的 java 进程的内存到 <code>app_mem_dump.bin</code> 文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=app_mem_dump.bin 4738</span><br></pre></td></tr></table></figure></p>
-<h4 id="2-dump-jvm-线程栈"><a href="#2-dump-jvm-线程栈" class="headerlink" title="2. dump jvm 线程栈"></a>2. dump jvm 线程栈</h4><p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack pid &gt; dump_file_name</span><br></pre></td></tr></table></figure></p>
-<p>举例：dump pid 为 <code>4738</code> 的 java 进程的线程栈到 <code>app_thread_dump.txt</code> 文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack 4738 &gt; app_thread_dump.txt</span><br></pre></td></tr></table></figure></p>
-<h3 id="脚本分享"><a href="#脚本分享" class="headerlink" title="脚本分享"></a>脚本分享</h3><p>当服务器线程数超过 2500 时自动 dump 线程数最高的 java 进程的内存及线程栈。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># 服务器线程数达到 2500 以上时 dump 线程数最多的 java 进程的线程及内存</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">cur_thread_num=`ps -efL | wc -l`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$cur_thread_num</span> -le 2500 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">cur_date=`date +<span class="string">"%Y-%m-%d_%H-%M-%S"</span>`</span><br><span class="line"><span class="built_in">cd</span> ./dumpfile</span><br><span class="line"><span class="comment"># 服务器当前线程 dump 到文件:按照线程数由大到小排序显示</span></span><br><span class="line">ps -efL --sort -nlwp &gt; server_thread_dump_<span class="variable">$cur_date</span></span><br><span class="line"><span class="comment"># dump 线程数最多的 jvm 的线程及内存</span></span><br><span class="line">most_thread_num_pid=`cat server_thread_dump_<span class="variable">$cur_date</span> | sed -n <span class="string">'2p'</span> | awk <span class="string">'&#123;print $2&#125;'</span>`</span><br><span class="line">nohup jstack -l <span class="variable">$most_thread_num_pid</span> &gt; java_app_thread_dump_<span class="variable">$&#123;cur_date&#125;</span>_pid_<span class="variable">$&#123;most_thread_num_pid&#125;</span> &amp;</span><br><span class="line">nohup jmap -dump:format=b,file=java_app_mem_dump_<span class="variable">$&#123;cur_date&#125;</span>_pid_<span class="variable">$&#123;most_thread_num_pid&#125;</span> <span class="variable">$most_thread_num_pid</span> &amp;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2053,7 +2055,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">104</span>
+                  <span class="site-state-item-count">105</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
