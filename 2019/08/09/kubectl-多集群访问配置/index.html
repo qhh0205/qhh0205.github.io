@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Redis," />
+  <meta name="keywords" content="Kubernetes," />
 
 
 
@@ -79,20 +79,18 @@
 
 
 
-<meta name="description" content="Redis 数据库管理概要Redis 提供了几个面向数据库的操作，分别是 dbsize, select, flushdb/flushall。其实在一个 Redis 实例内部也是有多个数据库的，与 MySQL 等其他关系型数据库不同的是，Redis 内部的数据库使用数字索引来标识，而不是像 MySQL 那样一个实例中的数">
-<meta name="keywords" content="Redis">
+<meta name="description" content="配置 KUBECONFIG 环境变量，是 kubectl 工具支持的变量，变量内容是冒号分隔的 kubernetes config 认证文件路径。假如我们有两个集群：A 和 B，A 集群的 config 文件为：$HOME/.kube/config，B 集群的 config 文件为：$HOME/.kube/config">
+<meta name="keywords" content="Kubernetes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis 数据库管理">
-<meta property="og:url" content="http://yoursite.com/2018/07/14/Redis-数据库管理/index.html">
+<meta property="og:title" content="kubectl 多集群访问配置">
+<meta property="og:url" content="http://yoursite.com/2019/08/09/kubectl-多集群访问配置/index.html">
 <meta property="og:site_name" content="The Spectre">
-<meta property="og:description" content="Redis 数据库管理概要Redis 提供了几个面向数据库的操作，分别是 dbsize, select, flushdb/flushall。其实在一个 Redis 实例内部也是有多个数据库的，与 MySQL 等其他关系型数据库不同的是，Redis 内部的数据库使用数字索引来标识，而不是像 MySQL 那样一个实例中的数据库是通过数据库名称来标识。在 Redis 中数据库默认有 16 个，数据库标识">
+<meta property="og:description" content="配置 KUBECONFIG 环境变量，是 kubectl 工具支持的变量，变量内容是冒号分隔的 kubernetes config 认证文件路径。假如我们有两个集群：A 和 B，A 集群的 config 文件为：$HOME/.kube/config，B 集群的 config 文件为：$HOME/.kube/config-local。要配置 kubectl 随时在两个集群间切换，只需要设置 KUBE">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/images/redis-db.png">
-<meta property="og:updated_time" content="2019-06-20T03:41:42.509Z">
+<meta property="og:updated_time" content="2019-08-09T02:19:24.137Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis 数据库管理">
-<meta name="twitter:description" content="Redis 数据库管理概要Redis 提供了几个面向数据库的操作，分别是 dbsize, select, flushdb/flushall。其实在一个 Redis 实例内部也是有多个数据库的，与 MySQL 等其他关系型数据库不同的是，Redis 内部的数据库使用数字索引来标识，而不是像 MySQL 那样一个实例中的数据库是通过数据库名称来标识。在 Redis 中数据库默认有 16 个，数据库标识">
-<meta name="twitter:image" content="http://yoursite.com/images/redis-db.png">
+<meta name="twitter:title" content="kubectl 多集群访问配置">
+<meta name="twitter:description" content="配置 KUBECONFIG 环境变量，是 kubectl 工具支持的变量，变量内容是冒号分隔的 kubernetes config 认证文件路径。假如我们有两个集群：A 和 B，A 集群的 config 文件为：$HOME/.kube/config，B 集群的 config 文件为：$HOME/.kube/config-local。要配置 kubectl 随时在两个集群间切换，只需要设置 KUBE">
 
 
 
@@ -122,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/14/Redis-数据库管理/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/08/09/kubectl-多集群访问配置/"/>
 
 
 
 
 
-  <title>Redis 数据库管理 | The Spectre</title>
+  <title>kubectl 多集群访问配置 | The Spectre</title>
   
 
 
@@ -299,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/14/Redis-数据库管理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/09/kubectl-多集群访问配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="haohao">
@@ -316,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Redis 数据库管理</h1>
+          <h1 class="post-title" itemprop="name headline">kubectl 多集群访问配置</h1>
         
 
         <div class="post-meta">
@@ -328,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-14T22:45:25+08:00">
-                2018-07-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-09T10:18:50+08:00">
+                2019-08-09
               </time>
             
 
@@ -351,8 +349,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Redis/" itemprop="url" rel="index">
-                    <span itemprop="name">Redis</span>
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
                   </a>
                 </span>
 
@@ -393,12 +391,9 @@
       
 
       
-        <h2 id="Redis-数据库管理"><a href="#Redis-数据库管理" class="headerlink" title="Redis 数据库管理"></a>Redis 数据库管理</h2><h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><p>Redis 提供了几个面向数据库的操作，分别是 <code>dbsize</code>, <code>select</code>, <code>flushdb/flushall</code>。<br>其实在一个 Redis 实例内部也是有多个数据库的，与 <code>MySQL</code> 等其他关系型数据库不同的是，Redis 内部的数据库使用数字索引来标识，而不是像 <code>MySQL</code> 那样一个实例中的数据库是通过数据库名称来标识。<br>在 Redis 中数据库默认有 <code>16</code> 个，数据库标识分别是 <code>0</code>, <code>1</code>, …, <code>15</code>，我们默认使用的是 <code>0</code> 号数据库，不同数据库之间是隔离的，可以拥有同名的键。</p>
-<p><img src="/images/redis-db.png" alt=""></p>
-<h3 id="各数据库管理命令介绍"><a href="#各数据库管理命令介绍" class="headerlink" title="各数据库管理命令介绍"></a>各数据库管理命令介绍</h3><h4 id="1-dbsize-查看当前数据库-key-的个数"><a href="#1-dbsize-查看当前数据库-key-的个数" class="headerlink" title="1. dbsize 查看当前数据库 key 的个数"></a>1. <code>dbsize</code> 查看当前数据库 key 的个数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> score 99</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; dbsize</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br></pre></td></tr></table></figure>
-<h4 id="2-select-切换数据"><a href="#2-select-切换数据" class="headerlink" title="2. select 切换数据"></a>2. <code>select</code> 切换数据</h4><p><code>select</code> 命令格式为：<code>select index</code>，<code>index</code> 为数据库的标识。举例如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> score 99</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; select 8  // 切换到 8 号数据库</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; get name  //可以看出不同 db 是隔离的</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379[8]&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; get name</span><br><span class="line"><span class="string">"tom"</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="3-flushdb-flushall-清理数据库"><a href="#3-flushdb-flushall-清理数据库" class="headerlink" title="3. flushdb/flushall 清理数据库"></a>3. <code>flushdb/flushall</code> 清理数据库</h4><p><code>flushdb</code> 和 <code>flushall</code> 的区别为：<code>flushdb</code> 清空当前数据库，而 <code>flushall</code> 清空所有数据库。举例如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379&gt; select 8</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379[8]&gt; flushdb</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br><span class="line">127.0.0.1:6379[8]&gt; select 0</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379&gt; flushall</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br></pre></td></tr></table></figure></p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>目前 Redis 对多数据库的支持开始弱化了，因为 Redis 是单线程架构，同一时间只有一个 <code>CPU</code> 为 Redis 服务，多个数据库同时存在不仅不会利用系统的多核优势，反而会由于单实例资源共享问题互相会有影响，导致出现问题时排错非常困难，Redis 实例如果一旦阻塞，那么所有的数据库都会受到影响。所以这是一个很鸡肋的功能，Redis 官方对其支持也在逐步弱化。<br>更合理的方式是一台机器启动多个 Redis 实例，互相隔离，充分利用 <code>CPU</code> 的多核优势。</p>
+        <p>配置 <code>KUBECONFIG</code> 环境变量，是 kubectl 工具支持的变量，变量内容是冒号分隔的 kubernetes config 认证文件路径。假如我们有两个集群：A 和 B，A 集群的 config 文件为：<code>$HOME/.kube/config</code>，B 集群的 config 文件为：<code>$HOME/.kube/config-local</code>。要配置 kubectl 随时在两个集群间切换，只需要设置 <code>KUBECONFIG</code> 环境变量为：<code>$HOME/.kube/config:$HOME/.kube/config-local</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> KUBECONFIG=<span class="variable">$HOME</span>/.kube/config:<span class="variable">$HOME</span>/.kube/config-local</span><br></pre></td></tr></table></figure></p>
+<p>当进行上面配置后，使用 <code>kubectl config view</code> 查看 kubectl 配置时，结果为两个文件的合并。<br>当需要切换集群时，使用 <code>kubectl config use-context &lt;context 名称&gt;</code></p>
+<p>参考文档：<br><a href="https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/</a></p>
 
       
     </div>
@@ -416,7 +411,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Redis/" rel="tag"># Redis</a>
+            <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
           
         </div>
       
@@ -429,8 +424,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/11/Redis-基础/" rel="next" title="Redis 基础">
-                <i class="fa fa-chevron-left"></i> Redis 基础
+              <a href="/2019/08/08/Mac-OS-启用-ssh-远程登陆/" rel="next" title="Mac OS 启用 ssh 远程登陆">
+                <i class="fa fa-chevron-left"></i> Mac OS 启用 ssh 远程登陆
               </a>
             
           </div>
@@ -438,10 +433,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/07/15/Redis-慢查询分析/" rel="prev" title="Redis 慢查询分析">
-                Redis 慢查询分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -494,17 +485,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -592,22 +574,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-数据库管理"><span class="nav-number">1.</span> <span class="nav-text">Redis 数据库管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概要"><span class="nav-number">1.1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各数据库管理命令介绍"><span class="nav-number">1.2.</span> <span class="nav-text">各数据库管理命令介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-dbsize-查看当前数据库-key-的个数"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. dbsize 查看当前数据库 key 的个数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-select-切换数据"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. select 切换数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-flushdb-flushall-清理数据库"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. flushdb/flushall 清理数据库</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
