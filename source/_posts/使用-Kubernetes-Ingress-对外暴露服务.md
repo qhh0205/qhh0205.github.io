@@ -160,7 +160,7 @@ spec:
 ```
 kubectl create -f kube-dashboard-ingress.yml -n kube-system
 说明：
-- kubernetes.io/ingress.class: "nginx" 注解：Inginx Ingress Controller 根据该注解自动发现 Ingress；
+- `kubernetes.io/ingress.class: "nginx"`：Inginx Ingress Controller 根据该注解自动发现 Ingress；
 - `nginx.ingress.kubernetes.io/backend-protocol`: Controller 向后端 Service 转发时使用 HTTPS 协议，这个注解必须添加，否则访问会报错，可以看到 Ingress Controller 报错日志：kubectl logs -f nginx-ingress-controller-mg8df
 > 2019/08/12 06:40:00 [error] 557#557: *56049 upstream sent no valid HTTP/1.0 header while reading response header from upstream, client: 192.168.26.10, server: dashboard.kube.com, request: "GET / HTTP/1.1", upstream: "http://10.244.1.8:8443/", host: "dashboard.kube.com"
 
