@@ -296,6 +296,162 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/配置-gcloud-使用-Shadowsocks-HTTP-代理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/14/配置-gcloud-使用-Shadowsocks-HTTP-代理/" itemprop="url">配置 gcloud 使用 Shadowsocks HTTP 代理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T17:06:55+08:00">
+                2018-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Google-Cloud-Platform/" itemprop="url" rel="index">
+                    <span itemprop="name">Google Cloud Platform</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="配置-gcloud-使用-Shadowsocks-HTTP-代理"><a href="#配置-gcloud-使用-Shadowsocks-HTTP-代理" class="headerlink" title="配置 gcloud 使用 Shadowsocks HTTP 代理"></a>配置 gcloud 使用 Shadowsocks HTTP 代理</h2><h3 id="1-问题描述"><a href="#1-问题描述" class="headerlink" title="1. 问题描述"></a>1. 问题描述</h3><p>最近在使用 <a href="https://cloud.google.com/sdk/?hl=zh-cn" target="_blank" rel="noopener">gcloud</a> 访问 <a href="https://cloud.google.com/?hl=zh-cn" target="_blank" rel="noopener">gcp(Google Cloud Platform)</a> 的资源，但是由于 GFW 的原因必须得配个 HTTP 代理才能访问。虽然之前装个 Shadowsock-X 可以突破 GFW 用浏览器访问 Google，但是 Shadowsock-X 默认只开启 SOCKS 代理，并没有提供 HTTP 代理。为了让 shadowsocks 开启 HTTP 代理，必须得想一些办法了，要不然没法工作了。。。</p>
+<h3 id="2-解决问题"><a href="#2-解决问题" class="headerlink" title="2. 解决问题"></a>2. 解决问题</h3><p>经过一番 google，取而代之的是使用 <a href="https://github.com/shadowsocks/ShadowsocksX-NG/releases" target="_blank" rel="noopener">Shadowsocks-NG</a> 客户端，其实就是 <a href="https://github.com/shadowsocks/shadowsocks/wiki/Ports-and-Clients#os-x" target="_blank" rel="noopener">Shadowsocks-X</a> 的升级版，有了更多丰富的功能，最主要的是该客户端启动后默认就开启了 HTTP 代理，可以直接供 gcloud 等命令行工具使用。具体配置 gcloud 使用 Shadowsocks-NG http 代理的方法如下：</p>
+<ol>
+<li>点击如下链接下载并安装 Shadowsocks-NG：<br><a href="https://github.com/shadowsocks/ShadowsocksX-NG/releases" target="_blank" rel="noopener">https://github.com/shadowsocks/ShadowsocksX-NG/releases</a></li>
+<li><p>启动 Shadowsocks-NG，填入 shadowsocks 服务端 ip，端口，加密方式等信息<br>注意：不能勾选<code>启用 OTA（被启用）</code>复选框<br><img src="/images/ss-1.png" alt=""></p>
+</li>
+<li><p>获取 HTTP 代理的 IP 和端口<br>点击<code>偏好设置</code>查看 HTTP 代理 IP 及端口：<br><img src="/images/ss-2.png" alt=""><br><img src="/images/ss-3.png" alt=""></p>
+</li>
+<li><p>设置 gcloud HTTP 代理<br>使用如下命令设置上一步获取的 Shadowsocks-NG HTTP 代理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcloud config <span class="built_in">set</span> proxy/<span class="built_in">type</span> http</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/address 127.0.0.1</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/port 1087</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接下来就可以畅通无阻地访问 google 云平台资源了</p>
+</li>
+</ol>
+<h3 id="3-相关链接"><a href="#3-相关链接" class="headerlink" title="3. 相关链接"></a>3. 相关链接</h3><p><a href="https://www.stefanwienert.de/blog/2018/01/21/shadowsocks-quick-guide-for-restricted-internet-environments/" target="_blank" rel="noopener">https://www.stefanwienert.de/blog/2018/01/21/shadowsocks-quick-guide-for-restricted-internet-environments/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/25/hexo-next-主题配置gitalk评论-爬坑记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1765,158 +1921,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Linux下文件的三个时间戳-atime-mtime-ctime/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/18/Linux下文件的三个时间戳-atime-mtime-ctime/" itemprop="url">Linux下文件的三个时间戳:atime,mtime,ctime</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T21:25:44+08:00">
-                2018-02-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>在linux系统下每个文件都有三个时间戳，分别为atime，mtime，ctime，具体解释如下：</p>
-<ul>
-<li>atime(access time):最近访问内容的时间</li>
-<li>mtime(modify time):最近修改内容的时间</li>
-<li>ctime(change time):最近更改文件的时间，包括文件名、大小、内容、权限、属主、属组等。</li>
-</ul>
-<p>查看一个文件的这三个时间戳可以用stat命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 12        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Modify: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Change: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
-<p><strong>查看文件可以更改文件的atime</strong>，比如cat，more，less一个文件后，文件的atime会更新，还是上面示例文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ cat file_timestamp </span><br><span class="line">hello,world</span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 12        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Change: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
-<p>可以看出文件的atime已经更新成最新的了。<br><strong>更改文件的内容会同时更新文件的mtime和ctime</strong>，还是上面的示例文件，改变文件内容，然后stat查看：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">echo</span> <span class="string">"RNG"</span> &gt;&gt; file_timestamp </span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 16        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line">Change: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
-<p>可以看出文件内容更改后文件的mtime和ctime都更新了，atime保持不变。<br><strong>更改文件的名称，大小，权限等只会更新文件的ctime</strong>，还是上面示例文件，更改下文件的文件名，然后stat查看：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ mv file_timestamp file_timestamp.txt  </span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp.txt </span><br><span class="line">  File: <span class="string">'file_timestamp.txt'</span></span><br><span class="line">  Size: 16        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line">Change: 2017-05-21 11:22:32.097598424 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
-<p>可以看出只有ctime发生了变化。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1966,7 +1970,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">107</span>
+                  <span class="site-state-item-count">108</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1977,7 +1981,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1988,7 +1992,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
