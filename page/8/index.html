@@ -296,6 +296,163 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/Google-Kubernetes-Engine-GKE-使用初探/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/14/Google-Kubernetes-Engine-GKE-使用初探/" itemprop="url">Google Kubernetes Engine(GKE) 使用初探</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T23:37:23+08:00">
+                2018-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Google-Cloud-Platform/" itemprop="url" rel="index">
+                    <span itemprop="name">Google Cloud Platform</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Google 的 k8s 在 2017 年已经从容器编排领域的竞争中取得主导地位，从 Docker 之前的一度排挤到最终完全拥抱 k8s，显然 k8s 已经成了目前业界的标准。但是到目前为止能提供 k8s 完全托管服务的云服务商少之又少，即便是目前在云提供商有统治力的 AWS 也没有完全提供 k8s 托管服务，仅仅提供有限的定制服务，在这一方面并不成熟。然而 Google 的 k8s 托管服务，即 GKE，却将 k8s 托管服务做到了极致（至少目前看来），不仅提供了全套的 k8s 托管服务，更引人注目的是 Google 已然将 Autoscaler 和 k8s 集成，实现了 k8s 节点的自动伸缩机制，能根据 pod 的需求自动化添加或删除节点，当现有节点无法承载新的服务时会自动添加节点来满足需求，当现有节点足够空闲时会启用调节机制自动化收缩节点，从某种意义上来说这几乎做到了无服务器的理念。然而这也许只是冰山一角，更多强大的功能还需要进一步探索，本文只是一个入门指南，主要指导能快速开始上手基于 Google Cloud Platform 的 GKE 服务（k8s 托管服务）。</p>
+<h3 id="GKE-入门指南"><a href="#GKE-入门指南" class="headerlink" title="GKE 入门指南"></a>GKE 入门指南</h3><p>接下来我们一步步指引如何使用 GKE 来部署服务，前提是对 k8s 有所了解，能简单使用 kubectl 命令。</p>
+<ol>
+<li>安装并配置 Google Cloud SDK<br>Google Cloud SDK 是 访问 GCP(Google Cloud Platform) 平台各种资源的命令行工具集，类似 aws 的 aws 命令行工具。<br>安装和配置就不多说了，点击下面链接选择相应操作系统版本的 tar 包下载，然后解压，在 PATH 环境变量中添加 <code>google-cloud-sdk/bin</code> 即可：<br><a href="https://cloud.google.com/sdk/?hl=zh-cn" target="_blank" rel="noopener">https://cloud.google.com/sdk/?hl=zh-cn</a></li>
+<li>初始化 Google Cloud SDK<br>初始化 Google Cloud SDK 是将 <code>gcloud</code>  命令和 Google 账号绑定起来并设置一些其他的默认值，比如区域，代理，账号，项目（Google 账号中新建的项目）之类的。在执行 <code>gcloud init</code> 初始化之前得先给 <code>gcloud</code> 配置 HTTP 代理（GFW 你懂得），具体配置见我之前<a href="https://blog.csdn.net/qianghaohao/article/details/79942485" target="_blank" rel="noopener">这篇文章</a>。然后执行 <code>gcloud init</code> 完成初始化，直接根据向导来即可。</li>
+<li>到 Google Cloud Platform 控制台建一个 k8s 集群，记住名称<br><img src="/images/gke1.png" alt=""></li>
+<li>安装 gcloud kubectl 组件<br><code>gcloud components install kubectl</code></li>
+<li>获取群集的身份验证凭据<br>创建群集后，您需要获取身份验证凭据以与群集进行交互。要为集群进行身份验证，请运行以下命令：<br><code>gcloud container clusters get-credentials &lt;上一步创建的集群名称&gt;</code></li>
+<li>接下来部署一个简单的 <code>hello-server</code> 服务到 GKE<br><code>kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080</code></li>
+</ol>
+<h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><p><a href="https://cloud.google.com/kubernetes-engine/docs/quickstart" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/quickstart</a><br><a href="https://cloud.google.com/sdk/docs/quickstart-macos?hl=zh-cn" target="_blank" rel="noopener">https://cloud.google.com/sdk/docs/quickstart-macos?hl=zh-cn</a></p>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="gloud-常用命令"><a href="#gloud-常用命令" class="headerlink" title="gloud 常用命令"></a>gloud 常用命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gcloud auth login --no-launch-browser <span class="comment"># gcloud 登录认证</span></span><br><span class="line">gcloud config <span class="built_in">set</span> compute/zone [COMPUTE_ZONE] <span class="comment"># 设置默认区域</span></span><br><span class="line">gcloud components list <span class="comment"># 列出可安装组件</span></span><br><span class="line">gcloud components install [组件名称] <span class="comment"># 安装组件</span></span><br><span class="line">gcloud components update  <span class="comment"># 更新所有已安装组件</span></span><br><span class="line">gcloud components remove [组件名称] <span class="comment"># 卸载已安装组件</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置-gcloud-http-代理"><a href="#设置-gcloud-http-代理" class="headerlink" title="设置 gcloud http 代理"></a>设置 gcloud http 代理</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcloud config <span class="built_in">set</span> proxy/<span class="built_in">type</span> http</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/address 127.0.0.1</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/port 1087</span><br></pre></td></tr></table></figure>
+<h4 id="设置集群-docker-私服认证："><a href="#设置集群-docker-私服认证：" class="headerlink" title="设置集群 docker 私服认证："></a>设置集群 docker 私服认证：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret docker-registry regcred --docker-server=&lt;your-registry-server&gt; --docker-username=&lt;your-name&gt; --docker-password=&lt;your-pword&gt; --docker-email=&lt;your-email&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：设置 docker 私服后，要在 GKE 部署 k8s 服务，必须得在 k8s 资源文件（yaml 格式）中的 container<br>同一级指定 imagePullSecrets 键，要不然仍然无法拉取配置的私服的镜像，示例文件如下：<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">private-reg</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">private-reg-container</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">&lt;your-private-image&gt;</span></span><br><span class="line"><span class="attr">  imagePullSecrets:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">regcred</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="查看集群-docker-私服配置："><a href="#查看集群-docker-私服配置：" class="headerlink" title="查看集群 docker 私服配置："></a>查看集群 docker 私服配置：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret regcred --output=yaml      <span class="comment">#base64 格式 显示</span></span><br><span class="line">kubectl get secret regcred --output=<span class="string">"jsonpath=&#123;.data.\.dockerconfigjson&#125;"</span> | base64 -d <span class="comment"># base64 解密后内容</span></span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/配置-gcloud-使用-Shadowsocks-HTTP-代理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1764,163 +1921,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Zabbix通过进程名监控进程状态配置详解/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/18/Zabbix通过进程名监控进程状态配置详解/" itemprop="url">Zabbix通过进程名监控进程状态配置详解</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T22:03:43+08:00">
-                2018-02-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Zabbix/" itemprop="url" rel="index">
-                    <span itemprop="name">Zabbix</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>有时候我们只能通过进程名监控一个进程是否停掉了，因为有的进程并没有对外提供端口号，以下记录了下详细步骤，通过这个示例会学到很多zabbix核心配置相关的东西。<br>总的来说，配置一个完整的监控流程如下：</p>
-<ol>
-<li>创建监控项，即配置要监控的指标，如内存的使用率，CPU的使用率，进程的运行状况等，配了监控项后就会定时收集机器的配置信息，然后等待zabbix server收集(zabbix agent被动模式)。</li>
-<li>创建触发器，触发器将监控项收集的数据通过触发器表达式进行评估。<br>在触发器表达式中我们可以定义哪些值范围是合理，哪些是不合理的，如果出现不合理的值，触发器会把状态改为PROBLEM，接下来就到了报警以及发邮件。</li>
-<li>创建动作，在zabbix中动作的意思是触发器触发后要进行的操作，一般是通过配置给相关负责人发送邮件，短信等通知。</li>
-</ol>
-<p>下面配置监控服务器的logstash(开源实时日志同步项目)进程是否在运行：</p>
-<ol>
-<li><p>首先创建监控进程的监控项:<br>监控项的组成：key[参数]<br><img src="/images/zabbix-proc1.png" alt=""><br>例如获取5分钟的负载情况：system.cpu.load[avg5]，avg5是对应的参数。<br>zabbix agent支持的所有key可以到这里找到：<br><a href="http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/" target="_blank" rel="noopener">http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/</a><br>在这里我们需要的是proc.num这个key，以下是对此key的详解：<br><img src="/images/zabbix-proc2.png" alt=""><br>可以看到此监控项的返回值是进程数量，其中cmdline参数可以是进程名字包含的关键字，在这里我的进程的关键字是logstash，因此按如下方式创建监控logstash进程的监控项，表示机器所有用户所有状态的logstash进程数量：<br><img src="/images/zabbix-proc3.png" alt=""></p>
-</li>
-<li><p>创建对应监控项的触发器：<br>创建触发器主要是编写触发器表达式，也就是评估监控项是否在合理范围的表达式。触发器表达式格式如下：<br><code>host:key[param].function(parameter)} operator constant<br>主机：监控项.函数(参数)} 表达式 常数</code><br>对于触发器表达式更加详细的介绍请参考这里：<br><a href="http://www.ttlsa.com/zabbix/zabbix-trigger-expression/" target="_blank" rel="noopener">http://www.ttlsa.com/zabbix/zabbix-trigger-expression/</a><br>触发器表达式示例：<br>触发器名称：Processor load is too high on www.zabbix.com<br><code>{www.zabbix.com:system.cpu.load[all,avg1].last(0)}&gt;5</code><br>触发器说明：<br>www.zabbix.com：host名称<br>system.cpu.load[all,avg1]：item值,一分内cpu平均负载值<br>last(0)：最新值<br>>5：最新值大于5<br>如上所示，www.zabbix.com这个主机的监控项，最新的CPU负载值如果大于5，那么表达式会返回true，这样一来触发器状态就改变为“problem”了。<br><strong>在这里针对logstash进程触发器配置如下：</strong><br><img src="/images/zabbix-proc4.png" alt=""><br>上面配置表示如果机器logstash进程数量的最新值小于1，就会触发报警。</p>
-</li>
-<li><p>配置动作发送短信和邮件报警：<br>以下是短信配置方式，邮件配置类似，其中应用集是自己创建的，主要用来分类，具体的自行研究：<br><img src="/images/zabbix-proc5.png" alt=""><br><img src="/images/zabbix-proc6.png" alt=""></p>
-</li>
-</ol>
-<p><strong>参考文章：</strong><br> <a href="http://www.ttlsa.com/zabbix/zabbix-item-key/" target="_blank" rel="noopener">zabbix item key详解</a><br> <a href="http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/" target="_blank" rel="noopener">zabbix agent 类型所有key</a><br> <a href="http://www.ttlsa.com/zabbix/zabbix-trigger-expression/" target="_blank" rel="noopener">zabbix触发器表达式详解</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1970,7 +1970,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">108</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

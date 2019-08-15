@@ -296,6 +296,167 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/17/Haproxy-从入门到掌握/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/06/17/Haproxy-从入门到掌握/" itemprop="url">Haproxy 从入门到掌握</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-17T09:54:54+08:00">
+                2019-06-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HAProxy/" itemprop="url" rel="index">
+                    <span itemprop="name">HAProxy</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><a href="http://www.haproxy.org/" target="_blank" rel="noopener">HAProxy</a> 是一款开源且免费的反向代理软件，为基于 TCP 和 HTTP 的应用提供高可用、负载均衡和代理功能。它特别适用于流量非常大的网站，为世界上访问量最大的网站提供了强大的支持。多年来，HAProxy 已经成为事实上的标准开源负载均衡器，大多数主流的 Linux 发行版已经自带了该安装包，并且在云平台也经常被使用。</p>
+<p>HAProxy 是一个纯粹的反向代理软件，与 nginx 不同的是 haproxy 没有 web 服务功能，而且同时支持 4 层和 7 层代理。Nginx 从 1.9.0 才开始支持 4 层代理，通过 stream 模块支持，该模块默认不会自带安装，需要编译安装的时候手动添加上这个模块。<br><img src="/images/haproxy.png" alt="Alt text"></p>
+<p>HAProxy的核心功能：</p>
+<ul>
+<li>负载均衡：L4 和 L7 两种模式，支持 RR/静态RR/LC/IP Hash/URI Hash/URL_PARAM Hash/HTTP_HEADER Hash等丰富的负载均衡算法；</li>
+<li>健康检查：支持 TCP 和 HTTP 两种健康检查模式；</li>
+<li>会话保持：对于未实现会话共享的应用集群，可通过 Insert Cookie/Rewrite Cookie/Prefix Cookie，以及上述的多种 Hash 方式实现会话保持；</li>
+<li>SSL：HAProxy 可以解析 HTTPS 协议，并能够将请求解密为 HTTP 后向后端传输；</li>
+<li>HTTP请求重写与重定向；</li>
+<li>监控与统计：HAProxy提供了基于 Web 的统计信息页面，展现健康状态和流量数据。基于此功能，使用者可以开发监控程序来监控 HAProxy 的状态；</li>
+</ul>
+<h3 id="Centos7-下安装-HAProxy"><a href="#Centos7-下安装-HAProxy" class="headerlink" title="Centos7 下安装 HAProxy"></a>Centos7 下安装 HAProxy</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget http:<span class="regexp">//</span>www.haproxy.org<span class="regexp">/download/</span><span class="number">1.8</span><span class="regexp">/src/</span>haproxy-<span class="number">1.8</span>.<span class="number">20</span>.tar.gz</span><br><span class="line">tar zxvf haproxy-<span class="number">1.8</span>.<span class="number">20</span>.tar.gz</span><br><span class="line">yum groupinstall -y <span class="string">'Development Tools'</span>  <span class="comment"># 安装 gcc 相关软件</span></span><br><span class="line">cd haproxy-<span class="number">1.8</span>.<span class="number">20</span></span><br><span class="line">make TARGET=linux2628  <span class="comment"># 编译：TARGET 和内核版本有关，不同的内核版</span></span><br><span class="line">                       <span class="comment"># 本对应不同值，对应关系在 README</span></span><br><span class="line">make install <span class="comment"># 安装到系统路径</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用-HAProxy-搭建一个-L4-层代理"><a href="#使用-HAProxy-搭建一个-L4-层代理" class="headerlink" title="使用 HAProxy 搭建一个 L4 层代理"></a>使用 HAProxy 搭建一个 L4 层代理</h3><p>这里使用 HAProxy 转发流量到后台 3 个 Shadowsocks 节点的 1443/tcp 端口，并配有 TCP 健康检查机制:<br><img src="/images/haproxy-arch.png" alt="Alt text"></p>
+<p>HAProxy 的 L4 层代理配置很简单，定义一对 frontend 和 backend，frontend 为 haproxy 前端监听的端口，backend 为后端服务器节点，我们访问 haproxy 不同的端口即可访问到对应的后端服务。frontend 和 backend 通过 default_backend 后面的名称关联。其他的配置项说明见下面配置文件 haproxy.cfg 中注释说明：</p>
+<p>新建一个 HAProxy 配置文件：<br>mkdir /etc/haproxy<br>vim /etc/haproxy/haproxy.cfg 填入如下内容:<br>haproxy.cfg:<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># demo config for Proxy mode</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># global 为全局配置项，主要和 haproxy 进程本身有关。defaults 为默认配置，当后面的 listen、frontend、banckend 等块没有再次指明相关配置时，会继承 defaults 的配置。</span></span><br><span class="line"></span><br><span class="line">global</span><br><span class="line">    maxconn         20000 #最大连接数</span><br><span class="line">    ulimit-n        204800  #ulimit的数量限制</span><br><span class="line">    log             127.0.0.1 local3</span><br><span class="line">    user             haproxy</span><br><span class="line">    group            haproxy</span><br><span class="line">    chroot          /var/empty</span><br><span class="line">    nbproc      4 #启动后运行的进程数量</span><br><span class="line">    daemon        #以后台形式运行haproxy</span><br><span class="line">    pidfile     /var/run/haproxy.pid</span><br><span class="line">defaults</span><br><span class="line">    log global</span><br><span class="line">    mode tcp</span><br><span class="line">    retries 3 #3次连接失败认为服务不可用，也可以在后面设置</span><br><span class="line">    timeout connect 5s #连接超时</span><br><span class="line">    timeout client 30s #客户端超时</span><br><span class="line">    timeout server 30s #服务器端超时</span><br><span class="line">    option redispatch</span><br><span class="line">    option    nolinger</span><br><span class="line">    no option dontlognull</span><br><span class="line">    option    tcplog</span><br><span class="line">    option log-separate-errors</span><br><span class="line"></span><br><span class="line">listen admin_stats  #监控页面设置</span><br><span class="line">    bind 0.0.0.0:26000 # 监控页面监听端口号</span><br><span class="line">    bind-process 1</span><br><span class="line">    mode http</span><br><span class="line">    log 127.0.0.1 local3 err</span><br><span class="line">    stats refresh 30s ##每隔30秒自动刷新监控页面</span><br><span class="line">    stats uri /admin</span><br><span class="line">    stats realm welcome login\ Haproxy</span><br><span class="line">    stats auth admin:123456</span><br><span class="line">    stats hide-version</span><br><span class="line">    stats admin if TRUE</span><br><span class="line"></span><br><span class="line">frontend shadowsocks</span><br><span class="line">  bind *:1443</span><br><span class="line">  default_backend shadowsocks</span><br><span class="line">backend shadowsocks</span><br><span class="line">  <span class="comment"># balance roundrobin #负载均衡的方式，roundrobin是轮询</span></span><br><span class="line">  <span class="comment"># check inter 1500 心跳检测频率, rise 3 是3次正确认为服务器可用，fall 3是3次失败认为服务器不可用</span></span><br><span class="line">  server ss-node-1 192.168.0.1:1443 check inter 1500 rise 3 fall 3</span><br><span class="line">  server ss-node-1 192.168.0.2:1443 check inter 1500 rise 3 fall 3</span><br><span class="line">  server ss-node-1 192.168.0.3:1443 check inter 1500 rise 3 fall 3</span><br></pre></td></tr></table></figure></p>
+<p>测试配置文件是否有效<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">haproxy -f /etc/haproxy/haproxy<span class="selector-class">.cfg</span> -c</span><br></pre></td></tr></table></figure></p>
+<p>启动 HAProy 服务：<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">haproxy -f <span class="regexp">/etc/</span>haproxy<span class="regexp">/haproxy.cfg</span></span><br></pre></td></tr></table></figure></p>
+<p>我们还可以访问 HAProxy 自带的监控页面：上面我们配置的访问地址为 haproxy_ip:26000/admin，账号：admin，密码：123456。HAProxy 自带的监控页面特别好用，可以看到每个后端节点的流量使用情况、在线状态、可以随时将节点从后端集群中剔除或者改变状态。</p>
+<p><img src="/images/haproxy-monitor-ui.png" alt="Alt text"></p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="http://www.haproxy.org/" target="_blank" rel="noopener">http://www.haproxy.org/</a> | HAProxy 官网<br><a href="https://www.jianshu.com/p/c9f6d55288c0" target="_blank" rel="noopener">https://www.jianshu.com/p/c9f6d55288c0</a> | HAProxy从零开始到掌握<br><a href="https://www.jianshu.com/p/17c2f87bb27f" target="_blank" rel="noopener">https://www.jianshu.com/p/17c2f87bb27f</a> | 简述Haproxy常见的负载均衡调度算法及应用场景详解<br><a href="https://www.serverlab.ca/tutorials/linux/network-services/how-to-configure-haproxy-health-checks/" target="_blank" rel="noopener">https://www.serverlab.ca/tutorials/linux/network-services/how-to-configure-haproxy-health-checks/</a> | HAProxy 健康检查配置</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/16/Cenos7-下搭建-OpenVPN-过程记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1913,341 +2074,6 @@ And more...
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/07/tcpdump使用技巧/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/05/07/tcpdump使用技巧/" itemprop="url">tcpdump使用技巧</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-07T23:21:58+08:00">
-                2019-05-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/计算机网络/" itemprop="url" rel="index">
-                    <span itemprop="name">计算机网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p><a href="https://www.tcpdump.org/" target="_blank" rel="noopener">tcpdump</a> 是一个开源的命令行网络封包分析工具，一般用于服务器端网络流量、协议分析。今天有幸看到了有人很好地总结了关于 tcpdump 的使用技巧，在此转载下。<br><u>本文转载自这里：</u><br><u><a href="https://github.com/linuxwiki/SourceWiki/blob/master/%E7%BD%91%E7%BB%9C/tcpdump.md" target="_blank" rel="noopener">https://github.com/linuxwiki/SourceWiki/blob/master/%E7%BD%91%E7%BB%9C/tcpdump.md</a></u></p>
-<hr>
-<p>作者: 潜水大叔</p>
-<p>一般情况下，非HTTP协议的网络分析，在服务器端用<code>tcpdump</code>比较多，在客户端用wireshark比较多，两个抓包软件的语法是一样的。</p>
-<h2 id="一、基本语法"><a href="#一、基本语法" class="headerlink" title="一、基本语法"></a>一、基本语法</h2><h3 id="1-1、过滤主机"><a href="#1-1、过滤主机" class="headerlink" title="1.1、过滤主机"></a>1.1、过滤主机</h3><ul>
-<li>抓取所有经过eth1，目的或源地址是192.168.1.1的网络数据</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 host 192.168.1.1</span><br></pre></td></tr></table></figure>
-<ul>
-<li>指定源地址</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 src host 192.168.1.1</span><br></pre></td></tr></table></figure>
-<ul>
-<li>指定目的地址</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 dst host 192.168.1.1</span><br></pre></td></tr></table></figure>
-<h3 id="1-2、过滤端口"><a href="#1-2、过滤端口" class="headerlink" title="1.2、过滤端口"></a>1.2、过滤端口</h3><ul>
-<li>抓取所有经过eth1，目的或源端口是25的网络数据</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 port 25</span><br></pre></td></tr></table></figure>
-<ul>
-<li>指定源端口</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 src port 25</span><br></pre></td></tr></table></figure>
-<ul>
-<li>指定目的端口</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 dst port 25</span><br></pre></td></tr></table></figure>
-<h3 id="1-3、网络过滤"><a href="#1-3、网络过滤" class="headerlink" title="1.3、网络过滤"></a>1.3、网络过滤</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 net 192.168</span><br><span class="line">tcpdump -i eth1 src net 192.168</span><br><span class="line">tcpdump -i eth1 dst net 192.168</span><br></pre></td></tr></table></figure>
-<h3 id="1-4、协议过滤"><a href="#1-4、协议过滤" class="headerlink" title="1.4、协议过滤"></a>1.4、协议过滤</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 arp</span><br><span class="line">tcpdump -i eth1 ip</span><br><span class="line">tcpdump -i eth1 tcp</span><br><span class="line">tcpdump -i eth1 udp</span><br><span class="line">tcpdump -i eth1 icmp</span><br></pre></td></tr></table></figure>
-<h3 id="1-5、常用表达式"><a href="#1-5、常用表达式" class="headerlink" title="1.5、常用表达式"></a>1.5、常用表达式</h3><pre><code>非 : ! or &quot;not&quot; (去掉双引号)  
-且 : &amp;&amp; or &quot;and&quot;  
-或 : || or &quot;or&quot;  
-</code></pre><ul>
-<li>抓取所有经过eth1，目的地址是192.168.1.254或192.168.1.200端口是80的TCP数据</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((tcp) and (port 80) and ((dst host 192.168.1.254) or (dst host 192.168.1.200)))'</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓取所有经过eth1，目标MAC地址是00:01:02:03:04:05的ICMP数据</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((icmp) and ((ether dst host 00:01:02:03:04:05)))'</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓取所有经过eth1，目的网络是192.168，但目的主机不是192.168.1.200的TCP数据</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((tcp) and ((dst net 192.168) and (not dst host 192.168.1.200)))'</span></span><br></pre></td></tr></table></figure>
-<h2 id="二、高级包头过滤"><a href="#二、高级包头过滤" class="headerlink" title="二、高级包头过滤"></a>二、高级包头过滤</h2><p>首先了解如何从包头过滤信息</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">proto[<span class="string">x:</span>y]          : 过滤从x字节开始的y字节数。比如ip[<span class="number">2</span>:<span class="number">2</span>]过滤出<span class="number">3</span>、<span class="number">4</span>字节（第一字节从<span class="number">0</span>开始排）</span><br><span class="line">proto[<span class="string">x:</span>y] &amp; z = <span class="number">0</span>  : proto[<span class="string">x:</span>y]和z的与操作为<span class="number">0</span></span><br><span class="line">proto[<span class="string">x:</span>y] &amp; z !=<span class="number">0</span>  : proto[<span class="string">x:</span>y]和z的与操作不为<span class="number">0</span></span><br><span class="line">proto[<span class="string">x:</span>y] &amp; z = <span class="string">z  :</span> proto[<span class="string">x:</span>y]和z的与操作为z</span><br><span class="line">proto[<span class="string">x:</span>y] = <span class="string">z      :</span> proto[<span class="string">x:</span>y]等于z</span><br></pre></td></tr></table></figure>
-<p>操作符 : &gt;, &lt;, &gt;=, &lt;=, =, !=</p>
-<h3 id="2-1、IP头"><a href="#2-1、IP头" class="headerlink" title="2.1、IP头"></a>2.1、IP头</h3><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">0                   1                   2                   3</span><br><span class="line">0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|Version|  IHL  |Type of Service|          Total Length         |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|         Identification        |Flags|      Fragment Offset    |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|  Time to Live |    Protocol   |         Header Checksum       |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                       Source Address                          |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                    Destination Address                        |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                    Options                    |    Padding    | &lt;-- optional</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                            DATA ...                           |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
-<p>本文只针对IPv4。</p>
-<h3 id="2-2、IP选项设置了吗？"><a href="#2-2、IP选项设置了吗？" class="headerlink" title="2.2、IP选项设置了吗？"></a>2.2、IP选项设置了吗？</h3><p>“一般”的IP头是20字节，但IP头有选项设置，不能直接从偏移21字节处读取数据。IP头有个长度字段可以知道头长度是否大于20字节。</p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|Version|  IHL  |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
-<p>通常第一个字节的二进制值是：01000101，分成两个部分：</p>
-<p>0100 = 4 表示IP版本<br>0101 = 5 表示IP头32 bit的块数，5 x 32 bits = 160 bits or 20 bytes</p>
-<p>如果第一字节第二部分的值大于5，那么表示头有IP选项。</p>
-<p>下面介绍两种过滤方法（第一种方法比较操蛋，可忽略）：</p>
-<p>a. 比较第一字节的值是否大于01000101，这可以判断IPv4带IP选项的数据和IPv6的数据。</p>
-<p>01000101十进制等于69，计算方法如下（小提示：用计算器更方便）</p>
-<figure class="highlight ldif"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">0 </span>: 0  \</span><br><span class="line"><span class="attribute">1 </span>: 2^6 = 64 \ 第一部分 (IP版本)</span><br><span class="line"><span class="attribute">0 </span>: 0   /</span><br><span class="line"><span class="attribute">0 </span>: 0  /</span><br><span class="line"><span class="literal">-</span></span><br><span class="line"><span class="attribute">0 </span>: 0  \</span><br><span class="line"><span class="attribute">1 </span>: 2^2 = 4  \ 第二部分 (头长度)</span><br><span class="line"><span class="attribute">0 </span>: 0   /</span><br><span class="line"><span class="attribute">1 </span>: 2^0 = 1 /</span><br></pre></td></tr></table></figure>
-<p>64 + 4 + 1 = 69</p>
-<p>如果设置了IP选项，那么第一自己是01000110（十进制70），过滤规则：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[0] &gt; 69'</span></span><br></pre></td></tr></table></figure></p>
-<p>IPv6的数据也会匹配，看看第二种方法。</p>
-<p>b. 位操作</p>
-<p>0100 0101 : 第一字节的二进制<br>0000 1111 : 与操作<br>&lt;=========<br>0000 0101 : 结果  </p>
-<p>正确的过滤方法</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[0] &amp; 15 &gt; 5'</span></span><br></pre></td></tr></table></figure>
-<p>或者<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[0] &amp; 0x0f &gt; 5'</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="2-3、分片标记"><a href="#2-3、分片标记" class="headerlink" title="2.3、分片标记"></a>2.3、分片标记</h3><p>当发送端的MTU大于到目的路径链路上的MTU时就会被分片，这段话有点拗口，权威的请参考《TCP/IP详解》。唉，32借我的书没还，只能凑合写，大家记得看书啊。</p>
-<p>分片信息在IP头的第七和第八字节：</p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|Flags|      Fragment Offset    |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
-<p>Bit 0:  保留，必须是0<br>Bit 1:  (DF) 0 = 可能分片, 1 = 不分片<br>Bit 2:  (MF) 0 = 最后的分片, 1 = 还有分片  </p>
-<p>Fragment Offset字段只有在分片的时候才使用。</p>
-<p>要抓带DF位标记的不分片的包，第七字节的值应该是：</p>
-<p>01000000 = 64</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[6] = 64'</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-4、抓分片包"><a href="#2-4、抓分片包" class="headerlink" title="2.4、抓分片包"></a>2.4、抓分片包</h3><ul>
-<li>匹配MF，分片包</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[6] = 32'</span></span><br></pre></td></tr></table></figure>
-<p>最后分片包的开始3位是0，但是有Fragment Offset字段。</p>
-<ul>
-<li>匹配分片和最后分片</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((ip[6:2] &gt; 0) and (not ip[6] = 64))'</span></span><br></pre></td></tr></table></figure>
-<p>测试分片可以用下面的命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping -M want -s 3000 192.168.1.1</span><br></pre></td></tr></table></figure>
-<h3 id="2-5、匹配小TTL"><a href="#2-5、匹配小TTL" class="headerlink" title="2.5、匹配小TTL"></a>2.5、匹配小TTL</h3><p>TTL字段在第九字节，并且正好是完整的一个字节，TTL最大值是255，二进制为11111111。</p>
-<p>可以用下面的命令验证一下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ping -M want -s 3000 -t 256 192.168.1.200</span><br><span class="line">ping: ttl 256 out of range</span><br></pre></td></tr></table></figure>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|  Time to Live |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
-<ul>
-<li>在网关可以用下面的命令看看网络中谁在使用traceroute</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[8] &lt; 5'</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-6、抓大于X字节的包"><a href="#2-6、抓大于X字节的包" class="headerlink" title="2.6、抓大于X字节的包"></a>2.6、抓大于X字节的包</h3><ul>
-<li>大于600字节</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[2:2] &gt; 600'</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-7、更多的IP过滤"><a href="#2-7、更多的IP过滤" class="headerlink" title="2.7、更多的IP过滤"></a>2.7、更多的IP过滤</h3><p>首先还是需要知道TCP基本结构，再次推荐《TCP/IP详解》，卷一就够看的了，避免走火入魔。</p>
-<ul>
-<li>TCP头</li>
-</ul>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">0                   1                   2                   3</span><br><span class="line">0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|          Source Port          |       Destination Port        |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                        Sequence Number                        |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                    Acknowledgment Number                      |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|  Data |       |C|E|U|A|P|R|S|F|                               |</span><br><span class="line">| Offset|  Res. |W|C|R|C|S|S|Y|I|            Window             |</span><br><span class="line">|       |       |R|E|G|K|H|T|N|N|                               |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|           Checksum            |         Urgent Pointer        |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                    Options                    |    Padding    |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                             data                              |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓取源端口大于1024的TCP数据包</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[0:2] &gt; 1024'</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>匹配TCP数据包的特殊标记</li>
-</ul>
-<p>TCP标记定义在TCP头的第十四个字节</p>
-<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-+-+-+-+-+-+-+-+</span><br><span class="line">|<span class="string">C</span>|<span class="string">E</span>|<span class="string">U</span>|<span class="string">A</span>|<span class="string">P</span>|<span class="string">R</span>|<span class="string">S</span>|<span class="string">F</span>|</span><br><span class="line">|<span class="string">W</span>|<span class="string">C</span>|<span class="string">R</span>|<span class="string">C</span>|<span class="string">S</span>|<span class="string">S</span>|<span class="string">Y</span>|<span class="string">I</span>|</span><br><span class="line">|<span class="string">R</span>|<span class="string">E</span>|<span class="string">G</span>|<span class="string">K</span>|<span class="string">H</span>|<span class="string">T</span>|<span class="string">N</span>|<span class="string">N</span>|</span><br><span class="line">+-+-+-+-+-+-+-+-+</span><br></pre></td></tr></table></figure>
-<p>重复一下TCP三次握手，两个主机是如何勾搭的：</p>
-<ol>
-<li>源发送SYN</li>
-<li>目标回答SYN, ACK</li>
-<li>源发送ACK</li>
-</ol>
-<p>没女朋友的童鞋要学习一下：  </p>
-<ol>
-<li>MM，你的手有空吗？-_-  </li>
-<li>有空，你呢？~_~  </li>
-<li>我也有空 *_*  </li>
-</ol>
-<p>失败的loser是酱紫的：  </p>
-<ol>
-<li>MM，这是你掉的板砖吗？(SYN) ￣▽￣  </li>
-<li>不是，找拍啊？(RST-ACK) ˋ﹏ˊ  </li>
-</ol>
-<ul>
-<li>只抓SYN包，第十四字节是二进制的00000010，也就是十进制的2</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] = 2'</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓SYN, ACK （00010010 or 18）</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] = 18'</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓SYN或者SYN-ACK</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] &amp; 2 = 2'</span></span><br></pre></td></tr></table></figure>
-<p>用到了位操作，就是不管ACK位是啥。</p>
-<ul>
-<li>抓PSH-ACK</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] = 24'</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓所有包含FIN标记的包（FIN通常和ACK一起，表示幽会完了，回见）</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] &amp; 1 = 1'</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓RST（勾搭没成功，伟大的greatwall对她认为有敏感信息的连接发RST包，典型的棒打鸳鸯）</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] &amp; 4 = 4'</span></span><br></pre></td></tr></table></figure>
-<p>下图详细描述了TCP各种状态的标记，方便分析。</p>
-<p><img src="/images/tcp_state_machine.jpg" alt="tcp_state_machine.jpg"></p>
-<h3 id="2-8、大叔注"><a href="#2-8、大叔注" class="headerlink" title="2.8、大叔注"></a>2.8、大叔注</h3><p>tcpdump考虑了一些数字恐惧症者的需求，提供了部分常用的字段偏移名字：</p>
-<p>icmptype  (ICMP类型字段)<br>icmpcode  (ICMP符号字段)<br>tcpflags  (TCP标记字段)  </p>
-<p>ICMP类型值有：</p>
-<p>icmp-echoreply, icmp-unreach, icmp-sourcequench, icmp-redirect, icmp-echo, icmp-routeradvert, icmp-routersolicit, icmp-timxceed, icmp-paramprob, icmp-tstamp, icmp-tstampreply, icmp-ireq, icmp-ireqreply, icmp-maskreq, icmp-maskreply</p>
-<p>TCP标记值：</p>
-<p>tcp-fin, tcp-syn, tcp-rst, tcp-push, tcp-push, tcp-ack, tcp-urg</p>
-<p>这样上面按照TCP标记位抓包的就可以写直观的表达式了：</p>
-<ul>
-<li>只抓SYN包</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[tcpflags] = tcp-syn'</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓SYN, ACK</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[tcpflags] &amp; tcp-syn != 0 and tcp[tcpflags] &amp; tcp-ack != 0'</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-9、抓SMTP数据"><a href="#2-9、抓SMTP数据" class="headerlink" title="2.9、抓SMTP数据"></a>2.9、抓SMTP数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((port 25) and (tcp[(tcp[12]&gt;&gt;2):4] = 0x4d41494c))'</span></span><br></pre></td></tr></table></figure>
-<p>抓取数据区开始为”MAIL”的包，”MAIL”的十六进制为0x4d41494c。</p>
-<h3 id="2-10、抓HTTP-GET数据"><a href="#2-10、抓HTTP-GET数据" class="headerlink" title="2.10、抓HTTP GET数据"></a>2.10、抓HTTP GET数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[(tcp[12]&gt;&gt;2):4] = 0x47455420'</span></span><br></pre></td></tr></table></figure>
-<p>“GET “的十六进制是47455420</p>
-<h3 id="2-11、抓SSH返回"><a href="#2-11、抓SSH返回" class="headerlink" title="2.11、抓SSH返回"></a>2.11、抓SSH返回</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[(tcp[12]&gt;&gt;2):4] = 0x5353482D'</span></span><br></pre></td></tr></table></figure>
-<p>“SSH-“的十六进制是0x5353482D</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'(tcp[(tcp[12]&gt;&gt;2):4] = 0x5353482D) and (tcp[((tcp[12]&gt;&gt;2)+4):2] = 0x312E)'</span></span><br></pre></td></tr></table></figure>
-<p>抓老版本的SSH返回信息，如”SSH-1.99..”</p>
-<h2 id="三、大叔注"><a href="#三、大叔注" class="headerlink" title="三、大叔注"></a>三、大叔注</h2><p>如果是为了查看数据内容，建议用<code>tcpdump -s 0 -w filename</code>把数据包都保存下来，然后用wireshark的Follow TCP Stream/Follow UDP Stream来查看整个会话的内容。</p>
-<p><code>-s 0</code>是抓取完整数据包，否则默认只抓68字节。</p>
-<p>另外，用tcpflow也可以方便的获取TCP会话内容，支持tcpdump的各种表达式。</p>
-<h3 id="3-1、UDP头"><a href="#3-1、UDP头" class="headerlink" title="3.1、UDP头"></a>3.1、UDP头</h3><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="code"> 0      7 8     15 16    23 24    31</span></span><br><span class="line"><span class="code">+--------+</span>--------<span class="code">+--------+</span>--------+</span><br><span class="line">|     Source      |   Destination   |</span><br><span class="line">|      Port       |      Port       |</span><br><span class="line"><span class="code">+--------+</span>--------<span class="code">+--------+</span>--------+</span><br><span class="line">|                 |                 |</span><br><span class="line">|     Length      |    Checksum     |</span><br><span class="line"><span class="code">+--------+</span>--------<span class="code">+--------+</span>--------+</span><br><span class="line">|                                   |</span><br><span class="line">|              DATA ...             |</span><br><span class="line"><span class="code">+-----------------------------------+</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>抓DNS请求数据</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 udp dst port 53</span><br></pre></td></tr></table></figure>
-<h3 id="3-2、其他"><a href="#3-2、其他" class="headerlink" title="3.2、其他"></a>3.2、其他</h3><p><code>-c</code>参数对于运维人员来说也比较常用，因为流量比较大的服务器，靠人工CTRL+C还是抓的太多，甚至导致服务器宕机，于是可以用<code>-c</code>参数指定抓多少个包。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">time tcpdump -nn -i eth0 <span class="string">'tcp[tcpflags] = tcp-syn'</span> -c 10000 &gt; /dev/null</span><br></pre></td></tr></table></figure>
-<p>上面的命令计算抓10000个SYN包花费多少时间，可以判断访问量大概是多少。</p>
-<h2 id="四、参考资料"><a href="#四、参考资料" class="headerlink" title="四、参考资料"></a>四、参考资料</h2><blockquote>
-<p><a href="http://www.wains.be/pub/networking/tcpdump_advanced_filters.txt" target="_blank" rel="noopener">tcpdump advanced filters</a></p>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2297,7 +2123,7 @@ And more...
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">108</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

@@ -296,6 +296,163 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Zabbix通过进程名监控进程状态配置详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/Zabbix通过进程名监控进程状态配置详解/" itemprop="url">Zabbix通过进程名监控进程状态配置详解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T22:03:43+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Zabbix/" itemprop="url" rel="index">
+                    <span itemprop="name">Zabbix</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>有时候我们只能通过进程名监控一个进程是否停掉了，因为有的进程并没有对外提供端口号，以下记录了下详细步骤，通过这个示例会学到很多zabbix核心配置相关的东西。<br>总的来说，配置一个完整的监控流程如下：</p>
+<ol>
+<li>创建监控项，即配置要监控的指标，如内存的使用率，CPU的使用率，进程的运行状况等，配了监控项后就会定时收集机器的配置信息，然后等待zabbix server收集(zabbix agent被动模式)。</li>
+<li>创建触发器，触发器将监控项收集的数据通过触发器表达式进行评估。<br>在触发器表达式中我们可以定义哪些值范围是合理，哪些是不合理的，如果出现不合理的值，触发器会把状态改为PROBLEM，接下来就到了报警以及发邮件。</li>
+<li>创建动作，在zabbix中动作的意思是触发器触发后要进行的操作，一般是通过配置给相关负责人发送邮件，短信等通知。</li>
+</ol>
+<p>下面配置监控服务器的logstash(开源实时日志同步项目)进程是否在运行：</p>
+<ol>
+<li><p>首先创建监控进程的监控项:<br>监控项的组成：key[参数]<br><img src="/images/zabbix-proc1.png" alt=""><br>例如获取5分钟的负载情况：system.cpu.load[avg5]，avg5是对应的参数。<br>zabbix agent支持的所有key可以到这里找到：<br><a href="http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/" target="_blank" rel="noopener">http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/</a><br>在这里我们需要的是proc.num这个key，以下是对此key的详解：<br><img src="/images/zabbix-proc2.png" alt=""><br>可以看到此监控项的返回值是进程数量，其中cmdline参数可以是进程名字包含的关键字，在这里我的进程的关键字是logstash，因此按如下方式创建监控logstash进程的监控项，表示机器所有用户所有状态的logstash进程数量：<br><img src="/images/zabbix-proc3.png" alt=""></p>
+</li>
+<li><p>创建对应监控项的触发器：<br>创建触发器主要是编写触发器表达式，也就是评估监控项是否在合理范围的表达式。触发器表达式格式如下：<br><code>host:key[param].function(parameter)} operator constant<br>主机：监控项.函数(参数)} 表达式 常数</code><br>对于触发器表达式更加详细的介绍请参考这里：<br><a href="http://www.ttlsa.com/zabbix/zabbix-trigger-expression/" target="_blank" rel="noopener">http://www.ttlsa.com/zabbix/zabbix-trigger-expression/</a><br>触发器表达式示例：<br>触发器名称：Processor load is too high on www.zabbix.com<br><code>{www.zabbix.com:system.cpu.load[all,avg1].last(0)}&gt;5</code><br>触发器说明：<br>www.zabbix.com：host名称<br>system.cpu.load[all,avg1]：item值,一分内cpu平均负载值<br>last(0)：最新值<br>>5：最新值大于5<br>如上所示，www.zabbix.com这个主机的监控项，最新的CPU负载值如果大于5，那么表达式会返回true，这样一来触发器状态就改变为“problem”了。<br><strong>在这里针对logstash进程触发器配置如下：</strong><br><img src="/images/zabbix-proc4.png" alt=""><br>上面配置表示如果机器logstash进程数量的最新值小于1，就会触发报警。</p>
+</li>
+<li><p>配置动作发送短信和邮件报警：<br>以下是短信配置方式，邮件配置类似，其中应用集是自己创建的，主要用来分类，具体的自行研究：<br><img src="/images/zabbix-proc5.png" alt=""><br><img src="/images/zabbix-proc6.png" alt=""></p>
+</li>
+</ol>
+<p><strong>参考文章：</strong><br> <a href="http://www.ttlsa.com/zabbix/zabbix-item-key/" target="_blank" rel="noopener">zabbix item key详解</a><br> <a href="http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/" target="_blank" rel="noopener">zabbix agent 类型所有key</a><br> <a href="http://www.ttlsa.com/zabbix/zabbix-trigger-expression/" target="_blank" rel="noopener">zabbix触发器表达式详解</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Linux下文件的三个时间戳-atime-mtime-ctime/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1663,140 +1820,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/14/Linux设备驱动程序和设备文件/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/14/Linux设备驱动程序和设备文件/" itemprop="url">Linux设备驱动程序和设备文件</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-14T18:31:05+08:00">
-                2018-01-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="设备驱动程序"><a href="#设备驱动程序" class="headerlink" title="设备驱动程序"></a>设备驱动程序</h4><p>一个设备驱动程序是一个管理着系统与某种特定硬件之间交互作用的程序。驱动程序在设备可理解的硬件指令和内核使用的固定编程接口之间起转换作用。驱动程序层的存在有助于内核合理地保持设备独立性。<br>在大多数情况下，设备驱动程序是内核的组成部分，它们不是用户进程。不过，一个驱动程序可以从内核里，也可以从用户空间进行访问。对设备的用户级访问往往要通过位于/dev目录下的特殊设备文件。内核把对这些文件操作映射到对驱动程序代码的调用上面。</p>
-<h4 id="设备文件"><a href="#设备文件" class="headerlink" title="设备文件"></a>设备文件</h4><h5 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a><strong>基本概念</strong></h5><p>大多数硬件设备都在/dev目录中有一个对应的设备文件，网络设备除外。在/dev中的每个文件都有与之相关的主设备号和一个次设备号。内核用这些设备号把对一个设备文件的引用映射到相应的驱动程序上。主设备号标明与文件相关的驱动程序（换句话说是设备类型）。次设备号常常是指定某种给定设备类型的特定实例，次设备号有时被称为单元号。<br>用ls -l可以看到一个设备文件的主设备号和次设备号：<br><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ls -l /dev/vda</span></span><br><span class="line">brw-rw----<span class="number"> 1 </span>root disk 253,<span class="number"> 0 </span>Oct<span class="number"> 15 </span>15:21 /dev/vda</span><br></pre></td></tr></table></figure></p>
-<p>设备文件分两种类型：</p>
-<ol>
-<li>块设备文件：<br>一个块设备文件每次读取或者写入一块数据（一组字节，通常是521的倍数），我们熟知的磁盘就是块设备，在/dev中对应的设备文件就是块设备文件。块设备文件在用ls -l查看时文件类型为b。</li>
-<li>字符设备文件：<br>字符设备每次读取或者写入一个字节。磁盘和磁带可以是块设备也可以是字符设备，而终端和打印机不行。字符设备文件在用ls -l查看时文件类型为c。</li>
-</ol>
-<h5 id="创建设备文件"><a href="#创建设备文件" class="headerlink" title="创建设备文件"></a><strong>创建设备文件</strong></h5><p>在Linux下，一般不需要手动创建设备文件，因为在Linux下设备文件的创建有专门的udev系统来管理，当系统有新的设备出现（或者消失），会动态地管理设备文件的创建和删除。守护进程udevd监听内核传来的有关设备状态变化的消息。根据/etc/udev 和/lib/udev两个目录的配置信息，在找到设备或者断开设备的时候，udevd能够自动采取相应措施。在默认情况下，它只创建/dev里的设备文件。手动创建设备文件用mknod命令来创建，语法为：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mknod filename<span class="built_in"> type </span>major minor</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>filename：要创建的设备文件名；</li>
-<li>type：设备类型，c代表一个字符设备，b代表一个块设备；</li>
-<li>major：主设备号；</li>
-<li>minor：次设备号；</li>
-</ul>
-<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p><a href="https://book.douban.com/subject/10747453/" target="_blank" rel="noopener">Unix/Linux系统管理手册|第13章</a><br><a href="http://blog.csdn.net/liangkaiming/article/details/6234238" target="_blank" rel="noopener">CSDN博客|主设备号和次设备号 </a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1846,7 +1869,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">108</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
