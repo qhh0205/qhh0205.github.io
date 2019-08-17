@@ -1,8 +1,8 @@
 ---
 title: Kong 微服务网关在 Kubernetes 的实践
 date: 2019-08-17 11:44:28
-categories: Kong
-tags: Kong
+categories: 微服务网关
+tags: 微服务网关
 ---
 
 本文主要介绍将 [Kong](https://konghq.com/kong/) 微服务网关作为 Kubernetes 集群统一入口的最佳实践，之前写过一篇文章使用 [Nginx Ingress Controller](https://github.com/kubernetes/ingress-nginx) 作为集群统一的流量入口：[使用 Kubernetes Ingress 对外暴露服务](https://qhh.me/2019/08/12/%E4%BD%BF%E7%94%A8-Kubernetes-Ingress-%E5%AF%B9%E5%A4%96%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1/)，但是相比于 [Kong Ingress Controller](https://github.com/Kong/kubernetes-ingress-controller) 来说，Kong 支持的功能更加强大，更适合微服务架构：
