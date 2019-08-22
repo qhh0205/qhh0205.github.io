@@ -296,6 +296,166 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/10/解决进程文件句柄泄露导致磁盘空间无法释放问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/10/解决进程文件句柄泄露导致磁盘空间无法释放问题/" itemprop="url">解决进程文件句柄泄露导致磁盘空间无法释放问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-10T11:23:41+08:00">
+                2018-02-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="问题的产生"><a href="#问题的产生" class="headerlink" title="问题的产生"></a>问题的产生</h4><p>今天突然接到一台服务器磁盘空间使用率达到90%的报警，于是登陆机器查看磁盘使用情况，发现确实外挂到/data的一块磁盘使用率达到了90%：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-46 data]<span class="comment"># df -h</span></span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">/dev/xvda2      100G   17G   84G  17% /</span><br><span class="line">devtmpfs         30G     0   30G   0% /dev</span><br><span class="line">tmpfs            29G     0   29G   0% /dev/shm</span><br><span class="line">tmpfs            29G  2.7G   27G  10% /run</span><br><span class="line">tmpfs            29G     0   29G   0% /sys/fs/cgroup</span><br><span class="line">/dev/xvdf       246G  209G   26G  90% /data</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1000</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1003</span><br></pre></td></tr></table></figure></p>
+<h4 id="分析问题"><a href="#分析问题" class="headerlink" title="分析问题"></a>分析问题</h4><p>对于这种情况我一般的处理方法是跳到对应的目录，查看哪个目录占用的空间比较大，然后进一步清理。由于这块磁盘是外挂到/data目录，因此查看下该目录下各个目录磁盘的占用情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-46 data]<span class="comment"># du -h --max-depth=1</span></span><br><span class="line">3.7G	./photo</span><br><span class="line">16K	./lost+found</span><br><span class="line">9.1G	./mls2</span><br><span class="line">36K	./parser</span><br><span class="line">79G	./web</span><br><span class="line">15G	./mls</span><br><span class="line">106G	.</span><br></pre></td></tr></table></figure></p>
+<p>可以发现一个奇怪的现象：该外挂目录总共才使用了106G，但是df -h显示的是该磁盘已经使用了209G，那么使用的另外那103G去哪儿了呢，况且这块磁盘也没有多个分区，就这一个分区且挂载到了/data下。这确实是个很奇怪的问题，于是网上搜索了下原因，原来是不正确的删除文件导致的：</p>
+<blockquote>
+<p>在Linux操作系统中，当一个文件被删除后，在文件系统目录中已经不可见了，所以du就不会再统计它了。然而如果此时还有运行的进程持有这个已经被删除了的文件的句柄，那么这个文件就不会真正在磁盘中被删除， 分区超级块中的信息也就不会更改，所以df命令查看的磁盘占用没有减少。我们知道在Linux中磁盘分区的超级块是非常重要的，在superblock中记录该分区上文件系统的整体信息，包括inode和block的总量，剩余量，使用量，以及文件系统的格式等信息。因此，superblock不更新，那么磁盘的使用量必然不会变化，操作系统对于文件的存盘都是需要事先读取superblock的信息，然后分配可用的inode和block。</p>
+</blockquote>
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><ol>
+<li><p>首先找出文件句柄泄露的进程，我的方法比较low，找出系统中启动时间比较久的java进程(因为这台机器主要是java服务)，然后用lsof看这个进程的文件句柄使用情况。之所以这么做主要是因为最近启动的进程发生句柄泄露的可能性很小，因为即使存在句柄泄露，重启后也会释放文件句柄的。可以看出2962这个进程最可能发生句柄泄露了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-46 data]<span class="comment"># ps -eo pid,lstart,comm | grep java</span></span><br><span class="line">  746 Thu Jan 18 19:44:15 2018 java</span><br><span class="line"> 1117 Thu Feb  8 02:20:03 2018 java</span><br><span class="line"> 1160 Thu Feb  8 02:20:09 2018 java</span><br><span class="line"> 2962 Thu Nov 16 23:08:40 2017 java</span><br><span class="line"> 3610 Wed Feb  7 22:55:37 2018 java</span><br><span class="line"> 4579 Thu Feb  8 20:45:09 2018 java</span><br><span class="line"> 5155 Mon Dec 25 19:01:32 2017 java</span><br><span class="line"> 6481 Wed Jan 10 05:16:28 2018 java</span><br><span class="line"> 6519 Thu Jan 18 00:51:07 2018 java</span><br><span class="line"> 9756 Thu Feb  8 02:36:23 2018 java</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用lsof分析上面找到的进程文件句柄使用情况，可以看出该进程确实存在句柄泄露，而且非常严重，已经有2208个文件没有释放了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-46 ~]<span class="comment"># lsof -p 2962 | grep "delete" | wc -l</span></span><br><span class="line">2208</span><br><span class="line">[root@awsuw7-46 ~]<span class="comment"># lsof -p 2962 | grep "delete" | head -n 20</span></span><br><span class="line">java    2962  web   17r      REG              202,2     2098273   17844538 /tmp/winstone962950350375526798.jar (deleted)</span><br><span class="line">java    2962  web  168w      REG             202,80           0    1969499 /data/web/mls/data/<span class="built_in">jobs</span>/mls_91/builds/590/23.log (deleted)</span><br><span class="line">java    2962  web  325w      REG             202,80           0    6455947 /data/web/mls/data/<span class="built_in">jobs</span>/mls_39/builds/1080/10.log (deleted)</span><br><span class="line">java    2962  web  341w      REG             202,80           0    1975873 /data/web/mls/data/<span class="built_in">jobs</span>/mls_113/builds/1054/29.log (deleted)</span><br><span class="line">java    2962  web  347w      REG             202,80           0    2506849 /data/web/mls/data/<span class="built_in">jobs</span>/mls_59/builds/.1073/21.log (deleted)</span><br><span class="line">java    2962  web  350w      REG             202,80        8192    1975877 /data/web/mls/data/<span class="built_in">jobs</span>/mls_113/builds/1054/31.log (deleted)</span><br><span class="line">java    2962  web  352w      REG             202,80           0    5387403 /data/web/mls/data/<span class="built_in">jobs</span>/mls_80/builds/505/23.log (deleted)</span><br><span class="line">java    2962  web  354w      REG             202,80           0    3422611 /data/web/mls/data/<span class="built_in">jobs</span>/mls_29/builds/.385/23.log (deleted)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启上面找到的发生内存泄露的进程，发起磁盘使用量回归正常状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@awsuw7-46 ~]$ df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">/dev/xvda2      100G   17G   84G  17% /</span><br><span class="line">devtmpfs         30G     0   30G   0% /dev</span><br><span class="line">tmpfs            29G     0   29G   0% /dev/shm</span><br><span class="line">tmpfs            29G  2.7G   27G  10% /run</span><br><span class="line">tmpfs            29G     0   29G   0% /sys/fs/cgroup</span><br><span class="line">/dev/xvdf       246G  128G  106G  55% /data</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1000</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1003</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1005</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1008</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1007</span><br><span class="line">tmpfs           5.8G     0  5.8G   0% /run/user/1006</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>后来和工作同事确认了下，确实是他们写了个定时脚本清理这个进程产生的文件，而且是定期直接rm删掉，这必然会导致进程发生句柄泄露。</p>
+<h4 id="相关链接："><a href="#相关链接：" class="headerlink" title="相关链接："></a>相关链接：</h4><p> <a href="https://www.cnblogs.com/heyonggang/p/3644736.html" target="_blank" rel="noopener">https://www.cnblogs.com/heyonggang/p/3644736.html</a><br><a href="http://www.eygle.com/archives/2009/10/linux_unix_file_handle_deleted.html" target="_blank" rel="noopener">http://www.eygle.com/archives/2009/10/linux_unix_file_handle_deleted.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/20/使用LFS解决GitHub无法上传大文件问题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1885,303 +2045,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/17/Vim使用技巧/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/17/Vim使用技巧/" itemprop="url">Vim使用技巧</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-17T17:28:38+08:00">
-                2017-12-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="基本技巧"><a href="#基本技巧" class="headerlink" title="基本技巧"></a>基本技巧</h4><ol>
-<li><p>各种插入模式</p>
-<blockquote>
-<ul>
-<li>a 在光标后插入</li>
-<li>o 在当前行后插入新行</li>
-<li>O 在当前行前插入新行</li>
-<li>cw 删除当前光标到单词的结尾</li>
-</ul>
-</blockquote>
-</li>
-<li><p>简单移动光标</p>
-<blockquote>
-<ul>
-<li>0 移动光标到行头</li>
-<li>^ 到本行第一个不是blank字符的位置</li>
-<li>$ 到行末</li>
-<li>g_ 到本行第一个不是blank字符的位置</li>
-<li>/pattern 搜索pattern的字符串</li>
-</ul>
-</blockquote>
-</li>
-<li><p>拷贝/粘贴</p>
-<blockquote>
-<ul>
-<li>p 粘贴</li>
-<li>yy 拷贝当前行</li>
-</ul>
-</blockquote>
-</li>
-<li><p>Undo/Redo</p>
-<blockquote>
-<ul>
-<li>u undo</li>
-<li>ctrl+r redo</li>
-</ul>
-</blockquote>
-</li>
-<li><p>打开/保存/退出/改变文件</p>
-<blockquote>
-<ul>
-<li><code>:e &lt;path/to/file&gt;</code> 打开一个文件</li>
-<li>:w 存盘</li>
-<li><code>:saveas &lt;path/to/file&gt;</code> 另存为<code>&lt;path/to/file&gt;</code> ，这个功能很实用，在不需要cp的情况下可以直接打开文件另存为则可以得到新的文件</li>
-<li>:x，ZZ或:wq 保存并退出(:x 表示仅在需要时保存，ZZ不需要输入冒号并回车即可保存并退出)</li>
-<li>:q! 退出不保存</li>
-<li>:qa! 强行退出所有的正在编辑的文件</li>
-<li>:bn和:bp 可以同时打开很多个文件，使用这两个命令来切换下一个或上一个文件</li>
-</ul>
-</blockquote>
-</li>
-</ol>
-<h4 id="进阶技巧"><a href="#进阶技巧" class="headerlink" title="进阶技巧"></a>进阶技巧</h4><ol>
-<li><p>命令的重复执行</p>
-<blockquote>
-<ul>
-<li>.(小数点) 重复上一次的命令</li>
-<li><code>N&lt;command&gt;</code> 重复某个命令N次</li>
-<li>2dd 删除2两行</li>
-</ul>
-</blockquote>
-</li>
-<li><p>高效地移动光标</p>
-<blockquote>
-<ul>
-<li>N<code>G</code> 光标到第N行，或者也可以:N</li>
-<li>gg 到第一行</li>
-<li>G 到最后一行</li>
-<li>w 到下一个单词的开头</li>
-<li>e 到下一个单词的结尾<br><em>如果你认为单词是由默认方式，那么就用小写的e和w。默认上来说，一个单词由字母，数字和下划线组成</em><br><em>如果你认为单词是由blank字符分隔符，那么你需要使用大写的E和W</em></li>
-<li>% 匹配括号移动，包括(，{，[  如果直接在行上按%会自动找到括号</li>
-<li><code>*</code> 匹配光标当前所在的单词，移动光标到下一个匹配的单词</li>
-<li><code>#</code> 匹配光标当前所在的单词，移动光标到上一个匹配的单词</li>
-</ul>
-</blockquote>
-</li>
-<li><p>大小写转换</p>
-<blockquote>
-<ul>
-<li>gU 变大写</li>
-<li>gu 变小写</li>
-<li>shift+v gU 将当前行变为大写</li>
-<li>shift+v gu 将当前行变为小写</li>
-</ul>
-</blockquote>
-</li>
-<li><p>将文本内容全部删除</p>
-<blockquote>
-<ul>
-<li>gg–&gt;d–&gt;G<br>解释一下：gg先跳到文本第一行，d表示删除，G表示跳到文本最后一行，组合起来表示删除文本的第一行到最后一行，即文本内容全部删除。</li>
-</ul>
-</blockquote>
-</li>
-<li><p>在当前行上移动光标</p>
-<blockquote>
-<ul>
-<li>fa 到下一个为a的字符处，你也可以fs到下一个为s的字符</li>
-<li>t, 到逗号前的第一个字符。逗号可以变成其它字符</li>
-<li>3fa 在当前行查找第三个出现的a</li>
-<li>F和T 和f和t一样，只不过是相反方向</li>
-<li>dt” 删除所有内容，直到遇到引号</li>
-</ul>
-</blockquote>
-</li>
-<li><p>块操作:ctrl+v</p>
-<blockquote>
-<p>块操作可以说是最实用的技巧了，典型的操作：ctrl+v–&gt;ctrl+d–&gt;I–&gt;[ESC]</p>
-<ul>
-<li>0 到行头</li>
-<li>ctrl+v 开始块操作</li>
-<li>ctrl+d 向下移动(你也可以使用hjkl来移动光标，或是使用%，或是别的)</li>
-<li><code>I-- [ESC]</code>  I是插入，插入“–”，按ESC键来为每一行生效</li>
-</ul>
-<p>1.给选中的行前面添加#字符</p>
-<ul>
-<li>按下ctrl+v</li>
-<li>按光标移动键选中行</li>
-<li>输入大写的I</li>
-<li>输入字符#</li>
-<li>按<code>[ESC]</code>使得每一行生效</li>
-</ul>
-<iframe src="/iframe/vim_block_opt.gif" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
-<p>2.给选中的行后面面添加#字符</p>
-<ul>
-<li>按下ctrl+v</li>
-<li>按光标移动键选中行(可以配合$符号操作)</li>
-<li>输入大写的A</li>
-<li>输入字符#</li>
-<li>按<code>[ESC]</code>使得每一行生效</li>
-</ul>
-<iframe src="/iframe/vim_block_opt1.gif" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
-</blockquote>
-</li>
-<li><p>自动提示</p>
-<blockquote>
-<p>在Insert模式下，可以输入一个词的开头，然后按ctrl+p或者ctrl+n<br>自动补全功能就出现了</p>
-<iframe src="/iframe/chelloworld.gif" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
-</blockquote>
-</li>
-<li><p>可视化选择</p>
-<blockquote>
-<p>使用ctrl+v或者shift+v选中后，可以进行如下操作：</p>
-<ul>
-<li><code>J</code> 把选中的行连接起来(变成一行)</li>
-<li><code>&lt;</code>或<code>&gt;</code> 左右缩进</li>
-<li><code>=</code>自动缩进</li>
-</ul>
-<iframe src="/iframe/vim_visual_opt.gif" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
-</blockquote>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2226,7 +2094,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">110</span>
+                  <span class="site-state-item-count">111</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
