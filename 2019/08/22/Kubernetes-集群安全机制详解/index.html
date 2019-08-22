@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://yoursite.com/images/k8s-https.png">
 <meta property="og:image" content="http://yoursite.com/images/k8s-rbac.png">
 <meta property="og:image" content="http://yoursite.com/images/k8s-dashboard-login.png">
-<meta property="og:updated_time" content="2019-08-22T04:45:04.364Z">
+<meta property="og:updated_time" content="2019-08-22T05:30:15.139Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kubernetes 集群安全机制详解">
 <meta name="twitter:description" content="本文主要介绍 Kubernetes 的安全机制，如何使用一系列概念、技术点、机制确保集群的访问是安全的，涉及到的关键词有：api-server，认证，授权，准入控制，RBAC，Service Account，客户端证书认证，Kubernetes 用户，Token 认证等等。虽然涉及到的技术点比较琐碎，比较多，但是了解整个机制后就很容易将其串起来，从而能很好地理解 Kubernetes 集群安全机制">
@@ -455,7 +455,11 @@
 <h3 id="实践：基于客户端证书认证方式新建-Kubeconfig-访问集群"><a href="#实践：基于客户端证书认证方式新建-Kubeconfig-访问集群" class="headerlink" title="实践：基于客户端证书认证方式新建 Kubeconfig 访问集群"></a>实践：基于客户端证书认证方式新建 Kubeconfig 访问集群</h3><h4 id="Kubeconfig-文件详解"><a href="#Kubeconfig-文件详解" class="headerlink" title="Kubeconfig 文件详解"></a>Kubeconfig 文件详解</h4><p>我们知道在安装完 k8s 集群后会生成 $HOME/.kube/config 文件，这个文件就是 kubectl 命令行工具访问集群时使用的认证文件，也叫 Kubeconfig 文件。这个 Kubeconfig 文件中有很多重要的信息，文件大概结构是这样，这里说明下每个字段的含义：<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">clusters:</span></span><br><span class="line"><span class="attr">- cluster:</span></span><br><span class="line"><span class="attr">    certificate-authority-data:</span> <span class="string">...</span></span><br><span class="line"><span class="attr">    server:</span> <span class="attr">https://192.168.26.10:6443</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">kubernetes</span></span><br><span class="line"><span class="attr">contexts:</span></span><br><span class="line"><span class="attr">- context:</span></span><br><span class="line"><span class="attr">    cluster:</span> <span class="string">kubernetes</span></span><br><span class="line"><span class="attr">    user:</span> <span class="string">kubernetes-admin</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">kubernetes-admin@kubernetes</span></span><br><span class="line"><span class="attr">current-context:</span> <span class="string">kubernetes-admin@kubernetes</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Config</span></span><br><span class="line"><span class="attr">preferences:</span> <span class="string">&#123;&#125;</span></span><br><span class="line"><span class="attr">users:</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">kubernetes-admin</span></span><br><span class="line"><span class="attr">  user:</span></span><br><span class="line"><span class="attr">    client-certificate-data:</span> <span class="string">...</span></span><br><span class="line"><span class="attr">    client-key-data:</span> <span class="string">...</span></span><br></pre></td></tr></table></figure></p>
 <p>可以看出文件分为三大部分：clusters、contexts、users<br><strong>clusters 部分</strong><br>定义集群信息，包括 api-server 地址、certificate-authority-data: 用于服务端证书认证的自签名 CA 根证书（master 节点 /etc/kubernetes/pki/ca.crt 文件内容 ）。</p>
 <p><strong>contexts 部分</strong><br>集群信息和用户的绑定，kubectl 通过上下文提供的信息连接集群。</p>
-<p><strong>users 部分</strong><br>多种用户类型，默认是客户端证书（x.509 标准的证书）和证书私钥，也可以是 ServiceAccount Token。这里重点说下前者：<br><code>client-certificate-data</code>: base64 加密后的客户端证书；<br><code>client-key-data</code>: base64 加密后的证书私钥；</p>
+<p><strong>users 部分</strong><br>多种用户类型，默认是客户端证书（x.509 标准的证书）和证书私钥，也可以是 ServiceAccount Token。这里重点说下前者：</p>
+<ul>
+<li><code>client-certificate-data</code>: base64 加密后的客户端证书；</li>
+<li><code>client-key-data</code>: base64 加密后的证书私钥；</li>
+</ul>
 <p>一个请求在通过 api-server 的认证关卡后，api-server 会从收到客户端证书中取用户信息，然后用于后面的授权关卡，这里所说的用户并不是服务账号，而是客户端证书里面的 Subject 信息：O 代表用户组，CN 代表用户名。为了证明，可以使用 openssl 手动获取证书中的这个信息：<br>首先，将 Kubeconfig 证书的 user 部分 <code>client-certificate-data</code> 字段内容进行 base64 解密，保存文件为 client.crt，然后使用 openssl 解析证书信息即可看到 Subject 信息：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> client.crt -text</span><br></pre></td></tr></table></figure></p>
 <p>解析集群默认的 Kubeconfig 客户端证书得到的 Subject 信息是：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Subject: <span class="attribute">O</span>=system:masters, <span class="attribute">CN</span>=kubernetes-admin</span><br></pre></td></tr></table></figure></p>
 <p>可以看出该证书绑定的用户组是 <code>system:masters</code>，用户名是 <code>kubernetes-admin</code>，而集群中默认有个 ClusterRoleBinding 叫 cluster-admin，它将名为 cluster-admin 的 ClusterRole 和用户组 <code>system:masters</code> 进行了绑定，而名为 cluster-admin 的 ClusterRole 有集群范围的 Superadmin 权限，这也就理解了为什么默认的 Kubeconfig 能拥有极高的权限来操作 k8s 集群了。</p>
@@ -490,12 +494,12 @@
 <blockquote>
 <p>注意：证书 base64 加密时指定 –wrap=0 参数<br>cat developer.crt | base64 –wrap=0<br>cat developer.key | base64 –wrap=0</p>
 </blockquote>
-</li>
-</ol>
-<p>接下来测试使用新建的 Kubeconfig 文件:</p>
+<p> 接下来测试使用新建的 Kubeconfig 文件:</p>
 <blockquote>
 <p>[root@master ~]# kubectl –kubeconfig developer-config –context=developer@kubernetes get pod<br>NAME                                READY   STATUS    RESTARTS   AGE<br>nginx-deployment-5754944d6c-dqsdj   1/1     Running   0          5d9h<br>nginx-deployment-5754944d6c-q675s   1/1     Running   0          5d9h<br>[root@master ~]# kubectl –kubeconfig developer-config –context=developer@kubernetes delete pod nginx-deployment-5754944d6c-dqsdj<br>Error from server (Forbidden): pods “nginx-deployment-5754944d6c-dqsdj” is forbidden: User “developer” cannot delete resource “pods” in API group “” in the namespace “default”</p>
 </blockquote>
+</li>
+</ol>
 <p>可以看出新建的 Kubeconfig 文件可以使用，写权限是被 forbidden 的，说明前面配的 RBAC 权限机制是起作用的。</p>
 <h3 id="实践：Kubeconfig-或-token-方式登陆-Kubernetes-dashboard"><a href="#实践：Kubeconfig-或-token-方式登陆-Kubernetes-dashboard" class="headerlink" title="实践：Kubeconfig 或 token 方式登陆 Kubernetes dashboard"></a>实践：Kubeconfig 或 token 方式登陆 Kubernetes dashboard</h3><p>我们打开 kubernetes dashboard 访问地址首先看到的是登陆认证页面，有两种登陆认证方式可供选择：Kubeconfig 和 Token 方式<br><img src="/images/k8s-dashboard-login.png" alt=""></p>
 <p>其实两种方式都需要服务账号的 Token，对于 Kubeconfig 方式直接使用集群默认的 Kubeconfig: $HOME/.kube/config 文件不能登陆，因为文件中缺少 Token 字段，所以直接选择本地的 Kubeconfig 文件登陆会报错。正确的使用方法是获取某个服务账号的 Token，然后将 Token 加入到 $HOME/.kube/config 文件。下面具体实践下两种登陆 dashboard 方式：</p>
