@@ -160,8 +160,8 @@ users:
 
 **users 部分**
 多种用户类型，默认是客户端证书（x.509 标准的证书）和证书私钥，也可以是 ServiceAccount Token。这里重点说下前者：
-`client-certificate-data`: base64 加密后的客户端证书；
-`client-key-data`: base64 加密后的证书私钥；
+- `client-certificate-data`: base64 加密后的客户端证书；
+- `client-key-data`: base64 加密后的证书私钥；
 
 一个请求在通过 api-server 的认证关卡后，api-server 会从收到客户端证书中取用户信息，然后用于后面的授权关卡，这里所说的用户并不是服务账号，而是客户端证书里面的 Subject 信息：O 代表用户组，CN 代表用户名。为了证明，可以使用 openssl 手动获取证书中的这个信息：
 首先，将 Kubeconfig 证书的 user 部分 `client-certificate-data` 字段内容进行 base64 解密，保存文件为 client.crt，然后使用 openssl 解析证书信息即可看到 Subject 信息：
@@ -214,8 +214,8 @@ kubectl create clusterrolebinding kubernetes-viewer --clusterrole=view --user=de
 	> cat developer.crt | base64 --wrap=0
 	> cat developer.key | base64 --wrap=0
 
-接下来测试使用新建的 Kubeconfig 文件:
-> [root@master ~]# kubectl --kubeconfig developer-config --context=developer@kubernetes get pod
+	接下来测试使用新建的 Kubeconfig 文件:
+	> [root@master ~]# kubectl --kubeconfig developer-config --context=developer@kubernetes get pod
 NAME                                READY   STATUS    RESTARTS   AGE
 nginx-deployment-5754944d6c-dqsdj   1/1     Running   0          5d9h
 nginx-deployment-5754944d6c-q675s   1/1     Running   0          5d9h
