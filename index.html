@@ -296,6 +296,338 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/26/从-Docker-到-Kubernetes-日志管理机制详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/26/从-Docker-到-Kubernetes-日志管理机制详解/" itemprop="url">从 Docker 到 Kubernetes 日志管理机制详解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-26T09:36:40+08:00">
+                2019-08-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在容器化时代，容器应用的日志管理和传统应用存在很大的区别，为了顺应容器化应用，Docker 和 Kubernetes 提供了一套完美的日志解决方案。本文从 Docker 到 Kubernetes 逐步介绍在容器化时代日志的管理机制，以及在 Kubernetes 平台下有哪些最佳的日志收集方案。涉及到的话题有 Docker 日志管理机制、Kubernetes 日志管理机制、Kubernetes 集群日志收集方案。本文结构如下：</p>
+<ul>
+<li><p>Docker 日志管理机制</p>
+<ul>
+<li>Docker 的日志种类</li>
+<li>基于日志驱动（loging driver）的日志管理机制</li>
+<li>Docker 日志驱动（loging driver）配置</li>
+<li>Docker 默认的日志驱动 <code>json-file</code></li>
+</ul>
+</li>
+<li><p>Kubernetes 日志管理机制</p>
+<ul>
+<li>应用 Pod 日志</li>
+<li>Kuberntes 集群组件日志</li>
+</ul>
+</li>
+<li><p>Kubernetes 集群日志收集方案</p>
+<ul>
+<li>节点级日志代理方案</li>
+<li>sidecar 容器方案</li>
+<li>应用程序直接将日志传输到日志平台</li>
+</ul>
+</li>
+</ul>
+<h3 id="Docker-日志管理机制"><a href="#Docker-日志管理机制" class="headerlink" title="Docker 日志管理机制"></a>Docker 日志管理机制</h3><h4 id="Docker-的日志种类"><a href="#Docker-的日志种类" class="headerlink" title="Docker 的日志种类"></a>Docker 的日志种类</h4><p>在 Docker 中日志分为两大类：</p>
+<ul>
+<li>Docker 引擎日志；</li>
+<li>容器日志；</li>
+</ul>
+<h5 id="Docker-引擎日志"><a href="#Docker-引擎日志" class="headerlink" title="Docker 引擎日志"></a>Docker 引擎日志</h5><p>Docker 引擎日志就是 docker 服务的日志，即 <code>dockerd</code> 守护进程的日志，在支持 Systemd 的系统中可以通过 <code>journal -u docker</code> 查看日志。</p>
+<p><img src="/images/docker-systemd.png" alt=""></p>
+<h5 id="容器日志"><a href="#容器日志" class="headerlink" title="容器日志"></a>容器日志</h5><p>容器日志指的是每个容器打到 stdout 和 stderr 的日志，而不是容器内部的日志文件。docker 管理所有容器打到 stdout 和 stderr 的日志，其他来源的日志不归 docker 管理。我们通过 <code>docker logs</code> 命令查看容器日志都是读取容器打到 stdout 和 stderr 的日志。</p>
+<h4 id="基于日志驱动（loging-driver）的日志管理机制"><a href="#基于日志驱动（loging-driver）的日志管理机制" class="headerlink" title="基于日志驱动（loging driver）的日志管理机制"></a>基于日志驱动（loging driver）的日志管理机制</h4><p>Docker 提供了一套通用、灵活的日志管理机制，Docker 将所有容器打到 stdout 和 stderr 的日志都统一通过日志驱动重定向到某个地方。</p>
+<p>Docker 支持的日志驱动有很多，比如 local、json-file、syslog、journald 等等，类似插件一样，不同的日志驱动可以将日志重定向到不同的地方，这体现了 Docker 日志管理的灵活性，以热插拔的方式实现日志不同目的地的输出。</p>
+<p>Dokcer 默认的日志日志驱动是 <code>json-file</code>，该驱动将将来自容器的 stdout 和 stderr  日志都统一以 <code>json</code> 的形式存储到本地磁盘。日志存储路径格式为：<code>/var/lib/docker/containers/&lt;容器 id&gt;/&lt;容器 id&gt;-json.log</code>。所以可以看出在 <code>json-file</code> 日志驱动下，Docker 将所有容器日志都统一重定向到了 <code>/var/lib/docker/containers/</code> 目录下，这为日志收集提供了很大的便利。</p>
+<blockquote>
+<p>注意：只有日志驱动为：local、json-file 或者 journald 时，<code>docker logs</code> 命令才能查看到容器打到 stdout/stderr 的日志。</p>
+</blockquote>
+<p><img src="/images/docker-logging-arch.png" alt=""></p>
+<p>下面为官方支持的日志驱动列表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">驱动</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">none</td>
+<td style="text-align:left">运行的容器没有日志，<code>docker logs</code> 也不返回任何输出。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/local/" target="_blank" rel="noopener">local</a></td>
+<td style="text-align:left">日志以自定义格式存储，旨在实现最小开销。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/json-file/" target="_blank" rel="noopener">json-file</a></td>
+<td style="text-align:left">日志格式为JSON。Docker的默认日志记录驱动程序。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/syslog/" target="_blank" rel="noopener">syslog</a></td>
+<td style="text-align:left">将日志消息写入syslog。该 syslog 守护程序必须在主机上运行。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/journald/" target="_blank" rel="noopener">journald</a></td>
+<td style="text-align:left">将日志消息写入journald。该journald守护程序必须在主机上运行。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/gelf/" target="_blank" rel="noopener">gelf</a></td>
+<td style="text-align:left">将日志消息写入Graylog扩展日志格式（GELF）端点，例如Graylog或Logstash。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/fluentd/" target="_blank" rel="noopener">fluentd</a></td>
+<td style="text-align:left">将日志消息写入fluentd（转发输入）。该fluentd守护程序必须在主机上运行。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/awslogs/" target="_blank" rel="noopener">awslogs</a></td>
+<td style="text-align:left">将日志消息写入Amazon CloudWatch Logs。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/splunk/" target="_blank" rel="noopener">splunk</a></td>
+<td style="text-align:left">使 用HTTP 事件收集器将日志消息写入 splunk。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/etwlogs/" target="_blank" rel="noopener">etwlogs</a></td>
+<td style="text-align:left">将日志消息写为 Windows 事件跟踪（ETW）事件。仅适用于Windows平台。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/gcplogs/" target="_blank" rel="noopener">gcplogs</a></td>
+<td style="text-align:left">将日志消息写入 Google Cloud Platform（GCP）Logging。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/logentries/" target="_blank" rel="noopener">logentries</a></td>
+<td style="text-align:left">将日志消息写入 Rapid7 Logentries。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Docker-日志驱动（loging-driver）配置"><a href="#Docker-日志驱动（loging-driver）配置" class="headerlink" title="Docker 日志驱动（loging driver）配置"></a>Docker 日志驱动（loging driver）配置</h4><p>上面我们已经知道 Docker 支持多种日志驱动类型，我们可以修改默认的日志驱动配置。日志驱动可以全局配置，也可以给特定容器配置。</p>
+<ul>
+<li><p>查看 Docker 当前的日志驱动配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker  info |grep  <span class="string">"Logging Driver"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看单个容器的设置的日志驱动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect  -f <span class="string">'&#123;&#123;.HostConfig.LogConfig.Type&#125;&#125;'</span>   容器id</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Docker 日志驱动全局配置<br>全局配置意味所有容器都生效，编辑 /etc/docker/daemon.json 文件（如果文件不存在新建一个），添加日志驱动配置。<br>示例：配置 Docker 引擎日志驱动为 <code>syslog</code></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"log-driver"</span>: <span class="string">"syslog"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>给特定容器配置日志驱动<br>在启动容器时指定日志驱动 <code>--log-driver</code> 参数。<br>示例：启动 nginx 容器，日志驱动指定为 journald</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker  run --name nginx -d --<span class="built_in">log</span>-driver journald nginx</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="Docker-默认的日志驱动-json-file"><a href="#Docker-默认的日志驱动-json-file" class="headerlink" title="Docker 默认的日志驱动 json-file"></a>Docker 默认的日志驱动 <code>json-file</code></h4><p>json-file 日志驱动记录所有容器的 STOUT/STDERR 的输出 ，用 JSON 的格式写到文件中，每一条 json 日志中默认包含 <code>log</code>, <code>stream</code>, <code>time</code> 三个字段，示例日志如下：<br>文件路径为：<br><code>/var/lib/docker/containers/40f1851f5eb9e684f0b0db216ea19542529e0a2a2e7d4d8e1d69f3591a573c39/40f1851f5eb9e684f0b0db216ea19542529e0a2a2e7d4d8e1d69f3591a573c39-json.log</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">"log"</span>:<span class="string">"14:C 25 Jul 2019 12:27:04.072 * DB saved on disk\n"</span>,<span class="string">"stream"</span>:<span class="string">"stdout"</span>,<span class="string">"time"</span>:<span class="string">"2019-07-25T12:27:04.072712524Z"</span>&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么打到磁盘的 json 文件该如何配置轮转，防止撑满磁盘呢？每种 Docker 日志驱动都有相应的配置项日志轮转，比如根据单个文件大小和日志文件数量配置轮转。<code>json-file</code> 日志驱动支持的配置选项如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">选项</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">max-size</td>
+<td style="text-align:left">切割之前日志的最大大小。可取值单位为(k,m,g)， 默认为-1（表示无限制）。</td>
+<td style="text-align:left"><code>--log-opt max-size=10m</code></td>
+</tr>
+<tr>
+<td style="text-align:left">max-file</td>
+<td style="text-align:left">可以存在的最大日志文件数。如果切割日志会创建超过阈值的文件数，则会删除最旧的文件。仅在max-size设置时有效。正整数。默认为1。</td>
+<td style="text-align:left"><code>--log-opt max-file=3</code></td>
+</tr>
+<tr>
+<td style="text-align:left">labels</td>
+<td style="text-align:left">适用于启动Docker守护程序时。此守护程序接受的以逗号分隔的与日志记录相关的标签列表。</td>
+<td style="text-align:left"><code>--log-opt labels=production_status,geo</code></td>
+</tr>
+<tr>
+<td style="text-align:left">env</td>
+<td style="text-align:left">适用于启动Docker守护程序时。此守护程序接受的以逗号分隔的与日志记录相关的环境变量列表。</td>
+<td style="text-align:left"><code>--log-opt env=os,customer</code></td>
+</tr>
+<tr>
+<td style="text-align:left">compress</td>
+<td style="text-align:left">切割的日志是否进行压缩。默认是disabled。</td>
+<td style="text-align:left"><code>--log-opt compress=true</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="Kubernetes-日志管理机制"><a href="#Kubernetes-日志管理机制" class="headerlink" title="Kubernetes 日志管理机制"></a>Kubernetes 日志管理机制</h3><p>在 Kubernetes 中日志也主要有两大类：</p>
+<ul>
+<li>应用 Pod 日志；</li>
+<li>Kuberntes 集群组件日志；</li>
+</ul>
+<h5 id="应用-Pod-日志"><a href="#应用-Pod-日志" class="headerlink" title="应用 Pod 日志"></a>应用 Pod 日志</h5><p> Kubernetes Pod 的日志管理是基于 Docker 引擎的，Kubernetes 并不管理日志的轮转策略，日志的存储都是基于 Docker 的日志管理策略。k8s 集群调度的基本单位就是 Pod，而 Pod 是一组容器，所以 k8s 日志管理基于 Docker 引擎这一说法也就不难理解了，最终日志还是要落到一个个容器上面。</p>
+<p><img src="/images/k8s-logging-arch.png" alt=""></p>
+<p>假设 Docker 日志驱动为 <code>json-file</code>，那么在 k8s 每个节点上，kubelet 会为每个容器的日志创建一个软链接，软连接存储路径为：<code>/var/log/containers/</code>，软连接会链接到 <code>/var/log/pods/</code> 目录下相应 pod 目录的容器日志，被链接的日志文件也是软链接，最终链接到 Docker 容器引擎的日志存储目录：<code>/var/lib/docker/container</code> 下相应容器的日志。另外这些软链接文件名称含有 k8s 相关信息，比如：Pod id，名字空间，容器 ID 等信息，这就为日志收集提供了很大的便利。</p>
+<p>举例：我们跟踪一个容器日志文件，证明上述的说明，跟踪一个 kong Pod 日志，Pod 副本数为 1</p>
+<blockquote>
+<p>/var/log/containers/kong-kong-d889cf995-2ntwz_kong_kong-432e47df36d0992a3a8d20ef6912112615ffeb30e6a95c484d15614302f8db03.log<br><code>-------&gt;</code><br>/var/log/pods/kong_kong-kong-d889cf995-2ntwz_a6377053-9ca3-48f9-9f73-49856908b94a/kong/0.log<br><code>-------&gt;</code><br>/var/lib/docker/containers/432e47df36d0992a3a8d20ef6912112615ffeb30e6a95c484d15614302f8db03/432e47df36d0992a3a8d20ef6912112615ffeb30e6a95c484d15614302f8db03-json.log</p>
+</blockquote>
+<p><img src="/images/docker-k8s-logging-arch.png" alt=""></p>
+<h5 id="Kuberntes-集群组件日志"><a href="#Kuberntes-集群组件日志" class="headerlink" title="Kuberntes 集群组件日志"></a>Kuberntes 集群组件日志</h5><p>Kuberntes 集群组件日志分为两类：</p>
+<ul>
+<li>运行在容器中的 Kubernetes scheduler 和 kube-proxy。</li>
+<li>未运行在容器中的 kubelet 和容器 runtime，比如 Docker。</li>
+</ul>
+<p>在使用 systemd 机制的服务器上，kubelet 和容器 runtime 写入日志到 journald。如果没有 systemd，他们写入日志到 /var/log 目录的 .log 文件。容器中的系统组件通常将日志写到 /var/log 目录，在 kubeadm 安装的集群中它们以静态 Pod 的形式运行在集群中，因此日志一般在 <code>/var/log/pods</code> 目录下。</p>
+<h3 id="Kubernetes-集群日志收集方案"><a href="#Kubernetes-集群日志收集方案" class="headerlink" title="Kubernetes 集群日志收集方案"></a>Kubernetes 集群日志收集方案</h3><p> Kubernetes 本身并未提供集群日志收集方案，k8s 官方文档给了三种日志收集的建议方案：</p>
+<ul>
+<li>使用运行在每个节点上的节点级的日志代理</li>
+<li>在应用程序的 pod 中包含专门记录日志 sidecar 容器</li>
+<li>应用程序直接将日志传输到日志平台</li>
+</ul>
+<h4 id="节点级日志代理方案"><a href="#节点级日志代理方案" class="headerlink" title="节点级日志代理方案"></a>节点级日志代理方案</h4><p>从前面的介绍我们已经了解到，k8s 每个节点都将容器日志统一存储到了 <code>/var/log/containers/</code> 目录下，因此可以在每个节点安装一个日志代理，将该目录下的日志实时传输到日志存储平台。</p>
+<p>由于需要每个节点运行一个日志代理，因此日志代理推荐以 DaemonSet 的方式运行在每个节点。官方推荐的日志代理是 fluentd，当然也可以使用其他日志代理，比如 filebeat，logstash 等。</p>
+<p><img src="/images/k8s-logging-arch1.png" alt=""></p>
+<h4 id="sidecar-容器方案"><a href="#sidecar-容器方案" class="headerlink" title="sidecar 容器方案"></a>sidecar 容器方案</h4><p>有两种使用 sidecar 容器的方式：</p>
+<ul>
+<li>sidecar 容器重定向日志流</li>
+<li>sidecar 容器作为日志代理</li>
+</ul>
+<h5 id="sidecar-容器重定向日志流"><a href="#sidecar-容器重定向日志流" class="headerlink" title="sidecar 容器重定向日志流"></a>sidecar 容器重定向日志流</h5><p>这种方式基于节点级日志代理方案，sidecar 容器和应用容器在同一个 Pod 运行，这个容器的作用就是读取应用容器的日志文件，然后将读取的日志内容重定向到 stdout 和 stderr，然后通过节点级日志代理统一收集。这种方式不推荐使用，缺点就是日志重复存储了，导致磁盘使用会成倍增加。比如应用容器的日志本身打到文件存储了一份，sidecar 容器重定向又存储了一份（存储到了 /var/lib/docker/containers/ 目录下）。这种方式的应用场景是应用本身不支持将日志打到 stdout 和 stderr，所以才需要 sidecar 容器重定向下。</p>
+<p><img src="/images/k8s-logging-arch2.png" alt=""></p>
+<h5 id="sidecar-容器作为日志代理"><a href="#sidecar-容器作为日志代理" class="headerlink" title="sidecar 容器作为日志代理"></a>sidecar 容器作为日志代理</h5><p>这种方式不需要节点级日志代理，和应用容器在一起的 sidecar 容器直接作为日志代理方式运行在 Pod 中，sidecar 容器读取应用容器的日志，然后直接实时传输到日志存储平台。很显然这种方式也存在一个缺点，就是每个应用 Pod 都需要有个 sidecar 容器作为日志代理，而日志代理对系统 CPU、和内存都有一定的消耗，在节点 Pod 数很多的时候这个资源消耗其实是不小的。另外还有个问题就是在这种方式下由于应用容器日志不直接打到 stdout 和 stderr，所以是无法使用 <code>kubectl logs</code> 命令查看 Pod 中容器日志。</p>
+<p><img src="/images/k8s-logging-arch3.png" alt=""></p>
+<h4 id="应用程序直接将日志传输到日志平台"><a href="#应用程序直接将日志传输到日志平台" class="headerlink" title="应用程序直接将日志传输到日志平台"></a>应用程序直接将日志传输到日志平台</h4><p>这种方式就是应用程序本身直接将日志打到统一的日志收集平台，比如 Java 应用可以配置日志的 appender，打到不同的地方，很显然这种方式对应用程序有一定的侵入性，而且还要保证日志系统的健壮性，从这个角度看应用和日志系统还有一定的耦合性，所以个人不是很推荐这种方式。</p>
+<p>总结：综合对比上述三种日志收集方案优缺点，更推荐使用节点级日志代理方案，这种方式对应用没有侵入性，而且对系统资源没有额外的消耗，也不影响 kubelet 工具查看 Pod 容器日志。</p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://juejin.im/entry/5c03f8bb5188251ba905741d" target="_blank" rel="noopener">https://juejin.im/entry/5c03f8bb5188251ba905741d</a> | Docker 日志驱动配置<br><a href="https://www.cnblogs.com/operationhome/p/10907591.html" target="_blank" rel="noopener">https://www.cnblogs.com/operationhome/p/10907591.html</a> | Docker容器日志管理最佳实践<br><a href="https://www.cnblogs.com/cocowool/p/Docker_Kubernetes_Log_Location.html" target="_blank" rel="noopener">https://www.cnblogs.com/cocowool/p/Docker_Kubernetes_Log_Location.html</a> | 谈一下Docker与Kubernetes集群的日志和日志管理<br><a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/cluster-administration/logging/</a> | Kubernetes 日志架构</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/22/Kubernetes-集群安全机制详解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1906,168 +2238,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/helm-部署-heapster-组件/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/08/helm-部署-heapster-组件/" itemprop="url">helm 部署 heapster 组件</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-08T12:30:15+08:00">
-                2019-08-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubernetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>之前工作用的 k8s 集群（GKE）都是支持 kubectl top node 查看节点资源使用情况的，最近自己本地新搭的集群发现用不了该命令。网上搜索了下发现是由于缺少集群指标收集组件导致，目前常用的集群指标收集组件是 <a href="https://github.com/kubernetes-retired/heapster" target="_blank" rel="noopener">heapster</a> 和 <a href="https://github.com/kubernetes-incubator/metrics-server/" target="_blank" rel="noopener">metrics-server</a>，看官方介绍 heapster 要逐渐被淘汰了，更推荐 metrics-server。但是为了适配后续要安装的 <a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">kubernetes-dashboard</a>，先使用 heapster 组件。</p>
-<p>heapster 组件是 Kubernetes 官方支持的容器集群监控组件，主要用于收集集群指标数据并存储，收集的数据可以对接可视化图表展示分析，比如 grafana、kubernetes-dashboard。</p>
-<p>除了 <code>kubectl top node</code> 依赖于 heapster 收集的指标，kubernetes-dashboard 也需要 heapster，本文使用 helm 来一键部署 heapster 组件。</p>
-<p>heapster Chart 使用 helm 官方提供的：<a href="https://github.com/helm/charts/tree/master/stable/heapster" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/heapster</a><br>对 values 文件做一些定制：</p>
-<ul>
-<li>使用阿里云镜像仓库，Chart 默认使用 k8s.gcr.io，国内是拉不下来镜像的；</li>
-<li>rbac 服务账号使用 admin，使用默认的 default 账号权限太小，收集指标时报错。</li>
-<li><p>heapster 启动参数 –source 调整成：<code>kubernetes:https://kubernetes.default:443?useServiceAccount=true&amp;kubeletHttps=true&amp;kubeletPort=10250&amp;insecure=true</code>，否则 heapster 会报错：</p>
-<blockquote>
-<p>E0806 22:11:05.017143       1 manager.go:101] Error in scraping containers from kubelet_summary:192.168.26.10:10255: Get <a href="http://192.168.26.10:10255/stats/summary/" target="_blank" rel="noopener">http://192.168.26.10:10255/stats/summary/</a>: dial tcp 192.168.26.10:10255: getsockopt: connection refused</p>
-</blockquote>
-<p>  报错主要原因是 k8s 1.12.0 以后已经取消了 kubelet 10255 端口:</p>
-  <figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">--read-only-port int32    </span></span><br><span class="line"> The read-only <span class="keyword">port</span> <span class="keyword">for</span> the Kubelet <span class="keyword">to</span> serve <span class="keyword">on</span> <span class="keyword">with</span> no authentication/authorization </span><br><span class="line">(set <span class="keyword">to</span> <span class="number">0</span> <span class="keyword">to</span> disable) (<span class="keyword">default</span> <span class="number">10255</span>) (DEPRECATED: </span><br><span class="line">This parameter should be set via the config <span class="keyword">file</span> specified by the Kubelet<span class="symbol">'s</span> <span class="comment">--config flag. </span></span><br><span class="line">See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-<span class="keyword">file</span>/ <span class="keyword">for</span> more information.)</span><br></pre></td></tr></table></figure>
-<p>  详情见：<a href="https://sealyun.com/post/heapster-error/" target="_blank" rel="noopener">https://sealyun.com/post/heapster-error/</a></p>
-</li>
-</ul>
-<p>定制后的 values 文件在这里：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml</a> </p>
-<p>创建集群服务账号：admin，heapster 使用 admin 服务账号，确保有足够权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/some-apiserver-rs/admin-sa.yml</span><br></pre></td></tr></table></figure></p>
-<p>接下来使用 helm 安装部署 heapster：<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/heapster --name heapster -<span class="keyword">f</span> http<span class="variable">s:</span>//raw.githubusercontent.<span class="keyword">com</span>/qhh0205/helm-charts/master/kube-component-<span class="built_in">values</span>/heapster-<span class="built_in">values</span>.yml --namespace kube-<span class="built_in">system</span></span><br></pre></td></tr></table></figure></p>
-<p>heapster 安装完后就可以正常使用 kubectl top node 了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl top node</span></span><br><span class="line">NAME     CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%</span><br><span class="line">master   141m         7%     1096Mi          63%</span><br><span class="line">node1    45m          2%     821Mi           47%</span><br></pre></td></tr></table></figure></p>
-<p>如果 heapster pod 有问题一般会报下面错误：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl top node</span></span><br><span class="line">error: metrics not available yet</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2117,7 +2287,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">111</span>
+                  <span class="site-state-item-count">112</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2139,7 +2309,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

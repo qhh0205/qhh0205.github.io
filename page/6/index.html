@@ -296,6 +296,148 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/02/Linux-文件与目录管理相关命令总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/02/Linux-文件与目录管理相关命令总结/" itemprop="url">Linux 文件与目录管理相关命令总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-02T10:57:35+08:00">
+                2018-12-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="/images/linux_file_dir_cmd.jpg" alt=""></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/18/Python-解析-Spring-pom-文件获取-jar-包名称/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1009,7 +1151,7 @@
 <h3 id="5-helm-打包"><a href="#5-helm-打包" class="headerlink" title="5. helm 打包"></a>5. helm 打包</h3><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm <span class="keyword">package</span> <span class="title">jenkins</span></span><br></pre></td></tr></table></figure>
 <h3 id="6-重新生成-chart-索引"><a href="#6-重新生成-chart-索引" class="headerlink" title="6. 重新生成 chart 索引"></a>6. 重新生成 chart 索引</h3><figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm repo <span class="keyword">index</span> .</span><br></pre></td></tr></table></figure>
 <h3 id="7-helm-部署"><a href="#7-helm-部署" class="headerlink" title="7. helm 部署"></a>7. helm 部署</h3><figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">helm</span> <span class="comment">install</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">name</span> <span class="comment">jenkins</span> <span class="comment">helm_local_repo/jenkins</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">namespace</span> <span class="comment">jenkins</span></span><br></pre></td></tr></table></figure>
-<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'base64d_str'</span> | base64 -d</span><br></pre></td></tr></table></figure></p>
+<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 'base64d_str' <span class="string">| base64 -d</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA</a></p>
 
           
@@ -1262,8 +1404,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubenetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubenetes</span>
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
                   </a>
                 </span>
 
@@ -1716,153 +1858,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/14/Redis-数据库管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/14/Redis-数据库管理/" itemprop="url">Redis 数据库管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-14T22:45:25+08:00">
-                2018-07-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Redis/" itemprop="url" rel="index">
-                    <span itemprop="name">Redis</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Redis-数据库管理"><a href="#Redis-数据库管理" class="headerlink" title="Redis 数据库管理"></a>Redis 数据库管理</h2><h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><p>Redis 提供了几个面向数据库的操作，分别是 <code>dbsize</code>, <code>select</code>, <code>flushdb/flushall</code>。<br>其实在一个 Redis 实例内部也是有多个数据库的，与 <code>MySQL</code> 等其他关系型数据库不同的是，Redis 内部的数据库使用数字索引来标识，而不是像 <code>MySQL</code> 那样一个实例中的数据库是通过数据库名称来标识。<br>在 Redis 中数据库默认有 <code>16</code> 个，数据库标识分别是 <code>0</code>, <code>1</code>, …, <code>15</code>，我们默认使用的是 <code>0</code> 号数据库，不同数据库之间是隔离的，可以拥有同名的键。</p>
-<p><img src="/images/redis-db.png" alt=""></p>
-<h3 id="各数据库管理命令介绍"><a href="#各数据库管理命令介绍" class="headerlink" title="各数据库管理命令介绍"></a>各数据库管理命令介绍</h3><h4 id="1-dbsize-查看当前数据库-key-的个数"><a href="#1-dbsize-查看当前数据库-key-的个数" class="headerlink" title="1. dbsize 查看当前数据库 key 的个数"></a>1. <code>dbsize</code> 查看当前数据库 key 的个数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> score 99</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; dbsize</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br></pre></td></tr></table></figure>
-<h4 id="2-select-切换数据"><a href="#2-select-切换数据" class="headerlink" title="2. select 切换数据"></a>2. <code>select</code> 切换数据</h4><p><code>select</code> 命令格式为：<code>select index</code>，<code>index</code> 为数据库的标识。举例如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> score 99</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; select 8  // 切换到 8 号数据库</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; get name  //可以看出不同 db 是隔离的</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379[8]&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; get name</span><br><span class="line"><span class="string">"tom"</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="3-flushdb-flushall-清理数据库"><a href="#3-flushdb-flushall-清理数据库" class="headerlink" title="3. flushdb/flushall 清理数据库"></a>3. <code>flushdb/flushall</code> 清理数据库</h4><p><code>flushdb</code> 和 <code>flushall</code> 的区别为：<code>flushdb</code> 清空当前数据库，而 <code>flushall</code> 清空所有数据库。举例如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379&gt; select 8</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379[8]&gt; flushdb</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br><span class="line">127.0.0.1:6379[8]&gt; select 0</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379&gt; flushall</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br></pre></td></tr></table></figure></p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>目前 Redis 对多数据库的支持开始弱化了，因为 Redis 是单线程架构，同一时间只有一个 <code>CPU</code> 为 Redis 服务，多个数据库同时存在不仅不会利用系统的多核优势，反而会由于单实例资源共享问题互相会有影响，导致出现问题时排错非常困难，Redis 实例如果一旦阻塞，那么所有的数据库都会受到影响。所以这是一个很鸡肋的功能，Redis 官方对其支持也在逐步弱化。<br>更合理的方式是一台机器启动多个 Redis 实例，互相隔离，充分利用 <code>CPU</code> 的多核优势。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1912,7 +1907,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">111</span>
+                  <span class="site-state-item-count">112</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1934,7 +1929,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

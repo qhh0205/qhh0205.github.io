@@ -296,6 +296,155 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/16/GitHub设置fork仓库和原始仓库同步/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/16/GitHub设置fork仓库和原始仓库同步/" itemprop="url">GitHub设置fork仓库和原始仓库同步</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-16T13:53:13+08:00">
+                2018-02-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>最近fork了一个翻译项目<a href="https://github.com/LCTT/TranslateProject" target="_blank" rel="noopener">Linux中国翻译项目(LCTT)</a>，准备用自己的业余时间为社区贡献点自己的力量，发现这个原始仓库比较活跃，经常出现fork仓库比原始仓库落后的情况：<br><img src="/images/github-sync1.png" alt=""><br>可以看出该仓库已经落后30个提交了，因此，为了避免长时间不同步原始仓库导致后面的PR可能发生冲突等其它问题，需要手动定期同步下fork仓库。</p>
+<h4 id="配置fork仓库和原始-上游-仓库同步"><a href="#配置fork仓库和原始-上游-仓库同步" class="headerlink" title="配置fork仓库和原始(上游)仓库同步"></a>配置fork仓库和原始(上游)仓库同步</h4><p>下面配置该<a href="https://github.com/qianghaohao/TranslateProject" target="_blank" rel="noopener">fork仓库</a>和<a href="https://github.com/LCTT/TranslateProject" target="_blank" rel="noopener">原始仓库</a>的同步：<br>1.本地fork仓库配置upstream地址<br>默认情况下clone的仓库只有两个远程地址，用来fetch和push时使用：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git remote -v</span><br><span class="line">origin	github:qianghaohao/TranslateProject<span class="selector-class">.git</span> (fetch)</span><br><span class="line">origin	github:qianghaohao/TranslateProject<span class="selector-class">.git</span> (push)</span><br></pre></td></tr></table></figure></p>
+<p>为了和原始(上游)仓库同步，我们还需要为该仓库配一个upstream地址，用来同步时使用，配置方法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># git remote add upstream后面添加要同步的原始仓库地址</span></span><br><span class="line">git remote add upstream git@github.com:LCTT/TranslateProject.git</span><br><span class="line"><span class="comment"># 重新查看远程仓库配置，发现upstream已经配置成功</span></span><br><span class="line">git remote -v</span><br><span class="line">origin	github:qianghaohao/TranslateProject.git (fetch)</span><br><span class="line">origin	github:qianghaohao/TranslateProject.git (push)</span><br><span class="line">upstream	git@github.com:LCTT/TranslateProject.git (fetch)</span><br><span class="line">upstream	git@github.com:LCTT/TranslateProject.git (push)</span><br></pre></td></tr></table></figure></p>
+<p>2.从上游分支fetch最新更改<br>本示例仓库只有一个master分支，所以在这里只同步下master分支。fetch后会将该分支的上游更新存储到新的本地分支upstream/master：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可以看出fetch后在本地生成了新的本地分支：upstream/master</span></span><br><span class="line">$ git fetch upstream</span><br><span class="line">remote: Counting objects: 139, <span class="keyword">done</span>.</span><br><span class="line">remote: Compressing objects: 100% (4/4), <span class="keyword">done</span>.</span><br><span class="line">remote: Total 139 (delta 73), reused 73 (delta 73), pack-reused 62</span><br><span class="line">Receiving objects: 100% (139/139), 58.17 KiB | 5.00 KiB/s, <span class="keyword">done</span>.</span><br><span class="line">Resolving deltas: 100% (73/73), completed with 17 <span class="built_in">local</span> objects.</span><br><span class="line">From github.com:LCTT/TranslateProject</span><br><span class="line"> * [new branch]      master     -&gt; upstream/master</span><br></pre></td></tr></table></figure></p>
+<p>3.合并上一步本地fetch得到的分支到本地相应分支<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ git merge upstream/master</span><br><span class="line">Updating db2c3cc..0175778</span><br><span class="line">Fast-forward</span><br><span class="line"> published/20171016 Using the Linux find <span class="built_in">command</span> with caution.md                             |  97 ++++++++++++++++++</span><br><span class="line"> published/20171117 How to Install and Use Docker on Linux.md                                | 165 +++++++++++++++++++++++++++++++</span><br><span class="line"> published/20171228 Dual Boot Ubuntu And Arch Linux.md                                       | 422 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><br><span class="line"> published/20180118 Getting Started with ncurses.md                                          | 197 ++++++++++++++++++++++++++++++++++++</span><br><span class="line"> published/20180202 Which Linux Kernel Version Is Stable.md                                  |  59 +++++++++++</span><br><span class="line"> &#123;translated/tech =&gt; published&#125;/20180206 Save Some Battery On Our Linux Machines With TLP.md |  24 ++---</span><br><span class="line"> sources/talk/20180214 How to Encrypt Files with Tomb on Ubuntu 16.04 LTS.md                 |   4 +-</span><br></pre></td></tr></table></figure></p>
+<p>4.push合并后的修改到<a href="https://github.com/qianghaohao/TranslateProject" target="_blank" rel="noopener">远程fork仓库</a>，完成同步<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ git push</span><br><span class="line">Counting objects: 139, <span class="keyword">done</span>.</span><br><span class="line">Delta compression using up to 8 threads.</span><br><span class="line">Compressing objects: 100% (77/77), <span class="keyword">done</span>.</span><br><span class="line">Writing objects: 100% (139/139), 51.50 KiB | 0 bytes/s, <span class="keyword">done</span>.</span><br><span class="line">Total 139 (delta 69), reused 126 (delta 62)</span><br><span class="line">remote: Resolving deltas: 100% (69/69), completed with 12 <span class="built_in">local</span> objects.</span><br><span class="line">To github:qianghaohao/TranslateProject.git</span><br><span class="line">   db2c3cc..0175778  master -&gt; master</span><br></pre></td></tr></table></figure></p>
+<p>可以看出<a href="https://github.com/qianghaohao/TranslateProject" target="_blank" rel="noopener">远程fork仓库</a>已经是最新的，和<a href="https://github.com/LCTT/TranslateProject" target="_blank" rel="noopener">原始仓库</a>保持一致：<br><img src="/images/github-sync2.png" alt=""></p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://help.github.com/articles/syncing-a-fork/" target="_blank" rel="noopener">https://help.github.com/articles/syncing-a-fork/</a><br><a href="http://wiki.jikexueyuan.com/project/github-basics/fork-synced.html" target="_blank" rel="noopener">http://wiki.jikexueyuan.com/project/github-basics/fork-synced.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/10/解决进程文件句柄泄露导致磁盘空间无法释放问题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1652,399 +1801,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/23/Linux进程管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/23/Linux进程管理/" itemprop="url">Linux进程管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-23T16:13:37+08:00">
-                2017-12-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="进程的查看"><a href="#进程的查看" class="headerlink" title="进程的查看"></a>进程的查看</h3><h4 id="ps-将某个时间点的进程运行情况打印出来"><a href="#ps-将某个时间点的进程运行情况打印出来" class="headerlink" title="ps: 将某个时间点的进程运行情况打印出来"></a>ps: 将某个时间点的进程运行情况打印出来</h4><ul>
-<li>ps aux 查看系统所有的进程(BSD语法)</li>
-<li>ps -lA(e) 较详细地查看系统所有进程(标准语法)</li>
-<li>ps axjf 打印出系统所有进程，以进程树的方式打印出来</li>
-</ul>
-<blockquote>
-<p>参数说明:</p>
-<ul>
-<li>-A 所有进程都显示出来，与-e(every)具有同样的作用；</li>
-<li>-a 不与terminal有关的所有进程；</li>
-<li>-u 有效用户相关的进程；</li>
-<li>-x 通常与-a这个参数一起用，可列出较完整的信息；</li>
-<li>-p 通过指定的pid查看某个进程的信息；</li>
-</ul>
-<p>输出格式控制：</p>
-<ul>
-<li>-l(long format) 通常与-y选项一起使用；</li>
-<li>-j(job format) 工作格式；</li>
-<li>-f(full format) 做一个更为完整的输出，当和-L参数一起使用时，NLWP(number of threads)和LWP(thread ID)列会被添加；</li>
-</ul>
-</blockquote>
-<h4 id="仅查看当前登录bash相关的进程-ps-l"><a href="#仅查看当前登录bash相关的进程-ps-l" class="headerlink" title="仅查看当前登录bash相关的进程: ps -l"></a>仅查看当前登录bash相关的进程: ps -l</h4><p>我们知道，当我们登录进行linux系统后，后续所有命令行的执行(即启动新的进程)都是当前bash进程的子进程，要想查看当前bash相关的进程可以用ps -l命令。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps -l</span></span><br><span class="line">F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD</span><br><span class="line">4 S     0 18313 18311  0  80   0 - 28878 <span class="built_in">wait</span>   pts/2    00:00:00 bash</span><br><span class="line">0 R     0 18331 18313  0  80   0 - 37233 -      pts/2    00:00:00 ps</span><br></pre></td></tr></table></figure></p>
-<p>输出结果说明：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">F</th>
-<th style="text-align:center">S</th>
-<th style="text-align:center">UID</th>
-<th style="text-align:center">PID</th>
-<th style="text-align:center">PPID</th>
-<th style="text-align:center">C</th>
-<th style="text-align:center">PRI</th>
-<th style="text-align:center">NI</th>
-<th style="text-align:center">ADDR</th>
-<th style="text-align:center">SZ</th>
-<th style="text-align:center">WCHAN</th>
-<th style="text-align:center">TTY</th>
-<th style="text-align:center">TIME</th>
-<th style="text-align:center">CMD</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">进程标志，说明进程的权限，如果为4，表示此进程的权限为root</td>
-<td style="text-align:center">进程运行状态</td>
-<td style="text-align:center">进程的UID</td>
-<td style="text-align:center">进程ID</td>
-<td style="text-align:center">父进程ID</td>
-<td style="text-align:center">CPU使用率，单位为百分比</td>
-<td style="text-align:center">进程被CPU执行的优先级，数值越小越快被CPU执行</td>
-<td style="text-align:center">进程Nice值</td>
-<td style="text-align:center">进程在内存中的地址，如果是running，会显示’-‘</td>
-<td style="text-align:center">进程使用的内存大小</td>
-<td style="text-align:center">进程是否在运行,若为’-‘则表示正在运行中</td>
-<td style="text-align:center">登录者的终端机位置，若为远程登录则使用动态终端接口(pts/n)</td>
-<td style="text-align:center">使用掉的CPU时间</td>
-<td style="text-align:center">启动该进程的命令行</td>
-</tr>
-</tbody>
-</table>
-<h4 id="查看系统所有进程-ps-aux"><a href="#查看系统所有进程-ps-aux" class="headerlink" title="查看系统所有进程: ps aux"></a>查看系统所有进程: ps aux</h4><p>默认情况下，ps aux显示的进程是以PID号由小到大排序列出来。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps aux</span></span><br><span class="line">USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">root         1  0.0  0.3 125188  3368 ?        Ss   Oct15   1:08 /usr/lib/systemd/systemd --switched-root --system --deserialize 21</span><br><span class="line">root         2  0.0  0.0      0     0 ?        S    Oct15   0:00 [kthreadd]</span><br><span class="line">root         3  0.0  0.0      0     0 ?        S    Oct15   1:05 [ksoftirqd/0]</span><br><span class="line">root         5  0.0  0.0      0     0 ?        S&lt;   Oct15   0:00 [kworker/0:0H]</span><br><span class="line">root         7  0.0  0.0      0     0 ?        S    Oct15   0:00 [migration/0]</span><br><span class="line">root         8  0.0  0.0      0     0 ?        S    Oct15   0:00 [rcu_bh]</span><br><span class="line">root         9  0.0  0.0      0     0 ?        R    Oct15   4:25 [rcu_sched]</span><br><span class="line">root        10  0.0  0.0      0     0 ?        S    Oct15   0:27 [watchdog/0]</span><br><span class="line">root        12  0.0  0.0      0     0 ?        S    Oct15   0:00 [kdevtmpfs]</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>USER：该进程属于哪个账号的<br>PID：进程ID号<br>%CPU：进程使用CPU资源百分比<br>%MEM：进程占用物理内存百分比<br>VSZ：进程占用虚拟内存量（KB）<br>RSS：进程占用物理内存量（KB）<br>TTY：进程所在的终端接口，若与终端机无关，则显示？，另外tty1～tty6表示本机登陆接口，若为pts/n，则表示远程连接产生的进程<br>STAT：进程目前的状态<br>START：进程启动时间<br>TIME：进程实际使用CPU运行的时间<br>COMMAND：触发进程的命令行</p>
-</blockquote>
-<h4 id="找出系统中所有的僵尸进程-ps-aux-grep-‘defunct’"><a href="#找出系统中所有的僵尸进程-ps-aux-grep-‘defunct’" class="headerlink" title="找出系统中所有的僵尸进程: ps aux | grep ‘defunct’"></a>找出系统中所有的僵尸进程: ps aux | grep ‘defunct’</h4><p>一个进程fork创建子进程，如果子进程退出，而父进程没有调用wait或waitpid获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中，这中进程称之为僵尸进程。僵尸进程在ps aux命令显示中状态是Z，而且在CMD后面会有<figure class="highlight plain"><figcaption><span>aux|grep 'defunct'```来查看系统中所有的僵尸进程：</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">```bash</span><br><span class="line">[root@vps ~]$ ps aux | grep defunct</span><br><span class="line">root  3419  0.0  0.0      0     0 ?        Zs   Oct24   0:00 [sh] &lt;defunct&gt;</span><br><span class="line">root  5468  0.0  0.0      0     0 ?        Z    Apr11   0:00 [sh] &lt;defunct&gt;</span><br><span class="line">root  7655  0.0  0.0      0     0 ?        Z    Apr07   0:00 [sh] &lt;defunct&gt;</span><br><span class="line">root  8542  0.0  0.0      0     0 ?        Zs   Oct23   0:00 [sh] &lt;defunct&gt;</span><br><span class="line">root  9188  0.0  0.0      0     0 ?        Z    Apr07   0:00 [sh] &lt;defunct&gt;</span><br><span class="line">root 14906  0.0  0.0      0     0 ?        Zs   Dec15   0:00 [sh] &lt;defunct&gt;</span><br><span class="line">root 21702  0.0  0.0      0     0 ?        Z    Apr18   0:00 [sh] &lt;defunct&gt;</span><br><span class="line">root 22620  0.0  0.0      0     0 ?        Z    May18   0:00 [sh] &lt;defunct&gt;</span><br><span class="line">root 23905  0.0  0.0 112652   972 pts/0    R+   08:49   0:00 grep --color=auto defunct</span><br></pre></td></tr></table></figure></p>
-<p>有关僵尸进程及孤儿进程的更多深入的理解，请参考这篇<a href="https://www.cnblogs.com/Anker/p/3271773.html" target="_blank" rel="noopener">文章</a></p>
-<h4 id="显示所需要的列-ps-OPTIONS-o-parm1-parm2-parm3-…"><a href="#显示所需要的列-ps-OPTIONS-o-parm1-parm2-parm3-…" class="headerlink" title="显示所需要的列: ps [OPTIONS] -o parm1,parm2,parm3 …"></a>显示所需要的列: ps [OPTIONS] -o parm1,parm2,parm3 …</h4><p>一般用ps -ef或者ps  aux显示出来的信息比较全，大多信息没什么用处，可以使用-o选项来控制想要输出的列。在ps的man page的<strong>STANDARD FORMAT SPECIFIERS</strong>章节可以查看其他支持的信息。</p>
-<blockquote>
-<p>-o参数以逗号(,)作为定界符号。逗号与它分隔的参数直接是没有空格的。在大多数情况下，选项-o都是和-e选项结合使用的(-eo)，因为需要它列出运行在系统中的每一个进程。但是如果-o需要使用某些过滤器，例如列出特定用户拥有的进程，那么就不在使用-e。-e和过滤器结果使用没有任何实际效果，依旧会显示所有进程。</p>
-</blockquote>
-<p>-o参数支持的参数非常多，可以通过man ps查看<strong>STANDARD FORMAT SPECIFIERS</strong>章节完整的参数及说明，以下列出常用参数：</p>
-<ul>
-<li>pcpu：CPU占用率，直接写成%cpu也可以；</li>
-<li>pmem：物理内存占用率，直接写成%mem也可以；</li>
-<li>pid：进程ID；</li>
-<li>ppid：父进程ID；</li>
-<li>comm：可执行文件名；</li>
-<li>user：启动进程的用户；</li>
-<li>nice优先级；</li>
-<li>time：累计的CPU时间，格式为[DD-]HH:MM:SS，也是ps -ef默认的输出列；</li>
-<li>etime(elapsed time)：进程自启动开始到现在的时间花费，格式为[[DD-]hh:]mm:ss；</li>
-<li>etimes(elapsed times)：进程自启动开始到现在的时间花费，时间单位为秒；</li>
-<li>tty：所关联的TTY设备；</li>
-<li>euid：有效用户ID；</li>
-<li>stat：进程状态；</li>
-<li>rss：进程使用物理内存大小，与rsz等同，单位为KB；</li>
-<li>vsz：进程使用虚拟内存大小，单位为KB；</li>
-<li>start：进程启动的时间，如果进程启动时间小于24小时，那么输出格式为”HH:MM:SS”，否则格式为”Mmm dd”，Mmm代表月份三个字符的缩写，也是ps -ef及ps aux的默认输出列；</li>
-<li>lstart：进程启动的准确时间点，这个参数比较有用，因为start参数并不能够查看进程准确的启动时间；</li>
-</ul>
-<p>示例：</p>
-<ol>
-<li><p>打印出前10个进程的<em>pid，ppid，cpu使用率，内存使用率，物理内存占用大小，虚拟内存占用大小，进程自启动开始到现在的时间花费，进程启动的准确时间</em>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps -eo pid,ppid,pcpu,pmem,rss,vsz,etime,lstart | head</span></span><br><span class="line">  PID  PPID %CPU %MEM   RSS    VSZ     ELAPSED                  STARTED</span><br><span class="line">    1     0  0.0  0.3  3368 125188 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br><span class="line">    2     0  0.0  0.0     0      0 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br><span class="line">    3     2  0.0  0.0     0      0 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br><span class="line">    5     2  0.0  0.0     0      0 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br><span class="line">    7     2  0.0  0.0     0      0 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br><span class="line">    8     2  0.0  0.0     0      0 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br><span class="line">    9     2  0.0  0.0     0      0 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br><span class="line">   10     2  0.0  0.0     0      0 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br><span class="line">   12     2  0.0  0.0     0      0 76-22:32:34 Sun Oct 15 15:21:14 2017</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查看ID号为1的进程的<em>pid，准确启动时间，命令行</em>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps -p 1 -o pid,lstart,comm</span></span><br><span class="line">  PID                  STARTED COMMAND</span><br><span class="line">    1 Sun Oct 15 15:21:14 2017 systemd</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="根据参数对ps输出进行排序-ps-OPTIONS-–sort-parm1-parm2"><a href="#根据参数对ps输出进行排序-ps-OPTIONS-–sort-parm1-parm2" class="headerlink" title="根据参数对ps输出进行排序: ps [OPTIONS] –sort  -parm1,+parm2 .."></a>根据参数对ps输出进行排序: ps [OPTIONS] –sort  -parm1,+parm2 ..</h4><p>可以用–sort将ps命令的输出根据特定的列进行排序。在参数前加上+(升序)或-(降序)来指定排序方式。<br>示例：</p>
-<ol>
-<li><p>列出占用物理内存最多的4个进程(降序排列)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps aux --sort -rss | head -n 5</span></span><br><span class="line">USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">root       328  0.0 11.5 197000 117788 ?       Ss   Oct15   1:12 /usr/lib/systemd/systemd-journald</span><br><span class="line">root       805  0.0  6.2 479552 63624 ?        Ssl  Oct15   0:23 /usr/sbin/rsyslogd -n</span><br><span class="line">root     19365  0.0  3.5 622728 36580 ?        Ssl  Dec16  16:47 /usr/bin/dockerd</span><br><span class="line">root     15785  0.1  1.3 128404 13724 ?        Ssl  Dec29   5:21 /usr/<span class="built_in">local</span>/aegis/aegis_client/aegis_10_39/AliYunDun</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>列出占用CPU最多的4个进程(降序排列)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps aux --sort -pcpu | head -n 5</span></span><br><span class="line">USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">root     15785  0.1  1.3 128404 13724 ?        Ssl  Dec29   5:22 /usr/<span class="built_in">local</span>/aegis/aegis_client/aegis_10_39/AliYunDun</span><br><span class="line">root         1  0.0  0.3 125188  3368 ?        Ss   Oct15   1:09 /usr/lib/systemd/systemd --switched-root --system --deserialize 21</span><br><span class="line">root         2  0.0  0.0      0     0 ?        S    Oct15   0:00 [kthreadd]</span><br><span class="line">root         3  0.0  0.0      0     0 ?        S    Oct15   1:05 [ksoftirqd/0]</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="根据进程名获取进程的ID列表：pgrep-COMMAND"><a href="#根据进程名获取进程的ID列表：pgrep-COMMAND" class="headerlink" title="根据进程名获取进程的ID列表：pgrep COMMAND"></a>根据进程名获取进程的ID列表：pgrep COMMAND</h4><p>一般我们可以使用ps aux | grep COMMAND来获取名字为COMMAND的进程ID，但是还有一个更加简单的pgrep来获取指定名字的进程ID，pgrep后面跟的进程名可以是完整名称的一部分，与grep匹配功能一样。<br>示例：</p>
-<ol>
-<li><p>找出所有和php有关的进程ID：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># pgrep "php"</span></span><br><span class="line">19908</span><br><span class="line">19909</span><br><span class="line">19910</span><br><span class="line">19911</span><br><span class="line">19912</span><br><span class="line">19913</span><br><span class="line">19914</span><br><span class="line">19915</span><br><span class="line">20056</span><br><span class="line">20057</span><br><span class="line">20060</span><br><span class="line">20061</span><br><span class="line">20062</span><br><span class="line">20063</span><br><span class="line">20064</span><br><span class="line">20065</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>指定PID输出的分隔符，默认为换行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># pgrep "php" -d ':'</span></span><br><span class="line">19908:19909:19910:19911:19912:19913:19914:19915:20056:20057:20060:20061:20062:20063:20064:20065</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>返回匹配进程的数量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># pgrep -c "php"</span></span><br><span class="line">16</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>指定进程的用户列表：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># pgrep -u root "rsyslogd"</span></span><br><span class="line">805</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="使用ps过滤输出信息：ps-u-U"><a href="#使用ps过滤输出信息：ps-u-U" class="headerlink" title="使用ps过滤输出信息：ps -u/-U"></a>使用ps过滤输出信息：ps -u/-U</h4><ul>
-<li>-u euser1，euser2… 指定有效用户列表；</li>
-<li>-U ruser1，ruser2… 指定真是用户列表；<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps -u root -U root -o user,pmem,pcpu | wc -l</span></span><br><span class="line">76</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查询线程相关信息"><a href="#查询线程相关信息" class="headerlink" title="查询线程相关信息"></a>查询线程相关信息</h4><p>通常线程相关的信息在ps输出中是看不到的。我们可以用选项-L在ps输出中显示线程相关的信息。这会多显示两列：LWP(lightweight process)和NLWP。LWP列是线程ID，NLWP是进程的线程数量。<br>示例：</p>
-<ol>
-<li><p>查看线程数量最多的进程：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps -efL --sort -nlwp | head</span></span><br><span class="line">UID        PID  PPID   LWP  C NLWP STIME TTY          TIME CMD</span><br><span class="line">root     19365     1 19365  0   15 Dec16 ?        00:02:24 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19367  0   15 Dec16 ?        00:01:27 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19368  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19369  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19373  0   15 Dec16 ?        00:01:14 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19375  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19378  0   15 Dec16 ?        00:01:14 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19379  0   15 Dec16 ?        00:02:40 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19382  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查看指定进程ID的所有线程：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps -p 19365 -fL</span></span><br><span class="line">UID        PID  PPID   LWP  C NLWP STIME TTY          TIME CMD</span><br><span class="line">root     19365     1 19365  0   15 Dec16 ?        00:02:24 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19367  0   15 Dec16 ?        00:01:27 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19368  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19369  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19373  0   15 Dec16 ?        00:01:14 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19375  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19378  0   15 Dec16 ?        00:01:14 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19379  0   15 Dec16 ?        00:02:40 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19382  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19383  0   15 Dec16 ?        00:04:27 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19384  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19831  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19833  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19976  0   15 Dec16 ?        00:00:00 /usr/bin/dockerd</span><br><span class="line">root     19365     1 19978  0   15 Dec16 ?        00:03:21 /usr/bin/dockerd</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="查看进程的环境变量"><a href="#查看进程的环境变量" class="headerlink" title="查看进程的环境变量"></a>查看进程的环境变量</h4><p>使用ps的e参数(注意前面没有’-‘符号)可以在输出中查看该进程的环境变量，如果进程有依赖的环境变量，那么会在command列后面把该进程的环境变量也列出来。<br>示例：</p>
-<ol>
-<li><p>列出进程的同时列出进程依赖的环境变量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 由于进程比较多，这里只展示一部分</span></span><br><span class="line">[root@vps ~]<span class="comment"># ps -e e</span></span><br><span class="line">  PID TTY      STAT   TIME COMMAND</span><br><span class="line">19840 ?        S      0:08 nginx: worker process</span><br><span class="line">19854 ?        Ss     0:56 lighttpd -D -f /etc/lighttpd/lighttpd.conf PATH=/usr/<span class="built_in">local</span>/sbin:/usr/<span class="built_in">local</span>/bin:/usr/sbin:/usr/bin:/sbin:/bin HOSTNAME=fe07006691c1 HOME=/var/www/localhost/htdocs</span><br><span class="line">19908 ?        Ss     0:00 /usr/bin/php-cgi PATH=/usr/<span class="built_in">local</span>/sbin:/usr/<span class="built_in">local</span>/bin:/usr/sbin:/usr/bin:/sbin:/bin HOSTNAME=fe07006691c1 HOME=/var/www/localhost/htdocs PHP_FCGI_CHILDREN=1</span><br><span class="line">19909 ?        Ss     0:00 /usr/bin/php-cgi PATH=/usr/<span class="built_in">local</span>/sbin:/usr/<span class="built_in">local</span>/bin:/usr/sbin:/usr/bin:/sbin:/bin HOSTNAME=fe07006691c1 HOME=/var/www/localhost/htdocs PHP_FCGI_CHILDREN=1</span><br><span class="line">19910 ?        S      0:00 /usr/bin/php-cgi PATH=/usr/<span class="built_in">local</span>/sbin:/usr/<span class="built_in">local</span>/bin:/usr/sbin:/usr/bin:/sbin:/bin HOSTNAME=fe07006691c1 HOME=/var/www/localhost/htdocs PHP_FCGI_CHILDREN=1</span><br><span class="line">19911 ?        S      0:00 /usr/bin/php-cgi PATH=/usr/<span class="built_in">local</span>/sbin:/usr/<span class="built_in">local</span>/bin:/usr/sbin:/usr/bin:/sbin:/bin HOSTNAME=fe07006691c1 HOME=/var/www/localhost/htdocs PHP_FCGI_CHILDREN=1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查看指定进程ID的环境变量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ps -p 19908 -f e</span></span><br><span class="line">UID        PID  PPID  C STIME TTY      STAT   TIME CMD</span><br><span class="line">100      19908 19854  0 Dec16 ?        Ss     0:00 /usr/bin/php-cgi PATH=/usr/<span class="built_in">local</span>/sbin:/usr/<span class="built_in">local</span>/bin:/usr/sbin:/usr/bin:/sbin:/bin HOSTNAME=fe07006691c1 HOME=/var/www/localhost/htdocs PHP_FCGI_CHILDREN=1</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="动态查看进程的变化：top"><a href="#动态查看进程的变化：top" class="headerlink" title="动态查看进程的变化：top"></a>动态查看进程的变化：top</h4><p>top [-d 数字]  | top [-bnp]</p>
-<blockquote>
-<p>参数：</p>
-<ul>
-<li>-d：top界面刷新时间间隔，单位为秒，默认是3s；</li>
-<li>-b：已批量模式启动top，一般和-n参数一起使用，将输出结果发送到其他程序或者重定向到文件；</li>
-<li>-n：与-b搭配，指定top刷新次数；</li>
-<li>-p：查看指定进程资源的使用；</li>
-</ul>
-<p>在top执行过程中可以使用的按键命令：</p>
-<ul>
-<li>?：显示在top当中可以输入的按键命令；</li>
-<li>P：以CPU的使用资源排序(从大到小)显示；</li>
-<li>M：以内存的使用资源(物理内存)排序(从大到小)显示；</li>
-<li>N：以PID来排序(从大到小)；</li>
-<li>T：以进程累计使用CPU时间来排序(从大到小)；</li>
-<li>k：给予某个PID一个信号；</li>
-<li>r(renice)：给某个PID重新指定一个nice值；</li>
-<li>q：退出top；</li>
-</ul>
-</blockquote>
-<p>1.每秒更新一次top：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># top -d 1</span></span><br><span class="line">top - 12:39:45 up 77 days, 21:18,  1 user,  load average: 0.00, 0.01, 0.05</span><br><span class="line">Tasks:  96 total,   1 running,  95 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  0.5 us,  0.2 sy,  0.0 ni, 99.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  1016396 total,    75168 free,   155720 used,   785508 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used.   676128 avail Mem </span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND                                                                  1 root      20   0  125188   3368   2036 S  0.0  0.3   1:09.72 systemd                                                                  2 root      20   0       0      0      0 S  0.0  0.0   0:00.91 kthreadd</span><br></pre></td></tr></table></figure></p>
-<p>输出结果说明：</p>
-<ul>
-<li>第一行：<ul>
-<li>当前时间为12:39:45；</li>
-<li>服务器自开机到当前所经过的时间为77天21个小时18分；</li>
-<li>目前登陆系统的用户人数为1；</li>
-<li>系统在过去1，5，15分钟的平均负载；</li>
-</ul>
-</li>
-<li>第二行：<br>目前系统总共有96个进程，一个处于running状态，95个处于sleeping状态，0个sotped，0个僵尸进程；</li>
-<li>第三行：<br>当前系统CPU的整体使用情况：<ul>
-<li>0.5 us(user)：运行用户进程(未调整优先级的)所占用的CPU百分比；</li>
-<li>0.2 sy(system)：运行系统内核进程所占用的CPU百分比；</li>
-<li>0.0 ni(nice)：运行用户进程(已经调整优先级的)所占用的CPU百分比；</li>
-<li>99.3 id(idle)：目前空闲CPU百分比；</li>
-<li>0.0 wa(wait)：用于等待IO完成所占的CPU百分比；</li>
-<li>0.0 hi(hard interrupt)：处理硬件中断所占CPU百分比；</li>
-<li>0.0 si(soft interrupt)：处理软件中断所占CPU百分比；</li>
-<li>0.0 st(steal)：虚拟机被hypervisor偷去的CPU百分比；</li>
-</ul>
-</li>
-<li>第四行和第五行：<br>物理内存及虚拟内存的使用情况；</li>
-<li>第六行：<br>在top中输入按键命令时的状态显示栏；</li>
-<li>PID：进程ID；</li>
-<li>USER：进程的拥有者；</li>
-<li>PR：Priority的缩写，进程优先执行顺序，数值越小越优先；</li>
-<li>NI：Nice的缩写，与Priority有关，也是数值越小越优先；</li>
-<li>VIRT：进程使用虚拟内存大小；</li>
-<li>RES：进程使用物理内存大小；</li>
-<li>SHR：进程使用共享内存大小；</li>
-<li>S：进程状态<ul>
-<li>D - 不可中断的睡眠态；</li>
-<li>R - 运行态；</li>
-<li>S - 睡眠态；</li>
-<li>T - 可被跟踪或已停止；</li>
-<li>Z - 僵尸态；</li>
-</ul>
-</li>
-<li>%CPU：CPU使用率；</li>
-<li>%MEM：内存使用率；</li>
-<li>TIME+：任务启动后到现在所使用的CPU累计时间，精确到百分之一秒；</li>
-<li>COMMAND：运行进程的命令；</li>
-</ul>
-<p>2.将top的结果输出到文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># top -b -n 1 &gt; tmp.txt</span></span><br></pre></td></tr></table></figure></p>
-<p>3.查看指定进程ID的资源使用情况：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># top -p 328</span></span><br><span class="line">top - 13:49:12 up 77 days, 22:27,  3 users,  load average: 0.00, 0.01, 0.05</span><br><span class="line">Tasks:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  0.7 us,  0.3 sy,  0.0 ni, 99.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  1016396 total,    70508 free,   160188 used,   785700 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used.   671588 avail Mem </span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND                                                                328 root      20   0  205192 119256 118896 S  0.0 11.7   1:13.09 systemd-journal</span><br></pre></td></tr></table></figure></p>
-<h4 id="查看进程树：pstree"><a href="#查看进程树：pstree" class="headerlink" title="查看进程树：pstree"></a>查看进程树：pstree</h4><p>如果需要查看进程之间的关系，可以使用pstree命令查看进程树，进程树以树状的形式显示进程之间的关系，每个节点的子节点为子进程。</p>
-<blockquote>
-<p><strong>pstree [-A|U] [-up]</strong><br>参数：</p>
-<ul>
-<li>-A：各进程树之间的连接以ASCII字符连接；</li>
-<li>-U：各进程树之间的连接以utf9字符来连接；</li>
-<li>-p：同时列出进程的PID；</li>
-<li>-u：同时列出进程的用户名称；</li>
-</ul>
-</blockquote>
-<ol>
-<li><p>列出当前系统所有的进程树：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">从输出中可以看出，相同名称的进程并没有展开，而是用数字表示个数</span><br><span class="line">[root@vps ~]<span class="comment"># pstree</span></span><br><span class="line">systemd─┬─AliYunDun───14*[&#123;AliYunDun&#125;]</span><br><span class="line">        ├─AliYunDunUpdate───3*[&#123;AliYunDunUpdate&#125;]</span><br><span class="line">        ├─agetty</span><br><span class="line">        ├─aliyun-service</span><br><span class="line">        ├─atd</span><br><span class="line">        ├─auditd───&#123;auditd&#125;</span><br><span class="line">        ├─crond</span><br><span class="line">        ├─dbus-daemon</span><br><span class="line">        ├─dhclient</span><br><span class="line">        ├─dockerd─┬─docker-containe─┬─docker-containe─┬─nginx───nginx</span><br><span class="line">        │         │                 │                 └─8*[&#123;docker-containe&#125;]</span><br><span class="line">        │         │                 ├─2*[docker-containe─┬─lighttpd───4*[php-cgi───php-cgi]]</span><br><span class="line">        │         │                 │                    └─8*[&#123;docker-containe&#125;]]</span><br><span class="line">        │         │                 ├─docker-containe─┬─entrypoint.sh───ss-server</span><br><span class="line">        │         │                 │                 └─8*[&#123;docker-containe&#125;]</span><br><span class="line">        │         │                 └─12*[&#123;docker-containe&#125;]</span><br><span class="line">        │         ├─4*[docker-proxy───3*[&#123;docker-proxy&#125;]]</span><br><span class="line">        │         ├─docker-proxy───4*[&#123;docker-proxy&#125;]</span><br><span class="line">        │         └─14*[&#123;dockerd&#125;]</span><br><span class="line">        ├─lvmetad</span><br><span class="line">        ├─ntpd</span><br><span class="line">        ├─polkitd───5*[&#123;polkitd&#125;]</span><br><span class="line">        ├─rsyslogd───2*[&#123;rsyslogd&#125;]</span><br><span class="line">        ├─sshd─┬─sshd───bash</span><br><span class="line">        │      └─sshd───bash───pstree</span><br><span class="line">        ├─systemd-journal</span><br><span class="line">        ├─systemd-logind</span><br><span class="line">        ├─systemd-udevd</span><br><span class="line">        └─tuned───4*[&#123;tuned&#125;]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>列出进程树的同时列出PID及所属用户名：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">此时相同进程名的进程会展开，并显示对应的PID，结果内容比较多，只列出一小部分。</span><br><span class="line">[root@vps ~]<span class="comment"># pstree -up</span></span><br><span class="line">...</span><br><span class="line">└─tuned(803)─┬─&#123;tuned&#125;(1056)</span><br><span class="line">                        ├─&#123;tuned&#125;(1057)</span><br><span class="line">                        ├─&#123;tuned&#125;(1059)</span><br><span class="line">                        └─&#123;tuned&#125;(1064)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>列出指定进程的进程树：<br>要查看指定进程的进程树直接在pstree命令后面跟PID即可：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># pstree 19365</span></span><br><span class="line">dockerd─┬─docker-containe─┬─docker-containe─┬─nginx───nginx</span><br><span class="line">        │                 │                 └─8*[&#123;docker-containe&#125;]</span><br><span class="line">        │                 ├─2*[docker-containe─┬─lighttpd───4*[php-cgi───php-cgi]]</span><br><span class="line">        │                 │                    └─8*[&#123;docker-containe&#125;]]</span><br><span class="line">        │                 ├─docker-containe─┬─entrypoint.sh───ss-server</span><br><span class="line">        │                 │                 └─8*[&#123;docker-containe&#125;]</span><br><span class="line">        │                 └─12*[&#123;docker-containe&#125;]</span><br><span class="line">        ├─4*[docker-proxy───3*[&#123;docker-proxy&#125;]]</span><br><span class="line">        ├─docker-proxy───4*[&#123;docker-proxy&#125;]</span><br><span class="line">        └─14*[&#123;dockerd&#125;]</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="进程的管理"><a href="#进程的管理" class="headerlink" title="进程的管理"></a>进程的管理</h3><p>在linux中，进程主要通过kill或者killall命令来管理，通过给某个进程发送信号来实现。目标进程根据接收到的信号类型，做出相应的动作。</p>
-<h4 id="使用kill命令来管理进程"><a href="#使用kill命令来管理进程" class="headerlink" title="使用kill命令来管理进程"></a>使用kill命令来管理进程</h4><p>命令格式：kill -signal [PID|%jobnumber]</p>
-<blockquote>
-<p>signal：信号的名称或者名称对应的数字<br>kill命令后面可以跟PID或者%jobnumber，如果跟的是PID则表示给某个进程发送信号，<br>如果跟的是%jobnumber，则表示给某个job id发送信号，两者是不一样的。</p>
-</blockquote>
-<p>1.查看当前系统所支持的所有信号的名称及对应的信号ID：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]# kill -l</span><br><span class="line"> 1) SIGHUP	 2) SIGINT	 3) SIGQUIT	 4) SIGILL	 5) SIGTRAP</span><br><span class="line"> 6) SIGABRT	 7) SIGBUS	 8) SIGFPE	 9) SIGKILL	10) SIGUSR1</span><br><span class="line">11) SIGSEGV	12) SIGUSR2	13) SIGPIPE	14) SIGALRM	15) SIGTERM</span><br><span class="line">16) SIGSTKFLT	17) SIGCHLD	18) SIGCONT	19) SIGSTOP	20) SIGTSTP</span><br><span class="line">21) SIGTTIN	22) SIGTTOU	23) SIGURG	24) SIGXCPU	25) SIGXFSZ</span><br><span class="line">26) SIGVTALRM	27) SIGPROF	28) SIGWINCH	29) SIGIO	30) SIGPWR</span><br><span class="line">31) SIGSYS	34) SIGRTMIN	35) SIGRTMIN+1	36) SIGRTMIN+2	37) SIGRTMIN+3</span><br><span class="line">38) SIGRTMIN+4	39) SIGRTMIN+5	40) SIGRTMIN+6	41) SIGRTMIN+7	42) SIGRTMIN+8</span><br><span class="line">43) SIGRTMIN+9	44) SIGRTMIN+10	45) SIGRTMIN+11	46) SIGRTMIN+12	47) SIGRTMIN+13</span><br><span class="line">48) SIGRTMIN+14	49) SIGRTMIN+15	50) SIGRTMAX-14	51) SIGRTMAX-13	52) SIGRTMAX-12</span><br><span class="line">53) SIGRTMAX-11	54) SIGRTMAX-10	55) SIGRTMAX-9	56) SIGRTMAX-8	57) SIGRTMAX-7</span><br><span class="line">58) SIGRTMAX-6	59) SIGRTMAX-5	60) SIGRTMAX-4	61) SIGRTMAX-3	62) SIGRTMAX-2</span><br><span class="line">63) SIGRTMAX-1	64) SIGRTMAX</span><br></pre></td></tr></table></figure></p>
-<p>2.正常结束ID号为5781的进程：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#通过指定信号ID方式发送信号</span></span><br><span class="line">[root@vps ~]<span class="comment"># kill -15 5781</span></span><br><span class="line"><span class="comment">#通过信号民初方式发送信号</span></span><br><span class="line">[root@vps ~]<span class="comment"># kill -SIGTERM 5781</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="使用killall命令来管理进程"><a href="#使用killall命令来管理进程" class="headerlink" title="使用killall命令来管理进程"></a>使用killall命令来管理进程</h4><p>命令格式：killall -signal [comm]<br>killall后面跟的为启动进程的命令名称，不需要指定PID，如果知道进程的名字，有时候这种方式比较方便。</p>
-<blockquote>
-<p>参数：</p>
-<ul>
-<li>-i(interactive) 交互式的，若需要删除时，会出现提示符给用户；</li>
-<li>-e(exect) 表示后面接的comm要一致，但整个完整的命令不能超过15个字符；</li>
-<li>-I 命令名称忽略大小写</li>
-</ul>
-</blockquote>
-<p>强制终止所有以httpd启动的进程：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">killall -9 httpd</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2094,7 +1850,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">111</span>
+                  <span class="site-state-item-count">112</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2116,7 +1872,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
