@@ -2,7 +2,7 @@
 title: 使用 kubeadm 搭建 kubernetes 集群
 date: 2019-03-19 22:50:45
 categories: Kubenetes
-tags: Kubenetes
+tags: Kubernetes
 ---
 
 ### kubeadm 简介

@@ -1,7 +1,7 @@
 ---
 title: kubeadm 安装的 k8s 集群 delete node 后重新添加回集群问题解决
 date: 2018-09-11 14:08:54
-categories: Kubenetes
+categories: Kubernetes
 tags: k8s
 ---
 

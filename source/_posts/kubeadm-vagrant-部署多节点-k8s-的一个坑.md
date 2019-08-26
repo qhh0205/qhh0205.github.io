@@ -1,8 +1,8 @@
 ---
 title: kubeadm + vagrant 部署多节点 k8s 的一个坑
 date: 2019-08-06 09:33:40
-categories: Kubenetes
-tags: Kubenetes
+categories: Kubernetes
+tags: Kubernetes
 ---
 
 之前写过一篇[「使用 kubeadm 搭建 kubernetes 集群」](https://qhh.me/2019/03/19/%E4%BD%BF%E7%94%A8-kubeadm-%E6%90%AD%E5%BB%BA-kubernetes-%E9%9B%86%E7%BE%A4/)教程，教程里面使用 Vagrant 启动 3 个节点，1 个 master，2 个 node 节点，后来使用过程中才慢慢发现还是存在问题的。具体问题表现是：
