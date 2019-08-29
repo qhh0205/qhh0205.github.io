@@ -296,6 +296,162 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/17/解决python使用gmail-smtp服务发邮件报错smtplib-smtpauthentic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/17/解决python使用gmail-smtp服务发邮件报错smtplib-smtpauthentic/" itemprop="url">解决python使用gmail smtp服务发邮件报错smtplib.smtpauthentic</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-17T11:21:43+08:00">
+                2018-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>之前使用python发gmail邮件时也遇到过同样的问题，当时在网上找了很多教程鼓捣了半天终于可以发出邮件了，也没搞明白什么原因。如今换了个gmail账号后同样的问题又复现了，又查了半天终于搞定了，不过这次问题还比较奇怪，根据网上很多教程做了后发现邮件是可以发送了，但是在阿里云机器上可以发送，到了AWS机器就不行了，还是报同样的错误，这次终于搞明白什么原因了，在此mark一下，方便后面遇到同样的问题可以快速解决。</p>
+<h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>执行python邮件发送代码后报错如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">smtplib.SMTPAuthenticationError: (534, <span class="string">'5.7.14 &lt;https://accounts.google.com/signin/continue?sarp=1&amp;scc=1&amp;plt=AKgnsbuK\n5.7.14 </span></span><br><span class="line"><span class="string">Gn6F1ag1icz1n3PPXqxUPRGkDb09Kdq88-uxXe-1Tcmguc_HnivrUAD3tjx_1Va5SWXbWQ\n5.7.14 FX-6LHu7-lu5-</span></span><br><span class="line"><span class="string">gPGT3yDrlqNG6gZUTiqk7zvxe1Mv6LgbAtipnqFDdLcvcBbvP8vy0scEd\n5.7.14 llhSJfaRjhTyXG--HuJ6YhsdCkyDA3O8SjWjv9JFORNiXab2Mp5OnJ1NLtIie1saDnQs_X\n5.7.14 </span></span><br><span class="line"><span class="string">PLuHe5XRB2BofVVItB8Gg9VrxKqpc&gt; Please log in via your web browser and\n5.7.14 then try again.\n5.7.14  Learn more at\n5.7.14 </span></span><br><span class="line"><span class="string">https://support.google.com/mail/answer/78754 u131sm18903705pgc.89 - gsmtp'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>python gmail邮件发送代码如下:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#/data/xce/local//python/bin/python2.7</span></span><br><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line">import smtplib</span><br><span class="line">import base64</span><br><span class="line">from email.mime.text import MIMEText</span><br><span class="line">from email.header import Header</span><br><span class="line">from email.mime.multipart import MIMEMultipart</span><br><span class="line">from email.mime.image import MIMEImage</span><br><span class="line">from email.utils import COMMASPACE</span><br><span class="line"></span><br><span class="line">SENDER = <span class="string">'xxxxx@gmail.com'</span></span><br><span class="line">SMTP_SERVER = <span class="string">'smtp.gmail.com'</span></span><br><span class="line">USER_ACCOUNT = &#123;<span class="string">'username'</span>:<span class="string">'xxxxx@gmail.com'</span>, <span class="string">'password'</span>:<span class="string">'xxxxxx'</span>&#125;</span><br><span class="line">SUBJECT = <span class="string">"Test Test"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def send_mail(receivers, text, sender=SENDER, user_account=USER_ACCOUNT, subject=SUBJECT):</span><br><span class="line">    msg_root = MIMEMultipart()  <span class="comment"># 创建一个带附件的实例</span></span><br><span class="line">    msg_root[<span class="string">'Subject'</span>] = subject  <span class="comment"># 邮件主题</span></span><br><span class="line">    msg_root[<span class="string">'To'</span>] = COMMASPACE.join(receivers)  <span class="comment"># 接收者</span></span><br><span class="line">    msg_text = MIMEText(text, <span class="string">'html'</span>, <span class="string">'utf-8'</span>)  <span class="comment"># 邮件正文</span></span><br><span class="line">    msg_root.attach(msg_text)  <span class="comment"># attach邮件正文内容</span></span><br><span class="line"></span><br><span class="line">    smtp = smtplib.SMTP(<span class="string">'smtp.gmail.com:587'</span>)</span><br><span class="line">    smtp.ehlo()</span><br><span class="line">    smtp.starttls()</span><br><span class="line">    smtp.login(user_account[<span class="string">'username'</span>], user_account[<span class="string">'password'</span>])</span><br><span class="line">    smtp.sendmail(sender, receivers, msg_root.as_string())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">    send_mail([<span class="string">'codenutter@foxmail.com'</span>], <span class="string">"Test Test"</span>)</span><br></pre></td></tr></table></figure></p>
+<h4 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h4><p><strong>出现这个错误的原因有两个：</strong></p>
+<ul>
+<li>Google阻止用户使用不符合他们安全标准的应用或设备登陆gmail<br><a href="https://support.google.com/accounts/answer/6010255?hl=zh-Hans" target="_blank" rel="noopener">https://support.google.com/accounts/answer/6010255?hl=zh-Hans</a></li>
+<li>Gmail没有解除验证码认证</li>
+</ul>
+<p><strong>知道原因了就可以有效地解决问题了，解决方法如下：</strong></p>
+<ul>
+<li>允许不够安全的应用使用您的账号:点击如下链接，开启“允许不够安全的应用”功能 <a href="https://myaccount.google.com/lesssecureapps" target="_blank" rel="noopener">https://myaccount.google.com/lesssecureapps</a><br><img src="/images/py-gmail1.png" alt=""></li>
+<li>解除gmail验证码认证:<br>点击如下链接，然后点击继续即可<br><a href="https://accounts.google.com/b/0/displayunlockcaptcha" target="_blank" rel="noopener">https://accounts.google.com/b/0/displayunlockcaptcha </a><br><img src="/images/py-gmail2.png" alt=""></li>
+</ul>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://segmentfault.com/q/1010000008458788/a-1020000008470509" target="_blank" rel="noopener">https://segmentfault.com/q/1010000008458788/a-1020000008470509</a><br><a href="https://blog.user.today/gmail-smtp-authentication-required" target="_blank" rel="noopener">https://blog.user.today/gmail-smtp-authentication-required</a><br><a href="https://stackoverflow.com/questions/35659172/django-send-mail-from-ec2-via-gmail-gives-smtpauthenticationerror-but-works" target="_blank" rel="noopener">https://stackoverflow.com/questions/35659172/django-send-mail-from-ec2-via-gmail-gives-smtpauthenticationerror-but-works
+</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/16/GitHub设置fork仓库和原始仓库同步/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1659,148 +1815,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/29/编程常用单词缩写/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/29/编程常用单词缩写/" itemprop="url">编程常用单词缩写</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-29T10:11:38+08:00">
-                2017-12-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/软件开发基础知识/" itemprop="url" rel="index">
-                    <span itemprop="name">软件开发基础知识</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>以下表格记录了编程常用单词缩写，可以随时查看<br>如果需要查看更加完整的整理，请参见这篇<a href="http://blog.csdn.net/carpinter/article/details/6975740" target="_blank" rel="noopener">博客</a><br>如果需要在线查看单词缩写，可以访问这个网站:<a href="http://www.abbreviations.com/" target="_blank" rel="noopener">ABBREVIATIONS</a><br><img src="/images/abbreviation.jpeg" alt=""><br>摘自：<br><a href="http://blog.csdn.net/sinat_34707539/article/details/52172997" target="_blank" rel="noopener">http://blog.csdn.net/sinat_34707539/article/details/52172997</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1850,7 +1864,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">112</span>
+                  <span class="site-state-item-count">113</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
