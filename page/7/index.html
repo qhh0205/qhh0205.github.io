@@ -296,6 +296,213 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/21/通过-CeSi-Supervisor-可视化集中管理服务器节点进程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/21/通过-CeSi-Supervisor-可视化集中管理服务器节点进程/" itemprop="url">通过 CeSi + Supervisor 可视化集中管理服务器节点进程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-21T16:35:19+08:00">
+                2018-07-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Supervisor/" itemprop="url" rel="index">
+                    <span itemprop="name">Supervisor</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li><a href="#%E9%80%9A%E8%BF%87-cesi--supervisor-%E5%8F%AF%E8%A7%86%E5%8C%96%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%8A%82%E7%82%B9%E8%BF%9B%E7%A8%8B">通过 CeSi + Supervisor 可视化集中管理服务器节点进程</a><ul>
+<li><a href="#%E7%AE%80%E4%BB%8B">简介</a></li>
+<li><a href="#supervisor-%E7%9A%84%E5%AE%89%E8%A3%85%E5%8F%8A%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8">Supervisor 的安装及基本使用</a><ul>
+<li><a href="#1-%E5%AE%89%E8%A3%85">1. 安装</a></li>
+<li><a href="#2-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8">2. 基本使用</a><ul>
+<li><a href="#21-%E5%90%AF%E5%8A%A8-supervisor">2.1 启动 supervisor</a></li>
+<li><a href="#22-supervisor-%E5%AE%A2%E6%88%B7%E7%AB%AF-supervisorctl">2.2 Supervisor 客户端 supervisorctl</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-cesi">安装配置 CeSi</a><ul>
+<li><a href="#1-%E7%AE%80%E4%BB%8B">1. 简介</a></li>
+<li><a href="#2-%E5%AE%89%E8%A3%85">2. 安装</a></li>
+<li><a href="#3-%E9%85%8D%E7%BD%AE">3. 配置</a></li>
+<li><a href="#4-%E5%90%AF%E5%8A%A8">4. 启动</a></li>
+</ul>
+</li>
+<li><a href="#supervisor-%E6%9C%8D%E5%8A%A1%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8">Supervisor 服务设置开机自启动</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><a href="http://supervisord.org" target="_blank" rel="noopener">Supervisor</a> 是一个用 <code>Python</code> 写的进程管理工具，可以很方便的用来启动、重启、关闭进程。类似于 <code>Linux</code> 的 <code>systemd</code> 守护进程一样，通过统一的命令来管理系统的各个服务，当管理的服务挂掉时会自动重新拉起。<code>Supervisor</code> 还提供了很多<a href="http://supervisord.org/plugins.html" target="_blank" rel="noopener">第三方插件</a>，比如后面会讲到的 <a href="https://github.com/Gamegos/cesi" target="_blank" rel="noopener">CeSi</a>，该工具是 <code>Supervisor</code> 的 <code>WebUI</code>，可以通过这个统一的 <code>WebUI</code> 集中化管理各个服务器节点的进程。</p>
+<p><code>Supervisor</code> 和 <code>Docker</code> 的架构类似，也是 <code>C/S</code> 架构，服务端是 <code>supervisord</code>，客户端是 <code>supervisorctl</code> 。客户端主要是用来控制服务端所管理的进程，比如控制服务的启动、关闭、重启、查看服务状态，还可以重启服务端、重载配置文件等。服务端管控各个服务的正常运行，当有服务异常退出时会自动拉起。</p>
+<h3 id="Supervisor-的安装及基本使用"><a href="#Supervisor-的安装及基本使用" class="headerlink" title="Supervisor 的安装及基本使用"></a>Supervisor 的安装及基本使用</h3><h4 id="1-安装"><a href="#1-安装" class="headerlink" title="1. 安装"></a>1. 安装</h4><p><code>Supervisor</code> 的安装特别简单，由于是 <code>Python</code> 写的，因此可以通过 <code>pip</code> 一键安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install supervisor</span><br></pre></td></tr></table></figure></p>
+<p><em>在此我提供了一个 <a href="https://gist.github.com/qhh0205/435ce1a7d29c935e743378b61e28b541" target="_blank" rel="noopener">Sueprvisor 一键安装配置脚本</a>，简化了 <code>Supervisor</code> 的初始配置。</em></p>
+<h4 id="2-基本使用"><a href="#2-基本使用" class="headerlink" title="2. 基本使用"></a>2. 基本使用</h4><p>安装完成后系统会多出如下三个命令：</p>
+<blockquote>
+<p><code>supervisord</code> ：Supervisor 的服务端；<br><code>supervisorctl</code>：Supervisor 的客户端；<br><code>echo_supervisord_conf</code>：Supervisor 服务端默认配置文件生成工具；</p>
+</blockquote>
+<h5 id="2-1-启动-supervisor"><a href="#2-1-启动-supervisor" class="headerlink" title="2.1 启动 supervisor"></a>2.1 启动 <code>supervisor</code></h5><p>首先通过如下命令将 <code>supervisor</code> 的默认配置生成到 <code>/etc/supervisord.conf</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo_supervisord_conf &gt; /etc/supervisord.conf</span><br></pre></td></tr></table></figure></p>
+<p><code>Supervisor</code> 配置文件格式是 <code>INI</code> 格式，因此看起来比较直观，很多配置项的含义已在上面生成的配置文件中以注释的形式说明，以下简要说明一下我在生产环境目前使用的配置，为了减少篇幅，在此只列出了非注释的内容：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[unix_http_server]</span></span><br><span class="line"><span class="attr">file</span>=/tmp/supervisor.sock   ; 服务端套接字文件路径，supervisorctl 客户端会使用该文件和服务端通信</span><br><span class="line"><span class="section">[inet_http_server]</span>         <span class="comment">; Supervisor 服务端提供的 http 服务，很多 Supervisor 的 WebUI</span></span><br><span class="line">                           <span class="comment">;都是通过访问该服务来实现统一管理的，比如后面要讲的 CeSi Web UI</span></span><br><span class="line"><span class="attr">port</span>=<span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9001</span>          ; ip_address:port specifier, *:port for all iface</span><br><span class="line"><span class="section">[supervisord]</span> <span class="comment">; Supervisor 服务端配置</span></span><br><span class="line"><span class="attr">logfile</span>=/tmp/supervisord.log ; 服务端日志文件路径</span><br><span class="line"><span class="attr">logfile_maxbytes</span>=<span class="number">50</span>MB        ; max main logfile bytes b4 rotation; default <span class="number">50</span>MB</span><br><span class="line"><span class="attr">logfile_backups</span>=<span class="number">10</span>           ; # of main logfile backups; <span class="number">0</span> means none, default <span class="number">10</span></span><br><span class="line"><span class="attr">loglevel</span>=debug               ; log level; default info; others: debug,warn,trace</span><br><span class="line"><span class="attr">pidfile</span>=/tmp/supervisord.pid ; supervisord pidfile; default supervisord.pid</span><br><span class="line"><span class="attr">nodaemon</span>=<span class="literal">false</span>               ; start in foreground if <span class="literal">true</span>; default <span class="literal">false</span></span><br><span class="line"><span class="attr">minfds</span>=<span class="number">1024</span>                  ; min. avail startup file descriptors; default <span class="number">1024</span></span><br><span class="line"><span class="attr">minprocs</span>=<span class="number">200</span>                 ; min. avail process descriptors;default <span class="number">200</span></span><br><span class="line"><span class="attr">user</span>=root</span><br><span class="line"><span class="section">[rpcinterface:supervisor]</span></span><br><span class="line">supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface</span><br><span class="line"><span class="section">[supervisorctl]</span> <span class="comment">; Supervisor 客户端配置</span></span><br><span class="line"><span class="attr">serverurl</span>=unix:///tmp/supervisor.sock ; 配置客户端和服务端的通信方式，默认 supervisorctl </span><br><span class="line">                                      <span class="comment">;和 supervisor 通信是通过该套接字通信，也可以配成通过 http 方式通信。</span></span><br><span class="line"><span class="section">[include]</span> <span class="comment">; 在此我将 Supervisor 所管理的服务配置文件都放到了 /etc/supervisor/ 目录，然后通过 include 统一引入</span></span><br><span class="line"><span class="attr">files</span> = /etc/supervisor/*.conf</span><br></pre></td></tr></table></figure></p>
+<p>接下来在 <code>/etc/supervisor/</code> 放入需要 <code>Supervisor</code> 管理的各服务的配置文件，一般一个服务一个配置文件，当然也可以写到一起，比如逻辑上有关联的一组服务可以放到一个配置文件，这样方便管理，下面以一个实例来介绍下要通过 <code>Supervisor</code> 管理服务，相应的配置文件该如何编写（使用 <code>Supervisor</code> 管理 <code>cesi</code> 服务的配置）：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; cesi.conf</span></span><br><span class="line"><span class="section">[program:cesi-5000]</span> <span class="comment">; program 表示 Supervisor 管理的服务实例，cesi-5000 是自己命名</span></span><br><span class="line">                    <span class="comment">;的服务名称，名字可以随便其，我为了方便管理统一命名为：服务名称-端口</span></span><br><span class="line"><span class="attr">directory</span> = /home/ec2-user/cesi ; 程序的启动目录</span><br><span class="line"><span class="attr">command</span> = python cesi/web.py ; 启动服务的命令</span><br><span class="line"><span class="attr">autostart</span> = <span class="literal">true</span>     ; 在 supervisord 启动的时候也自动启动</span><br><span class="line"><span class="attr">startsecs</span> = <span class="number">5</span>        ; 启动 <span class="number">5</span> 秒后没有异常退出，就当作已经正常启动了</span><br><span class="line"><span class="attr">autorestart</span> = <span class="literal">true</span>   ; 程序异常退出后自动重启</span><br><span class="line"><span class="attr">startretries</span> = <span class="number">3</span>     ; 启动失败自动重试次数，默认是 <span class="number">3</span></span><br><span class="line"><span class="attr">user</span> = ec2-user      ; 用哪个用户启动</span><br><span class="line"><span class="attr">redirect_stderr</span> = <span class="literal">true</span>  ; 把 stderr 重定向到 stdout，默认 <span class="literal">false</span></span><br><span class="line"><span class="attr">stdout_logfile_maxbytes</span> = <span class="number">50</span>MB  ; stdout 日志文件大小，默认 <span class="number">50</span>MB</span><br><span class="line"><span class="attr">stdout_logfile_backups</span> = <span class="number">7</span> ; stdout 日志文件备份数</span><br><span class="line"><span class="comment">; stdout 日志文件，需要注意当指定目录不存在时无法正常启动，所以需要手动创建目录（supervisord 会自动创建日志文件）</span></span><br><span class="line"><span class="attr">stdout_logfile</span> = /home/ec2-user/cesi/stdout.log</span><br></pre></td></tr></table></figure></p>
+<p>将上述配置保存为 <code>cesi.conf</code>，放到 <code>/etc/supervisor/</code>。</p>
+<p>前面已经对 <code>echo_supervisord_conf</code> 生成的默认配置文件做了微调，接下来启动 <code>Supervisor</code> 服务端（建议用 root 用户启动）:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo supervisord -c /etc/supervisord.conf</span><br></pre></td></tr></table></figure></p>
+<p>如果不指定 <code>-c</code> 参数，会通过如下顺序来搜索配置文件：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$PWD</span>/supervisord.conf</span><br><span class="line"><span class="variable">$PWD</span>/etc/supervisord.conf</span><br><span class="line">/etc/supervisord.conf</span><br><span class="line">/etc/supervisor/supervisord.conf</span><br></pre></td></tr></table></figure></p>
+<h5 id="2-2-Supervisor-客户端-supervisorctl"><a href="#2-2-Supervisor-客户端-supervisorctl" class="headerlink" title="2.2 Supervisor 客户端 supervisorctl"></a>2.2 Supervisor 客户端 <code>supervisorctl</code></h5><p><code>supervisorctl</code> 有两种使用方式：<br>一种是直接执行 <code>supervisorctl</code> ，这样会进入交互式的 <code>Shell</code>， 然后在该交互式 <code>Shell</code> 中输入管理命令，举例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw supervisor]<span class="comment"># supervisorctl</span></span><br><span class="line">cesi-5000                        RUNNING   pid 6538, uptime 1 day, 1:21:02</span><br><span class="line">zipkinstage-9411                 RUNNING   pid 30919, uptime 1 day, 19:51:43</span><br><span class="line">supervisor&gt; status</span><br><span class="line">cesi-5000                        RUNNING   pid 6538, uptime 1 day, 1:21:09</span><br><span class="line">zipkinstage-9411                 RUNNING   pid 30919, uptime 1 day, 19:51:50</span><br></pre></td></tr></table></figure></p>
+<p>另一种是 <code>supervisorctl [action]</code> 的方式，这样不会陷入交互式 <code>Shell</code>，直接会返回命令的执行结果，其中 <code>action</code> 就是管理服务进程的各个命令，举例（查看目前所管理的服务的进程状态）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw supervisor]<span class="comment"># supervisorctl status</span></span><br><span class="line">cesi-5000                        RUNNING   pid 6538, uptime 1 day, 1:24:53</span><br><span class="line">zipkinstage-9411                 RUNNING   pid 30919, uptime 1 day, 19:55:34</span><br></pre></td></tr></table></figure></p>
+<p>其中常用的 <code>action</code> 有如下（更多选项参数见 <a href="http://supervisord.org/running.html#supervisord-command-line-options" target="_blank" rel="noopener">这里</a>）：</p>
+<blockquote>
+<p><code>supervisorctl status</code> ： 查看所管理的服务状态；<br><code>supervisorctl start &lt;program_name&gt;</code>：启动一个服务；<br><code>supervisorctl restart &lt;program_name&gt;</code>：重启一个服务（注意：重启服务不会重新加载配置文件）；<br><code>supervisorctl stop &lt;program_name&gt;</code>：关闭一个服务；<br><code>supervisorctl update</code>：重新加载配置文件，并重启配置有变动的服务；<br><code>supervisorctl reread</code>：重新加载配置文件，但不会重启配置有变动的服务；<br><code>supervisorctl reload</code>：重启 <code>Supervisor</code> 服务端；<br><code>supervisorctl clear &lt;program_name&gt;</code>：清理一个服务的 <code>stdout log</code>；</p>
+</blockquote>
+<h3 id="安装配置-CeSi"><a href="#安装配置-CeSi" class="headerlink" title="安装配置 CeSi"></a>安装配置 CeSi</h3><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p><a href="https://github.com/gamegos/cesi" target="_blank" rel="noopener">CeSi</a> 是 <code>Supervisor</code> 官方推荐的集中化管理 <code>Supervisor</code> 实例的 <code>Web UI</code>，该工具是用 <code>Python</code> 编写，基于 <code>Flask</code>  <code>Web</code> 框架 。</p>
+<p><code>Superviosr</code> 自带的 <code>Web UI</code> 不支持跨机器管理<code>Supervisor</code> 进程，功能比较简单，通过 <code>CeSi</code> 可以集中管理各个服务器节点的进程，在 Web 界面就可以轻松管理各个服务的启动、关闭、重启等，很方便使用。</p>
+<h4 id="2-安装"><a href="#2-安装" class="headerlink" title="2. 安装"></a>2. 安装</h4><p>安装 <code>CeSi</code> 有三个依赖：<code>Python</code>，<code>Flask</code>，<code>sqlite3</code><br>一般的 Linux 发行版都默认安装了 <code>Python</code>，所以 <code>Python</code> 不需要再次安装；<br>从 <code>Python 2.5</code> 开始 <code>sqlite3</code> 已经在标准库内置了，所以也不需要安装 <code>sqlite3</code> 模块了；<br>另外很多 Linux 发行版已经自带 <code>sqlite3</code>，所以无需另外安装；<br>只需要安装 <code>flask web</code> 框架即可；</p>
+<p><a href="https://github.com/gamegos/cesi" target="_blank" rel="noopener">CeSi</a> 已经有了新的版本，在 GitHub 仓库的 <code>v2_api</code> 分支下，提供了比之前版本更加美观的界面，以下为 <a href="https://github.com/gamegos/cesi" target="_blank" rel="noopener">CeSi</a> 一键安装配置脚本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line">sudo pip install flask</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/gamegos/cesi.git</span><br><span class="line"><span class="built_in">cd</span> cesi</span><br><span class="line"><span class="comment"># 使用最新版, 最新版的 Web UI 做了很大改动</span></span><br><span class="line">git checkout -b v2_api origin/v2_api</span><br><span class="line">sudo cp cesi.conf.sample /etc/cesi.conf</span><br><span class="line">sudo ln -s /etc/cesi.conf cesi.conf</span><br><span class="line"><span class="comment">#创建用户信息表：</span></span><br><span class="line">sqlite3 userinfo.db &lt; userinfo.sql</span><br><span class="line"><span class="comment">#CeSi log 目录</span></span><br><span class="line">sudo mkdir -p /var/logs/cesi</span><br><span class="line">sudo chmod 777 -R /var/logs</span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意</strong>：<code>CeSi</code> 的配置文件路径必须是 <code>/etc/cesi.conf</code> ，否则启动会报错，简单看下 <code>CeSi</code> 的源码就知道为什么了。在这里我在仓库目录弄了个软连接指向了 <code>/etc/cesi.conf</code>，完全是为了编辑方便弄的。 </p>
+<h4 id="3-配置"><a href="#3-配置" class="headerlink" title="3. 配置"></a>3. 配置</h4><p><code>CeSi</code> 的配置非常简单，和 <code>Supervisor</code> 的配置文件类似，也是 <code>INI</code> 格式，关于配置文件的各项说明在 <code>cesi.conf.sample</code> 配置样例中已经通过注释的形式给了明确的说明，稍微看下就能明白，以下为我目前使用的配置（为了减小篇幅，去掉了注释）：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[node:node1]</span> <span class="comment">;各 Supervisor 节点的配置</span></span><br><span class="line"><span class="attr">username</span> = ; 如果 Supervisor 节点没有设置账号密码，这里就保持为空，但不能不写</span><br><span class="line"><span class="attr">password</span> =</span><br><span class="line"><span class="attr">host</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">port</span> = <span class="number">9001</span></span><br><span class="line"><span class="section">[node:node2]</span></span><br><span class="line"><span class="attr">username</span> =</span><br><span class="line"><span class="attr">password</span> =</span><br><span class="line"><span class="attr">host</span> = node2.d.com</span><br><span class="line"><span class="attr">port</span> = <span class="number">9001</span></span><br><span class="line"><span class="section">[node:node3]</span></span><br><span class="line"><span class="attr">username</span> =</span><br><span class="line"><span class="attr">password</span> =</span><br><span class="line"><span class="attr">host</span> = node3.d.com</span><br><span class="line"><span class="attr">port</span> = <span class="number">9001</span></span><br><span class="line"></span><br><span class="line"><span class="section">[cesi]</span> <span class="comment">; CeSi 自身的配置</span></span><br><span class="line"><span class="attr">database</span> = userinfo.db</span><br><span class="line"><span class="attr">activity_log</span> = /var/logs/cesi/activity.log ;log目录没有的话需要提前建好</span><br><span class="line"><span class="attr">host</span> = <span class="number">0.0</span>.<span class="number">0.0</span></span><br><span class="line"><span class="attr">port</span> = <span class="number">5000</span> ; CeSi 启动端口</span><br><span class="line"><span class="attr">name</span> = CeSI</span><br><span class="line"><span class="attr">theme</span> = superhero</span><br></pre></td></tr></table></figure></p>
+<h4 id="4-启动"><a href="#4-启动" class="headerlink" title="4. 启动"></a>4. 启动</h4><p><code>CeSi</code> 的启动非常简单，直接通过 <code>Python</code> 启动即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python cesi/web.py</span><br></pre></td></tr></table></figure></p>
+<p>为了方便管理，我把 <code>CeSi</code> 也通过 <code>Supervisor</code> 来管理，以下为对应的 <code>Supervisor</code> 配置：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;cesi.conf</span></span><br><span class="line"><span class="section">[program:cesi-5000]</span></span><br><span class="line"><span class="attr">directory</span> = /home/ec2-user/cesi ; 程序的启动目录</span><br><span class="line"><span class="attr">command</span> = python cesi/web.py</span><br><span class="line"><span class="attr">autostart</span> = <span class="literal">true</span>     ; 在 supervisord 启动的时候也自动启动</span><br><span class="line"><span class="attr">startsecs</span> = <span class="number">5</span>        ; 启动 <span class="number">5</span> 秒后没有异常退出，就当作已经正常启动了</span><br><span class="line"><span class="attr">autorestart</span> = <span class="literal">true</span>   ; 程序异常退出后自动重启</span><br><span class="line"><span class="attr">startretries</span> = <span class="number">3</span>     ; 启动失败自动重试次数，默认是 <span class="number">3</span></span><br><span class="line"><span class="attr">user</span> = ec2-user      ; 用哪个用户启动</span><br><span class="line"><span class="attr">redirect_stderr</span> = <span class="literal">true</span>  ; 把 stderr 重定向到 stdout，默认 <span class="literal">false</span></span><br><span class="line"><span class="attr">stdout_logfile_maxbytes</span> = <span class="number">50</span>MB  ; stdout 日志文件大小，默认 <span class="number">50</span>MB</span><br><span class="line"><span class="attr">stdout_logfile_backups</span> = <span class="number">7</span> ; stdout 日志文件备份数</span><br><span class="line"><span class="comment">; stdout 日志文件，需要注意当指定目录不存在时无法正常启动，所以需要手动创建目录（supervisord 会自动创建日志文件）</span></span><br><span class="line"><span class="attr">stdout_logfile</span> = /home/ec2-user/cesi/stdout.log</span><br></pre></td></tr></table></figure></p>
+<p>启动完成后，做个 <code>Nginx</code> 反向代理即可通过浏览器访问，最终效果如下：<br><img src="/images/cesi-ui.png" alt="cesi-ui"></p>
+<h3 id="Supervisor-服务设置开机自启动"><a href="#Supervisor-服务设置开机自启动" class="headerlink" title="Supervisor 服务设置开机自启动"></a>Supervisor 服务设置开机自启动</h3><p>以下为在 <code>RedHat7</code>下配置 <code>Supervisor</code> 开机自启动过程，编写 <code>Unit</code> 文件，使用 <code>systemd</code> 管理 <code>Supervisor</code>：</p>
+<ol>
+<li><p>编写 <code>Unit</code> 文件：<code>supervisord.service</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#supervisord.service</span></span><br><span class="line"></span><br><span class="line">[Unit]</span><br><span class="line">Description=Supervisor daemon</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/bin/supervisord -c /etc/supervisord.conf</span><br><span class="line">ExecStop=/bin/supervisorctl shutdown</span><br><span class="line">ExecReload=/bin/supervisorctl -c /etc/supervisord.conf reload</span><br><span class="line">KillMode=process</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=42s</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将上述文件拷贝到 <code>/usr/lib/systemd/system/</code> 目录下</p>
+</li>
+<li><p>将 <code>supervisor.service</code> 注册到系统中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw ~]<span class="comment"># systemctl enable supervisord.service</span></span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/supervisord.service to /usr/lib/systemd/system/supervisord.service.</span><br></pre></td></tr></table></figure>
+<p> 可以看出注册过程就是在 <code>/etc/systemd/system/multi-user.target.wants/</code> 目录下创建一个软链接指向第二步中的中拷贝到 <code>/usr/lib/systemd/system/</code> 的文件。</p>
+</li>
+</ol>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="http://supervisord.org/index.html" target="_blank" rel="noopener">http://supervisord.org/index.html</a><br><a href="http://www.bjhee.com/supervisor.html" target="_blank" rel="noopener">http://www.bjhee.com/supervisor.html</a><br><a href="https://www.jianshu.com/p/03619bf7d7f5" target="_blank" rel="noopener">https://www.jianshu.com/p/03619bf7d7f5</a><br><a href="http://liyangliang.me/posts/2015/06/using-supervisor" target="_blank" rel="noopener">http://liyangliang.me/posts/2015/06/using-supervisor</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/15/Redis-慢查询分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1797,164 +2004,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/自定义-Zabbix-监控指标及图表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/19/自定义-Zabbix-监控指标及图表/" itemprop="url">自定义 Zabbix 监控指标及图表</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-19T09:11:05+08:00">
-                2018-05-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Zabbix/" itemprop="url" rel="index">
-                    <span itemprop="name">Zabbix</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p> 有时候 Zabbix 监控系统的模版提供的监控指标并不能满足我们的需求，比如我们要监控服务器的线程数、TCP 连接数等，这些指标在 Zabbix 自带的模板中是没有的，这时候我们就需要自定义监控指标来实现可视化监控。本文以监控服务器的 TCP 连接数为例来说明如何自定义监控指标来实现可视化监控。</p>
-<h3 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h3><p><strong>总体思路是：</strong><br>修改 Zabbix Agent 端的配置文件，添加监控指标的键值对 –&gt; 重启 Zabbix Agent –&gt; 在 Zabbix Server 端界面化控制台中的模板添加监控指标，指定配置文件中的键 –&gt; 创建指标的可视化展示。<br>以下分步图文列出如何操作：</p>
-<h4 id="1-修改-Zabbix-Agent-端配置文件，添加监控指标的键值对"><a href="#1-修改-Zabbix-Agent-端配置文件，添加监控指标的键值对" class="headerlink" title="1. 修改 Zabbix Agent 端配置文件，添加监控指标的键值对"></a>1. 修改 Zabbix Agent 端配置文件，添加监控指标的键值对</h4><p><code>vim</code> 打开 Zabbix Agent 端配置文件 <code>/home/zabbix/zabbix/etc/zabbix_agentd.conf</code> ，末尾添加如下内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UnsafeUserParameters=1</span><br><span class="line">UserParameter=tcp.num,netstat -atunp | grep ESTABLISHED | wc -l</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li><code>UnsafeUserParameters</code>: 自定义指标必需要添加该行；</li>
-<li><code>UserParameter</code>: 自定义指标的参数；</li>
-<li><code>tcp.num</code>: 监控指标的键，在 Zabbix Server 端创建监控指标时会用到，可以随意命名，比如 <code>tcp.count</code>；</li>
-<li><code>netstat -atunp | grep ESTABLISHED | wc -l</code>：监控指标的值（注意：该值必须是数值类型，否则报错），获取服务器的 TCP 连接数，键和值之间通过英文逗号分隔；</li>
-</ul>
-<h4 id="2-重启-Zabbix-Agent-端"><a href="#2-重启-Zabbix-Agent-端" class="headerlink" title="2. 重启 Zabbix Agent 端"></a>2. 重启 Zabbix Agent 端</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/zabbix/zabbix/sbin/zabbix_agentd -c /home/zabbix/zabbix/etc/zabbix_agentd.conf</span><br></pre></td></tr></table></figure>
-<h4 id="3-在-Zabbix-Server-端界面化控制台创建监控指标"><a href="#3-在-Zabbix-Server-端界面化控制台创建监控指标" class="headerlink" title="3. 在 Zabbix Server 端界面化控制台创建监控指标"></a>3. 在 Zabbix Server 端界面化控制台创建监控指标</h4><p>为了让所有监控机器都能生效，所以在这里选择 Zabbix Server 自带的系统模板 <code>Template OS Linux</code> 中添加指标：<br><img src="/images/zbx_custom_metrix1.png" alt=""><br><img src="/images/zbx_custom_metrix2.png" alt=""><br><img src="/images/zbx_custom_metrix3.png" alt=""></p>
-<h4 id="4-创建指标的可视化展示"><a href="#4-创建指标的可视化展示" class="headerlink" title="4. 创建指标的可视化展示"></a>4. 创建指标的可视化展示</h4><p>在第三步中已经完成了监控指标的创建，即 Zabbix Server 已经开始收集 Agent 端的数据，但是我们还没有配置相应指标的可视化图表展示，无法看到该指标随时间的推移的变化趋势，接下来我们创建一个梯度图来可视化展示该指标的变化:</p>
-<p><img src="/images/zbx_custom_metrix4.png" alt=""><br><img src="/images/zbx_custom_metrix5.png" alt=""><br><img src="/images/zbx_custom_metrix6.png" alt=""><br><img src="/images/zbx_custom_metrix7.png" alt=""></p>
-<p>到这里该指标的可视化图表已创建完成，可以跳转到控制台首页查看相应 Zabbix Agent 的图表：<br><img src="/images/zbx_custom_metrix8.png" alt=""></p>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>由于 <code>netstat</code> 命令在非 root 用户下使用会有警告信息：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[zabbix@awsuw7-189 ~]$ netstat -atunp | grep ESTABLISHED | wc -l</span><br><span class="line">(Not all processes could be identified, non-owned process info</span><br><span class="line"> will not be shown, you would have to be root to see it all.)</span><br><span class="line">329</span><br></pre></td></tr></table></figure></p>
-<p>这样 Zabbix Agent 配置文件中使用 <code>netstat -atunp | grep ESTABLISHED | wc -l</code> 获取到的 <code>value</code> 会是上面所有的输出（即字符串类型），而不是 <code>wc -l</code> 得到的数值类型，从而导致配置自定义监控指标后会报错：<br><img src="/images/zbx_custom_metrix9.png" alt=""></p>
-<p>解决方法其实比较简单，切换到 root 用户给 <code>netstat</code> 命令添加 <code>s</code> 权限即可解决：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-189 ~]<span class="comment"># chmod u+s /bin/netstat</span></span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2004,7 +2053,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-count">114</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

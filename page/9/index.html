@@ -296,6 +296,191 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/19/Python-Plumbum-简介（翻译）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/19/Python-Plumbum-简介（翻译）/" itemprop="url">Python Plumbum 简介（翻译）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-19T09:00:46+08:00">
+                2018-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/翻译/" itemprop="url" rel="index">
+                    <span itemprop="name">翻译</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>说明：本文翻译自 <a href="https://plumbum.readthedocs.io/en/latest/" target="_blank" rel="noopener">Plumbum 官网主页</a>，对少量不太重要的内容进行了缩减。</p>
+</blockquote>
+<h4 id="Plumbum：Shell-组合器"><a href="#Plumbum：Shell-组合器" class="headerlink" title="Plumbum：Shell 组合器"></a>Plumbum：Shell 组合器</h4><hr>
+<blockquote>
+<p>你是否曾希望将 shell 脚本紧凑地融入到<strong>真正</strong>的编程语言里面？向 <em>Plumbum Shell Combinators</em> 问好。Plumbum （lead 的拉丁语，以前用来制作管道）是一个小型但功能丰富的 Python 类 shell 脚本程序库。该库的理念是 “<strong>永远不要再写 shell 脚本</strong>”，因此它试图合理地模仿 shell 语法（shell 组合器），同时保持 <strong>Python 特性和跨平台</strong>。</p>
+<p>除了<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands" target="_blank" rel="noopener">类似 shell 的语法</a>和<a href="https://plumbum.readthedocs.io/en/latest/utils.html#guide-utils" target="_blank" rel="noopener">便捷的快捷方式</a>之外，该库还提供本地和<a href="https://plumbum.readthedocs.io/en/latest/remote.html#guide-remote-commands" target="_blank" rel="noopener">远程</a>命令执行（通过 SSH）、本地和远程文件系统<a href="https://plumbum.readthedocs.io/en/latest/paths.html#guide-paths" target="_blank" rel="noopener">路径</a>、简单的工作目录和环境<a href="https://plumbum.readthedocs.io/en/latest/local_machine.html#guide-local-machine" target="_blank" rel="noopener">操作</a>、快捷访问 ANSI 颜色，以及<a href="https://plumbum.readthedocs.io/en/latest/cli.html#guide-cli" target="_blank" rel="noopener">编程命令行接口（CLI）</a>应用程序工具包。现在让我们看一些代码！</p>
+</blockquote>
+<h4 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h4><hr>
+<p><em>略。。。</em></p>
+<h4 id="备忘录"><a href="#备忘录" class="headerlink" title="备忘录"></a>备忘录</h4><hr>
+<h5 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum <span class="keyword">import</span> local</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ls = local[<span class="string">"ls"</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ls</span><br><span class="line">LocalCommand(&lt;LocalPath /bin/ls&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ls()</span><br><span class="line"><span class="string">u'build.py\ndist\ndocs\nLICENSE\nplumbum\nREADME.rst\nsetup.py\ntests\ntodo.txt\n'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>notepad = local[<span class="string">"c:\\windows\\notepad.exe"</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>notepad()                                   <span class="comment"># Notepad window pops up</span></span><br><span class="line"><span class="string">u''</span>                                             <span class="comment"># Notepad window is closed by user, command returns</span></span><br></pre></td></tr></table></figure>
+<p>不需要为每个你想使用的命令写 <code>xxx = local[&quot;xxx&quot;]</code>，你可以<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#import-hack" target="_blank" rel="noopener">导入命令行</a>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum.cmd <span class="keyword">import</span> grep, wc, cat, head</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>grep</span><br><span class="line">LocalCommand(&lt;LocalPath /bin/grep&gt;)</span><br></pre></td></tr></table></figure></p>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands" target="_blank" rel="noopener">本地命令行</a> 。</p>
+<h5 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>chain = ls[<span class="string">"-a"</span>] | grep[<span class="string">"-v"</span>, <span class="string">"\\.py"</span>] | wc[<span class="string">"-l"</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> chain</span><br><span class="line">/bin/ls -a | /bin/grep -v <span class="string">'\.py'</span> | /usr/bin/wc -l</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>chain()</span><br><span class="line"><span class="string">u'13\n'</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-pipelining" target="_blank" rel="noopener">管道</a>。</p>
+<h5 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>((cat &lt; <span class="string">"setup.py"</span>) | head[<span class="string">"-n"</span>, <span class="number">4</span>])()</span><br><span class="line"><span class="string">u'#!/usr/bin/env python\nimport os\n\ntry:\n'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(ls[<span class="string">"-a"</span>] &gt; <span class="string">"file.list"</span>)()</span><br><span class="line"><span class="string">u''</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(cat[<span class="string">"file.list"</span>] | wc[<span class="string">"-l"</span>])()</span><br><span class="line"><span class="string">u'17\n'</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-redir" target="_blank" rel="noopener">输入/输出重定向</a>。</p>
+<h5 id="工作目录操作"><a href="#工作目录操作" class="headerlink" title="工作目录操作"></a>工作目录操作</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>local.cwd</span><br><span class="line">&lt;Workdir /home/tomer/workspace/plumbum&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> local.cwd(local.cwd / <span class="string">"docs"</span>):</span><br><span class="line"><span class="meta">... </span>    chain()</span><br><span class="line">...</span><br><span class="line"><span class="string">u'15\n'</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/paths.html#guide-paths" target="_blank" rel="noopener">路径</a>和<a href="https://plumbum.readthedocs.io/en/latest/local_machine.html#guide-local-machine" target="_blank" rel="noopener">本地对象</a> 。</p>
+<h5 id="前台后和后台执行"><a href="#前台后和后台执行" class="headerlink" title="前台后和后台执行"></a>前台后和后台执行</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum <span class="keyword">import</span> FG, BG</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(ls[<span class="string">"-a"</span>] | grep[<span class="string">"\\.py"</span>]) &amp; FG         <span class="comment"># The output is printed to stdout directly</span></span><br><span class="line">build.py</span><br><span class="line">.pydevproject</span><br><span class="line">setup.py</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(ls[<span class="string">"-a"</span>] | grep[<span class="string">"\\.py"</span>]) &amp; BG         <span class="comment"># The process runs "in the background"</span></span><br><span class="line">&lt;Future [<span class="string">'/bin/grep'</span>, <span class="string">'\\.py'</span>] (running)&gt;</span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-bgfg" target="_blank" rel="noopener">前台和后台</a>。</p>
+<h5 id="命令行嵌套"><a href="#命令行嵌套" class="headerlink" title="命令行嵌套"></a>命令行嵌套</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum.cmd <span class="keyword">import</span> sudo</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> sudo[ifconfig[<span class="string">"-a"</span>]]</span><br><span class="line">/usr/bin/sudo /sbin/ifconfig -a</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(sudo[ifconfig[<span class="string">"-a"</span>]] | grep[<span class="string">"-i"</span>, <span class="string">"loop"</span>]) &amp; FG</span><br><span class="line">lo        Link encap:Local Loopback</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:<span class="number">16436</span>  Metric:<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-nesting" target="_blank" rel="noopener">命令行嵌套</a>。</p>
+<h5 id="远程命令（通过-SSH）"><a href="#远程命令（通过-SSH）" class="headerlink" title="远程命令（通过 SSH）"></a>远程命令（通过 SSH）</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> plumbum <span class="keyword">import</span> SshMachine</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>remote = SshMachine(<span class="string">"somehost"</span>, user = <span class="string">"john"</span>, keyfile = <span class="string">"/path/to/idrsa"</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>r_ls = remote[<span class="string">"ls"</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> remote.cwd(<span class="string">"/lib"</span>):</span><br><span class="line"><span class="meta">... </span>    (r_ls | grep[<span class="string">"0.so.0"</span>])()</span><br><span class="line">...</span><br><span class="line"><span class="string">u'libusb-1.0.so.0\nlibusb-1.0.so.0.0.0\n'</span></span><br></pre></td></tr></table></figure>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/remote.html#guide-remote" target="_blank" rel="noopener">远程</a>。</p>
+<h5 id="CLI-应用程序"><a href="#CLI-应用程序" class="headerlink" title="CLI 应用程序"></a>CLI 应用程序</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">from</span> plumbum <span class="keyword">import</span> cli</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCompiler</span><span class="params">(cli.Application)</span>:</span></span><br><span class="line">    verbose = cli.Flag([<span class="string">"-v"</span>, <span class="string">"--verbose"</span>], help = <span class="string">"Enable verbose mode"</span>)</span><br><span class="line">    include_dirs = cli.SwitchAttr(<span class="string">"-I"</span>, list = <span class="keyword">True</span>, help = <span class="string">"Specify include directories"</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @cli.switch("-loglevel", int)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set_log_level</span><span class="params">(self, level)</span>:</span></span><br><span class="line">        <span class="string">"""Sets the log-level of the logger"""</span></span><br><span class="line">        logging.root.setLevel(level)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(self, *srcfiles)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Verbose:"</span>, self.verbose</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Include dirs:"</span>, self.include_dirs</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Compiling:"</span>, srcfiles</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    MyCompiler.run()</span><br></pre></td></tr></table></figure>
+<p>输出样例<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ python simple_cli.py -v -I foo/bar -Ispam/eggs x.cpp y.cpp z.cpp</span><br><span class="line">Verbose: <span class="keyword">True</span></span><br><span class="line">Include dirs: [<span class="string">'foo/bar'</span>, <span class="string">'spam/eggs'</span>]</span><br><span class="line">Compiling: (<span class="string">'x.cpp'</span>, <span class="string">'y.cpp'</span>, <span class="string">'z.cpp'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/cli.html#guide-cli" target="_blank" rel="noopener">命令行应用程序</a>。</p>
+<h5 id="颜色和风格"><a href="#颜色和风格" class="headerlink" title="颜色和风格"></a>颜色和风格</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> plumbum <span class="keyword">import</span> colors</span><br><span class="line"><span class="keyword">with</span> colors.red:</span><br><span class="line">    print(<span class="string">"This library provides safe, flexible color access."</span>)</span><br><span class="line">    print(colors.bold | <span class="string">"(and styles in general)"</span>, <span class="string">"are easy!"</span>)</span><br><span class="line">print(<span class="string">"The simple 16 colors or"</span>,</span><br><span class="line">      colors.orchid &amp; colors.underline | <span class="string">'256 named colors,'</span>,</span><br><span class="line">      colors.rgb(<span class="number">18</span>, <span class="number">146</span>, <span class="number">64</span>) | <span class="string">"or full rgb colors"</span> ,</span><br><span class="line">      <span class="string">'can be used.'</span>)</span><br><span class="line">print(<span class="string">"Unsafe "</span> + colors.bg.dark_khaki + <span class="string">"color access"</span> + colors.bg.reset + <span class="string">" is available too."</span>)</span><br></pre></td></tr></table></figure>
+<p>输出样例<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">This library provides safe color access.</span><br><span class="line">Color (<span class="keyword">and</span> styles <span class="keyword">in</span> general) are easy!</span><br><span class="line">The<span class="built_in"> simple </span>16 colors, 256 named colors, <span class="keyword">or</span> full hex colors can be used.</span><br><span class="line">Unsafe color access is available too.</span><br></pre></td></tr></table></figure></p>
+<p>见<a href="https://plumbum.readthedocs.io/en/latest/colors.html#guide-colors" target="_blank" rel="noopener">颜色</a>。</p>
+<h4 id="开发和安装"><a href="#开发和安装" class="headerlink" title="开发和安装"></a>开发和安装</h4><hr>
+<p>该库在 <a href="https://github.com/tomerfiliba/plumbum" target="_blank" rel="noopener">Github</a> 上开发，非常乐意接受来自用户的<a href="https://help.github.com/send-pull-requests/" target="_blank" rel="noopener">补丁</a>。请使用 GitHub 的内置 <a href="https://github.com/tomerfiliba/plumbum/issues" target="_blank" rel="noopener">issue 跟踪器</a>报告您遇到的任何问题或提出功能上的需求。该库在 <a href="https://github.com/tomerfiliba/plumbum/blob/master/LICENSE" target="_blank" rel="noopener">IMIT 许可</a>下发布。</p>
+<h5 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h5><p>Plumbum 支持 <strong>Python 2.6-3.6</strong> 和 <strong>PyPy</strong>，并且通过 <a href="https://travis-ci.org/tomerfiliba/plumbum" target="_blank" rel="noopener"><strong>Travis CI</strong></a> 和 <a href="https://ci.appveyor.com/project/HenrySchreiner/plumbum/branch/master" target="_blank" rel="noopener"><strong>Appveyor</strong></a> 持续地在 <strong>Linux</strong>，<strong>Mac</strong> 和 <strong>Windows</strong> 机器上测试。Plumbum 在任何类 Unix 的机器都应该可以正常工作，除了 Windows，你也许需要安装一个合适的 <a href="https://www.wikiwand.com/en/Coreutils" target="_blank" rel="noopener"><strong>coreutils</strong></a> 环境并把其加入到你的<code>PATH</code>环境变量中。我推荐 <a href="http://mingw.org/" target="_blank" rel="noopener"><strong>mingw</strong></a>（与 <a href="http://msysgit.github.io/" target="_blank" rel="noopener"><strong>Windows Git</strong></a> 捆绑在一起），但是 <a href="http://www.cygwin.com/" target="_blank" rel="noopener"><strong>cygwin</strong></a> 应该也可以。如果你仅仅是使用 Plumbum 代替 Popen 来运行 Windows 程序，那么就不需要 Unix 工具了。<br>注意远程命令的执行，需要一个 <strong>openSHH 兼容的</strong>客户端（同样与 <em>Windows Git</em> 捆绑在一起）和一个 bash 兼容的 shell，也需要在主机上有一个 coreutils 环境。</p>
+<h5 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h5><p>你可以在 <a href="https://pypi.python.org/pypi/plumbum#downloads" target="_blank" rel="noopener"><strong>Python Package Index</strong></a> （多种格式）下载该库，或者直接运行 <code>pip install plumbum</code>。如果你使用 Anaconda，你可以使用 <code>conda install -c conda-forge plumbum</code> 从 <code>conda-forge</code> 通道获取。</p>
+<h4 id="用户指南"><a href="#用户指南" class="headerlink" title="用户指南"></a>用户指南</h4><hr>
+<p>用户指南涵盖了 Plumbum 大部分功能，拥有大量的代码片段，你可以不用花多少时间即可开始使用。该指南逐渐介绍概念和”语法”，因此推荐你按照顺序阅读。一个<a href="https://plumbum.readthedocs.io/en/latest/quickref.html#guide-quickref" target="_blank" rel="noopener"><strong>有效的快速参考指南</strong></a>。<br><em>略。。。</em></p>
+<h4 id="API-参考"><a href="#API-参考" class="headerlink" title="API 参考"></a>API 参考</h4><hr>
+<p>API 参考（在库中通过 <em>docstrings</em> 生成的）涵盖了所有暴露的 API。注意，一些“高级的”功能和一些函数参数在用户指南中没有，因此在这种情况下你也许需要参考下 API 文档。<br><em>略。。。</em></p>
+<h4 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h4><hr>
+<p>Plumburn 最初的目的是让本地和远程程序轻松地执行，假设没有比老的 ssh 更时髦的东西了。在此基础上，设计了一个文件系统抽象层，以便能够无缝地处理本地和远程文件。<br>我有这个想法一段时间了，直到我必须要个给我当前工作的项目写一个构建脚本，我决定使用 shell 脚本，现在是实现它的时候了。Plumbum 诞生自 <code>Path</code> 类的片段和我为 <a href="http://rpyc.readthedocs.io/en/latest/" target="_blank" rel="noopener"><strong>RPyC</strong></a> 写的 <code>SshContext</code> 和 <code>SshTunnel</code> 类。<code>Path</code> 类是我为前面说的构建系统写的。当我将两者与 <em>shell 组合器</em>（因为 shell 脚本在这里确实有优势）组合在一起时，奇迹就发生了，便产生了Plumbun。</p>
+<h4 id="赞扬"><a href="#赞扬" class="headerlink" title="赞扬"></a>赞扬</h4><hr>
+<p>该项目受到了 <a href="https://github.com/amoffat" target="_blank" rel="noopener"><strong>Andrew Moffat</strong></a> 的 <strong>PBS</strong>（现在被称作 <a href="http://amoffat.github.io/sh/" target="_blank" rel="noopener"><strong>sh</strong></a>）启发，并且借用了他的一些思想（即像函数一样看待程序，导入命令行的技巧）。然而我感觉在 PBS 中有太多的魔力在继续，当我编写类 shell 程序时，语法不是我想要的。关于这个问题我联系了 Andrew，但是他想让 PBS 保持这种状态。除此之外，两个库走不同的方向，Plumbum 试图提供一种更合理的方法。<br>Plumbum 也向 <a href="https://github.com/vmalloc/" target="_blank" rel="noopener"><strong>Rotem Yaari</strong></a> 致敬，他为特定的目的建议了一个代号为 <code>pyplatform</code> 的库，但是从未实现过。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/18/shadowsocks-使用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1690,166 +1875,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/python-logging模块禁止requests及elasticsearch模块打印请求日志/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/18/python-logging模块禁止requests及elasticsearch模块打印请求日志/" itemprop="url">python logging模块禁止requests及elasticsearch模块打印请求日志</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T18:21:41+08:00">
-                2018-02-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近写的代码基本都用到了python的标准日志模块logging，但发现在使用requests模块和elasticsearch时，即使自己没有打印相关日志，也会自动生成请求过程日志，示例如下：</p>
-<ul>
-<li><strong>requests日志</strong><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2017-11-02 17:30:31|INFO|Starting new HTTP<span class="built_in"> connection </span>(1): elk</span><br><span class="line">2017-11-03 06:32:55|INFO|Starting new HTTP<span class="built_in"> connection </span>(1): elk</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><strong>elasticsearch日志</strong><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">02</span>:<span class="number">00</span>:<span class="number">01</span>|INFO|GET http://localhos<span class="variable">t:9200</span>/configcenter*/_search [statu<span class="variable">s:200</span> reques<span class="variable">t:0</span>.<span class="number">020</span>s]</span><br><span class="line"><span class="number">2017</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">02</span>:<span class="number">00</span>:<span class="number">01</span>|INFO|GET http://localhos<span class="variable">t:9200</span>/<span class="keyword">abc</span>*/_search [statu<span class="variable">s:200</span> reques<span class="variable">t:0</span>.<span class="number">007</span>s]</span><br><span class="line"><span class="number">2017</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">02</span>:<span class="number">00</span>:<span class="number">01</span>|INFO|GET http://localhos<span class="variable">t:9200</span>/def*/_search [statu<span class="variable">s:200</span> reques<span class="variable">t:0</span>.<span class="number">008</span>s]</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>上面这种日志我们是不需要的，如果这种日志和我们自己打的日志混合在一块儿，日志文件将变得难以查看，对后面的问题排查带来很多不便，因此我们需要禁用掉这种默认的日志打印，方法如下：</p>
-<ul>
-<li><p><strong>requests模块请求日志禁用:</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logging.getLogger(<span class="string">"requests"</span>).setLevel(logging.WARNING)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>elasticsearch模块请求日志禁用:</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logging.getLogger(<span class="string">"elasticsearch"</span>).setLevel(logging.WARNING)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p><strong>参考文章:</strong><br><a href="https://stackoverflow.com/questions/11029717/how-do-i-disable-log-messages-from-the-requests-library" target="_blank" rel="noopener">https://stackoverflow.com/questions/11029717/how-do-i-disable-log-messages-from-the-requests-library</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1899,7 +1924,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-count">114</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

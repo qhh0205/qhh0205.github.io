@@ -296,6 +296,158 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/30/Kubernetes-CronJob-的一个应用案例/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/30/Kubernetes-CronJob-的一个应用案例/" itemprop="url">Kubernetes CronJob 的一个应用案例</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-30T11:25:17+08:00">
+                2019-08-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近 Kubernetes 集群中出现过几次 Redis 故障，具体表现是每次集群重启（云资源按需启动）， Redis Pod 都要老半天才能启动起来，后来逐渐排查定位才发现原来是由于 Redis 开启了 aof 持久化机制。</p>
+<p>我们知道在 AOF 持久化机制下，Resdis 的每一条写命令都会被同步、并且追加的方式持久化的磁盘文件，当 Redis 由于意外故障时，下次重启就会原封不动地执行 AOF 文件中的命令来恢复 Redis。那么显然这种方式会带来一个问题是随着时间的推移 aof 文件体积会越来越大，每次 Redis 重启都要执行一遍 aof 持久化的命令，速度也会越来越慢，从而导致 Redis 启动变慢。</p>
+<p>显然解决方法是怎么把 AOF 文件变小，丢弃没用的记录。Redis 有一条 <code>BGREWRITE</code> 命令就是解决这问题的，这条命令的工作原理是将当前 Redis 中的数据都导出成 Redis 写语句，然后生成新的 aof 文件，替换掉旧的。显然新的 aof 文件体积会原因小于长时间运行的旧的 aof 文件，因为新的 aof 只是当前 Redis 的数据恢复语句，只记录当前的状态。</p>
+<p>由于我们 Redis 是运行在 Kubernetes 集群中，所以借助于 Kubernetes 的 CronJob 机制定期执行 Redis <code>BGREWRITE</code> 命令来重写 aof 文件，从而缩小文件体积。</p>
+<h3 id="Kubernetes-CronJob-简介"><a href="#Kubernetes-CronJob-简介" class="headerlink" title="Kubernetes CronJob 简介"></a>Kubernetes CronJob 简介</h3><p>Kubernetes CronJob 资源用来定义一些需要定时执行的任务，类似于 Linux/Unix 的 Crontab。CronJob 资源创建后会按照写的定时任务规则启动 Pod 执行定义的任务。关于 CronJob 更详细的信息见这里：<a href="https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs</a></p>
+<h3 id="基于-k8s-CronJob-定期-AOF-重写"><a href="#基于-k8s-CronJob-定期-AOF-重写" class="headerlink" title="基于 k8s CronJob 定期 AOF 重写"></a>基于 k8s CronJob 定期 AOF 重写</h3><p>定义 CronJob 资源文件，每两小时进行一次 Redis AOF 重写，资源文件如下：<br>redis-cron.yaml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1beta1</span> <span class="comment">#for API server versions &gt;= 1.8.0 use batch/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CronJob</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">redis-bgrewriteaof-cron</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">redis-bgrewriteaof-cron</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  schedule:</span> <span class="string">"0 */2 * * *"</span></span><br><span class="line"><span class="attr">  successfulJobsHistoryLimit:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  failedJobsHistoryLimit:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">  concurrencyPolicy:</span> <span class="string">Forbid</span></span><br><span class="line"><span class="attr">  startingDeadlineSeconds:</span> <span class="number">120</span></span><br><span class="line"><span class="attr">  jobTemplate:</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      template:</span></span><br><span class="line"><span class="attr">        spec:</span></span><br><span class="line"><span class="attr">          containers:</span></span><br><span class="line"><span class="attr">          - name:</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">            image:</span> <span class="string">docker.io/bitnami/redis:4.0.12</span></span><br><span class="line"><span class="attr">            env:</span></span><br><span class="line"><span class="attr">              - name:</span> <span class="string">REDIS_PASSWORD</span></span><br><span class="line"><span class="attr">                valueFrom:</span></span><br><span class="line"><span class="attr">                  secretKeyRef:</span></span><br><span class="line"><span class="attr">                    name:</span> <span class="string">redis-test</span></span><br><span class="line"><span class="attr">                    key:</span> <span class="string">redis-password</span></span><br><span class="line"><span class="attr">            args:</span> <span class="string">[redis-cli,</span> <span class="bullet">-h,</span> <span class="string">redis-stage-master,</span> <span class="bullet">-a,</span> <span class="string">$(REDIS_PASSWORD),</span> <span class="string">BGREWRITEAOF]</span></span><br><span class="line"><span class="attr">          restartPolicy:</span> <span class="string">OnFailure</span></span><br></pre></td></tr></table></figure></p>
+<p>关于上面资源里面的一些配置项含义在此不做具体介绍，很多都能看懂，具体每个配置项含义看官方文档，都有详细的解释。这里有一点需要「特别注意」的是 redis<br>容器的 <code>args</code> 字段引用环境变量的方法：<br>比如这里引用了 REDIS_PASSWORD 环境变量，需要写成：<code>$(REDIS_PASSWORD)</code> 这样的方式引用，而不能写成：$REDIS_PASSWORD 或者 ${REDIS_PASSWORD}。</p>
+<p>执行 <code>kubectl create</code> 创建定义的 CronJob 资源<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f redis-cron.yaml -n <span class="built_in">test</span></span><br></pre></td></tr></table></figure></p>
+<p>查看 CronJob 执行情况<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get cronjob -n <span class="built_in">test</span></span><br><span class="line">NAME                      SCHEDULE      SUSPEND   ACTIVE    LAST SCHEDULE   AGE</span><br><span class="line">redis-bgrewriteaof-cron   0 */2 * * *   False     0         1h              14h</span><br></pre></td></tr></table></figure></p>
+<p>可以看出最近一小时前已经调度过一次，如果要看调度是否成功可以看对应 Pod 的 log，也可以 <code>kubectl get jobs -n test</code> 查看启动的 Job 的状态。</p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs</a> | Running Automated Tasks with a CronJob<br><a href="https://redis.io/commands/bgrewriteaof" target="_blank" rel="noopener">https://redis.io/commands/bgrewriteaof</a> | Redis之AOF重写及其实现原理</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/29/数据库升级-DevOps-落地实践/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2133,150 +2285,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/Vagrant-多网卡环境下-flannel-网络插件导致-DNS-无法解析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/08/Vagrant-多网卡环境下-flannel-网络插件导致-DNS-无法解析/" itemprop="url">Vagrant 多网卡环境下 flannel 网络插件导致 DNS 无法解析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-08T16:08:39+08:00">
-                2019-08-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubernetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>之前写过一篇 k8s 集群自动化部署的文章：<a href="https://qhh.me/2019/08/06/Kubeadm-%E7%BB%93%E5%90%88-Vagrant-%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88-Kubernetes-%E9%9B%86%E7%BE%A4/" target="_blank" rel="noopener">「Kubeadm 结合 Vagrant 自动化部署最新版 Kubernetes 集群」</a>，发现集群启动后 DNS 无法解析，公网和集群内部都无法解析，具体问题表现是：进入 pod 执行 ping service 名称或者公网域名都是无法解析 <code>Unknow host</code>。</p>
-<p>经过网上搜索一番找到了问题并得以解决，主要原因是 Vagrant 在多主机模式下有多个网卡，eth0 网卡用于 nat 转发访问公网，而 eth1 网卡才是主机真正的 IP，在这种情况下直接部署 k8s flannel 插件会导致 CoreDNS 无法工作。解决方法很简单，调整下 flannel 的启动参数，加上 <code>- --iface=eth1</code> 网卡参数：<br>vim <a href="https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</a><br><code>- --kube-subnet-mgr</code> 后面加一行参数：<code>- --iface=eth1</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line">containers:</span><br><span class="line">      - name: kube-flannel</span><br><span class="line">        image: quay.io/coreos/flannel:v0.11.0-amd64</span><br><span class="line">        <span class="built_in">command</span>:</span><br><span class="line">        - /opt/bin/flanneld</span><br><span class="line">        args:</span><br><span class="line">        - --ip-masq</span><br><span class="line">        - --kube-subnet-mgr</span><br><span class="line">        - --iface=eth1</span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
-<p>参考文档：<br><a href="https://blog.frognew.com/2019/07/kubeadm-install-kubernetes-1.15.html#2-3-%E5%AE%89%E8%A3%85pod-network" target="_blank" rel="noopener">https://blog.frognew.com/2019/07/kubeadm-install-kubernetes-1.15.html#2-3-%E5%AE%89%E8%A3%85pod-network</a> | 使用kubeadm安装Kubernetes 1.1<br><a href="https://github.com/kubernetes/kubeadm/issues/1056" target="_blank" rel="noopener">https://github.com/kubernetes/kubeadm/issues/1056</a> | github issue 讨论</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2326,7 +2334,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-count">114</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

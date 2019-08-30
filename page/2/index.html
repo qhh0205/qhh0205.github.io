@@ -296,6 +296,150 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/Vagrant-多网卡环境下-flannel-网络插件导致-DNS-无法解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/08/Vagrant-多网卡环境下-flannel-网络插件导致-DNS-无法解析/" itemprop="url">Vagrant 多网卡环境下 flannel 网络插件导致 DNS 无法解析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-08T16:08:39+08:00">
+                2019-08-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>之前写过一篇 k8s 集群自动化部署的文章：<a href="https://qhh.me/2019/08/06/Kubeadm-%E7%BB%93%E5%90%88-Vagrant-%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88-Kubernetes-%E9%9B%86%E7%BE%A4/" target="_blank" rel="noopener">「Kubeadm 结合 Vagrant 自动化部署最新版 Kubernetes 集群」</a>，发现集群启动后 DNS 无法解析，公网和集群内部都无法解析，具体问题表现是：进入 pod 执行 ping service 名称或者公网域名都是无法解析 <code>Unknow host</code>。</p>
+<p>经过网上搜索一番找到了问题并得以解决，主要原因是 Vagrant 在多主机模式下有多个网卡，eth0 网卡用于 nat 转发访问公网，而 eth1 网卡才是主机真正的 IP，在这种情况下直接部署 k8s flannel 插件会导致 CoreDNS 无法工作。解决方法很简单，调整下 flannel 的启动参数，加上 <code>- --iface=eth1</code> 网卡参数：<br>vim <a href="https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</a><br><code>- --kube-subnet-mgr</code> 后面加一行参数：<code>- --iface=eth1</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line">containers:</span><br><span class="line">      - name: kube-flannel</span><br><span class="line">        image: quay.io/coreos/flannel:v0.11.0-amd64</span><br><span class="line">        <span class="built_in">command</span>:</span><br><span class="line">        - /opt/bin/flanneld</span><br><span class="line">        args:</span><br><span class="line">        - --ip-masq</span><br><span class="line">        - --kube-subnet-mgr</span><br><span class="line">        - --iface=eth1</span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
+<p>参考文档：<br><a href="https://blog.frognew.com/2019/07/kubeadm-install-kubernetes-1.15.html#2-3-%E5%AE%89%E8%A3%85pod-network" target="_blank" rel="noopener">https://blog.frognew.com/2019/07/kubeadm-install-kubernetes-1.15.html#2-3-%E5%AE%89%E8%A3%85pod-network</a> | 使用kubeadm安装Kubernetes 1.1<br><a href="https://github.com/kubernetes/kubeadm/issues/1056" target="_blank" rel="noopener">https://github.com/kubernetes/kubeadm/issues/1056</a> | github issue 讨论</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/helm-部署-kubernetes-dashboard/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1661,148 +1805,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/15/Go-语言读写文件/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/15/Go-语言读写文件/" itemprop="url">Go 语言读写文件</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-15T21:45:52+08:00">
-                2019-07-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Go/" itemprop="url" rel="index">
-                    <span itemprop="name">Go</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>在这里演示下如何通过 Go 读写文件，Go 读写文件有很 IO 多函数可以使用，在这里使用 os 包的 OpenFile 和 Open 函数打开文件，然后用 bufio 包带缓冲的读写器读写文件。查看 OpenFile 源码，其实 Open 函数底层还是调用了 OpenFile。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//           写文件</span></span><br><span class="line">	outputFile, outputError := os.OpenFile(<span class="string">"file.txt"</span>, os.O_WRONLY|os.O_CREATE|os.O_APPEND, <span class="number">0666</span>)</span><br><span class="line">	<span class="keyword">if</span> outputError != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(outputError)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> outputFile.Close()</span><br><span class="line">	outputWriter := bufio.NewWriter(outputFile)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		outputWriter.WriteString(<span class="string">"hello, world\n"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 一定得记得将缓冲区内容刷新到磁盘文件</span></span><br><span class="line">	outputWriter.Flush()</span><br><span class="line">	<span class="comment">//           读文件</span></span><br><span class="line">	inputFile, inputError := os.Open(<span class="string">"file.txt"</span>)</span><br><span class="line">	<span class="keyword">if</span> inputError != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(inputError)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> inputFile.Close()</span><br><span class="line">	inputReader := bufio.NewReader(inputFile)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		inputString, readerError := inputReader.ReadString(<span class="string">'\n'</span>)</span><br><span class="line">		fmt.Printf(inputString)</span><br><span class="line">		<span class="keyword">if</span> readerError == io.EOF &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1852,7 +1854,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-count">114</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
