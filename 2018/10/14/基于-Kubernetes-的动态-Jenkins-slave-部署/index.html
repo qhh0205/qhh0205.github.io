@@ -401,7 +401,7 @@
 <h3 id="5-helm-打包"><a href="#5-helm-打包" class="headerlink" title="5. helm 打包"></a>5. helm 打包</h3><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm <span class="keyword">package</span> <span class="title">jenkins</span></span><br></pre></td></tr></table></figure>
 <h3 id="6-重新生成-chart-索引"><a href="#6-重新生成-chart-索引" class="headerlink" title="6. 重新生成 chart 索引"></a>6. 重新生成 chart 索引</h3><figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm repo <span class="keyword">index</span> .</span><br></pre></td></tr></table></figure>
 <h3 id="7-helm-部署"><a href="#7-helm-部署" class="headerlink" title="7. helm 部署"></a>7. helm 部署</h3><figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">helm</span> <span class="comment">install</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">name</span> <span class="comment">jenkins</span> <span class="comment">helm_local_repo/jenkins</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">namespace</span> <span class="comment">jenkins</span></span><br></pre></td></tr></table></figure>
-<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'base64d_str'</span> | base64 -d</span><br></pre></td></tr></table></figure></p>
+<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 'base64d_str' <span class="string">| base64 -d</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA</a></p>
 
       
@@ -523,7 +523,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">114</span>
+                  <span class="site-state-item-count">115</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

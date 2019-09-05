@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Kubernetes," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="之前写过一篇文章介绍了容器环境下日志管理的原理机制：从 Docker 到 Kubernetes 日志管理机制详解，文章内容偏理论，本文在该理论的支撑下具体实践 Kubernetes 下基于 EFK 技术栈的日志收集，本文偏实践，要想全面了解 Kubernetes 下日志收集管理机制，最好还是两篇文章顺序阅读。 本文不仅">
+<meta name="keywords" content="Kubernetes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes 基于 EFK 技术栈的日志收集实践">
+<meta property="og:url" content="http://yoursite.com/2019/09/05/Kubernetes-基于-EFK-技术栈的日志收集实践/index.html">
+<meta property="og:site_name" content="The Spectre">
+<meta property="og:description" content="之前写过一篇文章介绍了容器环境下日志管理的原理机制：从 Docker 到 Kubernetes 日志管理机制详解，文章内容偏理论，本文在该理论的支撑下具体实践 Kubernetes 下基于 EFK 技术栈的日志收集，本文偏实践，要想全面了解 Kubernetes 下日志收集管理机制，最好还是两篇文章顺序阅读。 本文不仅限于介绍怎么在 Kubernetes 集群部署 EFK 组件，还涉及到其他相关话">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/EFK.png">
+<meta property="og:image" content="http://yoursite.com/images/ELK.png">
+<meta property="og:image" content="http://yoursite.com/images/before-fluentd.png">
+<meta property="og:image" content="http://yoursite.com/images/after-fluentd.png">
+<meta property="og:image" content="http://yoursite.com/images/fluentd-workflow.png">
+<meta property="og:image" content="http://yoursite.com/images/k8s-efk-arch.png">
+<meta property="og:image" content="http://yoursite.com/images/kibana-konga1.png">
+<meta property="og:image" content="http://yoursite.com/images/kibana-konga2.png">
+<meta property="og:image" content="http://yoursite.com/images/kibana-konga3.png">
+<meta property="og:image" content="http://yoursite.com/images/efk-kibana.png">
+<meta property="og:updated_time" content="2019-09-05T16:06:05.256Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kubernetes 基于 EFK 技术栈的日志收集实践">
+<meta name="twitter:description" content="之前写过一篇文章介绍了容器环境下日志管理的原理机制：从 Docker 到 Kubernetes 日志管理机制详解，文章内容偏理论，本文在该理论的支撑下具体实践 Kubernetes 下基于 EFK 技术栈的日志收集，本文偏实践，要想全面了解 Kubernetes 下日志收集管理机制，最好还是两篇文章顺序阅读。 本文不仅限于介绍怎么在 Kubernetes 集群部署 EFK 组件，还涉及到其他相关话">
+<meta name="twitter:image" content="http://yoursite.com/images/EFK.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/05/Kubernetes-基于-EFK-技术栈的日志收集实践/"/>
+
+
+
+
+
+  <title>Kubernetes 基于 EFK 技术栈的日志收集实践 | The Spectre</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">The Spectre</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Talk is cheap. Show me the code.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/05/Kubernetes-基于-EFK-技术栈的日志收集实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Kubernetes 基于 EFK 技术栈的日志收集实践</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-05T23:54:59+08:00">
+                2019-09-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前写过一篇文章介绍了容器环境下日志管理的原理机制：<a href="https://blog.csdn.net/qianghaohao/article/details/100072538" target="_blank" rel="noopener">从 Docker 到 Kubernetes 日志管理机制详解</a>，文章内容偏理论，本文在该理论的支撑下具体实践 Kubernetes 下基于 EFK 技术栈的日志收集，本文偏实践，要想全面了解 Kubernetes 下日志收集管理机制，最好还是两篇文章顺序阅读。</p>
+<p>本文不仅限于介绍怎么在 Kubernetes 集群部署 EFK 组件，还涉及到其他相关话题：EFK 组件简介、Kubernetes 环境下为什么选用 EFK 优于 ELK 组件、Fluentd 简介、Fluentd 工作机制等等。本文结构如下：</p>
+<ul>
+<li>EFK 组件简介</li>
+<li>Kubernetes 环境下为什么选用 EFK 优于 ELK 组件</li>
+<li>Fluentd 简介</li>
+<li>Fluentd 工作机制</li>
+<li>Fluentd 配置的核心指令</li>
+<li>Kubernetes EFK 日志收集架构</li>
+<li>Kubernetes EFK 日志收集架构实践</li>
+</ul>
+<h3 id="EFK-组件简介"><a href="#EFK-组件简介" class="headerlink" title="EFK 组件简介"></a>EFK 组件简介</h3><p><img src="/images/EFK.png" alt=""><br>顾名思义，EFK 是 Elasticsearch、Fluentd、Kibana 三个开源软件组件的首字母缩写，EFK 是业界主流的容器时代日志收集处理的最佳解决方案。Fluentd 是一个日志收集器，负责从各个服务器节点抓取日志。Elasticsearch 是一个搜索存储引擎，可以存储 Fluentd 收集的日志，并提供查询服务。Kibana 是 Elasticsearch 的一个界面化组件，提供 UI 方式查询 Elasticsearch 存储的数据。三个组件组合起来工作就是 EFK，组件之间数据流是这样：Log 源（比如 Log 文件、k8s Pod 日志、Docker 日志驱动等等）—&gt; Fluentd 收集 —&gt; Elasticsearch 存储 —&gt; Kibana UI 查看。</p>
+<h3 id="Kubernetes-环境下为什么选用-EFK-优于-ELK-组件"><a href="#Kubernetes-环境下为什么选用-EFK-优于-ELK-组件" class="headerlink" title="Kubernetes 环境下为什么选用 EFK 优于 ELK 组件"></a>Kubernetes 环境下为什么选用 EFK 优于 ELK 组件</h3><p>ELK 是 Elasticsearch、Logstash、Kibana 三个开源组件的缩写，可以看出和 EFK 的区别在于第二个字母，一个是 Logstash，一个是 Fluentd。</p>
+<p>我们很早之前使用 ELK 技术栈收集云主机上部署的应用日志，每台虚拟主机部署一个 Logstash 实例收集应用程序目录日志，然后统一传输到一个 Logshtash 中央处理节点，处理后的数据存储到 Elasticsearch。这种方案虽然可以实现日志的统一收集处理，但是 Logstash 比较吃系统资源，基本上资源占用堪比一个 Java 微服务，一个简单的抓取节点就大概需要 1 GB 的内存，我们知道云主机的机器资源是非常昂贵的，所以这种方案对资源浪费比较大，不是很推荐。之前我们基于该 ELK 方案的日志收集大致架构图如下：收集大概 13 个微服务日志，其中 Logstash Server 端平均内存使用能达到 8GB +，显然 Logstash 比较重量级，对系统资源的消耗可见一斑。<br><img src="/images/ELK.png" alt=""><br>从上面的实践案例可以知道 ELK 技术栈的缺陷在于 Log 收集器 Logstash 比较重量级，对系统资源消耗比较大。那么有没有更加轻量级的替代方案呢？答案是有的，比如 Elastic 的 beats 家族的 Filebeat 就可以取代 Logstash 作为日志抓取器，还有 Fluentd 也可以作为 Logstash 替代品，Fluentd 也是本文要讲的重头戏。为什么我们选用 Fluentd 而不用 Filebeat 呢，个人认为 Fluentd 兼具日志抓取、收集、处理、轻量级的特性，拥有丰富的插件生态，是日志解决方案的神器。而 Filebeat 功能重点在于日志的抓取、轻量级，但是对于日志的处理功能不是很强大。</p>
+<p>Fluentd 的轻量级体现在它本身核心代码是用 C 语言编写，更接近操作系统底层语言，所以一般性能是比较高的，据官方介绍 30～40 MB 内存就能处理 13000 日志事件/秒/核，由此可见其性能是多么强大，所以对比 Logstash 而言，用 30 MB 内存就能解决的问题当然选择 Fluentd 了。</p>
+<h3 id="Fluentd-简介"><a href="#Fluentd-简介" class="headerlink" title="Fluentd 简介"></a>Fluentd 简介</h3><p><a href="https://www.fluentd.org/" target="_blank" rel="noopener">Fluentd</a> 是一个开源的日志收集器，它统一了日志的收集和处理逻辑，多种不同来源的日志都可以通过 Fluentd 这个单一的工具统一收集，然后统一存储到单个或多个存储后端。</p>
+<p>像很早之前没有类似 Fluentd 之类的工具的话，为了收集日志可能会有各种五花八门的方法（工具），比如：Shell 脚本分析日志文件、服务器 syslog 收集、rsync 定时同步，scp 拷贝日志文件到统一的存储服务器等等，这么做显然带来的问题是我们要维护各种日志收集端工具，由于各种工具使用上不统一，对整个日志系统的维护人员来说不亚于一场灾难。我们可以用一张图来描述这种复杂、错乱的场景：<br><img src="/images/before-fluentd.png" alt=""><br>针对上述存在的问题，Fluentd 插件式架构很好地解决了该问题，所有数据收集端和存储端都可以通过 Fluentd 使用不同的插件统一起来，这么做带来的最大好处就是大大简化了日志收集的架构，整个架构都以 Fuentd 为核心，不再需要维护人员掌握、维护各种乱七八糟的小工具。上面复杂、错乱的数据收集架构就可以简化为以 Fluentd 为核心的简单架构了：<br><img src="/images/after-fluentd.png" alt=""><br>关于 Fluentd 更多的介绍见官方文档：<a href="https://docs.fluentd.org/" target="_blank" rel="noopener">https://docs.fluentd.org/</a> 。</p>
+<h3 id="Fluentd-工作机制"><a href="#Fluentd-工作机制" class="headerlink" title="Fluentd 工作机制"></a>Fluentd 工作机制</h3><p>Fluentd 和其他日志收集器的工作原理类似，对数据的处理流程也分为三大阶段：收集—&gt;处理、过滤—&gt;输出。这三个处理阶段都有不同的插件支持，可以灵活组合。在 Fluentd 中事件是 整个数据流处理的基本单位，fluentd 的 input 插件每接收到一条日志都会将其封装成一个 fluentd 事件，然后发送给 fluentd 引擎处理，fluentd 引擎根据事件中包含的 tab 匹配不同的 filter 插件进行事件的处理，处理完后发送到 output 插件，output 插件根据事件中的 tag 匹配事件，将匹配到的事件发送到对应的后端。</p>
+<p>Fluentd 事件由三部分组成：</p>
+<ul>
+<li>tag: <code>.</code> 分隔的字符串，供 fluentd 路由引擎路由使用；</li>
+<li>time: 由输入插件指定的事件发生的时间戳，必须符合 Unix 时间格式；</li>
+<li>record: 日志内容；</li>
+</ul>
+<p><img src="/images/fluentd-workflow.png" alt=""></p>
+<h3 id="Fluentd-配置的核心指令"><a href="#Fluentd-配置的核心指令" class="headerlink" title="Fluentd 配置的核心指令"></a>Fluentd 配置的核心指令</h3><p>上面简单介绍了下 Fluentd 对日志数据的处理流程，其是在这个流程中 Fluentd 的行为是通过其配置文件定义的，配置文件由一条条指令组成。下面是 Fluentd 配置文件的 6 大指令，是 Fluentd 配置的核心指令：</p>
+<ul>
+<li>source directives determine the input sources.</li>
+<li>match directives determine the output destinations.</li>
+<li>filter directives determine the event processing pipelines.</li>
+<li>system directives set system wide configuration.</li>
+<li>label directives group the output and filter for internal<br>routing</li>
+<li>@include directives include other files.</li>
+</ul>
+<p>关于每条指令在具体配置文件中如何使用这里不再赘述，详情见：<a href="https://docs.fluentd.org/configuration/config-file" target="_blank" rel="noopener">https://docs.fluentd.org/configuration/config-file</a></p>
+<h3 id="Kubernetes-EFK-日志收集架构"><a href="#Kubernetes-EFK-日志收集架构" class="headerlink" title="Kubernetes EFK 日志收集架构"></a>Kubernetes EFK 日志收集架构</h3><p>之前介绍过 Kubernetes 日志管理机制：再 k8s 每个节点上，kubelet 会为每个容器的日志创建一个软链接，软连接存储路径为：/var/log/containers/，软连接会链接到 /var/log/pods/ 目录下相应 pod 目录的容器日志，被链接的日志文件也是软链接，最终链接到 Docker 容器引擎的日志存储目录：/var/lib/docker/container 下相应容器的日志。所以 /var/log 和 /var/lib/docker/container 目录是整个节点所有容器日志的统一存储地方，这就为 Fluentd 日志收集提供了很大的方便。</p>
+<p>针对上述 k8s 日志管理机制，Kubernetes 官方给出了推荐的日志收集方案：以 DaemonsSet 的方式在 k8s 集群每个节点部署一个节点级的 Fluentd 日志收集器，Fluentd Pod  在启动时挂载了宿主机的 /var/log 和 /var/lib/docker/container 目录，因此可以直接对宿主机目录中的容器日志读取并传输到存储后端：Elasticsearch。然后 Kibana 和 Elasticsearch 对接即可实时查看收集到的日志数据。<br><img src="/images/k8s-efk-arch.png" alt=""></p>
+<h3 id="Kubernetes-EFK-日志收集架构实践"><a href="#Kubernetes-EFK-日志收集架构实践" class="headerlink" title="Kubernetes EFK 日志收集架构实践"></a>Kubernetes EFK 日志收集架构实践</h3><p>上面介绍了 Kubernetes EFK 日志收集架构，本节基于该架构进行实践。我们使用 Kubernetes 官方提供的 EFK 组件 mainfest 文件进行部署，Github 仓库目录为：<br><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch</a></p>
+<p>该目录下存储了 EFK 三大组件的部署 yaml 资源文件，有两点需要说明下：</p>
+<ul>
+<li>Elasticsearch 数据持久化：默认 EmptyDir 的方式，这种方式在 Pod 重新调度后数据会丢失，不过为了实验，所以在这里就不进行修改了，使用默认的即可；</li>
+<li>Kibana deployment 文件需要修改下：去掉 SERVER_BASEPATH 环境变量，要不然部署后访问会 404；</li>
+</ul>
+<h4 id="Kubernetes-EFK-部署"><a href="#Kubernetes-EFK-部署" class="headerlink" title="Kubernetes EFK 部署"></a>Kubernetes EFK 部署</h4><p>进入 fluentd-elasticsearch 目录，执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl  create -f .</span><br></pre></td></tr></table></figure></p>
+<p>查看 Pod 状态，确保每个组件启动成功，一般都会启动成功的，这里基本没什么坑。</p>
+<h4 id="Kibana-对外访问"><a href="#Kibana-对外访问" class="headerlink" title="Kibana 对外访问"></a>Kibana 对外访问</h4><p>接下来将 Kibana 服务从 Kubernetes 集群对外暴露出来，实现对外访问，我们使用 Kong 网关对外暴露服务。具体 Kong 网关在 Kubernetes 的使用在这里不再赘述，如想了解见这里：<a href="https://blog.csdn.net/qianghaohao/article/category/9228448" target="_blank" rel="noopener">Kong 微服务网关在 Kubernetes 的实践</a>。</p>
+<p>Konga 配置 Kibana 服务对外访问：</p>
+<ol>
+<li>创建 kibana-logging Kong Service<br><img src="/images/kibana-konga1.png" alt=""></li>
+<li>创建 Kong 路由到 kibana-logging Kong Service<br><img src="/images/kibana-konga2.png" alt=""><br><img src="/images/kibana-konga3.png" alt=""></li>
+</ol>
+<p>kibnana.kong.com 绑定 host 到集群节点 IP 即可访问查看收集的日志：<br><img src="/images/efk-kibana.png" alt=""></p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/cluster-administration/logging/</a> | Kubernetes 日志架构<br><a href="https://www.fluentd.org/architecture" target="_blank" rel="noopener">https://www.fluentd.org/architecture</a> | What is fluentd?<br><a href="https://docs.fluentd.org/quickstart/life-of-a-fluentd-event" target="_blank" rel="noopener">https://docs.fluentd.org/quickstart/life-of-a-fluentd-event</a> | Life of a Fluentd event</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/30/Kubernetes-CronJob-的一个应用案例/" rel="next" title="Kubernetes CronJob 的一个应用案例">
+                <i class="fa fa-chevron-left"></i> Kubernetes CronJob 的一个应用案例
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div id="gitalk-container"></div>
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">haohao</p>
+              <p class="site-description motion-element" itemprop="description">Talk is cheap. Show me the code.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">115</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qhh0205" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/qianghaohao" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-globe"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://my.oschina.net/bufferoverflow" target="_blank" title="开源中国">
+                      
+                        <i class="fa fa-fw fa-globe"></i>开源中国</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:qhh0205@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#EFK-组件简介"><span class="nav-number">1.</span> <span class="nav-text">EFK 组件简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kubernetes-环境下为什么选用-EFK-优于-ELK-组件"><span class="nav-number">2.</span> <span class="nav-text">Kubernetes 环境下为什么选用 EFK 优于 ELK 组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fluentd-简介"><span class="nav-number">3.</span> <span class="nav-text">Fluentd 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fluentd-工作机制"><span class="nav-number">4.</span> <span class="nav-text">Fluentd 工作机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fluentd-配置的核心指令"><span class="nav-number">5.</span> <span class="nav-text">Fluentd 配置的核心指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kubernetes-EFK-日志收集架构"><span class="nav-number">6.</span> <span class="nav-text">Kubernetes EFK 日志收集架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kubernetes-EFK-日志收集架构实践"><span class="nav-number">7.</span> <span class="nav-text">Kubernetes EFK 日志收集架构实践</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kubernetes-EFK-部署"><span class="nav-number">7.1.</span> <span class="nav-text">Kubernetes EFK 部署</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kibana-对外访问"><span class="nav-number">7.2.</span> <span class="nav-text">Kibana 对外访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关文档"><span class="nav-number">8.</span> <span class="nav-text">相关文档</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">haohao</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="/js/src/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '3840ba8c8d80c18be7e3',
+          clientSecret: '1b00f2efe5285973c24da9ed9ac895775eacc8ea',
+          repo: 'qhh0205.github.io',
+          owner: 'qhh0205',
+          admin: ['qhh0205'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+    </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
