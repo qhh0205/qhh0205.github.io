@@ -51,13 +51,13 @@ Fluentd 事件由三部分组成：
 
 ### Fluentd 配置的核心指令
 上面简单介绍了下 Fluentd 对日志数据的处理流程，其是在这个流程中 Fluentd 的行为是通过其配置文件定义的，配置文件由一条条指令组成。下面是 Fluentd 配置文件的 6 大指令，是 Fluentd 配置的核心指令：
-- source directives determine the input sources.
-- match directives determine the output destinations.
-- filter directives determine the event processing pipelines.
-- system directives set system wide configuration.
-- label directives group the output and filter for internal
+- `source` directives determine the input sources.
+- `match` directives determine the output destinations.
+- `filter` directives determine the event processing pipelines.
+- `system` directives set system wide configuration.
+- `label` directives group the output and filter for internal
 routing
-- @include directives include other files.
+- `@include` directives include other files.
 
 关于每条指令在具体配置文件中如何使用这里不再赘述，详情见：https://docs.fluentd.org/configuration/config-file
 
