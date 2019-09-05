@@ -97,7 +97,7 @@
 <meta property="og:image" content="http://yoursite.com/images/kibana-konga2.png">
 <meta property="og:image" content="http://yoursite.com/images/kibana-konga3.png">
 <meta property="og:image" content="http://yoursite.com/images/efk-kibana.png">
-<meta property="og:updated_time" content="2019-09-05T16:06:05.256Z">
+<meta property="og:updated_time" content="2019-09-05T16:26:39.591Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kubernetes 基于 EFK 技术栈的日志收集实践">
 <meta name="twitter:description" content="之前写过一篇文章介绍了容器环境下日志管理的原理机制：从 Docker 到 Kubernetes 日志管理机制详解，文章内容偏理论，本文在该理论的支撑下具体实践 Kubernetes 下基于 EFK 技术栈的日志收集，本文偏实践，要想全面了解 Kubernetes 下日志收集管理机制，最好还是两篇文章顺序阅读。 本文不仅限于介绍怎么在 Kubernetes 集群部署 EFK 组件，还涉及到其他相关话">
@@ -429,12 +429,12 @@
 <p><img src="/images/fluentd-workflow.png" alt=""></p>
 <h3 id="Fluentd-配置的核心指令"><a href="#Fluentd-配置的核心指令" class="headerlink" title="Fluentd 配置的核心指令"></a>Fluentd 配置的核心指令</h3><p>上面简单介绍了下 Fluentd 对日志数据的处理流程，其是在这个流程中 Fluentd 的行为是通过其配置文件定义的，配置文件由一条条指令组成。下面是 Fluentd 配置文件的 6 大指令，是 Fluentd 配置的核心指令：</p>
 <ul>
-<li>source directives determine the input sources.</li>
-<li>match directives determine the output destinations.</li>
-<li>filter directives determine the event processing pipelines.</li>
-<li>system directives set system wide configuration.</li>
-<li>label directives group the output and filter for internal<br>routing</li>
-<li>@include directives include other files.</li>
+<li><code>source</code> directives determine the input sources.</li>
+<li><code>match</code> directives determine the output destinations.</li>
+<li><code>filter</code> directives determine the event processing pipelines.</li>
+<li><code>system</code> directives set system wide configuration.</li>
+<li><code>label</code> directives group the output and filter for internal<br>routing</li>
+<li><code>@include</code> directives include other files.</li>
 </ul>
 <p>关于每条指令在具体配置文件中如何使用这里不再赘述，详情见：<a href="https://docs.fluentd.org/configuration/config-file" target="_blank" rel="noopener">https://docs.fluentd.org/configuration/config-file</a></p>
 <h3 id="Kubernetes-EFK-日志收集架构"><a href="#Kubernetes-EFK-日志收集架构" class="headerlink" title="Kubernetes EFK 日志收集架构"></a>Kubernetes EFK 日志收集架构</h3><p>之前介绍过 Kubernetes 日志管理机制：再 k8s 每个节点上，kubelet 会为每个容器的日志创建一个软链接，软连接存储路径为：/var/log/containers/，软连接会链接到 /var/log/pods/ 目录下相应 pod 目录的容器日志，被链接的日志文件也是软链接，最终链接到 Docker 容器引擎的日志存储目录：/var/lib/docker/container 下相应容器的日志。所以 /var/log 和 /var/lib/docker/container 目录是整个节点所有容器日志的统一存储地方，这就为 Fluentd 日志收集提供了很大的方便。</p>
