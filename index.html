@@ -296,6 +296,168 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/07/基于-Kubernetes-的-7-大-DevOps-关键实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/07/基于-Kubernetes-的-7-大-DevOps-关键实践/" itemprop="url">基于 Kubernetes 的 7 大 DevOps 关键实践</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-07T20:34:38+08:00">
+                2019-09-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DevOps/" itemprop="url" rel="index">
+                    <span itemprop="name">DevOps</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文主要介绍 DevOps 的 7 大关键实践在 Kubernetes 平台下如何落地，结合我们目前基于 Kubernetes 平台的 DevOps 实践谈谈是如何贯彻相关理念的，这里不会对其具体实现细节进行深入讲解，只做一个大致的概括的描述，分享下已有的实践，具体实践细节有时间了会单独整理一篇文章分享。</p>
+<h3 id="DevOps-简介"><a href="#DevOps-简介" class="headerlink" title="DevOps 简介"></a>DevOps 简介</h3><p>DevOps 集文化理念、实践和工具于一身，可以提高企业高速交付应用程序和服务的能力，与使用传统软件开发和基础设施管理流程相比，能够帮助企业更快地发展和改进产品。</p>
+<p><img src="/images/devops.png" alt=""></p>
+<h5 id="Goals"><a href="#Goals" class="headerlink" title="Goals"></a>Goals</h5><p>The goals of DevOps span the entire delivery pipeline. They include:</p>
+<ul>
+<li>Improved deployment frequency;</li>
+<li>Faster time to market;</li>
+<li>Lower failure rate of new releases;</li>
+<li>Shortened lead time between fixes;</li>
+<li>Faster mean time to recovery (in the event of a new release crashing or otherwise disabling the current system).</li>
+</ul>
+<h3 id="DevOps-的-7-大关键实践在Kubernetes-平台下的落地"><a href="#DevOps-的-7-大关键实践在Kubernetes-平台下的落地" class="headerlink" title="DevOps 的 7 大关键实践在Kubernetes 平台下的落地"></a>DevOps 的 7 大关键实践在Kubernetes 平台下的落地</h3><p>下面为基于 Kubernetes 的 CI/CD  流水线整体实践，使用 Kubernetes + Docker + Jenkins + Helm 等云原生工具链来构建 CI/CD 管道，基于 Google Cloud Platform 云平台构建：</p>
+<p><img src="/images/k8s-devops-ci-cd.png" alt=""><br><strong>1. Configuration Management</strong><br>关于配置文件的管理我们统一使用 Kubernetes 提供的 configmap 和 secret 资源对象来实现，对于一般的应用配置使用 configmap 管理，对于敏感数据使用 secret 存储。</p>
+<p><strong>2. Release Management</strong><br>关于发布管理，使用 Helm 工具统一以 Chart 的方式打包并发布应用，维护每个微服务的历史版本，可以按需回滚。应用的镜像版本统一存储到一个 Docker 私服。</p>
+<p><strong>3. Continuous Integration</strong><br>关于持续集成整合了一套完全开源的工具链：Gitlab + Maven + Jenkins + TestNg + SonarQuebe + Allure。Jenkins 运行在 Kubernetes 集群中，所有的工具链都以容器的方式运行，按需定义并使用，无需单独安装维护。<br><img src="/images/k8s-ci-jenkins-pipeline.png" alt=""></p>
+<p><strong>4. Continuous Deployment</strong><br>关于持续部署方面做的不是很好，没有形成完整的 Pipeline，整个自动化 Pipeline 进行到预发布环境，对于生产环境发布，研发人员自助式点击另一个单独的部署 Pipeline Job 进行部署，选择镜像版本进行发布。<br><img src="/images/k8s-cd-jenkins-pipeline.png" alt=""></p>
+<p><strong>5. Infrastructure as Code</strong><br>基础架构即代码的指的是所有软件基础设施的管理维护都以代码的方式管理起来，对于基础设施资源的创建、销毁、变更，不再是人工通过界面化点触式管理，所有这些更改都基于代码的提交变更和一套自动化框架。比如知名的 Terraform 就是一个业界比较流行的 IaC 框架，专门用于代码化管理云基础设施。在 Infrastructure as Code 方面，其实 Kubernetes 完全契合这一点，所有的基础架构及应用服务都可以被抽象成 API 资源对象，我们只需要按需定义 yaml 资源文件即可快速生成相应的资源。比如我们需要一个 Redis 中间件，那么只需要编写一个声明式 yaml 文件，定义需要的配置、版本等信息即可以容器的方式在 k8s 集群中运行起来。最终只需要在 git 代码仓库维护这些 yaml 文件即可。<br><img src="/images/k8s-iac.png" alt=""></p>
+<p><strong>6.Test Automation</strong><br>关于测试自动化，目前主要有三种类型的测试：单元测试、后端接口测试、UI 自动化测试。所有的这些测试都集成在 Jenkins pipeline 中。后端接口测试和 UI 测试除了在自动化 Pipeline 中运行，还会每天定时跑测试，最终的测试报告统一收集到 Reportportal 报表平台。<br><img src="/images/rp_dashboard.png" alt=""></p>
+<p><strong>7. Application Performance Monitoring</strong><br>关于应用监控采用云原生架构下的最佳实践： Prometheus 监控栈<br><img src="/images/prometheus-arch.png" alt=""></p>
+<p>关于日志采集基于 EFK 技术栈<br><img src="/images/k8s-efk-arch.png" alt=""></p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://www.wikiwand.com/en/DevOps#/Definitions_and_history" target="_blank" rel="noopener">https://www.wikiwand.com/en/DevOps#/Definitions_and_history</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/05/Kubernetes-基于-EFK-技术栈的日志收集实践/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2190,150 +2352,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/09/kubectl-多集群访问配置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/09/kubectl-多集群访问配置/" itemprop="url">kubectl 多集群访问配置</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-09T10:18:50+08:00">
-                2019-08-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubernetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>配置 <code>KUBECONFIG</code> 环境变量，是 kubectl 工具支持的变量，变量内容是冒号分隔的 kubernetes config 认证文件路径。假如我们有两个集群：A 和 B，A 集群的 config 文件为：<code>$HOME/.kube/config</code>，B 集群的 config 文件为：<code>$HOME/.kube/config-local</code>。要配置 kubectl 随时在两个集群间切换，只需要设置 <code>KUBECONFIG</code> 环境变量为：<code>$HOME/.kube/config:$HOME/.kube/config-local</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> KUBECONFIG=<span class="variable">$HOME</span>/.kube/config:<span class="variable">$HOME</span>/.kube/config-local</span><br></pre></td></tr></table></figure></p>
-<p>当进行上面配置后，使用 <code>kubectl config view</code> 查看 kubectl 配置时，结果为两个文件的合并。<br>当需要切换集群时，使用 <code>kubectl config use-context &lt;context 名称&gt;</code></p>
-<p>参考文档：<br><a href="https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2383,7 +2401,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">115</span>
+                  <span class="site-state-item-count">116</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

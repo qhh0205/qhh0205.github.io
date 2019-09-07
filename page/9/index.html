@@ -296,6 +296,200 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/24/Python-两大环境管理神器：pyenv-和-virtualenv/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/24/Python-两大环境管理神器：pyenv-和-virtualenv/" itemprop="url">Python 两大环境管理神器：pyenv 和 virtualenv</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T20:01:08+08:00">
+                2018-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><hr>
+<p><a href="https://github.com/pyenv/pyenv" target="_blank" rel="noopener">pyenv</a> 是一个开源的 Python 版本管理工具，可以轻松地给系统安装任意 Python 版本，想玩哪个版本，瞬间就可以切换。有了 <code>pyenv</code>，我们不需要再为系统多版本 Python 共存问题而发愁，也不用为手动编译安装其他 Python 版本而浪费时间，只需要执行一条简单的命令就可以切换并使用任何其他版本，该工具真正地做到了开箱即用，简单实用。</p>
+<p><a href="https://github.com/pypa/virtualenv" target="_blank" rel="noopener">virtualenv</a> 是一个用来创建完全隔离的 Python 虚拟环境的工具，可以为每个项目工程创建一套独立的 Python 环境，从而可以解决不同工程对 Python 包，或者版本的依赖问题。假如有 A 和 B 两个工程，A 工程代码要跑起来需要 <code>requests 1.18.4</code>，而 B 工程跑起来需要 <code>requests 2.18.4</code>，这样在一个系统中就无法满足两个工程同时运行问题了。最好的解决办法是用 <code>virtualenv</code> 给每个工程创建一个完全隔离的 Python 虚拟环境，给每个虚拟环境安装相应版本的包，让程序使用对应的虚拟环境运行即可。这样既不影响系统 Python 环境，也能保证任何版本的 Python 程序可以在同一系统中运行。</p>
+<p><strong>最佳实践：</strong>使用 <code>pyenv</code> 安装任何版本的 Python，然后用 <code>virtualenv</code> 创建虚拟环境时指定需要的 Python 版本路径，这样就可以创建任何版本的虚拟环境，这样的实践真是极好的！</p>
+<h4 id="pyenv-的安装及使用"><a href="#pyenv-的安装及使用" class="headerlink" title="pyenv 的安装及使用"></a>pyenv 的安装及使用</h4><hr>
+<h4 id="1-安装"><a href="#1-安装" class="headerlink" title="1. 安装"></a>1. 安装</h4><ul>
+<li><p>将 <code>pyenv</code> 安装到 <code>~/.pyenv</code> 目录（当然你可以安装到任意其他路径）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/yyuu/pyenv.git ~/.pyenv</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置环境变量（我的 Shell 是 zsh，如果是 bash，请添加到 <code>~/.bashrc</code>）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'export PYENV_ROOT="$HOME/.pyenv"'</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'export PATH="$PYENV_ROOT/bin:$PATH"'</span> &gt;&gt; ~/.zshrc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加 <code>pyenv</code> 初始化（我的 Shell 是 zsh，如果是 bash，请添加到 <code>~/.bashrc</code>）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'eval "$(pyenv init -)"'</span> &gt;&gt; ~/.zshrc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使当前 Shell 配置生效，完成安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exec</span> <span class="variable">$SHELL</span></span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="2-使用"><a href="#2-使用" class="headerlink" title="2. 使用"></a>2. 使用</h4><ul>
+<li><p>查看有哪些 Python 版本可以安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyenv install --list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装某个 Python 版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyenv install -v 3.6.4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看当前 Python 版本情况（<code>*</code> 表示系统当前的 Python 版本，<code>system</code>表示系统初始版本）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv versions</span><br><span class="line">  system</span><br><span class="line">  2.6.7</span><br><span class="line">* 3.6.4 (<span class="built_in">set</span> by /Users/haohao/.pyenv/version)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换 Python 版本（切换之后查看当前版本）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv global 3.6.4</span><br><span class="line">$ pyenv versions</span><br><span class="line">  system</span><br><span class="line">* 3.6.4 (<span class="built_in">set</span> by /Users/haohao/.pyenv/version)</span><br><span class="line">$ python -V</span><br><span class="line">Python 3.6.4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>卸载某个 Python 版本</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">pyenv</span> <span class="selector-tag">uninstall</span> 3<span class="selector-class">.6</span><span class="selector-class">.4</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="virtualenv-的安装及使用"><a href="#virtualenv-的安装及使用" class="headerlink" title="virtualenv 的安装及使用"></a>virtualenv 的安装及使用</h4><hr>
+<h4 id="1-安装-1"><a href="#1-安装-1" class="headerlink" title="1. 安装"></a>1. 安装</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install virtualenv</span><br></pre></td></tr></table></figure>
+<h4 id="2-使用-1"><a href="#2-使用-1" class="headerlink" title="2. 使用"></a>2. 使用</h4><p>下面我们使用 <code>virtualenv</code> 创建一个完全隔离的 Python 虚拟环境：</p>
+<ol>
+<li><p>新建一个目录（一般用来用作工程路径）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir myproject</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入目录创建一个完全独立干净的虚拟环境<br>如果 <code>virtualenv</code> 后面不加任何参数，那么默认创建的虚拟环境的 Python 版本是系统当前版本，如果要创建其他版本，可以使用 <code>-p</code> 参数指定其他版本的 <code>python</code> 可执行文件路径。可执行文件可以在上一步安装的 <code>pyenv</code> 的 <code>~/.pyenv/versions</code> 路径找到，该路径是 <code>pyenv</code> 管理的所有 Python 版本路径。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用系统当前的 Python 版本创建虚拟环境</span></span><br><span class="line">$ virtualenv venv</span><br><span class="line">New python executable <span class="keyword">in</span> /Users/haohao/PycharmProjects/myproject/venv/bin/python</span><br><span class="line"><span class="comment"># 创建虚拟环境时指定 Python 版本</span></span><br><span class="line">$ virtualenv -p ~/.pyenv/versions/2.6.7/bin/python venv</span><br><span class="line">Running virtualenv with interpreter /Users/haohao/.pyenv/versions/2.6.7/bin/python</span><br><span class="line">New python executable <span class="keyword">in</span> /Users/haohao/PycharmProjects/myproject/venv/bin/python</span><br><span class="line">Installing setuptools&lt;37, pip, wheel&lt;0.30...done.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>激活创建的虚拟环境并使用<br>可以看出当前虚拟环境版本已经是 Python 2.6.7 了，而且所在路径确实是在上一步创建的虚拟环境路径。接下来使用 <code>pip</code> 安装的任何包都会安装在虚拟环境目录里面，不会安装在系统标准目录，从而保证当前环境是绝对干净的，对于系统是完全隔离的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">source</span> venv/bin/activate</span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/Users/haohao/PycharmProjects/myproject/venv/bin/python</span><br><span class="line">$ python -V</span><br><span class="line">Python 2.6.7</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>退出虚拟环境，回到系统版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ deactivate</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/19/Aws-Ec2-实例外挂-EBS-卷详细步骤/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1721,155 +1915,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/从AWS-S3下载指定日期范围的日志到本地/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/18/从AWS-S3下载指定日期范围的日志到本地/" itemprop="url">从AWS S3下载指定日期范围的日志到本地</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T20:48:41+08:00">
-                2018-02-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Shell脚本/" itemprop="url" rel="index">
-                    <span itemprop="name">Shell脚本</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><strong>本脚本主要包括如下要点：</strong></p>
-<ul>
-<li>Shell脚本日期循环;</li>
-<li>AWS S3命令行使用;</li>
-<li>通过正则进行日期合法性校验;</li>
-<li>Shell命令执行无限重试，直到成功;<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/bin/bash</span></span><br><span class="line"><span class="comment"># @Time    : 2017/10/11 下午3:20</span></span><br><span class="line"><span class="comment"># @Author  : qianghaohao</span></span><br><span class="line"><span class="comment"># @Mail    : codenutter@foxmail.com</span></span><br><span class="line"><span class="comment"># @File    : s3log_downloader.sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------- 脚本参数说明 --------------</span></span><br><span class="line"><span class="comment"># $1: 业务类型</span></span><br><span class="line"><span class="comment"># $2: 日志类型</span></span><br><span class="line"><span class="comment"># $3: 开始时间: 年-月-日 ex:2017-10-10</span></span><br><span class="line"><span class="comment"># $4: 结束时间: 年-月-日 ex:2017-10-10</span></span><br><span class="line"><span class="comment">#--------------------------------------------</span></span><br><span class="line">PROFILE=s3_key_profile</span><br><span class="line"><span class="comment">#  下载失败则无限重试</span></span><br><span class="line"><span class="keyword">function</span> repeat()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        <span class="variable">$@</span> &amp;&amp; <span class="built_in">return</span></span><br><span class="line">        sleep 5</span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----------------------------------------------------</span></span><br><span class="line"><span class="comment">#  合并一个目录下的文件到一个文件,</span></span><br><span class="line"><span class="comment">#  函数参数说明:</span></span><br><span class="line"><span class="comment">#  $1:日志文件夹</span></span><br><span class="line"><span class="comment">#  $2:合并后文件名:%&#123;business&#125;_%&#123;type&#125;-%&#123;date&#125;.log</span></span><br><span class="line"><span class="comment"># -----------------------------------------------------</span></span><br><span class="line"><span class="keyword">function</span> merge_file()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cd</span> <span class="variable">$1</span> &amp;&amp; ls -rt | xargs cat &gt; <span class="variable">$2</span> &amp;&amp; rm -rf <span class="variable">$1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">datebeg=<span class="string">"<span class="variable">$3</span>"</span></span><br><span class="line">dateend=<span class="string">"<span class="variable">$4</span>"</span></span><br><span class="line"><span class="comment">#  检查日期格式是否正确</span></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">"`echo "</span><span class="variable">$datebeg</span><span class="string">" | grep -E "</span>^[0-9]&#123;4&#125;-[0-9]&#123;2&#125;-[0-9]&#123;2&#125;$<span class="string">"`"</span> -o -z <span class="string">"`echo "</span><span class="variable">$dateend</span><span class="string">" | grep -E "</span>^[0-9]&#123;4&#125;-[0-9]&#123;2&#125;-[0-9]&#123;2&#125;$<span class="string">"`"</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Error: 日期格式不合法，请输入正确的日期格式[ex: 2017-09-09]..."</span></span><br><span class="line">    <span class="built_in">exit</span> -1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">beg_s=`date -d <span class="string">"<span class="variable">$datebeg</span>"</span> +%s`</span><br><span class="line">end_s=`date -d <span class="string">"<span class="variable">$dateend</span>"</span> +%s`</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> [ <span class="string">"<span class="variable">$beg_s</span>"</span> -le <span class="string">"<span class="variable">$end_s</span>"</span> ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">     day=`date -d @<span class="variable">$beg_s</span> +<span class="string">"%Y-%m-%d"</span>`</span><br><span class="line">     s3_log_path=<span class="string">"s3://s3-path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$day</span>"</span></span><br><span class="line">     local_log_path=<span class="string">"/home/path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$day</span>"</span></span><br><span class="line">     local_log_file=<span class="string">"/home/path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$&#123;1&#125;</span>-<span class="variable">$&#123;2&#125;</span>-<span class="variable">$&#123;day&#125;</span>.log"</span></span><br><span class="line">     <span class="comment">#   后台执行任务(非阻塞) 类似于多进程并发下载</span></span><br><span class="line">     repeat aws s3 cp --recursive <span class="variable">$&#123;s3_log_path&#125;</span> <span class="variable">$&#123;local_log_path&#125;</span> --profile=<span class="variable">$PROFILE</span> &amp;&amp; merge_file <span class="variable">$&#123;local_log_path&#125;</span> <span class="variable">$&#123;local_log_file&#125;</span> &amp;</span><br><span class="line">     beg_s=$((beg_s+86400))</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">wait</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=============================&gt; 下载完成 ============================"</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1919,7 +1964,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">115</span>
+                  <span class="site-state-item-count">116</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

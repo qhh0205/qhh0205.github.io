@@ -296,6 +296,155 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/从AWS-S3下载指定日期范围的日志到本地/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/从AWS-S3下载指定日期范围的日志到本地/" itemprop="url">从AWS S3下载指定日期范围的日志到本地</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T20:48:41+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Shell脚本/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell脚本</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>本脚本主要包括如下要点：</strong></p>
+<ul>
+<li>Shell脚本日期循环;</li>
+<li>AWS S3命令行使用;</li>
+<li>通过正则进行日期合法性校验;</li>
+<li>Shell命令执行无限重试，直到成功;<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/bin/bash</span></span><br><span class="line"><span class="comment"># @Time    : 2017/10/11 下午3:20</span></span><br><span class="line"><span class="comment"># @Author  : qianghaohao</span></span><br><span class="line"><span class="comment"># @Mail    : codenutter@foxmail.com</span></span><br><span class="line"><span class="comment"># @File    : s3log_downloader.sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#---------------- 脚本参数说明 --------------</span></span><br><span class="line"><span class="comment"># $1: 业务类型</span></span><br><span class="line"><span class="comment"># $2: 日志类型</span></span><br><span class="line"><span class="comment"># $3: 开始时间: 年-月-日 ex:2017-10-10</span></span><br><span class="line"><span class="comment"># $4: 结束时间: 年-月-日 ex:2017-10-10</span></span><br><span class="line"><span class="comment">#--------------------------------------------</span></span><br><span class="line">PROFILE=s3_key_profile</span><br><span class="line"><span class="comment">#  下载失败则无限重试</span></span><br><span class="line"><span class="keyword">function</span> repeat()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">        <span class="variable">$@</span> &amp;&amp; <span class="built_in">return</span></span><br><span class="line">        sleep 5</span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># -----------------------------------------------------</span></span><br><span class="line"><span class="comment">#  合并一个目录下的文件到一个文件,</span></span><br><span class="line"><span class="comment">#  函数参数说明:</span></span><br><span class="line"><span class="comment">#  $1:日志文件夹</span></span><br><span class="line"><span class="comment">#  $2:合并后文件名:%&#123;business&#125;_%&#123;type&#125;-%&#123;date&#125;.log</span></span><br><span class="line"><span class="comment"># -----------------------------------------------------</span></span><br><span class="line"><span class="keyword">function</span> merge_file()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cd</span> <span class="variable">$1</span> &amp;&amp; ls -rt | xargs cat &gt; <span class="variable">$2</span> &amp;&amp; rm -rf <span class="variable">$1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">datebeg=<span class="string">"<span class="variable">$3</span>"</span></span><br><span class="line">dateend=<span class="string">"<span class="variable">$4</span>"</span></span><br><span class="line"><span class="comment">#  检查日期格式是否正确</span></span><br><span class="line"><span class="keyword">if</span> [ -z <span class="string">"`echo "</span><span class="variable">$datebeg</span><span class="string">" | grep -E "</span>^[0-9]&#123;4&#125;-[0-9]&#123;2&#125;-[0-9]&#123;2&#125;$<span class="string">"`"</span> -o -z <span class="string">"`echo "</span><span class="variable">$dateend</span><span class="string">" | grep -E "</span>^[0-9]&#123;4&#125;-[0-9]&#123;2&#125;-[0-9]&#123;2&#125;$<span class="string">"`"</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Error: 日期格式不合法，请输入正确的日期格式[ex: 2017-09-09]..."</span></span><br><span class="line">    <span class="built_in">exit</span> -1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">beg_s=`date -d <span class="string">"<span class="variable">$datebeg</span>"</span> +%s`</span><br><span class="line">end_s=`date -d <span class="string">"<span class="variable">$dateend</span>"</span> +%s`</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> [ <span class="string">"<span class="variable">$beg_s</span>"</span> -le <span class="string">"<span class="variable">$end_s</span>"</span> ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">     day=`date -d @<span class="variable">$beg_s</span> +<span class="string">"%Y-%m-%d"</span>`</span><br><span class="line">     s3_log_path=<span class="string">"s3://s3-path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$day</span>"</span></span><br><span class="line">     local_log_path=<span class="string">"/home/path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$day</span>"</span></span><br><span class="line">     local_log_file=<span class="string">"/home/path/<span class="variable">$1</span>/<span class="variable">$2</span>/<span class="variable">$&#123;1&#125;</span>-<span class="variable">$&#123;2&#125;</span>-<span class="variable">$&#123;day&#125;</span>.log"</span></span><br><span class="line">     <span class="comment">#   后台执行任务(非阻塞) 类似于多进程并发下载</span></span><br><span class="line">     repeat aws s3 cp --recursive <span class="variable">$&#123;s3_log_path&#125;</span> <span class="variable">$&#123;local_log_path&#125;</span> --profile=<span class="variable">$PROFILE</span> &amp;&amp; merge_file <span class="variable">$&#123;local_log_path&#125;</span> <span class="variable">$&#123;local_log_file&#125;</span> &amp;</span><br><span class="line">     beg_s=$((beg_s+86400))</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">wait</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=============================&gt; 下载完成 ============================"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/常见软件版本及缩写/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1646,169 +1795,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/Logstash插件管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/07/Logstash插件管理/" itemprop="url">Logstash插件管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:58:57+08:00">
-                2018-01-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/翻译/" itemprop="url" rel="index">
-                    <span itemprop="name">翻译</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文翻译自<a href="https://www.elastic.co/guide/en/logstash/5.5/working-with-plugins.html" target="_blank" rel="noopener">Elast stack官方文档</a>，主要介绍Logstash插件的使用方法。</p>
-<hr>
-<h4 id="译文："><a href="#译文：" class="headerlink" title="译文："></a>译文：</h4><p>Logstash拥有丰富的input，filter，codec和output插件。插件是独立的gems包，托管在<a href="https://rubygems.org" target="_blank" rel="noopener">RubyGems.org</a>。插件管理器是通过bin/logstash-plugin脚本来使用，用来管理Logstash的插件的生命周期。通过下面的描述，你可以使用命令行来安装，删除，和升级插件。</p>
-<h4 id="代理配置"><a href="#代理配置" class="headerlink" title="代理配置:"></a>代理配置:</h4><p>大部分插件管理命令需要访问<a href="https://rubygems.org" target="_blank" rel="noopener">RubyGems.org</a>。如果你的组织被网络防火墙阻挡，你可以设置环境变量来配置Logstash使用代理。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> http_proxy=http://localhost:3128</span><br><span class="line"><span class="built_in">export</span> https_proxy=http://localhost:3128</span><br></pre></td></tr></table></figure></p>
-<h4 id="列出插件"><a href="#列出插件" class="headerlink" title="列出插件"></a>列出插件</h4><p>Logstash release包已经捆绑了常用的插件，所以你可以直接使用他们。列出当前可用的插件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bin/logstash-plugin list </span><br><span class="line">bin/logstash-plugin list --verbose </span><br><span class="line">bin/logstash-plugin list <span class="string">'*namefragment*'</span> </span><br><span class="line">bin/logstash-plugin list --group output</span><br></pre></td></tr></table></figure></p>
-<ol>
-<li>列出所有已安装插件；</li>
-<li>列出所有已安装的插件，包括版本信息；</li>
-<li>列出所有包括namefragment的已安装插件；</li>
-<li>列出指定组的已安装插件(input, filter, codec, output)；</li>
-</ol>
-<h4 id="给你的部署环境安装插件"><a href="#给你的部署环境安装插件" class="headerlink" title="给你的部署环境安装插件"></a>给你的部署环境安装插件</h4><p>最常见的情况是你通过互联网处理插件安装。使用这个方法，你能够检索托管在<a href="https://rubygems.org" target="_blank" rel="noopener">RubyGems.org</a>的插件并且安装在你的Logstash上。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/logstash-plugin install logstash-output-kafka</span><br></pre></td></tr></table></figure></p>
-<h4 id="进阶：安装本地编译好的插件"><a href="#进阶：安装本地编译好的插件" class="headerlink" title="进阶：安装本地编译好的插件"></a>进阶：安装本地编译好的插件</h4><p>在某些情况下，你可能需要安装还没有发布且没有托管在<a href="https://rubygems.org" target="_blank" rel="noopener">RubyGems.org</a>的插件。Logstash为您提供了选择，你可以安装本地已编译好的，ruby gem插件包。使用一个文件位置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/logstash-plugin install /path/to/logstash-output-kafka-1.0.0.gem</span><br></pre></td></tr></table></figure></p>
-<h4 id="使用-–path-plugins"><a href="#使用-–path-plugins" class="headerlink" title="使用 –path.plugins"></a>使用 –path.plugins</h4><p>使用Logstash –path.plugins选项，你可以加载在你的文件系统上的插件源码。通常情况下这个被开发人员用来迭代自定义的插件并在创建gem包之前做测试。路径需要位于特定的目录层次结构中：PATH/logstash/TYPE/NAME.rb，TYPE是input, outputs或者codes NAME是插件的名字。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># supposing the code is in /opt/shared/lib/logstash/inputs/my-custom-plugin-code.rb</span></span><br><span class="line">bin/logstash --path.plugins /opt/shared/lib</span><br></pre></td></tr></table></figure></p>
-<h4 id="升级插件"><a href="#升级插件" class="headerlink" title="升级插件"></a>升级插件</h4><p>插件有自己的发布周期，通常独立于Logstash的发布周期。使用update子命令，你可以获取到最新版本的插件。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin/logstash-plugin update </span><br><span class="line">bin/logstash-plugin update logstash-output-kafka</span><br></pre></td></tr></table></figure></p>
-<ol>
-<li>更新所有已安装插件；</li>
-<li>只更新指定的插件；</li>
-</ol>
-<h4 id="删除插件"><a href="#删除插件" class="headerlink" title="删除插件"></a>删除插件</h4><p>如果你需要从Logstash的安装中删除插件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/logstash-plugin remove logstash-output-kafka</span><br></pre></td></tr></table></figure></p>
-<h4 id="代理支持"><a href="#代理支持" class="headerlink" title="代理支持"></a>代理支持</h4><p>之前的章节依赖于Logstash能够访问<a href="https://rubygems.org" target="_blank" rel="noopener">RubyGems.org</a>。在某些环境下，正向代理用来处理HTTP请求。可以通过设置HTTP_PROXY环境变量来安装和更新Logstash插件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> HTTP_PROXY=http://127.0.0.1:3128</span><br><span class="line">bin/logstash-plugin install logstash-output-kafka</span><br></pre></td></tr></table></figure></p>
-<p>一旦设置了后，就可以使用这个代理来进行插件的安装和更新。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1858,7 +1844,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">115</span>
+                  <span class="site-state-item-count">116</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
