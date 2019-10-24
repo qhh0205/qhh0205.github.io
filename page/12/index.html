@@ -296,6 +296,148 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/shell多进程并发编程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/shell多进程并发编程/" itemprop="url">shell多进程并发编程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T21:27:19+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Shell脚本/" itemprop="url" rel="index">
+                    <span itemprop="name">Shell脚本</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在shell中使用多进程并发处理是非常方便的，如果有一个定时任务是同时ping主机ip列表，检测目标机器是否down掉，就可以用shell的多进程来实现，同时ping多个主机，不影响定时任务的执行。shell的实现方式是通过 &amp; 符号来使要执行的进程后台执行，然后主调shell通过wait来等待所有后台执行完毕，然后退出主调shell。以下是一个心跳检测脚本，通过ping来批量检测机器是否可达，如果不可达则启用备用机器的服务，并发送微信报警。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">cd</span> ~/scripts</span><br><span class="line"><span class="comment"># $1:host $2:server_type $3:port $4=start_server</span></span><br><span class="line"><span class="comment">#  将要执行的过程封装成函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">heartbeat_detection</span></span>() &#123;</span><br><span class="line">    ping_loss=`ping -c 6 <span class="variable">$1</span> | grep <span class="string">"100% packet loss"</span>`</span><br><span class="line">    Date=`date +<span class="string">"%Y-%m-%d %H:%M:%S"</span>`</span><br><span class="line">    <span class="keyword">if</span> [ -z <span class="string">"<span class="variable">$ping_loss</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> -e <span class="string">"Date: <span class="variable">$Date</span>|Host: <span class="variable">$1</span>|Monitor: Ping is ok."</span> &gt;&gt; monitor_result.log</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> -e <span class="string">"Date: <span class="variable">$Date</span>|Host: <span class="variable">$1</span>|Problem: Unreachable for 2 minutes..."</span> &gt;&gt; monitor_result.log</span><br><span class="line">        python wechat_alert/wechat_alert.py <span class="string">"@all"</span> <span class="string">"`Date: date +%F %H:%M:%S` Host:<span class="variable">$1</span> Server_type:<span class="variable">$2</span> Status:Down..."</span></span><br><span class="line">        service_port=`netstat -lnp | grep <span class="variable">$3</span> | awk <span class="string">'&#123;print $NF&#125;'</span> | awk -F <span class="string">'/'</span> <span class="string">'&#123;print $1&#125;'</span>`</span><br><span class="line">        <span class="keyword">if</span> [ -z <span class="variable">$service_port</span> ]; <span class="keyword">then</span></span><br><span class="line">            sh <span class="variable">$4</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> $(cat srv_list)</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">     host=`<span class="built_in">echo</span> <span class="variable">$item</span> | awk -F <span class="string">'|'</span> <span class="string">'&#123;print $1&#125;'</span>`</span><br><span class="line">     server_type=`<span class="built_in">echo</span> <span class="variable">$item</span> | awk -F <span class="string">'|'</span> <span class="string">'&#123;print $2&#125;'</span>`</span><br><span class="line">     port=`<span class="built_in">echo</span> <span class="variable">$item</span> | awk -F <span class="string">'|'</span> <span class="string">'&#123;print $3&#125;'</span>`</span><br><span class="line">     start_server=`<span class="built_in">echo</span> <span class="variable">$item</span> | awk -F <span class="string">'|'</span> <span class="string">'&#123;print $4&#125;'</span>`</span><br><span class="line">     <span class="comment">#   后台执行任务(非阻塞)</span></span><br><span class="line">     heartbeat_detection <span class="variable">$host</span> <span class="variable">$server_type</span> <span class="variable">$port</span> <span class="variable">$start_server</span> &amp;</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="comment"># 等待所有后台任务完成(阻塞)</span></span><br><span class="line"><span class="built_in">wait</span></span><br><span class="line">Date=`date +<span class="string">"%Y-%m-%d %H:%M:%S"</span>`</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">"Date: <span class="variable">$Date</span>|Heartbeta detection finished..."</span></span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/常用软件包安装/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1424,7 +1566,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">116</span>
+                  <span class="site-state-item-count">117</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

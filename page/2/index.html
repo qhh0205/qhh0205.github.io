@@ -296,6 +296,217 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/12/使用-Kubernetes-Ingress-对外暴露服务/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/12/使用-Kubernetes-Ingress-对外暴露服务/" itemprop="url">使用 Kubernetes Ingress 对外暴露服务</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-12T22:48:56+08:00">
+                2019-08-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文主要介绍如何通过 Kubernetes Ingress 资源对象实现从外部对 k8s 集群中服务的访问，介绍了 k8s 对外暴露服务的多种方法、Ingress 及 Ingress Controller 的概念。涉及到的话题有：</p>
+<ul>
+<li>k8s 对外暴露服务的方法；</li>
+<li>Ingress 及 Ingress Controller 简介；</li>
+<li>helm 裸机部署 Nginx Ingress Controller；</li>
+<li>使用 Ingress 对外暴露服务；</li>
+<li>通过 Ingress 访问 kubernetes dashboard（支持 HTTPS 访问）；</li>
+</ul>
+<h3 id="k8s-对外暴露服务的方法"><a href="#k8s-对外暴露服务的方法" class="headerlink" title="k8s 对外暴露服务的方法"></a>k8s 对外暴露服务的方法</h3><p>向 k8s 集群外部暴露服务的方式有三种： nodePort，LoadBalancer 和本文要介绍的 Ingress。每种方式都有各自的优缺点，nodePort 方式在服务变多的情况下会导致节点要开的端口越来越多，不好管理。而 LoadBalancer 更适合结合云提供商的 LB 来使用，但是在 LB 越来越多的情况下对成本的花费也是不可小觑。Ingress 是 k8s 官方提供的用于对外暴露服务的方式，也是在生产环境用的比较多的方式，一般在云环境下是 LB + Ingress Ctroller 方式对外提供服务，这样就可以在一个 LB 的情况下根据域名路由到对应后端的 Service，有点类似于 Nginx 反向代理，只不过在 k8s 集群中，这个反向代理是集群外部流量的统一入口。</p>
+<h3 id="Ingress-及-Ingress-Controller-简介"><a href="#Ingress-及-Ingress-Controller-简介" class="headerlink" title="Ingress 及 Ingress Controller 简介"></a>Ingress 及 Ingress Controller 简介</h3><p>Ingress 是 k8s 资源对象，用于对外暴露服务，该资源对象定义了不同主机名（域名）及 URL 和对应后端 Service（k8s Service）的绑定，根据不同的路径路由 http 和 https 流量。而 Ingress Contoller 是一个 pod 服务，封装了一个 web 前端负载均衡器，同时在其基础上实现了动态感知 Ingress 并根据 Ingress 的定义动态生成 前端 web 负载均衡器的配置文件，比如 Nginx Ingress Controller 本质上就是一个 Nginx，只不过它能根据 Ingress 资源的定义动态生成 Nginx 的配置文件，然后动态 Reload。个人觉得 Ingress Controller 的重大作用是将前端负载均衡器和 Kubernetes 完美地结合了起来，一方面在云、容器平台下方便配置的管理，另一方面实现了集群统一的流量入口，而不是像 nodePort 那样给集群打多个孔。</p>
+<p><img src="/images/ingress.png" alt=""></p>
+<p>所以，总的来说要使用 Ingress，得先部署 Ingress Controller 实体（相当于前端 Nginx），然后再创建 Ingress （相当于 Nginx 配置的 k8s 资源体现），Ingress Controller 部署好后会动态检测 Ingress 的创建情况生成相应配置。Ingress Controller 的实现有很多种：有基于 Nginx 的，也有基于 HAProxy的，还有基于 OpenResty 的 Kong Ingress Controller 等，更多 Controller 见：<a href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/</a>，本文使用基于 Nginx 的 Ingress Controller：<a href="https://github.com/nginxinc/kubernetes-ingress" target="_blank" rel="noopener">ingress-nginx</a>。</p>
+<h3 id="helm-裸机部署-Nginx-Ingress-Controller"><a href="#helm-裸机部署-Nginx-Ingress-Controller" class="headerlink" title="helm 裸机部署 Nginx Ingress Controller"></a>helm 裸机部署 Nginx Ingress Controller</h3><p>基于 Nginx 的 Ingress Controller 有两种，一种是 k8s 社区提供的 <a href="https://github.com/nginxinc/kubernetes-ingress" target="_blank" rel="noopener">ingress-nginx</a>，另一种是 Nginx 社区提供的 <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">kubernetes-igress</a>，关于两者的区别见 <a href="https://github.com/nginxinc/kubernetes-ingress/blob/master/docs/nginx-ingress-controllers.md" target="_blank" rel="noopener">这里</a>。</p>
+<p>在这里我们部署 k8s 社区提供的 <a href="https://github.com/nginxinc/kubernetes-ingress" target="_blank" rel="noopener">ingress-nginx</a>，Ingress Controller 对外暴露方式采用 hostNetwork，在裸机环境下更多其他暴露方式见：<a href="https://kubernetes.github.io/ingress-nginx/deploy/baremetal/" target="_blank" rel="noopener">https://kubernetes.github.io/ingress-nginx/deploy/baremetal/</a></p>
+<p><img src="/images/hostNetworkIngress.png" alt=""></p>
+<p>使用 Helm 官方提供的 Chart <a href="https://github.com/helm/charts/tree/master/stable/nginx-ingress" target="_blank" rel="noopener">stable/nginx-ingress</a>，修改 values 文件：</p>
+<ul>
+<li>使用 DaemonSet 控制器，默认是 Deployment：controller.kind 设为 DaemonSet；</li>
+<li>pod 使用主机网络：controller.hostNetwork 设为 true；</li>
+<li>在hostNetwork 下 pod 使用集群提供 dns 服务：controller.dnsPolicy 设为 ClusterFirstWithHostNet；</li>
+<li>Service 类型设为 ClusterIP，默认是 LoadBalancer：controller.service.type 设为 ClusterIP；</li>
+<li>默认后端镜像使用 docker hub 提供的镜像，Google 国内无法访问；</li>
+</ul>
+<p>修改后的 values 文件：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/nginx-ingress-values.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/nginx-ingress-values.yml</a><br>helm 部署<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/nginx-ingress --name nginx-ingress -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/nginx-ingress-values.yml</span><br></pre></td></tr></table></figure></p>
+<p>验证部署是否成功<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get pod</span><br><span class="line">NAME                                             READY   STATUS    RESTARTS   AGE</span><br><span class="line">nginx-ingress-controller-mg8df                   <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">2</span>          <span class="number">2</span>m14s</span><br><span class="line">nginx-ingress-<span class="section">default</span>-backend<span class="number">-577857</span>cd9c-gfsnd   <span class="number">1</span>/<span class="number">1</span>     Running   <span class="number">0</span>          <span class="number">2</span>m14s</span><br></pre></td></tr></table></figure></p>
+<p>浏览器访问节点 ip 出现：<code>default backend - 404</code> 页面，部署成功。</p>
+<blockquote>
+<p>至此 Nginx Ingress Controller 已部署完成，接下来讲解如何通过 Ingress 结合  Ingress Controller 实现集群服务对外访问。</p>
+</blockquote>
+<h3 id="使用-Ingress-对外暴露服务"><a href="#使用-Ingress-对外暴露服务" class="headerlink" title="使用 Ingress 对外暴露服务"></a>使用 Ingress 对外暴露服务</h3><p>为了快速体验 Ingress，下面部署一个 nginx 服务，然后通过 Ingress 对外暴露 nginx service 进行访问。<br>首先部署 nginx 服务：<br>Deployment + Service：nginx.yml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  replicas:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">  template:</span></span><br><span class="line"><span class="attr">    metadata:</span></span><br><span class="line"><span class="attr">      labels:</span></span><br><span class="line"><span class="attr">        app:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      containers:</span></span><br><span class="line"><span class="attr">      - name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">        image:</span> <span class="attr">nginx:1.7.9</span></span><br><span class="line"><span class="attr">        ports:</span></span><br><span class="line"><span class="attr">        - containerPort:</span> <span class="number">80</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">  ports:</span></span><br><span class="line"><span class="attr">    - port:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">      targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></p>
+<p>kubectl create -f nginx.yml</p>
+<p>接下来创建 Ingress 对外暴露 nginx service 80 端口：<br>ingress.yml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">ingress-nginx</span></span><br><span class="line"><span class="attr">  annotations:</span></span><br><span class="line">    <span class="comment"># use the shared ingress-nginx</span></span><br><span class="line">    <span class="string">kubernetes.io/ingress.class:</span> <span class="string">"nginx"</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  rules:</span></span><br><span class="line"><span class="attr">  - host:</span> <span class="string">nginx.kube.com</span></span><br><span class="line"><span class="attr">    http:</span></span><br><span class="line"><span class="attr">      paths:</span></span><br><span class="line"><span class="attr">      - path:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">        backend:</span></span><br><span class="line"><span class="attr">          serviceName:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">          servicePort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure></p>
+<p>说明：</p>
+<ul>
+<li><code>kubernetes.io/ingress.class: &quot;nginx&quot;</code>：Nginx Ingress Controller 根据该注解自动发现 Ingress；</li>
+<li><code>host: nginx.kube.com</code>：对外访问的域名；</li>
+<li><code>serviceName: nginx</code>：对外暴露的 Service 名称；</li>
+<li><code>servicePort: 80</code>：nginx service 监听的端口；</li>
+</ul>
+<blockquote>
+<p>注意：创建的 Ingress 必须要和对外暴露的 Service 在同一命名空间下！</p>
+</blockquote>
+<p>将域名 nginx.kube.com 绑定到 k8s 任意节点 ip 即可访问：<a href="http://nginx.kube.com" target="_blank" rel="noopener">http://nginx.kube.com</a></p>
+<p><img src="/images/ingress-demo.png" alt=""></p>
+<blockquote>
+<p>上面的示例不支持 https 访问，下面举一个支持 https 的 Ingress 例子：通过 Ingress 访问 kubernetes dashboard 服务。</p>
+</blockquote>
+<h3 id="通过-Ingress-访问-kubernetes-dashboard（支持-HTTPS-访问）"><a href="#通过-Ingress-访问-kubernetes-dashboard（支持-HTTPS-访问）" class="headerlink" title="通过 Ingress 访问 kubernetes dashboard（支持 HTTPS 访问）"></a>通过 Ingress 访问 kubernetes dashboard（支持 HTTPS 访问）</h3><p>之前我们使用 helm 以 nodePort 的方式部署了 kubernetes dashboard：<a href="https://blog.csdn.net/qianghaohao/article/details/98860671" target="_blank" rel="noopener">「helm 部署 kubernetes-dashboard」</a>，从集群外部只能通过 <code>nodeIP:nodePort 端口号</code> 访问，接下来基于之前部署的 kubernetes-dashboard 配置如何通过 Ingress 访问，并且支持 HTTPS 访问，HTTP 自动跳转到 HTTPS。 ：<br>首先，练习使用，先用自签名证书来代替吧：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout kube-dashboard.key -out kube-dashboard.crt -subj <span class="string">"/CN=dashboard.kube.com/O=dashboard.kube.com"</span></span><br></pre></td></tr></table></figure></p>
+<p>使用生成的证书创建 k8s Secret 资源，下一步创建的 Ingress 会引用这个 Secret：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret tls kube-dasboard-ssl --key kube-dashboard.key --cert kube-dashboard.crt -n kube-system</span><br></pre></td></tr></table></figure></p>
+<p>创建 Ingress 资源对象（支持 HTTPS 访问）：<br>kube-dashboard-ingress.yml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">ingress-kube-dashboard</span></span><br><span class="line"><span class="attr">  annotations:</span></span><br><span class="line">    <span class="comment"># use the shared ingress-nginx</span></span><br><span class="line">    <span class="string">kubernetes.io/ingress.class:</span> <span class="string">"nginx"</span></span><br><span class="line">    <span class="string">nginx.ingress.kubernetes.io/backend-protocol:</span> <span class="string">"HTTPS"</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  tls:</span></span><br><span class="line"><span class="attr">  - hosts:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">dashboard.kube.com</span></span><br><span class="line"><span class="attr">    secretName:</span> <span class="string">kube-dasboard-ssl</span></span><br><span class="line"><span class="attr">  rules:</span></span><br><span class="line"><span class="attr">  - host:</span> <span class="string">dashboard.kube.com</span></span><br><span class="line"><span class="attr">    http:</span></span><br><span class="line"><span class="attr">      paths:</span></span><br><span class="line"><span class="attr">      - path:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">        backend:</span></span><br><span class="line"><span class="attr">          serviceName:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line"><span class="attr">          servicePort:</span> <span class="number">443</span></span><br></pre></td></tr></table></figure></p>
+<p>kubectl create -f kube-dashboard-ingress.yml -n kube-system<br>说明：</p>
+<ul>
+<li><code>kubernetes.io/ingress.class: &quot;nginx&quot;</code>：Inginx Ingress Controller 根据该注解自动发现 Ingress；</li>
+<li><p><code>nginx.ingress.kubernetes.io/backend-protocol</code>: Controller 向后端 Service 转发时使用 HTTPS 协议，这个注解必须添加，否则访问会报错，可以看到 Ingress Controller 报错日志：kubectl logs -f nginx-ingress-controller-mg8df</p>
+<blockquote>
+<p>2019/08/12 06:40:00 [error] 557#557: *56049 upstream sent no valid HTTP/1.0 header while reading response header from upstream, client: 192.168.26.10, server: dashboard.kube.com, request: “GET / HTTP/1.1”, upstream: “<a href="http://10.244.1.8:8443/" target="_blank" rel="noopener">http://10.244.1.8:8443/</a>“, host: “dashboard.kube.com”</p>
+</blockquote>
+<p>  报错原因主要是 dashboard 服务后端只支持 https，但是 Ingress Controller 接到客户端的请求时往后端 dashboard 服务转发时使用的是 http 协议，解决办法就是给 创建的 Ingress 设置：<code>nginx.ingress.kubernetes.io/backend-protocol: &quot;HTTPS&quot;</code> 注解。解决方法参考自 StackOverflow：<a href="https://stackoverflow.com/questions/48324760/ingress-configuration-for-dashboard" target="_blank" rel="noopener">https://stackoverflow.com/questions/48324760/ingress-configuration-for-dashboard</a></p>
+</li>
+<li><code>secretName: kube-dasboard-ssl</code>：https 证书 Secret；</li>
+<li><code>host: dashboard.kube.com</code>：对外访问的域名；</li>
+<li><code>serviceName: kubernetes-dashboard</code>：集群对外暴露的 Service 名称；</li>
+<li><code>servicePort: 443</code>：service 监听的端口；</li>
+</ul>
+<blockquote>
+<p>注意：创建的 Ingress 必须要和对外暴露的 Service 在同一命名空间下！</p>
+</blockquote>
+<p>将域名 dashboard.kube.com 绑定到 k8s 任意节点 ip 即可访问：<a href="https://dashboard.kube.com" target="_blank" rel="noopener">https://dashboard.kube.com</a></p>
+<p><img src="/images/kube-dashboard-ingress.png" alt=""></p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/services-networking/ingress/</a> | 官方文档<br><a href="https://mritd.me/2017/03/04/how-to-use-nginx-ingress/" target="_blank" rel="noopener">https://mritd.me/2017/03/04/how-to-use-nginx-ingress/</a> | Kubernetes Nginx Ingress 教程<br><a href="https://github.com/nginxinc/kubernetes-ingress" target="_blank" rel="noopener">https://github.com/nginxinc/kubernetes-ingress</a> | Inginx Ingress Controller：nginx 社区提供<br><a href="https://github.com/kubernetes/ingress-nginx" target="_blank" rel="noopener">https://github.com/kubernetes/ingress-nginx</a> | Inginx Ingress Controller：k8s 社区提供<br><a href="https://github.com/nginxinc/kubernetes-ingress/blob/master/docs/nginx-ingress-controllers.md" target="_blank" rel="noopener">https://github.com/nginxinc/kubernetes-ingress/blob/master/docs/nginx-ingress-controllers.md</a> | 两种基于 nginx 的 Ingress Controller 区别<br><a href="https://kubernetes.github.io/ingress-nginx/deploy/" target="_blank" rel="noopener">https://kubernetes.github.io/ingress-nginx/deploy/</a> | Inginx Ingress Controller k8s 社区版安装文档<br><a href="https://kubernetes.github.io/ingress-nginx/deploy/baremetal/" target="_blank" rel="noopener">https://kubernetes.github.io/ingress-nginx/deploy/baremetal/</a> | 在 裸机环境下 Inginx Ingress Controller 对外暴露方案</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/09/kubectl-多集群访问配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1648,165 +1859,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/24/使用-Go-开发命令行应用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/24/使用-Go-开发命令行应用/" itemprop="url">使用 Go 开发命令行应用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-24T11:07:31+08:00">
-                2019-07-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Go/" itemprop="url" rel="index">
-                    <span itemprop="name">Go</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>作为一个程序员，命令行工具是我们再熟悉不过的了，我们每天或多或少都会用到命令行工具。比如项目构建、打包、启动等等。那么如何用 Go 语言编写类似的工具呢？调研了下，大概有下面三种方法：</p>
-<ul>
-<li><strong>os.Args 函数</strong><br>os.Args 功能类似于 Shell 脚本的 <code>$@</code> 功能，获取到命令行输入，然后进行人工解析处理，这种方式对于编写简单的工具还行，对于复杂点的工具，光解析输入参数就是一场”灾难”了。</li>
-<li><strong>使用 Go 标准 <a href="https://go-zh.org/pkg/flag/" target="_blank" rel="noopener">flag</a> 包</strong><br><a href="https://go-zh.org/pkg/flag/" target="_blank" rel="noopener">flag</a> 包是 Golang 官方提供的命令行参数解析包，省去人工解析工作，对于构建一个一般功能的命令行应用足够了，但是对于复杂应用还是显得比较麻烦。</li>
-<li><strong>使用第三方包 <a href="https://github.com/urfave/cli" target="_blank" rel="noopener">cli</a> 或者 <a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">cobra</a></strong><br>使用第三方包就比较专业了，提供的功能更加丰富，使用起来也很顺手。目前对于 Golang 命令行应用开发业界比较主流的就是 <a href="https://github.com/urfave/cli" target="_blank" rel="noopener">cli</a> 和 <a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">cobra</a> 了。其实两者的流行度差不多，cobra 的学习成本稍微高点，而且更加专业，看文档介绍，Kubernetes、Moby、rkt、etcd 等都是基于 cobra 构建。我个人更推荐使用 <a href="https://github.com/urfave/cli" target="_blank" rel="noopener">cli</a>，因为 cli 比较轻量级、容易学习，使用起来也更加得心应手，对于开发日常应用足够了。</li>
-</ul>
-<p>本文主要介绍后面两种方式，即 flag 包和第三方包 cli 的使用，对于 cobra 的使用这里不做具体介绍。</p>
-<h3 id="使用-flag-包构建命令行应用"><a href="#使用-flag-包构建命令行应用" class="headerlink" title="使用 flag 包构建命令行应用"></a>使用 flag 包构建命令行应用</h3><p> flag 包的使用很简单，能很方便地解析命令行输入，支持的命令行参数类型有  bool, int, uint, string, time.Duration, float 类型，另外还可以自定义类型。这里介绍下一般的使用方法，假如要开发一个命令行工具，使用方式：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./<span class="keyword">go</span>-curl -v -X <span class="string">"GET"</span> https:<span class="comment">//example.com</span></span><br></pre></td></tr></table></figure></p>
-<p>具体实现代码：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 定义一个 bool 类型的参数，默认值为 false，第三个参数为 Usage 说明</span></span><br><span class="line">	<span class="comment">// 函数返回值为对应类型的指针</span></span><br><span class="line">	v := flag.Bool(<span class="string">"v"</span>, <span class="literal">false</span>, <span class="string">"Makes  curl  verbose  during the operation."</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 定义一个 String 类型的参数，默认值为 GET，第三个参数为 Usage 说明</span></span><br><span class="line">	<span class="comment">// 与上面那种不同的是函数第一个参数为变量的指针</span></span><br><span class="line">	<span class="keyword">var</span> X <span class="keyword">string</span></span><br><span class="line">	flag.StringVar(&amp;X, <span class="string">"X"</span>, <span class="string">"GET"</span>, <span class="string">"(HTTP) Specifies a custom request method to use when communicating with the HTTP server."</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 在参数定义完后必须调用 flag.Parse() 完成命令行参数的解析</span></span><br><span class="line">	flag.Parse()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回其余参数的列表</span></span><br><span class="line">	args := flag.Args()</span><br><span class="line">	fmt.Printf(<span class="string">"v: %t, X: %s, args: %v\n"</span>, *v, X, args)</span><br><span class="line">	os.Exit(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>可以看出定义参数有两种方式：</p>
-<ul>
-<li>指针类型参数：调用函数为 <code>flag.Type</code> 形式，返回值为对应类型的指针；</li>
-<li>值类型参数：调用函数为 <code>flag.TypeVar</code> 形式，调用时传递变量的指针；</li>
-</ul>
-<p>两种方法效果都是一样的，只不过一种解析返回的是指针，另一种是直接使用变量。</p>
-<h3 id="使用-cli-包构建命令行应用"><a href="#使用-cli-包构建命令行应用" class="headerlink" title="使用 cli 包构建命令行应用"></a>使用 cli 包构建命令行应用</h3><p>使用 cli 包开发命令行工具能省很多事，而且写出来的代码结构非常清晰，很容易理解。具体使用见代码仓库 <a href="https://github.com/urfave/cli" target="_blank" rel="noopener">README.md</a> 。在这里举一个例子，我最近写的服务部署命令行工具：<a href="https://github.com/qhh0205/deploy-kit" target="_blank" rel="noopener">https://github.com/qhh0205/deploy-kit</a>   通过看官方文档结合这个例子能很容易掌握 cli 包的是使用技巧。下面为该部署工具的 <code>--help</code> 输出：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">NAME:</span><br><span class="line">   deploy - deploy application</span><br><span class="line"></span><br><span class="line">USAGE:</span><br><span class="line">   deploy [global options] command [command options] [arguments...]</span><br><span class="line"></span><br><span class="line">VERSION:</span><br><span class="line">   v1<span class="number">.0</span></span><br><span class="line"></span><br><span class="line">COMMANDS:</span><br><span class="line">     list, ls           list all of services</span><br><span class="line">     app                deploy microservice application</span><br><span class="line">     web                deploy web application</span><br><span class="line">     lsbranch, lsb      list the code branches of service</span><br><span class="line">     upload-cdn, upcdn  upload file or directory to gcs bucket</span><br><span class="line">     help, h            Shows a list of commands or help <span class="keyword">for</span> one command</span><br><span class="line"></span><br><span class="line">GLOBAL OPTIONS:</span><br><span class="line">   --help, -h     show help</span><br><span class="line">   --version, -v  <span class="built_in">print</span> the version</span><br></pre></td></tr></table></figure></p>
-<p>该工具基于 cli 包构建，cli 包的使用核心是通过 <code>app.Commands = []cli.Command{}</code>  定义一些列命令、选项，并且通过 <code>Action</code> 绑定对应选项参数的处理函数。</p>
-<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><p><a href="https://github.com/urfave/cli" target="_blank" rel="noopener">https://github.com/urfave/cli</a> | cli GitHub<br><a href="https://books.studygolang.com/The-Golang-Standard-Library-by-Example/chapter13/13.1.html" target="_blank" rel="noopener">https://books.studygolang.com/The-Golang-Standard-Library-by-Example/chapter13/13.1.html</a> | flag 包介绍<br><a href="https://blog.yumaojun.net/2016/12/30/go-cobra/" target="_blank" rel="noopener">https://blog.yumaojun.net/2016/12/30/go-cobra/</a> | cobra 使用，如何使用golang编写漂亮的命令行工具<br><a href="https://blog.rapid7.com/2016/08/04/build-a-simple-cli-tool-with-golang/" target="_blank" rel="noopener">https://blog.rapid7.com/2016/08/04/build-a-simple-cli-tool-with-golang/</a> | Building a Simple CLI Tool with Golang<br><a href="https://medium.com/what-i-talk-about-when-i-talk-about-technology/dealing-with-command-line-options-in-golang-flag-package-e5fb6ef1a79e" target="_blank" rel="noopener">https://medium.com/what-i-talk-about-when-i-talk-about-technology/dealing-with-command-line-options-in-golang-flag-package-e5fb6ef1a79e</a> | Dealing with Command Line Options in Golang: flag package</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1856,7 +1908,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">116</span>
+                  <span class="site-state-item-count">117</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
