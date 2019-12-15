@@ -296,6 +296,162 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/06/Amazon-CloudFront-CDN-s3-源站跨域配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/06/Amazon-CloudFront-CDN-s3-源站跨域配置/" itemprop="url">Amazon CloudFront CDN + s3 源站跨域配置</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-06T19:48:25+08:00">
+                2019-05-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Aws/" itemprop="url" rel="index">
+                    <span itemprop="name">Aws</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>使用 Amazon CloudFront CDN + s3 源站托管前端静态页面，前端跨域请求时报错：<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="params">...</span>blocked <span class="keyword">by</span> CORS policy: No <span class="string">'Access-Control-Allow-Origin'</span> <span class="keyword">header</span> is present <span class="keyword">on</span> the requested resource.</span><br></pre></td></tr></table></figure></p>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>配置 Amazon CloudFront CDN 和 s3 支持跨域请求</p>
+<h4 id="1-s3-存储桶添加-CORS-配置"><a href="#1-s3-存储桶添加-CORS-配置" class="headerlink" title="1. s3 存储桶添加 CORS 配置"></a>1. s3 存储桶添加 CORS 配置</h4><p>存储桶—&gt;权限—&gt;CORS配置，添加类似下面 xml 格式的 CORS 配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span><span class="meta">?&gt;</span></span></span><br><span class="line">   <span class="tag">&lt;<span class="name">CORSConfiguration</span> <span class="attr">xmlns</span>=<span class="string">"http://s3.amazonaws.com/doc/2006-03-01/"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">CORSRule</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedOrigin</span>&gt;</span>*<span class="tag">&lt;/<span class="name">AllowedOrigin</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedMethod</span>&gt;</span>HEAD<span class="tag">&lt;/<span class="name">AllowedMethod</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedMethod</span>&gt;</span>PUT<span class="tag">&lt;/<span class="name">AllowedMethod</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedMethod</span>&gt;</span>GET<span class="tag">&lt;/<span class="name">AllowedMethod</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">MaxAgeSeconds</span>&gt;</span>3000<span class="tag">&lt;/<span class="name">MaxAgeSeconds</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">ExposeHeader</span>&gt;</span>x-amz-server-side-encryption<span class="tag">&lt;/<span class="name">ExposeHeader</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">ExposeHeader</span>&gt;</span>x-amz-request-id<span class="tag">&lt;/<span class="name">ExposeHeader</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">ExposeHeader</span>&gt;</span>x-amz-id-2<span class="tag">&lt;/<span class="name">ExposeHeader</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedHeader</span>&gt;</span>*<span class="tag">&lt;/<span class="name">AllowedHeader</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">CORSRule</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">CORSConfiguration</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p> s3 CORS 相关配置项说明：</p>
+<ul>
+<li><code>&lt;AllowedOrigin&gt;*&lt;/AllowedOrigin&gt;</code>: 允许访问来源，* 表示允许所有来源访问，具体根据实际情况配置；</li>
+<li><code>&lt;AllowedMethod&gt;HEAD&lt;/AllowedMethod&gt;</code>: 允许的请求方法：GET、PUT、POST、DELETE、HEAD，不包含 OPTIONS 请求；</li>
+<li><code>&lt;MaxAgeSeconds&gt;3000&lt;/MaxAgeSeconds&gt;</code>: 指定在 Amazon S3 针对特定资源的预检 OPTIONS 请求做出响应后，浏览器缓存该响应的时间（以秒为单位，在本示例中为 3000 秒）。通过缓存响应，在需要重复原始请求时，浏览器无需向 Amazon S3 发送预检请求。</li>
+<li>其他配置项解释见这里：<a href="https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/dev/cors.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/dev/cors.html</a></li>
+</ul>
+<p>使用 curl 测试存储桶 CORS 配置是否正确：<br><figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -I -v -L -H <span class="comment">'origin: <span class="doctag">&lt;跨域请求的来源域名&gt;</span>' <span class="doctag">&lt;s3资源地址&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p>如果响应头中有如下请求头，则表示配置正确：<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Access</span>-Control-Allow-Origin: &lt;curl 请求时 -H 参数指定的值&gt;</span><br><span class="line"><span class="keyword">Access</span>-Control-Allow-Methods: &lt;s3 存储桶 CORS 配置指定的请求方法&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-CloudFront-分发行为中配置正确的”白名单标头”"><a href="#2-CloudFront-分发行为中配置正确的”白名单标头”" class="headerlink" title="2. CloudFront 分发行为中配置正确的”白名单标头”:"></a>2. CloudFront 分发行为中配置正确的”白名单标头”:</h4><p>打开 Amazon CloudFront 控制台—&gt;点击要配置的分发—&gt;选中”行为”列—&gt;选中某条行为配置行，点击”编辑”—&gt;”白名单标头”添加如下标头（CORS 相关配置，必须得添加，否则跨域请求时会出问题）：<br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Request-Headers</span><br><span class="line">Access-Control-Request-<span class="function"><span class="keyword">Method</span></span></span><br><span class="line"><span class="function"><span class="title">CloudFront</span>-<span class="title">Forwarded</span>-<span class="title">Proto</span></span></span><br><span class="line"><span class="function"><span class="title">Origin</span></span></span><br></pre></td></tr></table></figure></p>
+<h4 id="3-CloudFront-缓存行为允许-OPTIONS-请求："><a href="#3-CloudFront-缓存行为允许-OPTIONS-请求：" class="headerlink" title="3. CloudFront 缓存行为允许 OPTIONS 请求："></a>3. CloudFront 缓存行为允许 OPTIONS 请求：</h4><p>打开 Amazon CloudFront 控制台—&gt;点击要配置的分发—&gt;选中”行为”列—&gt;选中某条行为配置行，点击”编辑”—&gt;”缓存的 HTTP 方法” 下面勾选 OPTIONS 复选框</p>
+<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p>   <a href="https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/dev/cors.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/dev/cors.html</a><br>   <a href="https://aws.amazon.com/cn/premiumsupport/knowledge-center/no-access-control-allow-origin-error/?nc1=h_ls" target="_blank" rel="noopener">https://aws.amazon.com/cn/premiumsupport/knowledge-center/no-access-control-allow-origin-error/?nc1=h_ls</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/01/计算机网络协议学习总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1953,158 +2109,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/14/基于-Docker-Compose-容器化搭建-Wordpress/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/14/基于-Docker-Compose-容器化搭建-Wordpress/" itemprop="url">基于 Docker Compose 容器化搭建 Wordpress</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-14T22:57:55+08:00">
-                2019-01-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Wordpress/" itemprop="url" rel="index">
-                    <span itemprop="name">Wordpress</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近由于业务需求帮公司搞了几个 Wordpress 作为官网，中间也是踩了不少坑，倒不是搭建 wordpress 难，主要是 wordpress 本身坑就挺多的，比如迁移、使用过程中文件上传大小的限制问题、迁移后域名无法变更问题等等。</p>
-<p>接下来演示如何基于 Docker Compose 来容器化搭建一个可靠、易维护的 Wordpress 网站，可靠指的是服务挂了会自愈（当然是 docker 本身的功能了），易维护指的是即使后面做服务的迁移也是非常方便的，只是简单的文件拷贝，然后 docker compose 启动，没有任何其他的维护成本。</p>
-<p><strong>架构</strong>：非容器化 nginx 反向代理 + Docker Compose （ Wordpress + MySql）</p>
-<p><img src="/images/nginx-wordpress-docker.png" alt=""></p>
-<h3 id="Docker-Compose-工程"><a href="#Docker-Compose-工程" class="headerlink" title="Docker Compose 工程"></a>Docker Compose 工程</h3><p>Wordpress Docker Compose 工程目录结构：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wordpress</span><br><span class="line">├── db_data  # mysql 数据目录</span><br><span class="line">├── docker-compose.yaml  # docker-compose 文件</span><br><span class="line">├── upload.ini  # php 文件上传相关配置</span><br><span class="line">└── wp_site  # wordpress 静态资源存储目录</span><br></pre></td></tr></table></figure></p>
-<p>docker-compose.yaml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3.3'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">   db:</span></span><br><span class="line"><span class="attr">     image:</span> <span class="attr">mysql:5.7</span></span><br><span class="line"><span class="attr">     volumes:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./db_data:/var/lib/mysql</span></span><br><span class="line"><span class="attr">     restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">     environment:</span></span><br><span class="line"><span class="attr">       MYSQL_ROOT_PASSWORD:</span> <span class="string">somewordpress</span></span><br><span class="line"><span class="attr">       MYSQL_DATABASE:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       MYSQL_USER:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       MYSQL_PASSWORD:</span> <span class="string">example</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   wordpress:</span></span><br><span class="line"><span class="attr">     depends_on:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">db</span></span><br><span class="line"><span class="attr">     image:</span> <span class="attr">wordpress:5.0.3</span></span><br><span class="line"><span class="attr">     volumes:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./wp_site:/var/www/html</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini</span></span><br><span class="line"><span class="attr">     ports:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">"9000:80"</span></span><br><span class="line"><span class="attr">     restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">     environment:</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_HOST:</span> <span class="attr">db:3306</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_USER:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_PASSWORD:</span> <span class="string">example</span></span><br></pre></td></tr></table></figure></p>
-<p>uploads.ini:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">file_uploads</span> <span class="string">=</span> <span class="string">On</span></span><br><span class="line"><span class="string">memory_limit</span> <span class="string">=</span> <span class="number">128</span><span class="string">M</span></span><br><span class="line"><span class="string">upload_max_filesize</span> <span class="string">=</span> <span class="number">512</span><span class="string">M</span></span><br><span class="line"><span class="string">post_max_size</span> <span class="string">=</span> <span class="number">128</span><span class="string">M</span></span><br><span class="line"><span class="string">max_execution_time</span> <span class="string">=</span> <span class="number">600</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="外部-Nginx-配置文件"><a href="#外部-Nginx-配置文件" class="headerlink" title="外部 Nginx  配置文件"></a>外部 Nginx  配置文件</h3><p>https_server.conf（网站配置文件）:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>      <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span> example.com;</span><br><span class="line">        <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span>  https://<span class="variable">$host</span><span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>      <span class="number">443</span>;</span><br><span class="line">        <span class="attribute">ssl</span> <span class="literal">on</span>;</span><br><span class="line">        <span class="attribute">ssl_certificate</span> crts/example/example_com.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> crts/example/example_com.key;</span><br><span class="line">        <span class="attribute">server_name</span> example.com;</span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">                <span class="attribute">proxy_pass</span>   http://localhost:9002;</span><br><span class="line">                <span class="attribute">include</span> conf.d/common.cfg;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Forwarded-Proto https;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>common.cfg（Nginx 相关配置项）:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">proxy_set_header</span>   Host             <span class="variable">$host</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span>   X-Real-IP        <span class="variable">$remote_addr</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span>  X-Forwarded-For  <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line"><span class="attribute">client_max_body_size</span>       <span class="number">128m</span>;</span><br><span class="line"><span class="attribute">client_body_buffer_size</span>    <span class="number">10m</span>;</span><br><span class="line"><span class="attribute">client_body_temp_path</span>      /tmp/client_body_temp;</span><br><span class="line"><span class="attribute">proxy_connect_timeout</span>      <span class="number">40</span>;</span><br><span class="line"><span class="attribute">proxy_send_timeout</span>         <span class="number">20</span>;</span><br><span class="line"><span class="attribute">proxy_read_timeout</span>         <span class="number">20</span>;</span><br><span class="line"><span class="attribute">proxy_buffer_size</span>          <span class="number">256k</span>;</span><br><span class="line"><span class="attribute">proxy_buffers</span>              <span class="number">32</span> <span class="number">64k</span>;</span><br></pre></td></tr></table></figure></p>
-<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><p>进入 docker compose 工程目录执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure></p>
-<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><p>相关 docker compose 指令：<br><code>docker-compose stop</code>: 停止已启动的服务，停止后容器还在，只是退出了；<br><code>docker-compose start</code>: 启动已停止的服务；<br><code>docker-compose down</code>: 停止并清理掉启动的 Docker 容器、卷、网络等相关资源；<br><code>docker-compose logs -f</code>: 实时查看日志</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2154,7 +2158,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">117</span>
+                  <span class="site-state-item-count">118</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

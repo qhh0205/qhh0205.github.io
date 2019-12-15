@@ -296,6 +296,207 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/16/Cenos7-下搭建-OpenVPN-过程记录/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/06/16/Cenos7-下搭建-OpenVPN-过程记录/" itemprop="url">Cenos7 下搭建 OpenVPN 过程记录</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-16T14:52:51+08:00">
+                2019-06-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OpenVPN/" itemprop="url" rel="index">
+                    <span itemprop="name">OpenVPN</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="/images/openvpn-icon.png" alt="Alt text"></p>
+<h3 id="OpenVPN-服务端安装配置"><a href="#OpenVPN-服务端安装配置" class="headerlink" title="OpenVPN 服务端安装配置"></a>OpenVPN 服务端安装配置</h3><p>由于不同环境及软件版本命令使用略有差异，特别是 easy-rsa 的使用在 2.0 和 3.0 的差别有点大，所以在此先说明下安装环境及相关软件版本：</p>
+<ul>
+<li><strong>系统平台：</strong>Centos7</li>
+<li><strong><a href="https://openvpn.net/" target="_blank" rel="noopener">OpenVPN</a> 版本：</strong>2.4.7</li>
+<li><strong>easy-rsa 版本：</strong>3.0.3</li>
+</ul>
+<p><strong>尽管不同环境及软件版本命令使用略有所差异，但是整个搭建过程都是一致的</strong>：</p>
+<blockquote>
+<p>安装相关软件—&gt;生成相关证书：CA 根证书、服务器证书—&gt;配置 open VPN 服务端—&gt;添加防火墙规则：snat—&gt;启动 open VPN 服务端—&gt;创建一个用户测试连接：创建客户端 CA 证书、生成 .ovpn 配置文件、打包相关文件供客户端使用。</p>
+</blockquote>
+<p><img src="/images/openvpn-install-step.png" alt="Alt text"></p>
+<p>1.安装 openvpn、easy-rsa、iptables-services<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y <span class="keyword">install</span> epel-<span class="keyword">release</span></span><br><span class="line">yum -y <span class="keyword">install</span> openvpn easy-rsa iptables-services</span><br></pre></td></tr></table></figure></p>
+<p>2.使用 easy-rsa 生成需要的证书及相关文件，在这个阶段会产生一些 key 和证书：</p>
+<ul>
+<li>CA 根证书</li>
+<li>OpenVPN 服务器 ssl 证书</li>
+<li>Diffie-Hellman 算法用到的 key</li>
+</ul>
+<p>2.1 将 easy-rsa 脚本复制到 /etc/openvpn/，该脚本主要用来方便地生成 CA 证书和各种 key<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -r <span class="regexp">/usr/</span>share<span class="regexp">/easy-rsa/</span> <span class="regexp">/etc/</span>openvpn<span class="regexp">/</span></span><br></pre></td></tr></table></figure></p>
+<p>2.2 跳到 easy-rsa 目录并编辑 vars 文件，添加一些生成证书时用到的变量<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/openvpn/easy-rsa/&lt;easy-rsa 版本号&gt;/  # 查看 easy-rsa 版本号：yum <span class="builtin-name">info</span> easy-rsa</span><br><span class="line">vim vars  # 没这个文件的话新建，填写如下内容（变量值根据实际情况随便填写）:</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">KEY_COUNTRY</span>=<span class="string">"***"</span></span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">KEY_PROVINCE</span>=<span class="string">"***"</span></span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">KEY_CITY</span>=<span class="string">"***"</span></span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">KEY_ORG</span>=<span class="string">"***"</span></span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">KEY_EMAIL</span>=<span class="string">"***"</span></span><br><span class="line">source ./vars   # 使变量生效</span><br></pre></td></tr></table></figure></p>
+<p>2.3 生成 CA 根证书<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">./easyrsa</span> init-pki    <span class="comment">#初始化 pki 相关目录</span></span><br><span class="line"><span class="string">./easyrsa</span> build-ca nopass  <span class="comment">#生成 CA 根证书, 输入 Common Name，名字随便起。</span></span><br></pre></td></tr></table></figure></p>
+<p>2.4 生成 OpenVPN 服务器证书和密钥<br>第一个参数 server 为证书名称，可以随便起，比如 <code>./easyrsa build-server-full openvpn nopass</code><br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./easyrsa build-server-full<span class="built_in"> server </span>nopass</span><br></pre></td></tr></table></figure></p>
+<p>2.5 生成 Diffie-Hellman 算法需要的密钥文件<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">./easyrsa</span> gen-dh   <span class="comment">#创建Diffie-Hellman，这可能得等一小会儿</span></span><br></pre></td></tr></table></figure></p>
+<p>2.6 生成 tls-auth key，这个 key 主要用于防止 DoS 和 TLS 攻击，这一步其实是可选的，但为了安全还是生成一下，该文件在后面配置 open VPN 时会用到。<br><figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">openvpn</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">genkey</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">secret</span> <span class="comment">ta</span><span class="string">.</span><span class="comment">key</span></span><br></pre></td></tr></table></figure></p>
+<p>2.7 将上面生成的相关证书文件整理到  /etc/openvpn/server/certs （这一步完全是为了维护方便）<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mkdir <span class="meta-keyword">/etc/</span>openvpn<span class="meta-keyword">/server/</span>certs &amp;&amp; cd <span class="meta-keyword">/etc/</span>openvpn<span class="meta-keyword">/server/</span>certs/</span><br><span class="line">cp <span class="meta-keyword">/etc/</span>openvpn<span class="meta-keyword">/easy-rsa/</span><span class="number">3</span><span class="meta-keyword">/pki/</span>dh.pem ./     <span class="meta"># SSL 协商时 Diffie-Hellman 算法需要的 key</span></span><br><span class="line">cp <span class="meta-keyword">/etc/</span>openvpn<span class="meta-keyword">/easy-rsa/</span><span class="number">3</span><span class="meta-keyword">/pki/</span>ca.crt ./        <span class="meta"># CA 根证书</span></span><br><span class="line">cp <span class="meta-keyword">/etc/</span>openvpn<span class="meta-keyword">/easy-rsa/</span><span class="number">3</span><span class="meta-keyword">/pki/</span>issued/server.crt ./    <span class="meta"># open VPN 服务器证书</span></span><br><span class="line">cp <span class="meta-keyword">/etc/</span>openvpn<span class="meta-keyword">/easy-rsa/</span><span class="number">3</span><span class="meta-keyword">/pki/</span>private/server.key ./   <span class="meta"># open VPN 服务器证书 key</span></span><br><span class="line">cp <span class="meta-keyword">/etc/</span>openvpn<span class="meta-keyword">/easy-rsa/</span><span class="number">3</span>/ta.key ./   <span class="meta"># tls-auth key</span></span><br></pre></td></tr></table></figure></p>
+<p>2.8 创建 open VPN 日志目录<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /<span class="built_in">var</span>/<span class="built_in">log</span>/openvpn/</span><br><span class="line">chown openvpn:openvpn /<span class="built_in">var</span>/<span class="built_in">log</span>/openvpn</span><br></pre></td></tr></table></figure></p>
+<p>3.配置 OpenVPN<br>可以从 /usr/share/doc/openvpn-<open vpn版本号="">/sample/sample-config-files 复制一份 demo 到 /etc/openvpn/（openvpn 版本号查看：yum info openvpn。）然后改改，或者从头开始创建一个新的配置文件。我选择新建配置:<br><code>cd  /etc/openvpn/</code><br><code>vim server.conf</code> 填入如下内容（很多配置项不需要特别了解，重要的配置这里注释出来了，其他相关配置项想了解的话见 <a href="https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage" target="_blank" rel="noopener">这里</a>）：<br>server.conf:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">port 1194   # 监听的端口号</span><br><span class="line">proto udp   # 服务端用的协议，udp 能快点，所以我选择 udp</span><br><span class="line">dev tun</span><br><span class="line">ca /etc/openvpn/server/certs/ca.crt  #   CA 根证书路径</span><br><span class="line">cert /etc/openvpn/server/certs/server.crt  # open VPN 服务器证书路径</span><br><span class="line">key /etc/openvpn/server/certs/server.key  # open VPN 服务器密钥路径，This file should be kept secret</span><br><span class="line">dh /etc/openvpn/server/certs/dh.pem  # Diffie-Hellman 算法密钥文件路径</span><br><span class="line">tls-auth /etc/openvpn/server/certs/ta.key 0 #  tls-auth key，参数 0 可以省略，如果不省略，那么客户端</span><br><span class="line"><span class="comment"># 配置相应的参数该配成 1。如果省略，那么客户端不需要 tls-auth 配置</span></span><br><span class="line">server 10.8.0.0 255.255.255.0   # 该网段为 open VPN 虚拟网卡网段，不要和内网网段冲突即可。open VPN 默认为 10.8.0.0/24</span><br><span class="line">push <span class="string">"dhcp-option DNS 8.8.8.8"</span>  #<span class="built_in"> DNS </span>服务器配置，可以根据需要指定其他 ns</span><br><span class="line">push <span class="string">"dhcp-option DNS 8.8.4.4"</span></span><br><span class="line">push <span class="string">"redirect-gateway def1"</span>   # 客户端所有流量都通过 open VPN 转发，类似于代理开全局</span><br><span class="line">compress lzo</span><br><span class="line">duplicate-cn   # 允许一个用户多个终端连接</span><br><span class="line">keepalive 10 120</span><br><span class="line">comp-lzo</span><br><span class="line">persist-key</span><br><span class="line">persist-tun</span><br><span class="line">user openvpn  # open VPN 进程启动用户，openvpn 用户在安装完 openvpn 后就自动生成了</span><br><span class="line">group openvpn</span><br><span class="line">log /var/log/openvpn/server.log  # 指定 log 文件位置</span><br><span class="line">log-append /var/log/openvpn/server.log</span><br><span class="line">status /var/log/openvpn/status.log</span><br><span class="line">verb 3</span><br><span class="line">explicit-exit-notify 1</span><br></pre></td></tr></table></figure></open></p>
+<p>4.防火墙相关配置（使用 iptables 添加 snat 规则）<br>4.1 禁用 Centos7 默认的 firewalld，使用经典的 iptables 防火墙管理软件：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="keyword">stop</span> firewalld</span><br><span class="line">systemctl <span class="keyword">mask</span> firewalld</span><br></pre></td></tr></table></figure></p>
+<p>4.2 禁用 SELinux<br>马上关闭：setenforce 0 | 马上生效<br>永久关闭：sed -i ‘s/SELINUX=enforcing/SELINUX=disabled/g’ /etc/selinux/config | 需要重启服务器生效</p>
+<p>4.3 启用iptables<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> iptables</span><br><span class="line">systemctl start iptables</span><br><span class="line">iptables -F   <span class="comment"># 清理所有防火墙规则</span></span><br></pre></td></tr></table></figure></p>
+<p>4.4 添加防火墙规则，将 openvpn 的网络流量转发到公网：snat 规则<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -t<span class="built_in"> nat </span>-A POSTROUTING -s 10.8.0.0/24 -j MASQUERADE</span><br><span class="line">iptables-save &gt; /etc/sysconfig/iptables   # iptables 规则持久化保存</span><br></pre></td></tr></table></figure></p>
+<p>4.5 Linux 服务器启用地址转发<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> net.ipv4.ip_forward = 1 &gt;&gt; /etc/sysctl.conf</span><br><span class="line">sysctl -p <span class="comment"># 这一步一定得执行，否则不会立即生效。</span></span><br></pre></td></tr></table></figure></p>
+<p>5.启动 open VPN<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl start openvpn@server  <span class="comment"># 启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> openvpn@server  <span class="comment"># 开机自启动</span></span><br><span class="line">systemctl status openvpn@server  <span class="comment"># 查看服务状态</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="添加一个-OpenVPN-用户"><a href="#添加一个-OpenVPN-用户" class="headerlink" title="添加一个 OpenVPN 用户"></a>添加一个 OpenVPN 用户</h3><p>OpenVPN 服务端搭建完了，但是我们该如何使用呢？下面以 Mac 平台下使用为例：</p>
+<p>要连接到 open VPN 服务端首先得需要一个客户端软件，在 Mac 下推荐使用 <a href="https://tunnelblick.net/" target="_blank" rel="noopener">Tunnelblick</a>，下载地址：<a href="https://tunnelblick.net/。Tunnelblick" target="_blank" rel="noopener">https://tunnelblick.net/。Tunnelblick</a> 是一个开源、免费的 Mac 版 open VPN 客户端软件。</p>
+<p>接下来在服务端创建一个 open VPN 用户：其实创建用户的过程就是生成客户端 SSL 证书的过程，然后将其他相关的证书文件、key、.ovpn 文件（客户端配置文件）打包到一起供客户端使用。由于创建一个用户的过程比较繁琐，所以在此将整个过程写成了一个脚本 ovpn_user.sh，脚本内容比较简单，一看就懂：</p>
+<p>首先创建一个客户端配置模板文件 sample.ovpn，该文件在脚本中会用到，放到 /etc/openvpn/client/ 目录，内容如下：<br>sample.ovpn:<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">client</span><br><span class="line">proto udp</span><br><span class="line">dev tun</span><br><span class="line">remote [open VPN服务端公网 ip，根据实际情况填写] 1194</span><br><span class="line">ca ca.crt</span><br><span class="line">cert admin.crt</span><br><span class="line">key admin.key</span><br><span class="line">tls-auth ta.key 1</span><br><span class="line">remote-cert-tls server</span><br><span class="line">persist-tun</span><br><span class="line">persist-key</span><br><span class="line">comp-lzo</span><br><span class="line">verb 3</span><br><span class="line">mute-replay-warnings</span><br></pre></td></tr></table></figure></p>
+<p>下面为创建 open VPN 用户脚本：<br>./ovpn_user.sh:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ! /bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line">OVPN_USER_KEYS_DIR=/etc/openvpn/client/keys</span><br><span class="line">EASY_RSA_VERSION=3</span><br><span class="line">EASY_RSA_DIR=/etc/openvpn/easy-rsa/</span><br><span class="line">PKI_DIR=<span class="variable">$EASY_RSA_DIR</span>/<span class="variable">$EASY_RSA_VERSION</span>/pki</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> user <span class="keyword">in</span> <span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="keyword">if</span> [ -d <span class="string">"<span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">    rm -rf <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span></span><br><span class="line">    rm -rf  <span class="variable">$PKI_DIR</span>/reqs/<span class="variable">$user</span>.req</span><br><span class="line">    sed -i <span class="string">'/'</span><span class="string">"<span class="variable">$user</span>"</span><span class="string">'/d'</span> <span class="variable">$PKI_DIR</span>/index.txt</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line">  <span class="built_in">cd</span> <span class="variable">$EASY_RSA_DIR</span>/<span class="variable">$EASY_RSA_VERSION</span></span><br><span class="line">  <span class="comment"># 生成客户端 ssl 证书文件</span></span><br><span class="line">  ./easyrsa build-client-full <span class="variable">$user</span> nopass</span><br><span class="line">  <span class="comment"># 整理下生成的文件</span></span><br><span class="line">  mkdir -p  <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span></span><br><span class="line">  cp <span class="variable">$PKI_DIR</span>/ca.crt <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span>/   <span class="comment"># CA 根证书</span></span><br><span class="line">  cp <span class="variable">$PKI_DIR</span>/issued/<span class="variable">$user</span>.crt <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span>/   <span class="comment"># 客户端证书</span></span><br><span class="line">  cp <span class="variable">$PKI_DIR</span>/private/<span class="variable">$user</span>.key <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span>/  <span class="comment"># 客户端证书密钥</span></span><br><span class="line">  cp /etc/openvpn/client/sample.ovpn <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span>/<span class="variable">$user</span>.ovpn <span class="comment"># 客户端配置文件</span></span><br><span class="line">  sed -i <span class="string">'s/admin/'</span><span class="string">"<span class="variable">$user</span>"</span><span class="string">'/g'</span> <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span>/<span class="variable">$user</span>.ovpn</span><br><span class="line">  cp /etc/openvpn/server/certs/ta.key <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span>/ta.key  <span class="comment"># auth-tls 文件</span></span><br><span class="line">  <span class="built_in">cd</span> <span class="variable">$OVPN_USER_KEYS_DIR</span></span><br><span class="line">  zip -r <span class="variable">$user</span>.zip <span class="variable">$user</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure></p>
+<p>执行上面脚本创建一个用户：<code>sh ovpn_user.sh &lt;username&gt;</code>，会在 /etc/openvpn/client/keys 目录下生成以用户名命名的 zip 打包文件，将该压缩包下载到本地解压，然后将里面的 .ovpn 文件拖拽到 Tunnelblick 客户端软件即可使用。<br>压缩包里面文件有如下，示例：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── ca.crt</span><br><span class="line">├── username.crt</span><br><span class="line">├── username.key</span><br><span class="line">├── username.ovpn</span><br><span class="line">└── ta.key</span><br></pre></td></tr></table></figure></p>
+<h3 id="删除一个-OpenVPN-用户"><a href="#删除一个-OpenVPN-用户" class="headerlink" title="删除一个 OpenVPN 用户"></a>删除一个 OpenVPN 用户</h3><p>上面我们知道了如何添加一个用户，那么如果公司员工离职了或者其他原因，想删除对应用户 OpenVPN 的使用权，该如何操作呢？其实很简单，OpenVPN 的客户端和服务端的认证主要通过 SSL 证书进行双向认证，所以只要吊销对应用户的 SSL 证书即可。</p>
+<ol>
+<li><p>编辑 OpenVPN 服务端配置 server.conf 添加如下配置:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crl-verify /etc/openvpn/easy-rsa/3/pki/crl.pem</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>吊销用户证书，假设要吊销的用户名为 username</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/openvpn/easy-rsa/3/</span><br><span class="line">./easyrsa revoke username</span><br><span class="line">./easyrsa gen-crl</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启 OpenVPN 服务端使其生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start openvpn@server</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>为了方便，也将上面步骤整理成了一个脚本，可以一键删除用户：<br>del_ovpn_user.sh:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ! /bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line">OVPN_USER_KEYS_DIR=/etc/openvpn/client/keys</span><br><span class="line">EASY_RSA_VERSION=3</span><br><span class="line">EASY_RSA_DIR=/etc/openvpn/easy-rsa/</span><br><span class="line"><span class="keyword">for</span> user <span class="keyword">in</span> <span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">cd</span> <span class="variable">$EASY_RSA_DIR</span>/<span class="variable">$EASY_RSA_VERSION</span></span><br><span class="line">  <span class="built_in">echo</span> -e <span class="string">'yes\n'</span> | ./easyrsa revoke <span class="variable">$user</span></span><br><span class="line">  ./easyrsa gen-crl</span><br><span class="line">  <span class="comment"># 吊销掉证书后清理客户端相关文件</span></span><br><span class="line">  <span class="keyword">if</span> [ -d <span class="string">"<span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$user</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">    rm -rf <span class="variable">$OVPN_USER_KEYS_DIR</span>/<span class="variable">$&#123;user&#125;</span>*</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line">  systemctl restart openvpn@server</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure></p>
+<h3 id="安装过程中遇到的问题及解决方法"><a href="#安装过程中遇到的问题及解决方法" class="headerlink" title="安装过程中遇到的问题及解决方法"></a>安装过程中遇到的问题及解决方法</h3><h4 id="问题-1：open-VPN-客户端可以正常连接到服务端，但是无法上网，ping-任何地址都不通，只有服务端公网-ip-可以-ping-通。"><a href="#问题-1：open-VPN-客户端可以正常连接到服务端，但是无法上网，ping-任何地址都不通，只有服务端公网-ip-可以-ping-通。" class="headerlink" title="问题 1：open VPN 客户端可以正常连接到服务端，但是无法上网，ping 任何地址都不通，只有服务端公网 ip 可以 ping 通。"></a>问题 1：open VPN 客户端可以正常连接到服务端，但是无法上网，ping 任何地址都不通，只有服务端公网 ip 可以 ping 通。</h4><p>问题原因及解决方法：主要原因是服务的地址转发功能没打开，其实我前面配置<br>了 echo net.ipv4.ip_forward = 1 &gt;&gt; /etc/sysctl.conf，但是没有执行 sysctl -p 使其<br>立即生效，所以才导致出现问题。因此一定要记得两条命令都要执行。</p>
+<h4 id="问题-2-open-VPN-可以正常使用，但是看客户端日志却有如下错误："><a href="#问题-2-open-VPN-可以正常使用，但是看客户端日志却有如下错误：" class="headerlink" title="问题 2: open VPN 可以正常使用，但是看客户端日志却有如下错误："></a>问题 2: open VPN 可以正常使用，但是看客户端日志却有如下错误：</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2019-06-15 02:39:03.957926 AEAD Decrypt error: bad packet ID (may be a replay): [ #6361 ] -- see the man<span class="built_in"> page </span>entry <span class="keyword">for</span> --no-replay <span class="keyword">and</span> --replay-window <span class="keyword">for</span> more <span class="builtin-name">info</span> <span class="keyword">or</span> silence this <span class="builtin-name">warning</span> with --mute-replay-warnings</span><br><span class="line">2019-06-15 02:39:23.413750 AEAD Decrypt error: bad packet ID (may be a replay): [ #6508 ] -- see the man<span class="built_in"> page </span>entry <span class="keyword">for</span> --no-replay <span class="keyword">and</span> --replay-window <span class="keyword">for</span> more <span class="builtin-name">info</span> <span class="keyword">or</span> silence this <span class="builtin-name">warning</span> with --mute-replay-warnings</span><br></pre></td></tr></table></figure>
+<p>问题原因及解决方法：<br>其实这个问题一般在 open VPN 是 UDP 服务的情况下出现，主要原因是 UDP 数据包重复发送导致，在 Wi-Fi 网络下经常出现，这并不影响使用，但是我们可以选择禁止掉该错误：根据错误提示可知使用 –mute-replay-warnings 参数可以消除该警告，我们使用的 open VPN 是 GUI 的，所以修改客户端 .ovpn 配置文件，末尾添加：mute-replay-warnings 即可解决。</p>
+<p>该问题在这里有讨论：<br><a href="https://sourceforge.net/p/openvpn/mailman/message/10655695/" target="_blank" rel="noopener">https://sourceforge.net/p/openvpn/mailman/message/10655695/</a></p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p>关于 open VPN 客户端和服务端配置文件配置项说明：很全面，可以随时查看不懂的配置项<br><a href="https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage" target="_blank" rel="noopener">https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage</a></p>
+<p><a href="https://openvpn.net/" target="_blank" rel="noopener">https://openvpn.net/</a> | OpenVPN 官网<br><a href="https://www.fandenggui.com/post/centos7-install-openvpn.html" target="_blank" rel="noopener">https://www.fandenggui.com/post/centos7-install-openvpn.html</a> | Centos7 安装 OpenVPN<br><a href="https://www.howtoing.com/how-to-install-openvpn-on-centos-7" target="_blank" rel="noopener">https://www.howtoing.com/how-to-install-openvpn-on-centos-7</a> | Centos7 安装 OpenVPN</p>
+<p><a href="https://www.xiaohui.com/dev/server/20070904-revoke-openvpn-client.htm" target="_blank" rel="noopener">https://www.xiaohui.com/dev/server/20070904-revoke-openvpn-client.htm</a> | 吊销客户端证书<br><a href="https://scott.stevensononthe.net/2015/02/how-to-addremove-additional-users-to-openvpn/" target="_blank" rel="noopener">https://scott.stevensononthe.net/2015/02/how-to-addremove-additional-users-to-openvpn/</a> | 吊销客户端证书<br><a href="https://tunnelblick.net/cConnectedBut.html" target="_blank" rel="noopener">https://tunnelblick.net/cConnectedBut.html</a> | open VPN 一些常见问题<br><a href="https://tunnelblick.net/ipinfo" target="_blank" rel="noopener">https://tunnelblick.net/ipinfo</a> | 本地公网 ip 查看</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/11/使用-ansible-模板化-haproxy-配置文件/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2047,162 +2248,6 @@ And more...
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/06/Amazon-CloudFront-CDN-s3-源站跨域配置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/05/06/Amazon-CloudFront-CDN-s3-源站跨域配置/" itemprop="url">Amazon CloudFront CDN + s3 源站跨域配置</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-06T19:48:25+08:00">
-                2019-05-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Aws/" itemprop="url" rel="index">
-                    <span itemprop="name">Aws</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>使用 Amazon CloudFront CDN + s3 源站托管前端静态页面，前端跨域请求时报错：<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="params">...</span>blocked <span class="keyword">by</span> CORS policy: No <span class="string">'Access-Control-Allow-Origin'</span> <span class="keyword">header</span> is present <span class="keyword">on</span> the requested resource.</span><br></pre></td></tr></table></figure></p>
-<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>配置 Amazon CloudFront CDN 和 s3 支持跨域请求</p>
-<h4 id="1-s3-存储桶添加-CORS-配置"><a href="#1-s3-存储桶添加-CORS-配置" class="headerlink" title="1. s3 存储桶添加 CORS 配置"></a>1. s3 存储桶添加 CORS 配置</h4><p>存储桶—&gt;权限—&gt;CORS配置，添加类似下面 xml 格式的 CORS 配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span><span class="meta">?&gt;</span></span></span><br><span class="line">   <span class="tag">&lt;<span class="name">CORSConfiguration</span> <span class="attr">xmlns</span>=<span class="string">"http://s3.amazonaws.com/doc/2006-03-01/"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">CORSRule</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedOrigin</span>&gt;</span>*<span class="tag">&lt;/<span class="name">AllowedOrigin</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedMethod</span>&gt;</span>HEAD<span class="tag">&lt;/<span class="name">AllowedMethod</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedMethod</span>&gt;</span>PUT<span class="tag">&lt;/<span class="name">AllowedMethod</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedMethod</span>&gt;</span>GET<span class="tag">&lt;/<span class="name">AllowedMethod</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">MaxAgeSeconds</span>&gt;</span>3000<span class="tag">&lt;/<span class="name">MaxAgeSeconds</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">ExposeHeader</span>&gt;</span>x-amz-server-side-encryption<span class="tag">&lt;/<span class="name">ExposeHeader</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">ExposeHeader</span>&gt;</span>x-amz-request-id<span class="tag">&lt;/<span class="name">ExposeHeader</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">ExposeHeader</span>&gt;</span>x-amz-id-2<span class="tag">&lt;/<span class="name">ExposeHeader</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">AllowedHeader</span>&gt;</span>*<span class="tag">&lt;/<span class="name">AllowedHeader</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">CORSRule</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">CORSConfiguration</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p> s3 CORS 相关配置项说明：</p>
-<ul>
-<li><code>&lt;AllowedOrigin&gt;*&lt;/AllowedOrigin&gt;</code>: 允许访问来源，* 表示允许所有来源访问，具体根据实际情况配置；</li>
-<li><code>&lt;AllowedMethod&gt;HEAD&lt;/AllowedMethod&gt;</code>: 允许的请求方法：GET、PUT、POST、DELETE、HEAD，不包含 OPTIONS 请求；</li>
-<li><code>&lt;MaxAgeSeconds&gt;3000&lt;/MaxAgeSeconds&gt;</code>: 指定在 Amazon S3 针对特定资源的预检 OPTIONS 请求做出响应后，浏览器缓存该响应的时间（以秒为单位，在本示例中为 3000 秒）。通过缓存响应，在需要重复原始请求时，浏览器无需向 Amazon S3 发送预检请求。</li>
-<li>其他配置项解释见这里：<a href="https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/dev/cors.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/dev/cors.html</a></li>
-</ul>
-<p>使用 curl 测试存储桶 CORS 配置是否正确：<br><figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -I -v -L -H <span class="comment">'origin: <span class="doctag">&lt;跨域请求的来源域名&gt;</span>' <span class="doctag">&lt;s3资源地址&gt;</span></span></span><br></pre></td></tr></table></figure></p>
-<p>如果响应头中有如下请求头，则表示配置正确：<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Access</span>-Control-Allow-Origin: &lt;curl 请求时 -H 参数指定的值&gt;</span><br><span class="line"><span class="keyword">Access</span>-Control-Allow-Methods: &lt;s3 存储桶 CORS 配置指定的请求方法&gt;</span><br></pre></td></tr></table></figure></p>
-<h4 id="2-CloudFront-分发行为中配置正确的”白名单标头”"><a href="#2-CloudFront-分发行为中配置正确的”白名单标头”" class="headerlink" title="2. CloudFront 分发行为中配置正确的”白名单标头”:"></a>2. CloudFront 分发行为中配置正确的”白名单标头”:</h4><p>打开 Amazon CloudFront 控制台—&gt;点击要配置的分发—&gt;选中”行为”列—&gt;选中某条行为配置行，点击”编辑”—&gt;”白名单标头”添加如下标头（CORS 相关配置，必须得添加，否则跨域请求时会出问题）：<br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Request-Headers</span><br><span class="line">Access-Control-Request-<span class="function"><span class="keyword">Method</span></span></span><br><span class="line"><span class="function"><span class="title">CloudFront</span>-<span class="title">Forwarded</span>-<span class="title">Proto</span></span></span><br><span class="line"><span class="function"><span class="title">Origin</span></span></span><br></pre></td></tr></table></figure></p>
-<h4 id="3-CloudFront-缓存行为允许-OPTIONS-请求："><a href="#3-CloudFront-缓存行为允许-OPTIONS-请求：" class="headerlink" title="3. CloudFront 缓存行为允许 OPTIONS 请求："></a>3. CloudFront 缓存行为允许 OPTIONS 请求：</h4><p>打开 Amazon CloudFront 控制台—&gt;点击要配置的分发—&gt;选中”行为”列—&gt;选中某条行为配置行，点击”编辑”—&gt;”缓存的 HTTP 方法” 下面勾选 OPTIONS 复选框</p>
-<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p>   <a href="https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/dev/cors.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/dev/cors.html</a><br>   <a href="https://aws.amazon.com/cn/premiumsupport/knowledge-center/no-access-control-allow-origin-error/?nc1=h_ls" target="_blank" rel="noopener">https://aws.amazon.com/cn/premiumsupport/knowledge-center/no-access-control-allow-origin-error/?nc1=h_ls</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2252,7 +2297,7 @@ And more...
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">117</span>
+                  <span class="site-state-item-count">118</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

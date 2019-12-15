@@ -296,6 +296,158 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/14/基于-Docker-Compose-容器化搭建-Wordpress/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/14/基于-Docker-Compose-容器化搭建-Wordpress/" itemprop="url">基于 Docker Compose 容器化搭建 Wordpress</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-14T22:57:55+08:00">
+                2019-01-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Wordpress/" itemprop="url" rel="index">
+                    <span itemprop="name">Wordpress</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近由于业务需求帮公司搞了几个 Wordpress 作为官网，中间也是踩了不少坑，倒不是搭建 wordpress 难，主要是 wordpress 本身坑就挺多的，比如迁移、使用过程中文件上传大小的限制问题、迁移后域名无法变更问题等等。</p>
+<p>接下来演示如何基于 Docker Compose 来容器化搭建一个可靠、易维护的 Wordpress 网站，可靠指的是服务挂了会自愈（当然是 docker 本身的功能了），易维护指的是即使后面做服务的迁移也是非常方便的，只是简单的文件拷贝，然后 docker compose 启动，没有任何其他的维护成本。</p>
+<p><strong>架构</strong>：非容器化 nginx 反向代理 + Docker Compose （ Wordpress + MySql）</p>
+<p><img src="/images/nginx-wordpress-docker.png" alt=""></p>
+<h3 id="Docker-Compose-工程"><a href="#Docker-Compose-工程" class="headerlink" title="Docker Compose 工程"></a>Docker Compose 工程</h3><p>Wordpress Docker Compose 工程目录结构：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wordpress</span><br><span class="line">├── db_data  # mysql 数据目录</span><br><span class="line">├── docker-compose.yaml  # docker-compose 文件</span><br><span class="line">├── upload.ini  # php 文件上传相关配置</span><br><span class="line">└── wp_site  # wordpress 静态资源存储目录</span><br></pre></td></tr></table></figure></p>
+<p>docker-compose.yaml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3.3'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">   db:</span></span><br><span class="line"><span class="attr">     image:</span> <span class="attr">mysql:5.7</span></span><br><span class="line"><span class="attr">     volumes:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./db_data:/var/lib/mysql</span></span><br><span class="line"><span class="attr">     restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">     environment:</span></span><br><span class="line"><span class="attr">       MYSQL_ROOT_PASSWORD:</span> <span class="string">somewordpress</span></span><br><span class="line"><span class="attr">       MYSQL_DATABASE:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       MYSQL_USER:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       MYSQL_PASSWORD:</span> <span class="string">example</span></span><br><span class="line"></span><br><span class="line"><span class="attr">   wordpress:</span></span><br><span class="line"><span class="attr">     depends_on:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">db</span></span><br><span class="line"><span class="attr">     image:</span> <span class="attr">wordpress:5.0.3</span></span><br><span class="line"><span class="attr">     volumes:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./wp_site:/var/www/html</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini</span></span><br><span class="line"><span class="attr">     ports:</span></span><br><span class="line"><span class="bullet">       -</span> <span class="string">"9000:80"</span></span><br><span class="line"><span class="attr">     restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">     environment:</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_HOST:</span> <span class="attr">db:3306</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_USER:</span> <span class="string">wordpress</span></span><br><span class="line"><span class="attr">       WORDPRESS_DB_PASSWORD:</span> <span class="string">example</span></span><br></pre></td></tr></table></figure></p>
+<p>uploads.ini:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">file_uploads</span> <span class="string">=</span> <span class="string">On</span></span><br><span class="line"><span class="string">memory_limit</span> <span class="string">=</span> <span class="number">128</span><span class="string">M</span></span><br><span class="line"><span class="string">upload_max_filesize</span> <span class="string">=</span> <span class="number">512</span><span class="string">M</span></span><br><span class="line"><span class="string">post_max_size</span> <span class="string">=</span> <span class="number">128</span><span class="string">M</span></span><br><span class="line"><span class="string">max_execution_time</span> <span class="string">=</span> <span class="number">600</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="外部-Nginx-配置文件"><a href="#外部-Nginx-配置文件" class="headerlink" title="外部 Nginx  配置文件"></a>外部 Nginx  配置文件</h3><p>https_server.conf（网站配置文件）:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>      <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span> example.com;</span><br><span class="line">        <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span>  https://<span class="variable">$host</span><span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>      <span class="number">443</span>;</span><br><span class="line">        <span class="attribute">ssl</span> <span class="literal">on</span>;</span><br><span class="line">        <span class="attribute">ssl_certificate</span> crts/example/example_com.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> crts/example/example_com.key;</span><br><span class="line">        <span class="attribute">server_name</span> example.com;</span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">                <span class="attribute">proxy_pass</span>   http://localhost:9002;</span><br><span class="line">                <span class="attribute">include</span> conf.d/common.cfg;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Forwarded-Proto https;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>common.cfg（Nginx 相关配置项）:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">proxy_set_header</span>   Host             <span class="variable">$host</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span>   X-Real-IP        <span class="variable">$remote_addr</span>;</span><br><span class="line"><span class="attribute">proxy_set_header</span>  X-Forwarded-For  <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line"><span class="attribute">client_max_body_size</span>       <span class="number">128m</span>;</span><br><span class="line"><span class="attribute">client_body_buffer_size</span>    <span class="number">10m</span>;</span><br><span class="line"><span class="attribute">client_body_temp_path</span>      /tmp/client_body_temp;</span><br><span class="line"><span class="attribute">proxy_connect_timeout</span>      <span class="number">40</span>;</span><br><span class="line"><span class="attribute">proxy_send_timeout</span>         <span class="number">20</span>;</span><br><span class="line"><span class="attribute">proxy_read_timeout</span>         <span class="number">20</span>;</span><br><span class="line"><span class="attribute">proxy_buffer_size</span>          <span class="number">256k</span>;</span><br><span class="line"><span class="attribute">proxy_buffers</span>              <span class="number">32</span> <span class="number">64k</span>;</span><br></pre></td></tr></table></figure></p>
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><p>进入 docker compose 工程目录执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure></p>
+<h3 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h3><p>相关 docker compose 指令：<br><code>docker-compose stop</code>: 停止已启动的服务，停止后容器还在，只是退出了；<br><code>docker-compose start</code>: 启动已停止的服务；<br><code>docker-compose down</code>: 停止并清理掉启动的 Docker 容器、卷、网络等相关资源；<br><code>docker-compose logs -f</code>: 实时查看日志</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/13/构建-Docker-镜像上传到-docker-hub/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1721,151 +1873,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/14/基于-Kubernetes-的-Jenkins-主从通信异常解决/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/14/基于-Kubernetes-的-Jenkins-主从通信异常解决/" itemprop="url">基于 Kubernetes 的 Jenkins 主从通信异常解决</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-14T13:24:08+08:00">
-                2018-10-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DevOps/" itemprop="url" rel="index">
-                    <span itemprop="name">DevOps</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p><a href="https://qhh0205.github.io/2018/10/14/%E5%9F%BA%E4%BA%8E-Kubernetes-%E7%9A%84%E5%8A%A8%E6%80%81-Jenkins-slave-%E9%83%A8%E7%BD%B2/" target="_blank" rel="noopener">基于 Kubernetes 部署 Jenkins 动态 slave</a> 后，运行 Jenkins Job 会抛java.nio.channels.ClosedChannelException 异常完整的异常栈如下：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">FATAL: java<span class="selector-class">.nio</span><span class="selector-class">.channels</span><span class="selector-class">.ClosedChannelException</span></span><br><span class="line">java<span class="selector-class">.nio</span><span class="selector-class">.channels</span><span class="selector-class">.ClosedChannelException</span></span><br><span class="line">Also:   hudson<span class="selector-class">.remoting</span><span class="selector-class">.Channel</span><span class="variable">$CallSiteStackTrace</span>: Remote call to JNLP4-connect connection from <span class="number">10.244</span>.<span class="number">8.1</span>/<span class="number">10.244</span>.<span class="number">8.1</span>:<span class="number">55340</span></span><br><span class="line">		at hudson<span class="selector-class">.remoting</span><span class="selector-class">.Channel</span><span class="selector-class">.attachCallSiteStackTrace</span>(Channel<span class="selector-class">.java</span>:<span class="number">1741</span>)</span><br><span class="line">		at hudson<span class="selector-class">.remoting</span><span class="selector-class">.Request</span><span class="selector-class">.call</span>(Request<span class="selector-class">.java</span>:<span class="number">202</span>)</span><br><span class="line">		at hudson<span class="selector-class">.remoting</span><span class="selector-class">.Channel</span><span class="selector-class">.call</span>(Channel<span class="selector-class">.java</span>:<span class="number">954</span>)</span><br><span class="line">		at hudson<span class="selector-class">.FilePath</span><span class="selector-class">.act</span>(FilePath<span class="selector-class">.java</span>:<span class="number">1071</span>)</span><br><span class="line">		at hudson<span class="selector-class">.FilePath</span><span class="selector-class">.act</span>(FilePath<span class="selector-class">.java</span>:<span class="number">1060</span>)</span><br><span class="line">		at hudson<span class="selector-class">.FilePath</span><span class="selector-class">.mkdirs</span>(FilePath<span class="selector-class">.java</span>:<span class="number">1245</span>)</span><br><span class="line">		at hudson<span class="selector-class">.model</span><span class="selector-class">.AbstractProject</span><span class="selector-class">.checkout</span>(AbstractProject<span class="selector-class">.java</span>:<span class="number">1202</span>)</span><br><span class="line">		at hudson<span class="selector-class">.model</span><span class="selector-class">.AbstractBuild</span><span class="variable">$AbstractBuildExecution</span>.defaultCheckout(AbstractBuild<span class="selector-class">.java</span>:<span class="number">574</span>)</span><br><span class="line">		at jenkins<span class="selector-class">.scm</span><span class="selector-class">.SCMCheckoutStrategy</span><span class="selector-class">.checkout</span>(SCMCheckoutStrategy<span class="selector-class">.java</span>:<span class="number">86</span>)</span><br><span class="line">		at hudson<span class="selector-class">.model</span><span class="selector-class">.AbstractBuild</span><span class="variable">$AbstractBuildExecution</span>.run(AbstractBuild<span class="selector-class">.java</span>:<span class="number">499</span>)</span><br><span class="line">		at hudson<span class="selector-class">.model</span><span class="selector-class">.Run</span><span class="selector-class">.execute</span>(Run<span class="selector-class">.java</span>:<span class="number">1819</span>)</span><br><span class="line">		at hudson<span class="selector-class">.model</span><span class="selector-class">.FreeStyleBuild</span><span class="selector-class">.run</span>(FreeStyleBuild<span class="selector-class">.java</span>:<span class="number">43</span>)</span><br><span class="line">		at hudson<span class="selector-class">.model</span><span class="selector-class">.ResourceController</span><span class="selector-class">.execute</span>(ResourceController<span class="selector-class">.java</span>:<span class="number">97</span>)</span><br><span class="line">		at hudson<span class="selector-class">.model</span><span class="selector-class">.Executor</span><span class="selector-class">.run</span>(Executor<span class="selector-class">.java</span>:<span class="number">429</span>)</span><br><span class="line">Caused: hudson<span class="selector-class">.remoting</span><span class="selector-class">.RequestAbortedException</span></span><br><span class="line">	at hudson<span class="selector-class">.remoting</span><span class="selector-class">.Request</span><span class="selector-class">.abort</span>(Request<span class="selector-class">.java</span>:<span class="number">340</span>)</span><br><span class="line">	at hudson<span class="selector-class">.remoting</span><span class="selector-class">.Channel</span><span class="selector-class">.terminate</span>(Channel<span class="selector-class">.java</span>:<span class="number">1038</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.impl</span><span class="selector-class">.ChannelApplicationLayer</span><span class="selector-class">.onReadClosed</span>(ChannelApplicationLayer<span class="selector-class">.java</span>:<span class="number">209</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.ApplicationLayer</span><span class="selector-class">.onRecvClosed</span>(ApplicationLayer<span class="selector-class">.java</span>:<span class="number">222</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.ProtocolStack</span><span class="variable">$Ptr</span>.onRecvClosed(ProtocolStack<span class="selector-class">.java</span>:<span class="number">832</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.FilterLayer</span><span class="selector-class">.onRecvClosed</span>(FilterLayer<span class="selector-class">.java</span>:<span class="number">287</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.impl</span><span class="selector-class">.SSLEngineFilterLayer</span><span class="selector-class">.onRecvClosed</span>(SSLEngineFilterLayer<span class="selector-class">.java</span>:<span class="number">172</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.ProtocolStack</span><span class="variable">$Ptr</span>.onRecvClosed(ProtocolStack<span class="selector-class">.java</span>:<span class="number">832</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.NetworkLayer</span><span class="selector-class">.onRecvClosed</span>(NetworkLayer<span class="selector-class">.java</span>:<span class="number">154</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.impl</span><span class="selector-class">.NIONetworkLayer</span><span class="selector-class">.ready</span>(NIONetworkLayer<span class="selector-class">.java</span>:<span class="number">142</span>)</span><br><span class="line">	at org<span class="selector-class">.jenkinsci</span><span class="selector-class">.remoting</span><span class="selector-class">.protocol</span><span class="selector-class">.IOHub</span><span class="variable">$OnReady</span>.run(IOHub<span class="selector-class">.java</span>:<span class="number">795</span>)</span><br><span class="line">	at jenkins<span class="selector-class">.util</span><span class="selector-class">.ContextResettingExecutorService</span>$<span class="number">1</span>.run(ContextResettingExecutorService<span class="selector-class">.java</span>:<span class="number">28</span>)</span><br><span class="line">	at jenkins<span class="selector-class">.security</span><span class="selector-class">.ImpersonatingExecutorService</span>$<span class="number">1</span>.run(ImpersonatingExecutorService<span class="selector-class">.java</span>:<span class="number">59</span>)</span><br><span class="line">	at java<span class="selector-class">.util</span><span class="selector-class">.concurrent</span><span class="selector-class">.ThreadPoolExecutor</span><span class="selector-class">.runWorker</span>(ThreadPoolExecutor<span class="selector-class">.java</span>:<span class="number">1149</span>)</span><br><span class="line">	at java<span class="selector-class">.util</span><span class="selector-class">.concurrent</span><span class="selector-class">.ThreadPoolExecutor</span><span class="variable">$Worker</span>.run(ThreadPoolExecutor<span class="selector-class">.java</span>:<span class="number">624</span>)</span><br><span class="line">	at java<span class="selector-class">.lang</span><span class="selector-class">.Thread</span><span class="selector-class">.run</span>(Thread<span class="selector-class">.java</span>:<span class="number">748</span>)</span><br><span class="line">Finished: FAILURE</span><br></pre></td></tr></table></figure></p>
-<h4 id="原因及解决方法"><a href="#原因及解决方法" class="headerlink" title="原因及解决方法"></a>原因及解决方法</h4><h5 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h5><p>抛 java.nio.channels.ClosedChannelException 异常的原因是 Jenkins Slave Pod 在 Jenkins Job 运行时突然挂掉，然后 Master Pod 无法和 Slave Pod 进行通信。那么解决方法就是找到 Slave Pod 经常挂掉的原因，经排查是 Slave Pod 的资源限制不合理，配置的 CPU 和内存太小，导致 Pod 在运行是很容易超出资源限制，然后被 k8s Kill 掉。</p>
-<h5 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h5><p> 打开 Jenkins 设置 Slave Pod 模版的资源限制：<br>Jenkins-&gt;系统管理-&gt;系统设置-&gt;云-&gt;镜像-&gt;Kubernetes Pod Template-&gt;Container Template-&gt;高级，然后根据实际情况调整 CPU 和内存需求。</p>
-<h4 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h4><p><a href="https://github.com/GoogleCloudPlatform/continuous-deployment-on-kubernetes/issues/118" target="_blank" rel="noopener">https://github.com/GoogleCloudPlatform/continuous-deployment-on-kubernetes/issues/118</a><br><a href="https://medium.com/@garunski/closedchannelexception-in-jenkins-with-kubernetes-plugin-a7788f1c62a9" target="_blank" rel="noopener">https://medium.com/@garunski/closedchannelexception-in-jenkins-with-kubernetes-plugin-a7788f1c62a9</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1915,7 +1922,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">117</span>
+                  <span class="site-state-item-count">118</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

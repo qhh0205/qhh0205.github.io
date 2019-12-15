@@ -296,6 +296,158 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Linux下文件的三个时间戳-atime-mtime-ctime/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/02/18/Linux下文件的三个时间戳-atime-mtime-ctime/" itemprop="url">Linux下文件的三个时间戳:atime,mtime,ctime</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T21:25:44+08:00">
+                2018-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在linux系统下每个文件都有三个时间戳，分别为atime，mtime，ctime，具体解释如下：</p>
+<ul>
+<li>atime(access time):最近访问内容的时间</li>
+<li>mtime(modify time):最近修改内容的时间</li>
+<li>ctime(change time):最近更改文件的时间，包括文件名、大小、内容、权限、属主、属组等。</li>
+</ul>
+<p>查看一个文件的这三个时间戳可以用stat命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 12        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Modify: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Change: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
+<p><strong>查看文件可以更改文件的atime</strong>，比如cat，more，less一个文件后，文件的atime会更新，还是上面示例文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ cat file_timestamp </span><br><span class="line">hello,world</span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 12        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line">Change: 2017-05-21 11:11:48.882598473 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
+<p>可以看出文件的atime已经更新成最新的了。<br><strong>更改文件的内容会同时更新文件的mtime和ctime</strong>，还是上面的示例文件，改变文件内容，然后stat查看：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">echo</span> <span class="string">"RNG"</span> &gt;&gt; file_timestamp </span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp </span><br><span class="line">  File: <span class="string">'file_timestamp'</span></span><br><span class="line">  Size: 16        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line">Change: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
+<p>可以看出文件内容更改后文件的mtime和ctime都更新了，atime保持不变。<br><strong>更改文件的名称，大小，权限等只会更新文件的ctime</strong>，还是上面示例文件，更改下文件的文件名，然后stat查看：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[haohao@localhost <span class="built_in">test</span>]$ mv file_timestamp file_timestamp.txt  </span><br><span class="line">[haohao@localhost <span class="built_in">test</span>]$ <span class="built_in">stat</span> file_timestamp.txt </span><br><span class="line">  File: <span class="string">'file_timestamp.txt'</span></span><br><span class="line">  Size: 16        	Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: 100f5c8h/16840136d	Inode: 97910802    Links: 1</span><br><span class="line">Access: (0664/-rw-rw-r--)  Uid: ( 1000/  haohao)   Gid: ( 1000/  haohao)</span><br><span class="line">Access: 2017-05-21 11:14:09.815598462 +0800</span><br><span class="line">Modify: 2017-05-21 11:17:23.968598448 +0800</span><br><span class="line">Change: 2017-05-21 11:22:32.097598424 +0800</span><br><span class="line"> Birth: -</span><br></pre></td></tr></table></figure></p>
+<p>可以看出只有ctime发生了变化。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Nginx隐式页面跳转配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1645,156 +1797,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/13/本地以Gems包的形式安装Logstash插件/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/13/本地以Gems包的形式安装Logstash插件/" itemprop="url">本地以Gems包的形式安装Logstash插件</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T20:56:20+08:00">
-                2018-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ELK/" itemprop="url" rel="index">
-                    <span itemprop="name">ELK</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>Logstash的插件都是独立的gem包，因此可以通过从<a href="https://rubygems.org/" target="_blank" rel="noopener">RubyGems.org</a>来下载需要的插件的gem包来安装Logstash插件。<a href="https://rubygems.org/" target="_blank" rel="noopener">RubyGems.org</a>是一个专门用来托管gem包的网站，类似于yum包的仓库，上面存放各种Ruby gem包供用户下载并使用。</p>
-<h4 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h4><p> 以下通过安装最近刚发布的logstash-filter-dissect v1.1.1插件包为例来说明安装过程，logstash-filter-dissect v1.1.1修复了我提的这个<a href="https://github.com/logstash-plugins/logstash-filter-dissect/issues/41" target="_blank" rel="noopener">issue#41</a>及其他一些bug，具体请看<a href="https://github.com/logstash-plugins/logstash-filter-dissect/blob/v1.1.1/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG</a>。</p>
-<ol>
-<li><p>打开<a href="https://rubygems.org/" target="_blank" rel="noopener">RubyGems.org</a>官网，找到我们需要的logstash-filter-dissect v1.1.1 gem包并下载，下载下来是gem文件:<br><img src="/images/gem-org1.png" alt=""><br><img src="/images/gem-org2.png" alt=""><br><img src="/images/gem-org3.png" alt=""></p>
-</li>
-<li><p>使用bin/logstash-plugin install命令来安装下载的gem包:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除此插件的当前版本</span></span><br><span class="line">bin/logstash-plugin remove logstash-filter-dissect</span><br><span class="line"><span class="comment"># 安装下载的gem包</span></span><br><span class="line">bin/logstash-plugin install ../logstash-filter-dissect-1.1.1.gem</span><br><span class="line"><span class="comment">#查看版本是否是安装的版本</span></span><br><span class="line">bin/logstash-plugin list --verbose | grep dissect</span><br><span class="line"><span class="comment"># logstash-filter-dissect (1.1.1)  可以看到已经安装成功</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1844,7 +1846,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">117</span>
+                  <span class="site-state-item-count">118</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

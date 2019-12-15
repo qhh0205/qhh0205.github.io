@@ -296,6 +296,172 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/10/使用-cli53-自动化管理-Aws-Route53/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/10/使用-cli53-自动化管理-Aws-Route53/" itemprop="url">使用 cli53 自动化管理 Aws Route53</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T09:18:44+08:00">
+                2018-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Aws/" itemprop="url" rel="index">
+                    <span itemprop="name">Aws</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="cli53-工具"><a href="#cli53-工具" class="headerlink" title="cli53 工具"></a>cli53 工具</h3><p>cli53 是一个开源的命令行管理 Aws Route53 的工具，非常实用，可以通过命令行来进行域名及相关记录的创建、更新、删除、记录的导出备份、记录的导入恢复等。配置域名时无需在 Aws 界面控制台操作，只需用命令操作即可，能在一定程度上提高效率，将工作代码化。<br>工具地址（Go 语言版）：<a href="https://github.com/barnybug/cli53" target="_blank" rel="noopener">https://github.com/barnybug/cli53</a><br>该工具还有个 Python 版本，是同一个作者，但是 Python 版的已不再维护，目前主要支持 Go 语言版的。</p>
+<h4 id="1-安装"><a href="#1-安装" class="headerlink" title="1. 安装"></a>1. 安装</h4><p><a href="https://github.com/barnybug/cli53" target="_blank" rel="noopener">https://github.com/barnybug/cli53</a></p>
+<p>Mac 下安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install cli53</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-配置-AWS-访问密钥"><a href="#2-配置-AWS-访问密钥" class="headerlink" title="2. 配置 AWS 访问密钥"></a>2. 配置 AWS 访问密钥</h4><ul>
+<li>在控制台新建拥有 Route53 访问权限的 IAM 账号，获取 aws key</li>
+</ul>
+<p><img src="/images/cli53.png" alt="这里写图片描述"></p>
+<ul>
+<li>将 aws key 添加到环境变量<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> AWS_ACCESS_KEY_ID=<span class="string">"xxxx"</span></span><br><span class="line"><span class="built_in">export</span> AWS_SECRET_ACCESS_KEY=<span class="string">"xxxxx"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="使用方法总结"><a href="#使用方法总结" class="headerlink" title="使用方法总结"></a>使用方法总结</h4><p>1.创建一个域名托管（指定的域名必须是有效的，否则报错）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 create example.com --comment <span class="string">'my first zone'</span></span><br></pre></td></tr></table></figure></p>
+<p>2.列出 Rout53 当前所有域名<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 list</span><br></pre></td></tr></table></figure></p>
+<p>3.导入 BIND 区域文件（用来做域名迁移）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 import --file zonefile.txt example.com</span><br></pre></td></tr></table></figure></p>
+<p>4.导出域名 BIND 区域文件（用来备份，防止误操作导致不可恢复）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导出非完全符合标准的 bind 文件</span></span><br><span class="line">cli53 <span class="built_in">export</span> example.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导出完全符合标准的 bind 文件（一般使用该命令备份）</span></span><br><span class="line">cli53 <span class="built_in">export</span> --full example.com</span><br></pre></td></tr></table></figure></p>
+<p>5.创建一个 A 记录指向 <code>192.168.0.1</code>，并设置 TTL 为 <code>60s</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 rrcreate example.com <span class="string">'www 60 A 192.168.0.1'</span></span><br></pre></td></tr></table></figure></p>
+<p>6.更新上面创建的 A 记录，指向 <code>192.168.0.2</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 rrcreate --replace example.com <span class="string">'www 60 A 192.168.0.2'</span></span><br></pre></td></tr></table></figure></p>
+<p>7.删除一个 A 记录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 rrdelete example.com www A</span><br></pre></td></tr></table></figure></p>
+<p>8.创建一个 MX 记录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 rrcreate example.com <span class="string">'@ MX 10 mail1.'</span> <span class="string">'@ MX 20 mail2.'</span></span><br></pre></td></tr></table></figure></p>
+<p>9.创建一个轮询的 A 记录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 rrcreate example.com <span class="string">'@ A 127.0.0.1'</span> <span class="string">'@ A 127.0.0.2'</span></span><br></pre></td></tr></table></figure></p>
+<p>10.创建 CNAME 记录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cli53 rrcreate example.com <span class="string">'login CNAME www'</span></span><br><span class="line">cli53 rrcreate example.com <span class="string">'mail CNAME ghs.googlehosted.com.'</span></span><br></pre></td></tr></table></figure></p>
+<p>11.创建 ELB 别名记录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 rrcreate example.com <span class="string">'www AWS ALIAS A dns-name.elb.amazonaws.com. ABCDEFABCDE false'</span></span><br></pre></td></tr></table></figure></p>
+<p>12.删除一个域名（⚠️危险 删除时如果域名有记录则必须指定 <code>--purge</code> 选项）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 delete --purge example.com</span><br></pre></td></tr></table></figure></p>
+<p>13.删除一个域名的所有记录（⚠️危险）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cli53 rrpurge example.com</span><br></pre></td></tr></table></figure></p>
+<h4 id="域名导入注意事项"><a href="#域名导入注意事项" class="headerlink" title="域名导入注意事项"></a>域名导入注意事项</h4><p>有的域名提供商，比如 GoDaddy 提供域名记录导出功能，但是导出来后的 BIND 域文件并不是符合标准的，<code>CNAME</code><br>或者 <code>MX</code> 记录末尾没有圆点 <code>.</code>，这样在导入 Route53 后会出现问题，需要在导入之前用如下命令处理一下文件<br>（<code>MX</code> 和 <code>CNAME</code> 记录末尾添加圆点）再导入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perl -pe <span class="string">'s/((CNAME|MX\s+\d+)\s+[-a-zA-Z0-9._]+)(?!.)$/$1./i'</span> broken.txt &gt; fixed.txt</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/09/Python-根据本地时间获取-UTC-偏移量/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1866,162 +2032,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/配置-gcloud-使用-Shadowsocks-HTTP-代理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/14/配置-gcloud-使用-Shadowsocks-HTTP-代理/" itemprop="url">配置 gcloud 使用 Shadowsocks HTTP 代理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T17:06:55+08:00">
-                2018-04-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Google-Cloud-Platform/" itemprop="url" rel="index">
-                    <span itemprop="name">Google Cloud Platform</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="配置-gcloud-使用-Shadowsocks-HTTP-代理"><a href="#配置-gcloud-使用-Shadowsocks-HTTP-代理" class="headerlink" title="配置 gcloud 使用 Shadowsocks HTTP 代理"></a>配置 gcloud 使用 Shadowsocks HTTP 代理</h2><h3 id="1-问题描述"><a href="#1-问题描述" class="headerlink" title="1. 问题描述"></a>1. 问题描述</h3><p>最近在使用 <a href="https://cloud.google.com/sdk/?hl=zh-cn" target="_blank" rel="noopener">gcloud</a> 访问 <a href="https://cloud.google.com/?hl=zh-cn" target="_blank" rel="noopener">gcp(Google Cloud Platform)</a> 的资源，但是由于 GFW 的原因必须得配个 HTTP 代理才能访问。虽然之前装个 Shadowsock-X 可以突破 GFW 用浏览器访问 Google，但是 Shadowsock-X 默认只开启 SOCKS 代理，并没有提供 HTTP 代理。为了让 shadowsocks 开启 HTTP 代理，必须得想一些办法了，要不然没法工作了。。。</p>
-<h3 id="2-解决问题"><a href="#2-解决问题" class="headerlink" title="2. 解决问题"></a>2. 解决问题</h3><p>经过一番 google，取而代之的是使用 <a href="https://github.com/shadowsocks/ShadowsocksX-NG/releases" target="_blank" rel="noopener">Shadowsocks-NG</a> 客户端，其实就是 <a href="https://github.com/shadowsocks/shadowsocks/wiki/Ports-and-Clients#os-x" target="_blank" rel="noopener">Shadowsocks-X</a> 的升级版，有了更多丰富的功能，最主要的是该客户端启动后默认就开启了 HTTP 代理，可以直接供 gcloud 等命令行工具使用。具体配置 gcloud 使用 Shadowsocks-NG http 代理的方法如下：</p>
-<ol>
-<li>点击如下链接下载并安装 Shadowsocks-NG：<br><a href="https://github.com/shadowsocks/ShadowsocksX-NG/releases" target="_blank" rel="noopener">https://github.com/shadowsocks/ShadowsocksX-NG/releases</a></li>
-<li><p>启动 Shadowsocks-NG，填入 shadowsocks 服务端 ip，端口，加密方式等信息<br>注意：不能勾选<code>启用 OTA（被启用）</code>复选框<br><img src="/images/ss-1.png" alt=""></p>
-</li>
-<li><p>获取 HTTP 代理的 IP 和端口<br>点击<code>偏好设置</code>查看 HTTP 代理 IP 及端口：<br><img src="/images/ss-2.png" alt=""><br><img src="/images/ss-3.png" alt=""></p>
-</li>
-<li><p>设置 gcloud HTTP 代理<br>使用如下命令设置上一步获取的 Shadowsocks-NG HTTP 代理：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcloud config <span class="built_in">set</span> proxy/<span class="built_in">type</span> http</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/address 127.0.0.1</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/port 1087</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>接下来就可以畅通无阻地访问 google 云平台资源了</p>
-</li>
-</ol>
-<h3 id="3-相关链接"><a href="#3-相关链接" class="headerlink" title="3. 相关链接"></a>3. 相关链接</h3><p><a href="https://www.stefanwienert.de/blog/2018/01/21/shadowsocks-quick-guide-for-restricted-internet-environments/" target="_blank" rel="noopener">https://www.stefanwienert.de/blog/2018/01/21/shadowsocks-quick-guide-for-restricted-internet-environments/</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2071,7 +2081,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">117</span>
+                  <span class="site-state-item-count">118</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
