@@ -296,6 +296,559 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/18/基于-OpenSSL-生成自签名证书/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/18/基于-OpenSSL-生成自签名证书/" itemprop="url">基于 OpenSSL 生成自签名证书</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-18T12:41:23+08:00">
+                2019-05-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTTPS/" itemprop="url" rel="index">
+                    <span itemprop="name">HTTPS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="PKI、CA、SSL、TLS、OpenSSL几个概念"><a href="#PKI、CA、SSL、TLS、OpenSSL几个概念" class="headerlink" title="PKI、CA、SSL、TLS、OpenSSL几个概念"></a><p style="color:green;">PKI、CA、SSL、TLS、OpenSSL几个概念</p></h3><h4 id="PKI-和-CA"><a href="#PKI-和-CA" class="headerlink" title=" PKI 和 CA"></a><p style="color:green;"> PKI 和 CA</p></h4><p>PKI 就是 Public Key Infrastructure 的缩写，翻译过来就是公开密钥基础设施。它是利用公开密钥技术所构建的，解决网络安全问题的，普遍适用的一种基础设施。</p>
+<p>PKI 是目前唯一的能够基本全面解决安全问题的可能的方案。 PKI 通过电子证书以及管理这些电子证书的一整套设施，维持网络世界的秩序；通过提供一系列的安全服务，为网络电子商务、电子政务提供有力的安全保障。</p>
+<p>通俗点说 PKI 就是一整套安全相关标准，然后基于这套标准体系衍生一系列安全相关的产品，主要目的是保证数据在网络上安全、可靠地传输。</p>
+<p>PKI 主要由以下组件组成：</p>
+<ul>
+<li>认证中心 CA(证书签发) ;</li>
+<li>X.500目录服务器(证书保存) ;</li>
+<li>具有高强度密码算法(SSL)的安全WWW服务器(即配置了 HTTPS 的 apache) ;</li>
+<li>Web(安全通信平台): Web 有 Web Client 端和 Web Server 端两部分</li>
+<li>自开发安全应用系统 自开发安全应用系统是指各行业自开发的各种具体应用系统，例如银行、证券的应用系统等。</li>
+</ul>
+<p>CA 是 PKI 的”核心”，即数字证书的申请及签发机关，CA 必须具备权威性的特征，它负责管理 PKI 结构下的所有用户(包括各种应用程序)的证书，把用户的公钥和用户的其他信息捆绑在一起，在网上验证用户的身份，CA 还要负责用户证书的黑名单登记和黑名单发布 。</p>
+<p>CA 实现了 PKI 中一些很重要的功能：</p>
+<ul>
+<li>接收验证最终用户数字证书的申请；</li>
+<li>确定是否接受最终用户数字证书的申请-证书的审批；</li>
+<li>向申请者颁发、拒绝颁发数字证书-证书的发放；</li>
+<li>接收、处理最终用户的数字证书更新请求-证书的更新；</li>
+<li>接收最终用户数字证书的查询、撤销；</li>
+<li>产生和发布证书废止列表(CRL)；</li>
+<li>数字证书的归档；</li>
+<li>密钥归档；</li>
+<li>历史数据归档；</li>
+</ul>
+<p>在这么多功能中，CA 的核心功能就是”发放”和”管理”数字证书：<br><img src="/images/ca-arch.png" alt="Alt text"></p>
+<h4 id="SSL-和-TLS"><a href="#SSL-和-TLS" class="headerlink" title="SSL 和 TLS"></a><p style="color:green;">SSL 和 TLS</p></h4><p>SSL 和 TLS 协议是介于 HTTP 协议与 TCP 之间的一个可选层，主要用于 Web 客户端和服务器之间进行数据的安全传输：<br><img src="/images/ssl-tls.png" alt="Alt text"></p>
+<ul>
+<li><strong>SSL:</strong> Secure Socket Layer，安全套接字层），为Netscape所研发，用以保障在Internet上数据传输之安全，利用数据加密(Encryption)技术，可确保数据在网络上之传输过程中不会被截取。当前版本为3.0。它已被广泛地用于Web浏览器与服务器之间的身份认证和加密数据传输。SSL协议位于TCP/IP协议与各种应用层协议之间，为数据通讯提供安全支持。SSL协议可分为两层：<br>SSL记录协议（SSL Record Protocol）：它建立在可靠的传输协议（如TCP）之上，为高层协议提供数据封装、压缩、加密等基本功能的支持。<br>SSL握手协议（SSL Handshake Protocol）：它建立在SSL记录协议之上，用于在实际的数据传输开始前，通讯双方进行身份认证、协商加密算法、交换加密密钥等。</li>
+<li><strong>TLS:</strong> (Transport Layer Security，传输层安全协议)，用于两个应用程序之间提供保密性和数据完整性。<br>TLS 1.0是IETF（Internet Engineering Task Force，Internet工程任务组）制定的一种新的协议，它建立在SSL 3.0协议规范之上，是SSL 3.0的后续版本，可以理解为SSL 3.1，它是写入了 RFC 的。该协议由两层组成： TLS 记录协议（TLS Record）和 TLS 握手协议（TLS Handshake）。较低的层为 TLS 记录协议，位于某个可靠的传输协议（例如 TCP）上面。</li>
+</ul>
+<p>SSL/TLS协议提供的服务主要有：</p>
+<ul>
+<li>认证用户和服务器，确保数据发送到正确的客户机和服务器；</li>
+<li>加密数据以防止数据中途被窃取；</li>
+<li>维护数据的完整性，确保数据在传输过程中不被改变；</li>
+</ul>
+<h4 id="OpenSSL"><a href="#OpenSSL" class="headerlink" title="OpenSSL"></a><p style="color:green;">OpenSSL</p></h4><p><img src="/images/openssl.png" alt="Alt text"><br><a href="https://github.com/openssl/openssl" target="_blank" rel="noopener">OpenSSL</a> 是一个开源的加密工具包，主要包括如下三部分：</p>
+<ul>
+<li><strong>libssl (with platform specific naming)</strong>:<br>   Provides the client and server-side implementations for SSLv3 and TLS.</li>
+<li><strong>libcrypto (with platform specific naming)</strong>:<br>   Provides general cryptographic and X.509 support needed by SSL/TLS but<br>   not logically part of it.</li>
+<li><strong>openssl</strong>:<br>   A command line tool that can be used for:<pre><code>Creation of key parameters
+Creation of X.509 certificates, CSRs and CRLs
+Calculation of message digests
+Encryption and decryption
+SSL/TLS client and server tests
+Handling of S/MIME signed or encrypted mail
+And more...
+</code></pre></li>
+</ul>
+<h3 id="使用-OpenSSL-生产自签名-SSL-证书过程"><a href="#使用-OpenSSL-生产自签名-SSL-证书过程" class="headerlink" title="使用 OpenSSL 生产自签名 SSL 证书过程"></a><p style="color:green;">使用 OpenSSL 生产自签名 SSL 证书过程</p></h3><p><img src="/images/gen-certificate.png" alt="Alt text"></p>
+<p>以下为 Centos7 环境下生成自签名 SSL 证书的具体过程：</p>
+<ol>
+<li><p>修改 openssl 配置文件</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/pki/tls/openssl.cnf</span><br><span class="line"><span class="comment"># match 表示后续生成的子证书的对应项必须和创建根证书时填的值一样，否则报错。以下配置只规定子证书的 countryName 必须和根证书一致。</span></span><br><span class="line">[ policy_match ] 段配置改成如下：</span><br><span class="line">countryName             = match</span><br><span class="line">stateOrProvinceName     = optional</span><br><span class="line">organizationName        = optional</span><br><span class="line">organizationalUnitName  = optional</span><br><span class="line">commonName              = supplied</span><br><span class="line">emailAddress            = optional</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在服务器 pki 的 CA 目录下新建两个文件</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> <span class="string">/etc/pki/CA</span> &amp;&amp; touch index.txt serial &amp;&amp; <span class="keyword">echo</span> 01 &gt; serial</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成 CA 根证书密钥</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd <span class="regexp">/etc/</span>pki<span class="regexp">/CA/</span> &amp;&amp; openssl genrsa -out <span class="keyword">private</span><span class="regexp">/cakey.pem 2048 &amp;&amp; chmod 400 private/</span>cakey.pem</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成根证书（根据提示输入信息，除了 Country Name 选项需要记住的，后面的随便填）</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -<span class="keyword">new</span> -x509 -key <span class="keyword">private</span>/cakey.pem -<span class="keyword">out</span> cacert.pem</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成密钥文件</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out nginx.<span class="type">key</span> <span class="number">2048</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成证书请求文件（CSR）:<br>A. 根据提示输入信息，除了 Country Name 与前面根证书一致外，其他随便填写<br>B. Common Name 填写要保护的域名，比如：*.qhh.me</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -<span class="keyword">new</span> -<span class="built_in">key</span> nginx.<span class="built_in">key</span> -out nginx.csr</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 openssl 签署 CSR 请求，生成证书</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">openssl ca -<span class="keyword">in</span> nginx.csr -cert <span class="regexp">/etc/</span>pki<span class="regexp">/CA/</span>cacert.pem -keyfile <span class="regexp">/etc/</span>pki<span class="regexp">/CA/</span><span class="keyword">private</span>/cakey.pem -days <span class="number">365</span> -out nginx.crt</span><br><span class="line"></span><br><span class="line">参数项说明：</span><br><span class="line">-<span class="string">in:</span> CSR 请求文件</span><br><span class="line">-<span class="string">cert:</span> 用于签发的根 CA 证书</span><br><span class="line">-<span class="string">keyfile:</span> 根 CA 的私钥文件</span><br><span class="line">-<span class="string">days:</span> 生成的证书的有效天数</span><br><span class="line">-<span class="string">out:</span> 生成证书的文件名</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>至此自签名证书生成完成，最终需要：nginx.key 和 nginx.crt</p>
+<h3 id="配置-Nginx-使用自签名证书"><a href="#配置-Nginx-使用自签名证书" class="headerlink" title="配置 Nginx 使用自签名证书"></a><p style="color:green;">配置 Nginx 使用自签名证书</p></h3><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>  <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span>     domain;</span><br><span class="line">        <span class="attribute">return</span>  <span class="number">301</span>     https://<span class="variable">$host</span><span class="variable">$request_uri</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>  <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">ssl_certificate</span>       ssl/nginx.crt; <span class="comment"># 前面生成的 crt 证书文件</span></span><br><span class="line">        <span class="attribute">ssl_certificate_key</span>   ssl/nginx.key; <span class="comment"># 前面生成的证书私钥</span></span><br><span class="line">        <span class="attribute">server_name</span>     domain;</span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span> /var/www-html;</span><br><span class="line">            <span class="attribute">index</span>  index.html;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a><p style="color:green;">相关资料</p></h3><p><a href="http://seanlook.com/2015/01/18/openssl-self-sign-ca/" target="_blank" rel="noopener">http://seanlook.com/2015/01/18/openssl-self-sign-ca/</a> | 基于 OpenSSL 自签署证书<br><a href="http://www.cnblogs.com/littlehann/p/3738141.html" target="_blank" rel="noopener">http://www.cnblogs.com/littlehann/p/3738141.html</a> | openSSL命令、PKI、CA、SSL证书原理<br><a href="https://cnzhx.net/blog/ssl-on-lamp-on-vps/" target="_blank" rel="noopener">https://cnzhx.net/blog/ssl-on-lamp-on-vps/</a><br><a href="http://seanlook.com/2015/01/15/openssl-certificate-encryption/" target="_blank" rel="noopener">http://seanlook.com/2015/01/15/openssl-certificate-encryption/</a> | OpenSSL 与 SSL 数字证书概念贴<br><a href="https://kb.cnblogs.com/page/194742/" target="_blank" rel="noopener">https://kb.cnblogs.com/page/194742/</a> | 数字证书及 CA 的扫盲<br><a href="http://netsecurity.51cto.com/art/200602/21066.htm" target="_blank" rel="noopener">http://netsecurity.51cto.com/art/200602/21066.htm</a> | PKI/CA 技术的介绍<br><a href="http://cnzhx.net/blog/self-signed-certificate-as-trusted-root-ca-in-windows/" target="_blank" rel="noopener">http://cnzhx.net/blog/self-signed-certificate-as-trusted-root-ca-in-windows/</a> | 浏览器添加自签名证书<br><a href="https://aotu.io/notes/2016/08/16/nginx-https/index.html" target="_blank" rel="noopener">https://aotu.io/notes/2016/08/16/nginx-https/index.html</a> | Nginx 配置 HTTPS 服务器</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/07/tcpdump使用技巧/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/07/tcpdump使用技巧/" itemprop="url">tcpdump使用技巧</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-07T23:21:58+08:00">
+                2019-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/计算机网络/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p><a href="https://www.tcpdump.org/" target="_blank" rel="noopener">tcpdump</a> 是一个开源的命令行网络封包分析工具，一般用于服务器端网络流量、协议分析。今天有幸看到了有人很好地总结了关于 tcpdump 的使用技巧，在此转载下。<br><u>本文转载自这里：</u><br><u><a href="https://github.com/linuxwiki/SourceWiki/blob/master/%E7%BD%91%E7%BB%9C/tcpdump.md" target="_blank" rel="noopener">https://github.com/linuxwiki/SourceWiki/blob/master/%E7%BD%91%E7%BB%9C/tcpdump.md</a></u></p>
+<hr>
+<p>作者: 潜水大叔</p>
+<p>一般情况下，非HTTP协议的网络分析，在服务器端用<code>tcpdump</code>比较多，在客户端用wireshark比较多，两个抓包软件的语法是一样的。</p>
+<h2 id="一、基本语法"><a href="#一、基本语法" class="headerlink" title="一、基本语法"></a>一、基本语法</h2><h3 id="1-1、过滤主机"><a href="#1-1、过滤主机" class="headerlink" title="1.1、过滤主机"></a>1.1、过滤主机</h3><ul>
+<li>抓取所有经过eth1，目的或源地址是192.168.1.1的网络数据</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 host 192.168.1.1</span><br></pre></td></tr></table></figure>
+<ul>
+<li>指定源地址</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 src host 192.168.1.1</span><br></pre></td></tr></table></figure>
+<ul>
+<li>指定目的地址</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 dst host 192.168.1.1</span><br></pre></td></tr></table></figure>
+<h3 id="1-2、过滤端口"><a href="#1-2、过滤端口" class="headerlink" title="1.2、过滤端口"></a>1.2、过滤端口</h3><ul>
+<li>抓取所有经过eth1，目的或源端口是25的网络数据</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 port 25</span><br></pre></td></tr></table></figure>
+<ul>
+<li>指定源端口</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 src port 25</span><br></pre></td></tr></table></figure>
+<ul>
+<li>指定目的端口</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 dst port 25</span><br></pre></td></tr></table></figure>
+<h3 id="1-3、网络过滤"><a href="#1-3、网络过滤" class="headerlink" title="1.3、网络过滤"></a>1.3、网络过滤</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 net 192.168</span><br><span class="line">tcpdump -i eth1 src net 192.168</span><br><span class="line">tcpdump -i eth1 dst net 192.168</span><br></pre></td></tr></table></figure>
+<h3 id="1-4、协议过滤"><a href="#1-4、协议过滤" class="headerlink" title="1.4、协议过滤"></a>1.4、协议过滤</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 arp</span><br><span class="line">tcpdump -i eth1 ip</span><br><span class="line">tcpdump -i eth1 tcp</span><br><span class="line">tcpdump -i eth1 udp</span><br><span class="line">tcpdump -i eth1 icmp</span><br></pre></td></tr></table></figure>
+<h3 id="1-5、常用表达式"><a href="#1-5、常用表达式" class="headerlink" title="1.5、常用表达式"></a>1.5、常用表达式</h3><pre><code>非 : ! or &quot;not&quot; (去掉双引号)  
+且 : &amp;&amp; or &quot;and&quot;  
+或 : || or &quot;or&quot;  
+</code></pre><ul>
+<li>抓取所有经过eth1，目的地址是192.168.1.254或192.168.1.200端口是80的TCP数据</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((tcp) and (port 80) and ((dst host 192.168.1.254) or (dst host 192.168.1.200)))'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓取所有经过eth1，目标MAC地址是00:01:02:03:04:05的ICMP数据</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((icmp) and ((ether dst host 00:01:02:03:04:05)))'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓取所有经过eth1，目的网络是192.168，但目的主机不是192.168.1.200的TCP数据</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((tcp) and ((dst net 192.168) and (not dst host 192.168.1.200)))'</span></span><br></pre></td></tr></table></figure>
+<h2 id="二、高级包头过滤"><a href="#二、高级包头过滤" class="headerlink" title="二、高级包头过滤"></a>二、高级包头过滤</h2><p>首先了解如何从包头过滤信息</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">proto[<span class="string">x:</span>y]          : 过滤从x字节开始的y字节数。比如ip[<span class="number">2</span>:<span class="number">2</span>]过滤出<span class="number">3</span>、<span class="number">4</span>字节（第一字节从<span class="number">0</span>开始排）</span><br><span class="line">proto[<span class="string">x:</span>y] &amp; z = <span class="number">0</span>  : proto[<span class="string">x:</span>y]和z的与操作为<span class="number">0</span></span><br><span class="line">proto[<span class="string">x:</span>y] &amp; z !=<span class="number">0</span>  : proto[<span class="string">x:</span>y]和z的与操作不为<span class="number">0</span></span><br><span class="line">proto[<span class="string">x:</span>y] &amp; z = <span class="string">z  :</span> proto[<span class="string">x:</span>y]和z的与操作为z</span><br><span class="line">proto[<span class="string">x:</span>y] = <span class="string">z      :</span> proto[<span class="string">x:</span>y]等于z</span><br></pre></td></tr></table></figure>
+<p>操作符 : &gt;, &lt;, &gt;=, &lt;=, =, !=</p>
+<h3 id="2-1、IP头"><a href="#2-1、IP头" class="headerlink" title="2.1、IP头"></a>2.1、IP头</h3><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">0                   1                   2                   3</span><br><span class="line">0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|Version|  IHL  |Type of Service|          Total Length         |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|         Identification        |Flags|      Fragment Offset    |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|  Time to Live |    Protocol   |         Header Checksum       |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                       Source Address                          |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                    Destination Address                        |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                    Options                    |    Padding    | &lt;-- optional</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                            DATA ...                           |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
+<p>本文只针对IPv4。</p>
+<h3 id="2-2、IP选项设置了吗？"><a href="#2-2、IP选项设置了吗？" class="headerlink" title="2.2、IP选项设置了吗？"></a>2.2、IP选项设置了吗？</h3><p>“一般”的IP头是20字节，但IP头有选项设置，不能直接从偏移21字节处读取数据。IP头有个长度字段可以知道头长度是否大于20字节。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|Version|  IHL  |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
+<p>通常第一个字节的二进制值是：01000101，分成两个部分：</p>
+<p>0100 = 4 表示IP版本<br>0101 = 5 表示IP头32 bit的块数，5 x 32 bits = 160 bits or 20 bytes</p>
+<p>如果第一字节第二部分的值大于5，那么表示头有IP选项。</p>
+<p>下面介绍两种过滤方法（第一种方法比较操蛋，可忽略）：</p>
+<p>a. 比较第一字节的值是否大于01000101，这可以判断IPv4带IP选项的数据和IPv6的数据。</p>
+<p>01000101十进制等于69，计算方法如下（小提示：用计算器更方便）</p>
+<figure class="highlight ldif"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">0 </span>: 0  \</span><br><span class="line"><span class="attribute">1 </span>: 2^6 = 64 \ 第一部分 (IP版本)</span><br><span class="line"><span class="attribute">0 </span>: 0   /</span><br><span class="line"><span class="attribute">0 </span>: 0  /</span><br><span class="line"><span class="literal">-</span></span><br><span class="line"><span class="attribute">0 </span>: 0  \</span><br><span class="line"><span class="attribute">1 </span>: 2^2 = 4  \ 第二部分 (头长度)</span><br><span class="line"><span class="attribute">0 </span>: 0   /</span><br><span class="line"><span class="attribute">1 </span>: 2^0 = 1 /</span><br></pre></td></tr></table></figure>
+<p>64 + 4 + 1 = 69</p>
+<p>如果设置了IP选项，那么第一自己是01000110（十进制70），过滤规则：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[0] &gt; 69'</span></span><br></pre></td></tr></table></figure></p>
+<p>IPv6的数据也会匹配，看看第二种方法。</p>
+<p>b. 位操作</p>
+<p>0100 0101 : 第一字节的二进制<br>0000 1111 : 与操作<br>&lt;=========<br>0000 0101 : 结果  </p>
+<p>正确的过滤方法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[0] &amp; 15 &gt; 5'</span></span><br></pre></td></tr></table></figure>
+<p>或者<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[0] &amp; 0x0f &gt; 5'</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="2-3、分片标记"><a href="#2-3、分片标记" class="headerlink" title="2.3、分片标记"></a>2.3、分片标记</h3><p>当发送端的MTU大于到目的路径链路上的MTU时就会被分片，这段话有点拗口，权威的请参考《TCP/IP详解》。唉，32借我的书没还，只能凑合写，大家记得看书啊。</p>
+<p>分片信息在IP头的第七和第八字节：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|Flags|      Fragment Offset    |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
+<p>Bit 0:  保留，必须是0<br>Bit 1:  (DF) 0 = 可能分片, 1 = 不分片<br>Bit 2:  (MF) 0 = 最后的分片, 1 = 还有分片  </p>
+<p>Fragment Offset字段只有在分片的时候才使用。</p>
+<p>要抓带DF位标记的不分片的包，第七字节的值应该是：</p>
+<p>01000000 = 64</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[6] = 64'</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-4、抓分片包"><a href="#2-4、抓分片包" class="headerlink" title="2.4、抓分片包"></a>2.4、抓分片包</h3><ul>
+<li>匹配MF，分片包</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[6] = 32'</span></span><br></pre></td></tr></table></figure>
+<p>最后分片包的开始3位是0，但是有Fragment Offset字段。</p>
+<ul>
+<li>匹配分片和最后分片</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((ip[6:2] &gt; 0) and (not ip[6] = 64))'</span></span><br></pre></td></tr></table></figure>
+<p>测试分片可以用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping -M want -s 3000 192.168.1.1</span><br></pre></td></tr></table></figure>
+<h3 id="2-5、匹配小TTL"><a href="#2-5、匹配小TTL" class="headerlink" title="2.5、匹配小TTL"></a>2.5、匹配小TTL</h3><p>TTL字段在第九字节，并且正好是完整的一个字节，TTL最大值是255，二进制为11111111。</p>
+<p>可以用下面的命令验证一下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ping -M want -s 3000 -t 256 192.168.1.200</span><br><span class="line">ping: ttl 256 out of range</span><br></pre></td></tr></table></figure>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|  Time to Live |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在网关可以用下面的命令看看网络中谁在使用traceroute</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[8] &lt; 5'</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-6、抓大于X字节的包"><a href="#2-6、抓大于X字节的包" class="headerlink" title="2.6、抓大于X字节的包"></a>2.6、抓大于X字节的包</h3><ul>
+<li>大于600字节</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'ip[2:2] &gt; 600'</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-7、更多的IP过滤"><a href="#2-7、更多的IP过滤" class="headerlink" title="2.7、更多的IP过滤"></a>2.7、更多的IP过滤</h3><p>首先还是需要知道TCP基本结构，再次推荐《TCP/IP详解》，卷一就够看的了，避免走火入魔。</p>
+<ul>
+<li>TCP头</li>
+</ul>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">0                   1                   2                   3</span><br><span class="line">0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|          Source Port          |       Destination Port        |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                        Sequence Number                        |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                    Acknowledgment Number                      |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|  Data |       |C|E|U|A|P|R|S|F|                               |</span><br><span class="line">| Offset|  Res. |W|C|R|C|S|S|Y|I|            Window             |</span><br><span class="line">|       |       |R|E|G|K|H|T|N|N|                               |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|           Checksum            |         Urgent Pointer        |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                    Options                    |    Padding    |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br><span class="line">|                             data                              |</span><br><span class="line"><span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-<span class="code">+-+</span>-+</span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓取源端口大于1024的TCP数据包</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[0:2] &gt; 1024'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>匹配TCP数据包的特殊标记</li>
+</ul>
+<p>TCP标记定义在TCP头的第十四个字节</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-+-+-+-+-+-+-+-+</span><br><span class="line">|<span class="string">C</span>|<span class="string">E</span>|<span class="string">U</span>|<span class="string">A</span>|<span class="string">P</span>|<span class="string">R</span>|<span class="string">S</span>|<span class="string">F</span>|</span><br><span class="line">|<span class="string">W</span>|<span class="string">C</span>|<span class="string">R</span>|<span class="string">C</span>|<span class="string">S</span>|<span class="string">S</span>|<span class="string">Y</span>|<span class="string">I</span>|</span><br><span class="line">|<span class="string">R</span>|<span class="string">E</span>|<span class="string">G</span>|<span class="string">K</span>|<span class="string">H</span>|<span class="string">T</span>|<span class="string">N</span>|<span class="string">N</span>|</span><br><span class="line">+-+-+-+-+-+-+-+-+</span><br></pre></td></tr></table></figure>
+<p>重复一下TCP三次握手，两个主机是如何勾搭的：</p>
+<ol>
+<li>源发送SYN</li>
+<li>目标回答SYN, ACK</li>
+<li>源发送ACK</li>
+</ol>
+<p>没女朋友的童鞋要学习一下：  </p>
+<ol>
+<li>MM，你的手有空吗？-_-  </li>
+<li>有空，你呢？~_~  </li>
+<li>我也有空 *_*  </li>
+</ol>
+<p>失败的loser是酱紫的：  </p>
+<ol>
+<li>MM，这是你掉的板砖吗？(SYN) ￣▽￣  </li>
+<li>不是，找拍啊？(RST-ACK) ˋ﹏ˊ  </li>
+</ol>
+<ul>
+<li>只抓SYN包，第十四字节是二进制的00000010，也就是十进制的2</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] = 2'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓SYN, ACK （00010010 or 18）</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] = 18'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓SYN或者SYN-ACK</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] &amp; 2 = 2'</span></span><br></pre></td></tr></table></figure>
+<p>用到了位操作，就是不管ACK位是啥。</p>
+<ul>
+<li>抓PSH-ACK</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] = 24'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓所有包含FIN标记的包（FIN通常和ACK一起，表示幽会完了，回见）</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] &amp; 1 = 1'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓RST（勾搭没成功，伟大的greatwall对她认为有敏感信息的连接发RST包，典型的棒打鸳鸯）</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] &amp; 4 = 4'</span></span><br></pre></td></tr></table></figure>
+<p>下图详细描述了TCP各种状态的标记，方便分析。</p>
+<p><img src="/images/tcp_state_machine.jpg" alt="tcp_state_machine.jpg"></p>
+<h3 id="2-8、大叔注"><a href="#2-8、大叔注" class="headerlink" title="2.8、大叔注"></a>2.8、大叔注</h3><p>tcpdump考虑了一些数字恐惧症者的需求，提供了部分常用的字段偏移名字：</p>
+<p>icmptype  (ICMP类型字段)<br>icmpcode  (ICMP符号字段)<br>tcpflags  (TCP标记字段)  </p>
+<p>ICMP类型值有：</p>
+<p>icmp-echoreply, icmp-unreach, icmp-sourcequench, icmp-redirect, icmp-echo, icmp-routeradvert, icmp-routersolicit, icmp-timxceed, icmp-paramprob, icmp-tstamp, icmp-tstampreply, icmp-ireq, icmp-ireqreply, icmp-maskreq, icmp-maskreply</p>
+<p>TCP标记值：</p>
+<p>tcp-fin, tcp-syn, tcp-rst, tcp-push, tcp-push, tcp-ack, tcp-urg</p>
+<p>这样上面按照TCP标记位抓包的就可以写直观的表达式了：</p>
+<ul>
+<li>只抓SYN包</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[tcpflags] = tcp-syn'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓SYN, ACK</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[tcpflags] &amp; tcp-syn != 0 and tcp[tcpflags] &amp; tcp-ack != 0'</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-9、抓SMTP数据"><a href="#2-9、抓SMTP数据" class="headerlink" title="2.9、抓SMTP数据"></a>2.9、抓SMTP数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'((port 25) and (tcp[(tcp[12]&gt;&gt;2):4] = 0x4d41494c))'</span></span><br></pre></td></tr></table></figure>
+<p>抓取数据区开始为”MAIL”的包，”MAIL”的十六进制为0x4d41494c。</p>
+<h3 id="2-10、抓HTTP-GET数据"><a href="#2-10、抓HTTP-GET数据" class="headerlink" title="2.10、抓HTTP GET数据"></a>2.10、抓HTTP GET数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[(tcp[12]&gt;&gt;2):4] = 0x47455420'</span></span><br></pre></td></tr></table></figure>
+<p>“GET “的十六进制是47455420</p>
+<h3 id="2-11、抓SSH返回"><a href="#2-11、抓SSH返回" class="headerlink" title="2.11、抓SSH返回"></a>2.11、抓SSH返回</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[(tcp[12]&gt;&gt;2):4] = 0x5353482D'</span></span><br></pre></td></tr></table></figure>
+<p>“SSH-“的十六进制是0x5353482D</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'(tcp[(tcp[12]&gt;&gt;2):4] = 0x5353482D) and (tcp[((tcp[12]&gt;&gt;2)+4):2] = 0x312E)'</span></span><br></pre></td></tr></table></figure>
+<p>抓老版本的SSH返回信息，如”SSH-1.99..”</p>
+<h2 id="三、大叔注"><a href="#三、大叔注" class="headerlink" title="三、大叔注"></a>三、大叔注</h2><p>如果是为了查看数据内容，建议用<code>tcpdump -s 0 -w filename</code>把数据包都保存下来，然后用wireshark的Follow TCP Stream/Follow UDP Stream来查看整个会话的内容。</p>
+<p><code>-s 0</code>是抓取完整数据包，否则默认只抓68字节。</p>
+<p>另外，用tcpflow也可以方便的获取TCP会话内容，支持tcpdump的各种表达式。</p>
+<h3 id="3-1、UDP头"><a href="#3-1、UDP头" class="headerlink" title="3.1、UDP头"></a>3.1、UDP头</h3><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="code"> 0      7 8     15 16    23 24    31</span></span><br><span class="line"><span class="code">+--------+</span>--------<span class="code">+--------+</span>--------+</span><br><span class="line">|     Source      |   Destination   |</span><br><span class="line">|      Port       |      Port       |</span><br><span class="line"><span class="code">+--------+</span>--------<span class="code">+--------+</span>--------+</span><br><span class="line">|                 |                 |</span><br><span class="line">|     Length      |    Checksum     |</span><br><span class="line"><span class="code">+--------+</span>--------<span class="code">+--------+</span>--------+</span><br><span class="line">|                                   |</span><br><span class="line">|              DATA ...             |</span><br><span class="line"><span class="code">+-----------------------------------+</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>抓DNS请求数据</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 udp dst port 53</span><br></pre></td></tr></table></figure>
+<h3 id="3-2、其他"><a href="#3-2、其他" class="headerlink" title="3.2、其他"></a>3.2、其他</h3><p><code>-c</code>参数对于运维人员来说也比较常用，因为流量比较大的服务器，靠人工CTRL+C还是抓的太多，甚至导致服务器宕机，于是可以用<code>-c</code>参数指定抓多少个包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">time tcpdump -nn -i eth0 <span class="string">'tcp[tcpflags] = tcp-syn'</span> -c 10000 &gt; /dev/null</span><br></pre></td></tr></table></figure>
+<p>上面的命令计算抓10000个SYN包花费多少时间，可以判断访问量大概是多少。</p>
+<h2 id="四、参考资料"><a href="#四、参考资料" class="headerlink" title="四、参考资料"></a>四、参考资料</h2><blockquote>
+<p><a href="http://www.wains.be/pub/networking/tcpdump_advanced_filters.txt" target="_blank" rel="noopener">tcpdump advanced filters</a></p>
+</blockquote>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/06/Amazon-CloudFront-CDN-s3-源站跨域配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1809,306 +2362,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/27/Docker-启动-MySQL-最佳实践/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/27/Docker-启动-MySQL-最佳实践/" itemprop="url">Docker 启动 MySQL 最佳实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-27T15:55:39+08:00">
-                2019-01-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index">
-                    <span itemprop="name">MySQL</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文主要介绍使用 Docker 启动 MySQL 服务的最佳实践，Docker 镜像来自 <a href="https://hub.docker.com/_/mysql" target="_blank" rel="noopener">docker 官方镜像</a>。</p>
-<h3 id="启动一个-MySql-5-7-实例"><a href="#启动一个-MySql-5-7-实例" class="headerlink" title="启动一个 MySql 5.7 实例"></a>启动一个 MySql 5.7 实例</h3><p>关于版本的选择，修改镜像 tag 即可，支持的 tag 在 <a href="https://hub.docker.com/_/mysql" target="_blank" rel="noopener">docker hub 仓库</a> 有说明。<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql5.<span class="number">7</span> --restart always -p <span class="number">3306</span>:<span class="number">3306</span> -e MYSQL_ROOT_PASSWORD=<span class="number">12345</span> \</span><br><span class="line">-v /home/vagrant/mysql5.<span class="number">7</span>/<span class="symbol">data:</span>/var/<span class="class"><span class="keyword">lib</span>/<span class="title">mysql</span> -<span class="title">d</span> <span class="title">mysql</span>:5.7</span></span><br></pre></td></tr></table></figure></p>
-<p>参数说明</p>
-<ul>
-<li><code>--name mysql5.7</code>: 指定运行容器名称</li>
-<li><code>--restart always</code>: 容器意外退出后自动重启</li>
-<li><code>-p 3306:3306</code>: 映射主机 3306 端口到容器 3306 端口</li>
-<li><code>-e MYSQL_ROOT_PASSWORD=12345</code>: 指定 msyql root 密码，该参数是为必须的</li>
-<li><code>-v /home/vagrant/mysql5.7/data:/var/lib/mysql</code>: mysql 数据持久化，主机 /home/vagrant/mysql5.7/data 目录挂载到容器 /var/lib/mysql 目录</li>
-</ul>
-<h3 id="连接-MySql"><a href="#连接-MySql" class="headerlink" title="连接 MySql"></a>连接 MySql</h3><p>mysql 容器连接服务端：<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">run</span> -<span class="keyword">it</span> <span class="comment">--rm mysql:5.7 mysql -hxxx -uxxx -p***</span></span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>注意：如果在 mysql server 端所在的主机连接，-h 参数不能是 localhost，应该为主机所在的内网 ip。</p>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/19/Redis-常用命令总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/19/Redis-常用命令总结/" itemprop="url">Redis 常用命令总结</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-19T13:54:46+08:00">
-                2019-01-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Redis/" itemprop="url" rel="index">
-                    <span itemprop="name">Redis</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Redis-常用命令总结"><a href="#Redis-常用命令总结" class="headerlink" title="Redis 常用命令总结"></a>Redis 常用命令总结</h2><h3 id="redis-cli"><a href="#redis-cli" class="headerlink" title="redis-cli"></a>redis-cli</h3><p>redis-cli 是 redis 的客户端工具，有很多实用的参数。</p>
-<p><img src="/images/redis-cli.png" alt=""></p>
-<h3 id="redis-benchmark"><a href="#redis-benchmark" class="headerlink" title="redis-benchmark"></a>redis-benchmark</h3><p>redis-benchmark 为 redis 提供的性能测试工具，对 redis 各种数据的操作进行测试，并给出测试结果。如下为 GET 操作的测试报告样例：<br><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">====== GET ======</span><br><span class="line"> <span class="number"> 20000 </span>requests completed in 0.36 seconds</span><br><span class="line"> <span class="number"> 100 </span>parallel clients</span><br><span class="line"> <span class="number"> 3 </span>bytes payload</span><br><span class="line">  keep alive: 1</span><br><span class="line"></span><br><span class="line">62.01% &lt;=<span class="number"> 1 </span>milliseconds</span><br><span class="line">97.57% &lt;=<span class="number"> 2 </span>milliseconds</span><br><span class="line">99.99% &lt;=<span class="number"> 3 </span>milliseconds</span><br><span class="line">100.00% &lt;=<span class="number"> 3 </span>milliseconds</span><br><span class="line">55865.92 requests per second</span><br></pre></td></tr></table></figure></p>
-<p><img src="/images/redis-benchmark.png" alt=""></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2158,7 +2411,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">118</span>
+                  <span class="site-state-item-count">120</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2245,7 +2498,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

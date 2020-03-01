@@ -296,6 +296,402 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/22/Vagrant-入门指南/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/22/Vagrant-入门指南/" itemprop="url">Vagrant 入门指南</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-22T13:06:06+08:00">
+                2018-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vagrant/" itemprop="url" rel="index">
+                    <span itemprop="name">Vagrant</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Vagrant-简介"><a href="#Vagrant-简介" class="headerlink" title="Vagrant 简介"></a>Vagrant 简介</h3><p>Vagrant 是一个用来构建和管理虚拟机环境的工具。Vagrant 有着易于使用的工作流，并且专注于自动化，降低了开发者搭建环境的时间，提高了生产力。解决了“在我的机器上可以工作”的问题。</p>
+<p>Vagrant 是为了方便的实现虚拟化环境而设计的，使用 Ruby 开发，基于 VirtualBox 等虚拟机管理软件的接口，提供了一个可配置、轻量级的便携式虚拟开发环境。使用 Vagrant 可以很方便的就建立起来一个虚拟环境，而且可以模拟多台虚拟机，这样我们平时还可以在开发机模拟分布式系统。</p>
+<p>团队新员工加入，常常会遇到花一天甚至更多时间来从头搭建完整的开发环境，而有了Vagrant，只需要直接将已经打包好的 package（里面包括开发工具，代码库，配置好的服务器等）拿过来就可以工作了，这对于提升工作效率非常有帮助。</p>
+<h3 id="为什么选择-Vagrant"><a href="#为什么选择-Vagrant" class="headerlink" title="为什么选择 Vagrant"></a>为什么选择 Vagrant</h3><p>Vagrant 提供了一个易于配置，可重复使用，兼容的环境，通过一个单一的工作流程来控制，帮助你和团队最大化生产力和灵活性。<br>为了实现 Vagrant 的魔力，Vagrant 站在了巨人的肩膀上。虚拟机的配置基于 VirtualBox，VMware，AWS 或者其他提供商。然后一些配置工具，比如 shell 脚本，Chef 或者 Puppet 可以自动化地在虚拟机安装并配置软件。</p>
+<h4 id="对于开发者人员"><a href="#对于开发者人员" class="headerlink" title="对于开发者人员"></a>对于开发者人员</h4><p>如果你是一个开发者，Vagrant 将在一个一次性的、一致的环境中隔离依赖项及其配置，而不会影响你习惯使用的任何工具(编辑器、浏览器、调试器等)。一旦你或者其他人创建了一个 Vagrantfile，你只需要执行 <code>vagrant up</code> 所有的东西就自动安装和配置了。你团队中的其他成员使用同一个配置文件来创建开发环境，因此不管你工作在 Linux，MacOS X 还是 Windows， 所有团队的成员都可以在统一的环境环境中运行代码，这样就可以避免“在我的机器上可以工作”的问题。</p>
+<h4 id="对于运维人员"><a href="#对于运维人员" class="headerlink" title="对于运维人员"></a>对于运维人员</h4><p>如果你是一个运维工程师或者 DevOps 工程师，Vagrant 给予你一个一次性的环境来开发和测试基础架构管理脚本。你可以使用本地虚拟机（比如 VirtualBox 或者 VMware）马上测试一些东西，比如 shell 脚本，Chef cookbooks，Puppet 模块等。然后，你可以用同样的配置在远程云上，比如 AWS 或者 RackSpace，来测试这些脚本。抛弃之前自定义脚本来回收 EC2 实例吧，停止使用 SSH 在各种机器之间跳来跳去，请开始使用 Vagrant 来给你的工作带来更多便利。</p>
+<h3 id="Vagrant-和-Terraform-的区别"><a href="#Vagrant-和-Terraform-的区别" class="headerlink" title="Vagrant 和 Terraform 的区别"></a>Vagrant 和 Terraform 的区别</h3><p>Vagrant 和 Terraform 都出自同一个公司 <a href="https://www.hashicorp.com/" target="_blank" rel="noopener">HashiCorp</a>，该公司主要做一些开源软件，相关的产品还有 <a href="https://www.packer.io/" target="_blank" rel="noopener">Packer</a>，<a href="https://www.consul.io/" target="_blank" rel="noopener">Consul</a>，<a href="https://www.vaultproject.io/" target="_blank" rel="noopener">Vault</a>，<a href="https://www.nomadproject.io/" target="_blank" rel="noopener">Nomad</a> 等。</p>
+<p>Terraform 的主要用途是管理云提供商的远程资源，比如 AWS。Terraform 可以管理横跨多个云提供商巨量的基础设施。而 Vagrant 主要用来管理仅使用少量虚拟机的本地开发环境。</p>
+<p>Vagrant 用于开发环境，Terraform 普遍用于基础设施管理。</p>
+<hr>
+<h3 id="VirtualBox-安装"><a href="#VirtualBox-安装" class="headerlink" title="VirtualBox 安装"></a>VirtualBox 安装</h3><p>VirtualBox 是 Oracle 开源的虚拟化系统，和 VMware 是同类产品，支持多个平台，可以到官方网站：<a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">https://www.virtualbox.org/wiki/Downloads</a> 下载适合你平台的 VirtualBox 最新版本并安装。</p>
+<blockquote>
+<p><strong>提示：</strong>对于 Mac 用户，如果系统为 OSX 10.13.3(mac OS High Sierra) 或者更高版本，安装过程可能会失败，报错提示<code>安装失败，安装器遇到了一个错误导致安装失败...</code>，原因是新版本 Mac 系统的安全机制阻止外部内核扩展安装，导致安装失败。两种解决方法：</p>
+<ol>
+<li>进入系统偏好设置&gt;安全性与隐私&gt;通用，然后手动允许；</li>
+<li>在终端敲命令禁用此安全特性：<code>sudo spctl --master-disable</code>；</li>
+</ol>
+</blockquote>
+<h3 id="Vagrant-安装"><a href="#Vagrant-安装" class="headerlink" title="Vagrant 安装"></a>Vagrant 安装</h3><p>到官方网站下载相应系统平台的安装包：<a href="http://www.vagrantup.com/downloads.html" target="_blank" rel="noopener">http://www.vagrantup.com/downloads.html</a><br>直接根据向导进行操作即可完成安装，安装完后就可以在终端输入 <code>vagrant</code> 命令了。</p>
+<blockquote>
+<p><strong>提示：</strong>尽量下载最新的程序，因为VirtualBox经常升级，升级后有些接口会变化，老的Vagrant 可能无法使用。</p>
+</blockquote>
+<h3 id="Vagrant-启动第一台虚拟机"><a href="#Vagrant-启动第一台虚拟机" class="headerlink" title="Vagrant 启动第一台虚拟机"></a>Vagrant 启动第一台虚拟机</h3><p>到此准备工作（VirtualBox 和 Vagrant 安装）基本上做完了，接下来就可以通过 Vagrant 来启动一台虚拟机了。</p>
+<p>在启动虚拟机之前先简单介绍下 <code>Vagrant box</code>：<code>box</code> 是一个打包好的操作系统，是一个后缀名为 <code>.box</code> 的文件，其实是一个压缩包，里面包含了 Vagrant 的配置信息和 VirtualBox 的虚拟机镜像文件。<code>vagrant up</code> 启动虚拟机是基于 <code>box</code> 文件的，因此在启动虚拟机前必须得把 <code>box</code> 文件准备好。或者也可以在启动的时候指定远程 <code>box</code> 地址，在这里我把 <code>box</code> 文件下载下来，然后启动时指定该文件。</p>
+<p>我使用网上分享的 <code>ubuntu-server-16.04</code> 这个 <code>box</code>，由于<a href="http://www.vagrantbox.es/" target="_blank" rel="noopener">vagrant 官方 box</a> 下载速度特别慢，所以在此提供一下该 <code>box</code> 的百度网盘下载地址，加速下载：<a href="https://pan.baidu.com/s/1wJCeWEyxKQLVPi1IH1IlYg" target="_blank" rel="noopener">https://pan.baidu.com/s/1wJCeWEyxKQLVPi1IH1IlYg</a></p>
+<ol>
+<li><p>新建一个目录作为 <code>Vagrant</code> 的工程目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> <span class="built_in">cd</span> /Users/haohao</span><br><span class="line"><span class="variable">$haohao</span> mkdir vagrant</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加前面下载的 <code>box</code><br>添加 <code>box</code> 命令格式：<code>vagrant box add &lt;本地 box 名称&gt; &lt;box 文件&gt;</code></p>
+<ul>
+<li>本地 <code>box</code> 名称：自定义名称，该名称是本地 <code>vagrant</code> 管理时使用的名称；</li>
+<li><code>box</code> 文件：前面下载的 <code>vagrant box</code> 文件或者远程 <code>box</code> url 地址；<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant box add ubuntu-server-16.04 ubuntu-server-16.04-amd64-vagrant.box</span><br><span class="line">==&gt; box: Box file was not detected as metadata. Adding it directly...</span><br><span class="line">==&gt; box: Adding box <span class="string">'ubuntu-server-16.04'</span> (v0) <span class="keyword">for</span> provider:</span><br><span class="line">    box: Unpacking necessary files from: file:///Users/haohao/vagrant/ubuntu-server-16.04-amd64-vagrant.box</span><br><span class="line">==&gt; box: Successfully added box <span class="string">'ubuntu-server-16.04'</span> (v0) <span class="keyword">for</span> <span class="string">'virtualbox'</span>!</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>查看 <code>box</code> 是否添加成功<br>查看当前 <code>vagrant</code> 中有哪些 <code>box</code>：<code>vagrant box list</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant box list</span><br><span class="line">ubuntu-server-16.04 (virtualbox, 0)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化上面添加的 <code>box</code><br>初始化命令格式：<code>vagrant init &lt;本地 box 名称&gt;</code><br>本地 <code>box</code> 名称：第 2 步中添加的 <code>box</code> 名称<br>这里初始化前面添加的 <code>box</code>，初始化后会在当前目录生产一个 <code>Vagrantfile</code> 文件，里面包含了虚拟机的各种配置，关于具体每个配置项是什么意思，后面会介绍。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant init <span class="string">'ubuntu-server-16.04'</span></span><br><span class="line">A `Vagrantfile` has been placed <span class="keyword">in</span> this directory. You are now</span><br><span class="line">ready to `vagrant up` your first virtual environment! Please <span class="built_in">read</span></span><br><span class="line">the comments <span class="keyword">in</span> the Vagrantfile as well as documentation on</span><br><span class="line">`vagrantup.com` <span class="keyword">for</span> more information on using Vagrant.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动虚拟机<br>虚拟机启动命令：<code>vagrant up</code><br>启动虚拟机时会自动将当前目录（即 Vagrantfile 文件所在目录），和虚拟机的 <code>/vagrant</code> 目录共享。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant up</span><br><span class="line">Bringing machine <span class="string">'default'</span> up with <span class="string">'virtualbox'</span> provider...</span><br><span class="line">==&gt; default: Importing base box <span class="string">'ubuntu-server-16.04'</span>...</span><br><span class="line">==&gt; default: Matching MAC address <span class="keyword">for</span> NAT networking...</span><br><span class="line">==&gt; default: Setting the name of the VM: vagrant_default_1524288099752_62326</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> network interfaces...</span><br><span class="line">.....</span><br><span class="line">==&gt; default: Mounting shared folders...</span><br><span class="line">    default: /vagrant =&gt; /Users/haohao/vagrant</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接虚拟机<br>命令格式：<code>vagrant ssh</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$haohao</span> vagrant ssh</span><br><span class="line">Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-98-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line">  Get cloud support with Ubuntu Advantage Cloud Guest:</span><br><span class="line">    http://www.ubuntu.com/business/services/cloud</span><br><span class="line"></span><br><span class="line">0 packages can be updated.</span><br><span class="line">0 updates are security updates.</span><br><span class="line"></span><br><span class="line">Last login: Sat Apr 21 05:28:37 2018 from 10.0.2.2</span><br><span class="line">ubuntu@ubuntu-xenial:~$</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看 Vagrant 共享目录<br>进入虚拟机后执行 <code>df -h</code> 可以看到 Vagrant 默认把宿主机 <code>Vagrantfile</code> 所在的目录和虚拟机的 <code>/vagrant</code> 目录共享，可以通过 <code>ls /vagrant/</code> 查看该目录内容，内容和宿主机对应目录一致。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@ubuntu-xenial:~$ df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">udev            490M     0  490M   0% /dev</span><br><span class="line">tmpfs           100M  3.1M   97M   4% /run</span><br><span class="line">/dev/sda1       9.7G  857M  8.8G   9% /</span><br><span class="line">tmpfs           497M     0  497M   0% /dev/shm</span><br><span class="line">tmpfs           5.0M     0  5.0M   0% /run/lock</span><br><span class="line">tmpfs           497M     0  497M   0% /sys/fs/cgroup</span><br><span class="line">vagrant         234G   49G  185G  21% /vagrant</span><br><span class="line">tmpfs           100M     0  100M   0% /run/user/1000</span><br><span class="line"></span><br><span class="line"><span class="comment"># ls 查看该共享目录内容和宿主机内容一致</span></span><br><span class="line">ubuntu@ubuntu-xenial:~$ ls /vagrant/</span><br><span class="line">ubuntu-xenial-16.04-cloudimg-console.log  Vagrantfile</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Vagrant-配置文件浅析"><a href="#Vagrant-配置文件浅析" class="headerlink" title="Vagrant 配置文件浅析"></a>Vagrant 配置文件浅析</h3><p>前面我们执行 <code>vagrant init &lt;本地 box 名称&gt;</code> 会在当前目录生成 <code>Vagrantfile</code> 文件，这个文件是非常重要的，一般给别人共享自己的环境时都是提供一个 <code>Vagrantfile</code> 和一个 <code>box</code> 文件，这样就可以很轻松地将环境共享给别人，别人能得到一模一样的统一的环境，这就是使用 <code>Vagrant</code> 的好处。</p>
+<p><code>Vagrantfile</code> 主要包括三个方面的配置，虚拟机的配置、SSH配置、Vagrant 的一些基础配置。Vagrant 是使用 Ruby 开发的，所以它的配置语法也是 Ruby 的，对于没有学过 Ruby 的朋友也没关系，根据例子模仿下就会了。</p>
+<p>修改完配置后需要执行 <code>vagrant reload</code> 重启 VM 使其配置生效。</p>
+<p>以下简单介绍下常用配置的配置项：</p>
+<ol>
+<li><p><code>box</code> 名称设置<br><code>config.vm.box = &quot;base&quot;</code><br> 上面这配置展示了 Vagrant 要去启用那个box作为系统，也就是前面我们输入 <code>vagrant init &lt;本地 box 名称&gt;</code>时所指定的 <code>box</code>，如果沒有输入 <code>box</code> 名称的话，那么默认就是 <code>base</code>。</p>
+</li>
+<li><p>VM 相关配置<br>VirtualBox 提供了 VBoxManage 这个命令行工具，可以让我们设定 VM，用<code>modifyvm</code>这个命令让我们可以设定 VM 的名称和内存大小等等，这里说的名称指的是在 VirtualBox 中显示的名称，我们也可以在 Vagrantfile 中进行设定，举例如下：</p>
+<blockquote>
+<p>调用 VBoxManage 的 <code>modifyvm</code> 的命令，设置 VM 的名称为 <code>ubuntu</code>，内存为 1024 MB。你可以类似的通过定制其它 VM 属性来定制你自己的 VM。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> |v|</span><br><span class="line">  v.customize [<span class="string">"modifyvm"</span>, :id, <span class="string">"--name"</span>, <span class="string">"ubuntu"</span>, <span class="string">"--memory"</span>, <span class="string">"1024"</span>]</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>网络设置<br> Vagrant 有两种方式来进行网络连接，一种是 host-only (主机模式)，这种模式下所有的虚拟系统是可以互相通信的，但虚拟系统和真实的网络是被隔离开的，虚拟机和宿主机是可以互相通信的，相当于两台机器通过双绞线互联。另一种是Bridge(桥接模式)，该模式下的 VM  就像是局域网中的一台独立的主机，可以和局域网中的任何一台机器通信，这种情况下需要手动给 VM 配 IP 地址，子网掩码等。我们一般选择 host-only 模式，配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.network :private_network, ip: <span class="string">"11.11.11.11"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>hostname 设置<br> <code>hostname</code> 的设置非常简单：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.hostname = <span class="string">"kubernetes"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>目录共享<br> 我们前面介绍过<code>/vagrant</code>目录默认就是当前的开发目录，这是在虚拟机开启的时候默认挂载同步的。我们还可以通过配置来设置额外的同步目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第一个参数是主机的目录，第二个参数是虚拟机挂载的目录</span></span><br><span class="line">config.vm.synced_folder  <span class="string">"/Users/haohao/data"</span>, <span class="string">"/vagrant_data"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>端口转发<br>对宿主机器上 8080 端口的访问请求 forward 到虚拟机的 80 端口的服务上：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.network :forwarded_port, guest: 80, host: 8080</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Vagrant-常用命令清单"><a href="#Vagrant-常用命令清单" class="headerlink" title="Vagrant 常用命令清单"></a>Vagrant 常用命令清单</h3><ul>
+<li><code>vagrant box add</code> 添加box</li>
+<li><code>vagrant init</code> 初始化 box</li>
+<li><code>vagrant up</code> 启动虚拟机</li>
+<li><code>vagrant ssh</code> 登录虚拟机</li>
+<li><code>vagrant box list</code> 列出 Vagrant 当前 <code>box</code> 列表</li>
+<li><code>vagrant box remove</code> 删除相应的 <code>box</code></li>
+<li><code>vagrant destroy</code> 停止当前正在运行的虚拟机并销毁所有创建的资源</li>
+<li><code>vagrant halt</code> 关机</li>
+<li><code>vagrant package</code> 把当前的运行的虚拟机环境进行打包为 <code>box</code> 文件</li>
+<li><code>vagrant plugin</code> 安装卸载插件</li>
+<li><code>vagrant reload</code> 重新启动虚拟机，重新载入配置文件</li>
+<li><code>vagrant resume</code> 恢复被挂起的状态</li>
+<li><code>vagrant ssh-config</code> 输出用于 ssh 连接的一些信息</li>
+<li><code>vagrant status</code>  获取当前虚拟机的状态</li>
+<li><code>vagrant suspend</code> 挂起当前的虚拟机</li>
+<li><code>vagrant up</code> 重启虚拟机</li>
+</ul>
+<h3 id="Vagrant-启动虚拟机集群"><a href="#Vagrant-启动虚拟机集群" class="headerlink" title="Vagrant 启动虚拟机集群"></a>Vagrant 启动虚拟机集群</h3><p>前面我们都是通过一个 <code>Vagrantfile</code> 配置启动单台机器，如果我们要启动一个集群，那么可以把需要的节点在一个 <code>Vagrantfile</code> 写好，然后直接就可以通过 <code>vagrant up</code> 同时启动多个 VM 组成一个集群。以下示例配置一个 web 节点和一个 db 节点，两个节点在同一个网段，并且使用同一个 <code>box</code> 启动：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> |config|</span><br><span class="line">  config.vm.define :web <span class="keyword">do</span> |web|</span><br><span class="line">    web.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> |v|</span><br><span class="line">          v.customize [<span class="string">"modifyvm"</span>, :id, <span class="string">"--name"</span>, <span class="string">"web"</span>, <span class="string">"--memory"</span>, <span class="string">"512"</span>]</span><br><span class="line">    end</span><br><span class="line">    web.vm.box = <span class="string">"ubuntu-server-16.04"</span></span><br><span class="line">    web.vm.hostname = <span class="string">"web"</span></span><br><span class="line">    web.vm.network :private_network, ip: <span class="string">"11.11.1.1"</span></span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  config.vm.define :db <span class="keyword">do</span> |db|</span><br><span class="line">    db.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> |v|</span><br><span class="line">          v.customize [<span class="string">"modifyvm"</span>, :id, <span class="string">"--name"</span>, <span class="string">"db"</span>, <span class="string">"--memory"</span>, <span class="string">"512"</span>]</span><br><span class="line">    end</span><br><span class="line">    db.vm.box = <span class="string">"ubuntu-server-16.04"</span></span><br><span class="line">    db.vm.hostname = <span class="string">"db"</span></span><br><span class="line">    db.vm.network :private_network, ip: <span class="string">"11.11.1.2"</span></span><br><span class="line">  end</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
+<h3 id="相关连接"><a href="#相关连接" class="headerlink" title="相关连接"></a>相关连接</h3><p><a href="https://www.vagrantup.com/intro/index.html" target="_blank" rel="noopener">https://www.vagrantup.com/intro/index.html</a><br><a href="https://blog.csdn.net/rickiyeat/article/details/55097687" target="_blank" rel="noopener">https://blog.csdn.net/rickiyeat/article/details/55097687</a><br><a href="https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.0.md" target="_blank" rel="noopener">https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.0.md</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/Google-Kubernetes-Engine-GKE-使用初探/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Spectre">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/14/Google-Kubernetes-Engine-GKE-使用初探/" itemprop="url">Google Kubernetes Engine(GKE) 使用初探</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-14T23:37:23+08:00">
+                2018-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Google-Cloud-Platform/" itemprop="url" rel="index">
+                    <span itemprop="name">Google Cloud Platform</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Google 的 k8s 在 2017 年已经从容器编排领域的竞争中取得主导地位，从 Docker 之前的一度排挤到最终完全拥抱 k8s，显然 k8s 已经成了目前业界的标准。但是到目前为止能提供 k8s 完全托管服务的云服务商少之又少，即便是目前在云提供商有统治力的 AWS 也没有完全提供 k8s 托管服务，仅仅提供有限的定制服务，在这一方面并不成熟。然而 Google 的 k8s 托管服务，即 GKE，却将 k8s 托管服务做到了极致（至少目前看来），不仅提供了全套的 k8s 托管服务，更引人注目的是 Google 已然将 Autoscaler 和 k8s 集成，实现了 k8s 节点的自动伸缩机制，能根据 pod 的需求自动化添加或删除节点，当现有节点无法承载新的服务时会自动添加节点来满足需求，当现有节点足够空闲时会启用调节机制自动化收缩节点，从某种意义上来说这几乎做到了无服务器的理念。然而这也许只是冰山一角，更多强大的功能还需要进一步探索，本文只是一个入门指南，主要指导能快速开始上手基于 Google Cloud Platform 的 GKE 服务（k8s 托管服务）。</p>
+<h3 id="GKE-入门指南"><a href="#GKE-入门指南" class="headerlink" title="GKE 入门指南"></a>GKE 入门指南</h3><p>接下来我们一步步指引如何使用 GKE 来部署服务，前提是对 k8s 有所了解，能简单使用 kubectl 命令。</p>
+<ol>
+<li>安装并配置 Google Cloud SDK<br>Google Cloud SDK 是 访问 GCP(Google Cloud Platform) 平台各种资源的命令行工具集，类似 aws 的 aws 命令行工具。<br>安装和配置就不多说了，点击下面链接选择相应操作系统版本的 tar 包下载，然后解压，在 PATH 环境变量中添加 <code>google-cloud-sdk/bin</code> 即可：<br><a href="https://cloud.google.com/sdk/?hl=zh-cn" target="_blank" rel="noopener">https://cloud.google.com/sdk/?hl=zh-cn</a></li>
+<li>初始化 Google Cloud SDK<br>初始化 Google Cloud SDK 是将 <code>gcloud</code>  命令和 Google 账号绑定起来并设置一些其他的默认值，比如区域，代理，账号，项目（Google 账号中新建的项目）之类的。在执行 <code>gcloud init</code> 初始化之前得先给 <code>gcloud</code> 配置 HTTP 代理（GFW 你懂得），具体配置见我之前<a href="https://blog.csdn.net/qianghaohao/article/details/79942485" target="_blank" rel="noopener">这篇文章</a>。然后执行 <code>gcloud init</code> 完成初始化，直接根据向导来即可。</li>
+<li>到 Google Cloud Platform 控制台建一个 k8s 集群，记住名称<br><img src="/images/gke1.png" alt=""></li>
+<li>安装 gcloud kubectl 组件<br><code>gcloud components install kubectl</code></li>
+<li>获取群集的身份验证凭据<br>创建群集后，您需要获取身份验证凭据以与群集进行交互。要为集群进行身份验证，请运行以下命令：<br><code>gcloud container clusters get-credentials &lt;上一步创建的集群名称&gt;</code></li>
+<li>接下来部署一个简单的 <code>hello-server</code> 服务到 GKE<br><code>kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080</code></li>
+</ol>
+<h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><p><a href="https://cloud.google.com/kubernetes-engine/docs/quickstart" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/quickstart</a><br><a href="https://cloud.google.com/sdk/docs/quickstart-macos?hl=zh-cn" target="_blank" rel="noopener">https://cloud.google.com/sdk/docs/quickstart-macos?hl=zh-cn</a></p>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><h4 id="gloud-常用命令"><a href="#gloud-常用命令" class="headerlink" title="gloud 常用命令"></a>gloud 常用命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gcloud auth login --no-launch-browser <span class="comment"># gcloud 登录认证</span></span><br><span class="line">gcloud config <span class="built_in">set</span> compute/zone [COMPUTE_ZONE] <span class="comment"># 设置默认区域</span></span><br><span class="line">gcloud components list <span class="comment"># 列出可安装组件</span></span><br><span class="line">gcloud components install [组件名称] <span class="comment"># 安装组件</span></span><br><span class="line">gcloud components update  <span class="comment"># 更新所有已安装组件</span></span><br><span class="line">gcloud components remove [组件名称] <span class="comment"># 卸载已安装组件</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置-gcloud-http-代理"><a href="#设置-gcloud-http-代理" class="headerlink" title="设置 gcloud http 代理"></a>设置 gcloud http 代理</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcloud config <span class="built_in">set</span> proxy/<span class="built_in">type</span> http</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/address 127.0.0.1</span><br><span class="line">gcloud config <span class="built_in">set</span> proxy/port 1087</span><br></pre></td></tr></table></figure>
+<h4 id="设置集群-docker-私服认证："><a href="#设置集群-docker-私服认证：" class="headerlink" title="设置集群 docker 私服认证："></a>设置集群 docker 私服认证：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret docker-registry regcred --docker-server=&lt;your-registry-server&gt; --docker-username=&lt;your-name&gt; --docker-password=&lt;your-pword&gt; --docker-email=&lt;your-email&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：设置 docker 私服后，要在 GKE 部署 k8s 服务，必须得在 k8s 资源文件（yaml 格式）中的 container<br>同一级指定 imagePullSecrets 键，要不然仍然无法拉取配置的私服的镜像，示例文件如下：<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">private-reg</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">private-reg-container</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">&lt;your-private-image&gt;</span></span><br><span class="line"><span class="attr">  imagePullSecrets:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">regcred</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="查看集群-docker-私服配置："><a href="#查看集群-docker-私服配置：" class="headerlink" title="查看集群 docker 私服配置："></a>查看集群 docker 私服配置：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret regcred --output=yaml      <span class="comment">#base64 格式 显示</span></span><br><span class="line">kubectl get secret regcred --output=<span class="string">"jsonpath=&#123;.data.\.dockerconfigjson&#125;"</span> | base64 -d <span class="comment"># base64 解密后内容</span></span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/14/配置-gcloud-使用-Shadowsocks-HTTP-代理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1605,322 +2001,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/19/GitHub多账号密钥配置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/19/GitHub多账号密钥配置/" itemprop="url">GitHub多账号密钥配置</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-19T16:56:46+08:00">
-                2018-02-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Git/" itemprop="url" rel="index">
-                    <span itemprop="name">Git</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="GitHub多账号密钥配置"><a href="#GitHub多账号密钥配置" class="headerlink" title="GitHub多账号密钥配置"></a>GitHub多账号密钥配置</h4><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>之前在自己的GitHub账号配置过本地电脑的ssh key，然后用同样的ssh key给另外一个GitHub账号配置密钥，发现报如下错误：<br><img src="/images/github1.jpg" alt=""><br>其实这个问题的原因很简单，主要是GitHub账号和服务器通信的ssh密钥对是一一对应的，不允许多个账号使用同样的密钥对，否则会出现歧义，需要为每个账号配置不同的密钥对。</p>
-<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><ol>
-<li><p>为每个GitHub账号单独生成ssh密钥对：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -f github1 -C <span class="string">"abc@gmail.com"</span></span><br><span class="line">ssh-keygen -t rsa -f github2 -C <span class="string">"def@gmail.com"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>把生成的公钥分别添加到GitHub账号管理后台：<br><img src="/images/github2.png" alt=""></p>
-</li>
-<li><p>编辑~/.ssh/config文件添加如下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 其中Host是主机别名，HostName是github服务器地址，User是GitHub服务器用户名，</span></span><br><span class="line"><span class="comment"># IdentityFile是和GitHub服务器通信的ssh私钥，通过IdentityFile就可以区分出</span></span><br><span class="line"><span class="comment"># 不同的账号。</span></span><br><span class="line">Host account1</span><br><span class="line">    HostName github.com</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/github1</span><br><span class="line">Host account2</span><br><span class="line">    HostName github.com</span><br><span class="line">    User git</span><br><span class="line">    IdentityFile ~/.ssh/github2</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>使用ssh-agent管理生成的私钥：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-add github1</span><br><span class="line">ssh-add github2</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在使用git clone时将GitHub SSH仓库地址中的git@github.com替换成第三步新建的Host别名account1或account2（仓库属于哪个Host则使用哪个，这里假设仓库属于account1，GitHub账号的区分是通过在GitHub管理后台添加的公钥来辨识）。如原地址是：<em>git@github.com:qianghaohao/TranslateProject.git</em> 替换后应该是：<em>account1:qianghaohao/TranslateProject.git</em> 如果是新建的仓库，直接使用替换后的URL克隆即可。如果已经使用原地址克隆过了，可以使用命令修改远程仓库地址：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote <span class="built_in">set</span>-url origin account1:qianghaohao/TranslateProject.git</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="http://blog.csdn.net/u010387196/article/details/41266255" target="_blank" rel="noopener">http://blog.csdn.net/u010387196/article/details/41266255</a><br><a href="http://happy123.me/blog/2014/12/07/duo-ge-gitzhang-hao-zhi-jian-de-qie-huan/" target="_blank" rel="noopener">http://happy123.me/blog/2014/12/07/duo-ge-gitzhang-hao-zhi-jian-de-qie-huan</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/18/Zabbix通过进程名监控进程状态配置详解/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/18/Zabbix通过进程名监控进程状态配置详解/" itemprop="url">Zabbix通过进程名监控进程状态配置详解</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-18T22:03:43+08:00">
-                2018-02-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Zabbix/" itemprop="url" rel="index">
-                    <span itemprop="name">Zabbix</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>有时候我们只能通过进程名监控一个进程是否停掉了，因为有的进程并没有对外提供端口号，以下记录了下详细步骤，通过这个示例会学到很多zabbix核心配置相关的东西。<br>总的来说，配置一个完整的监控流程如下：</p>
-<ol>
-<li>创建监控项，即配置要监控的指标，如内存的使用率，CPU的使用率，进程的运行状况等，配了监控项后就会定时收集机器的配置信息，然后等待zabbix server收集(zabbix agent被动模式)。</li>
-<li>创建触发器，触发器将监控项收集的数据通过触发器表达式进行评估。<br>在触发器表达式中我们可以定义哪些值范围是合理，哪些是不合理的，如果出现不合理的值，触发器会把状态改为PROBLEM，接下来就到了报警以及发邮件。</li>
-<li>创建动作，在zabbix中动作的意思是触发器触发后要进行的操作，一般是通过配置给相关负责人发送邮件，短信等通知。</li>
-</ol>
-<p>下面配置监控服务器的logstash(开源实时日志同步项目)进程是否在运行：</p>
-<ol>
-<li><p>首先创建监控进程的监控项:<br>监控项的组成：key[参数]<br><img src="/images/zabbix-proc1.png" alt=""><br>例如获取5分钟的负载情况：system.cpu.load[avg5]，avg5是对应的参数。<br>zabbix agent支持的所有key可以到这里找到：<br><a href="http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/" target="_blank" rel="noopener">http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/</a><br>在这里我们需要的是proc.num这个key，以下是对此key的详解：<br><img src="/images/zabbix-proc2.png" alt=""><br>可以看到此监控项的返回值是进程数量，其中cmdline参数可以是进程名字包含的关键字，在这里我的进程的关键字是logstash，因此按如下方式创建监控logstash进程的监控项，表示机器所有用户所有状态的logstash进程数量：<br><img src="/images/zabbix-proc3.png" alt=""></p>
-</li>
-<li><p>创建对应监控项的触发器：<br>创建触发器主要是编写触发器表达式，也就是评估监控项是否在合理范围的表达式。触发器表达式格式如下：<br><code>host:key[param].function(parameter)} operator constant<br>主机：监控项.函数(参数)} 表达式 常数</code><br>对于触发器表达式更加详细的介绍请参考这里：<br><a href="http://www.ttlsa.com/zabbix/zabbix-trigger-expression/" target="_blank" rel="noopener">http://www.ttlsa.com/zabbix/zabbix-trigger-expression/</a><br>触发器表达式示例：<br>触发器名称：Processor load is too high on www.zabbix.com<br><code>{www.zabbix.com:system.cpu.load[all,avg1].last(0)}&gt;5</code><br>触发器说明：<br>www.zabbix.com：host名称<br>system.cpu.load[all,avg1]：item值,一分内cpu平均负载值<br>last(0)：最新值<br>>5：最新值大于5<br>如上所示，www.zabbix.com这个主机的监控项，最新的CPU负载值如果大于5，那么表达式会返回true，这样一来触发器状态就改变为“problem”了。<br><strong>在这里针对logstash进程触发器配置如下：</strong><br><img src="/images/zabbix-proc4.png" alt=""><br>上面配置表示如果机器logstash进程数量的最新值小于1，就会触发报警。</p>
-</li>
-<li><p>配置动作发送短信和邮件报警：<br>以下是短信配置方式，邮件配置类似，其中应用集是自己创建的，主要用来分类，具体的自行研究：<br><img src="/images/zabbix-proc5.png" alt=""><br><img src="/images/zabbix-proc6.png" alt=""></p>
-</li>
-</ol>
-<p><strong>参考文章：</strong><br> <a href="http://www.ttlsa.com/zabbix/zabbix-item-key/" target="_blank" rel="noopener">zabbix item key详解</a><br> <a href="http://www.ttlsa.com/zabbix/zabbix-agent-types-and-all-keys/" target="_blank" rel="noopener">zabbix agent 类型所有key</a><br> <a href="http://www.ttlsa.com/zabbix/zabbix-trigger-expression/" target="_blank" rel="noopener">zabbix触发器表达式详解</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1970,7 +2050,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">118</span>
+                  <span class="site-state-item-count">120</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2057,7 +2137,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
