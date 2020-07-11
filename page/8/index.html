@@ -81,13 +81,13 @@
 
 <meta name="description" content="Talk is cheap. Show me the code.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="The Spectre">
+<meta property="og:title" content="Jim">
 <meta property="og:url" content="http://yoursite.com/page/8/index.html">
-<meta property="og:site_name" content="The Spectre">
+<meta property="og:site_name" content="Jim">
 <meta property="og:description" content="Talk is cheap. Show me the code.">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="The Spectre">
+<meta name="twitter:title" content="Jim">
 <meta name="twitter:description" content="Talk is cheap. Show me the code.">
 
 
@@ -124,7 +124,7 @@
 
 
 
-  <title>The Spectre</title>
+  <title>Jim</title>
   
 
 
@@ -155,7 +155,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">The Spectre</span>
+        <span class="site-title">Jim</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -296,6 +296,674 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/11/kubeadm-安装的-k8s-集群-delete-node-后重新添加回集群问题解决/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/11/kubeadm-安装的-k8s-集群-delete-node-后重新添加回集群问题解决/" itemprop="url">kubeadm 安装的 k8s 集群 delete node 后重新添加回集群问题解决</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-11T14:08:54+08:00">
+                2018-09-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>前不久公司同事误操作，直接 kubectl delete node node_ip 从集群中删除了一个 node，后来未知原因服务器给宕机了，重启服务器后 docker、kubelet 等服务器都自动重启了（用 systemd 管理），但是 node 一直是 Not Ready 状态，按理来说执行如下命令把节点添加回集群即可：<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join --<span class="keyword">token</span> xxxxxxx master_ip:6443 --discovery-<span class="keyword">token</span>-<span class="keyword">ca</span>-cert-hash sha256:xxxxxxx</span><br></pre></td></tr></table></figure></p>
+<p>但是执行如上命令后报错如下(提示 10250 端口被占用)：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@com10-81 ~]# kubeadm join --token xxxx 10.4.37.167:6443 --discovery-token-ca-cert-hash sha256:xxxxxx</span><br><span class="line">[preflight] Running pre-flight checks.</span><br><span class="line">	[<span class="builtin-name">WARNING</span> SystemVerification]: docker version is greater than the most recently validated version. Docker version: 17.12.1-ce. Max validated version: 17.03</span><br><span class="line">	[<span class="builtin-name">WARNING</span> FileExisting-crictl]: crictl <span class="keyword">not</span> found <span class="keyword">in</span><span class="built_in"> system </span>path</span><br><span class="line">[preflight] Some fatal errors occurred:</span><br><span class="line">	[<span class="builtin-name">ERROR</span> Port-10250]:<span class="built_in"> Port </span>10250 is <span class="keyword">in</span> use</span><br><span class="line">	[<span class="builtin-name">ERROR</span> FileAvailable--etc-kubernetes-pki-ca.crt]: /etc/kubernetes/pki/ca.crt already exists</span><br><span class="line">	[<span class="builtin-name">ERROR</span> FileAvailable--etc-kubernetes-kubelet.conf]: /etc/kubernetes/kubelet.conf already exists</span><br></pre></td></tr></table></figure></p>
+<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><p>出现如上问题的主要原因是之前 kubeadm init 初始化过，所以一些配置文件及服务均已存在，重新执行 kubeadm join 时必然<br>会导致冲突，解决方法如下：<br>1.先执行 kubeadm reset，重新初始化节点配置：<br><code>kubeadm reset</code><br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@com10-<span class="number">81</span> ~]<span class="comment"># kubeadm reset</span></span><br><span class="line">[preflight] Running pre-flight checks.</span><br><span class="line">[reset] Stopping the kubelet service.</span><br><span class="line">[reset] Unmounting mounted directories in <span class="string">"/var/lib/kubelet"</span></span><br><span class="line">[reset] Removing kubernetes-managed containers.</span><br><span class="line">[reset] No etcd manifest found in <span class="string">"/etc/kubernetes/manifests/etcd.yaml"</span>. Assuming external etcd.</span><br><span class="line">[reset] Deleting contents <span class="keyword">of</span> stateful <span class="symbol">directories:</span> [<span class="regexp">/var/lib</span><span class="regexp">/kubelet /etc</span><span class="regexp">/cni/net</span>.d /var/<span class="class"><span class="keyword">lib</span>/<span class="title">dockershim</span> /<span class="title">var</span>/<span class="title">run</span>/<span class="title">kubernetes</span>]</span></span><br></pre></td></tr></table></figure></p>
+<p>2.然后执行 kubeadm join 添加节点到集群（如果 token 失效，到主节点执行：kubeadm token create 重新生成）：<br><code>kubeadm join --token xxxxx master_ip:6443 --discovery-token-ca-cert-hash sha256:xxxx</code><br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@com10<span class="number">-81</span> ~]<span class="comment"># kubeadm join --token xxxxx 10.4.37.167:6443 --discovery-token-ca-cert-hash sha256:xxxxxxx</span></span><br><span class="line">[preflight] Running pre-flight checks.</span><br><span class="line">	[WARNING SystemVerification]: docker <span class="built_in">version</span> <span class="keyword">is</span> <span class="keyword">greater than</span> <span class="keyword">the</span> most recently validated <span class="built_in">version</span>. Docker <span class="built_in">version</span>: <span class="number">17.12</span><span class="number">.1</span>-ce. Max validated <span class="built_in">version</span>: <span class="number">17.03</span></span><br><span class="line">	[WARNING FileExisting-crictl]: crictl <span class="keyword">not</span> found <span class="keyword">in</span> system path</span><br><span class="line">[preflight] Starting <span class="keyword">the</span> kubelet service</span><br><span class="line">[discovery] Trying <span class="keyword">to</span> connect <span class="keyword">to</span> API Server <span class="string">"10.4.37.167:6443"</span></span><br><span class="line">[discovery] Created cluster-info discovery client, requesting info <span class="keyword">from</span> <span class="string">"https://10.4.37.167:6443"</span></span><br><span class="line">[discovery] Requesting info <span class="keyword">from</span> <span class="string">"https://10.4.37.167:6443"</span> again <span class="keyword">to</span> validate TLS <span class="keyword">against</span> <span class="keyword">the</span> pinned public key</span><br><span class="line">[discovery] Cluster info signature <span class="keyword">and</span> <span class="built_in">contents</span> are valid <span class="keyword">and</span> TLS certificate validates <span class="keyword">against</span> pinned roots, will use API Server <span class="string">"10.4.37.167:6443"</span></span><br><span class="line">[discovery] Successfully established connection <span class="keyword">with</span> API Server <span class="string">"10.4.37.167:6443"</span></span><br><span class="line"></span><br><span class="line">This node has joined <span class="keyword">the</span> cluster:</span><br><span class="line">* Certificate signing request was sent <span class="keyword">to</span> master <span class="keyword">and</span> a response</span><br><span class="line">  was received.</span><br><span class="line">* The Kubelet was informed <span class="keyword">of</span> <span class="keyword">the</span> new secure connection details.</span><br><span class="line"></span><br><span class="line">Run 'kubectl <span class="keyword">get</span> nodes' <span class="keyword">on</span> <span class="keyword">the</span> master <span class="keyword">to</span> see this node join <span class="keyword">the</span> cluster.</span><br></pre></td></tr></table></figure></p>
+<p>PS: k8s 集群 /etc/kubernetes/pki/ca.crt 证书(任何一节点都有该文件) sha256 编码获取（kubeadm join 添加集群节点时需要该证书的 sha256 编码串认证）：<br><code>openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2&gt;/dev/null | openssl dgst -sha256 -hex | sed &#39;s/^.* //&#39;</code></p>
+<p>到此节点添加回集群了，但是直接执行 kubectl 相关的命令可能还会报如下错误：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@com10-81 ~]# kubectl <span class="builtin-name">get</span> pod</span><br><span class="line">The<span class="built_in"> connection </span><span class="keyword">to</span> the<span class="built_in"> server </span>localhost:8080 was refused - did you specify the right host <span class="keyword">or</span> port?</span><br><span class="line">You have mail <span class="keyword">in</span> /var/spool/mail/root</span><br></pre></td></tr></table></figure></p>
+<p>问题原因及解决方法:<br>很明显 kubelet 加载的配置文件(/etc/kubernetes/kubelet.conf)有问题，可能服务器重启的缘故，启动后该文件丢失了，导致里面的连接 master 节点的配置及其他配置给丢了，因此会默认连接 localhost:8080 端口。解决方法很简单：拷贝其他任一节点的该文件，然后重启 kubelet (systemctl restart kublete)即可。</p>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a href="https://stackoverflow.com/questions/41732265/how-to-use-kubeadm-to-create-kubernetest-cluster" target="_blank" rel="noopener">https://stackoverflow.com/questions/41732265/how-to-use-kubeadm-to-create-kubernetest-cluster</a><br><a href="https://blog.csdn.net/mailjoin/article/details/79686934" target="_blank" rel="noopener">https://blog.csdn.net/mailjoin/article/details/79686934</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/21/通过-CeSi-Supervisor-可视化集中管理服务器节点进程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/21/通过-CeSi-Supervisor-可视化集中管理服务器节点进程/" itemprop="url">通过 CeSi + Supervisor 可视化集中管理服务器节点进程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-21T16:35:19+08:00">
+                2018-07-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Supervisor/" itemprop="url" rel="index">
+                    <span itemprop="name">Supervisor</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li><a href="#%E9%80%9A%E8%BF%87-cesi--supervisor-%E5%8F%AF%E8%A7%86%E5%8C%96%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%8A%82%E7%82%B9%E8%BF%9B%E7%A8%8B">通过 CeSi + Supervisor 可视化集中管理服务器节点进程</a><ul>
+<li><a href="#%E7%AE%80%E4%BB%8B">简介</a></li>
+<li><a href="#supervisor-%E7%9A%84%E5%AE%89%E8%A3%85%E5%8F%8A%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8">Supervisor 的安装及基本使用</a><ul>
+<li><a href="#1-%E5%AE%89%E8%A3%85">1. 安装</a></li>
+<li><a href="#2-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8">2. 基本使用</a><ul>
+<li><a href="#21-%E5%90%AF%E5%8A%A8-supervisor">2.1 启动 supervisor</a></li>
+<li><a href="#22-supervisor-%E5%AE%A2%E6%88%B7%E7%AB%AF-supervisorctl">2.2 Supervisor 客户端 supervisorctl</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-cesi">安装配置 CeSi</a><ul>
+<li><a href="#1-%E7%AE%80%E4%BB%8B">1. 简介</a></li>
+<li><a href="#2-%E5%AE%89%E8%A3%85">2. 安装</a></li>
+<li><a href="#3-%E9%85%8D%E7%BD%AE">3. 配置</a></li>
+<li><a href="#4-%E5%90%AF%E5%8A%A8">4. 启动</a></li>
+</ul>
+</li>
+<li><a href="#supervisor-%E6%9C%8D%E5%8A%A1%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8">Supervisor 服务设置开机自启动</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><a href="http://supervisord.org" target="_blank" rel="noopener">Supervisor</a> 是一个用 <code>Python</code> 写的进程管理工具，可以很方便的用来启动、重启、关闭进程。类似于 <code>Linux</code> 的 <code>systemd</code> 守护进程一样，通过统一的命令来管理系统的各个服务，当管理的服务挂掉时会自动重新拉起。<code>Supervisor</code> 还提供了很多<a href="http://supervisord.org/plugins.html" target="_blank" rel="noopener">第三方插件</a>，比如后面会讲到的 <a href="https://github.com/Gamegos/cesi" target="_blank" rel="noopener">CeSi</a>，该工具是 <code>Supervisor</code> 的 <code>WebUI</code>，可以通过这个统一的 <code>WebUI</code> 集中化管理各个服务器节点的进程。</p>
+<p><code>Supervisor</code> 和 <code>Docker</code> 的架构类似，也是 <code>C/S</code> 架构，服务端是 <code>supervisord</code>，客户端是 <code>supervisorctl</code> 。客户端主要是用来控制服务端所管理的进程，比如控制服务的启动、关闭、重启、查看服务状态，还可以重启服务端、重载配置文件等。服务端管控各个服务的正常运行，当有服务异常退出时会自动拉起。</p>
+<h3 id="Supervisor-的安装及基本使用"><a href="#Supervisor-的安装及基本使用" class="headerlink" title="Supervisor 的安装及基本使用"></a>Supervisor 的安装及基本使用</h3><h4 id="1-安装"><a href="#1-安装" class="headerlink" title="1. 安装"></a>1. 安装</h4><p><code>Supervisor</code> 的安装特别简单，由于是 <code>Python</code> 写的，因此可以通过 <code>pip</code> 一键安装：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install supervisor</span><br></pre></td></tr></table></figure></p>
+<p><em>在此我提供了一个 <a href="https://gist.github.com/qhh0205/435ce1a7d29c935e743378b61e28b541" target="_blank" rel="noopener">Sueprvisor 一键安装配置脚本</a>，简化了 <code>Supervisor</code> 的初始配置。</em></p>
+<h4 id="2-基本使用"><a href="#2-基本使用" class="headerlink" title="2. 基本使用"></a>2. 基本使用</h4><p>安装完成后系统会多出如下三个命令：</p>
+<blockquote>
+<p><code>supervisord</code> ：Supervisor 的服务端；<br><code>supervisorctl</code>：Supervisor 的客户端；<br><code>echo_supervisord_conf</code>：Supervisor 服务端默认配置文件生成工具；</p>
+</blockquote>
+<h5 id="2-1-启动-supervisor"><a href="#2-1-启动-supervisor" class="headerlink" title="2.1 启动 supervisor"></a>2.1 启动 <code>supervisor</code></h5><p>首先通过如下命令将 <code>supervisor</code> 的默认配置生成到 <code>/etc/supervisord.conf</code>：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo_supervisord_conf &gt; /etc/supervisord.conf</span><br></pre></td></tr></table></figure></p>
+<p><code>Supervisor</code> 配置文件格式是 <code>INI</code> 格式，因此看起来比较直观，很多配置项的含义已在上面生成的配置文件中以注释的形式说明，以下简要说明一下我在生产环境目前使用的配置，为了减少篇幅，在此只列出了非注释的内容：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[unix_http_server]</span></span><br><span class="line"><span class="attr">file</span>=/tmp/supervisor.sock   ; 服务端套接字文件路径，supervisorctl 客户端会使用该文件和服务端通信</span><br><span class="line"><span class="section">[inet_http_server]</span>         <span class="comment">; Supervisor 服务端提供的 http 服务，很多 Supervisor 的 WebUI</span></span><br><span class="line">                           <span class="comment">;都是通过访问该服务来实现统一管理的，比如后面要讲的 CeSi Web UI</span></span><br><span class="line"><span class="attr">port</span>=<span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9001</span>          ; ip_address:port specifier, *:port for all iface</span><br><span class="line"><span class="section">[supervisord]</span> <span class="comment">; Supervisor 服务端配置</span></span><br><span class="line"><span class="attr">logfile</span>=/tmp/supervisord.log ; 服务端日志文件路径</span><br><span class="line"><span class="attr">logfile_maxbytes</span>=<span class="number">50</span>MB        ; max main logfile bytes b4 rotation; default <span class="number">50</span>MB</span><br><span class="line"><span class="attr">logfile_backups</span>=<span class="number">10</span>           ; # of main logfile backups; <span class="number">0</span> means none, default <span class="number">10</span></span><br><span class="line"><span class="attr">loglevel</span>=debug               ; log level; default info; others: debug,warn,trace</span><br><span class="line"><span class="attr">pidfile</span>=/tmp/supervisord.pid ; supervisord pidfile; default supervisord.pid</span><br><span class="line"><span class="attr">nodaemon</span>=<span class="literal">false</span>               ; start in foreground if <span class="literal">true</span>; default <span class="literal">false</span></span><br><span class="line"><span class="attr">minfds</span>=<span class="number">1024</span>                  ; min. avail startup file descriptors; default <span class="number">1024</span></span><br><span class="line"><span class="attr">minprocs</span>=<span class="number">200</span>                 ; min. avail process descriptors;default <span class="number">200</span></span><br><span class="line"><span class="attr">user</span>=root</span><br><span class="line"><span class="section">[rpcinterface:supervisor]</span></span><br><span class="line">supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface</span><br><span class="line"><span class="section">[supervisorctl]</span> <span class="comment">; Supervisor 客户端配置</span></span><br><span class="line"><span class="attr">serverurl</span>=unix:///tmp/supervisor.sock ; 配置客户端和服务端的通信方式，默认 supervisorctl </span><br><span class="line">                                      <span class="comment">;和 supervisor 通信是通过该套接字通信，也可以配成通过 http 方式通信。</span></span><br><span class="line"><span class="section">[include]</span> <span class="comment">; 在此我将 Supervisor 所管理的服务配置文件都放到了 /etc/supervisor/ 目录，然后通过 include 统一引入</span></span><br><span class="line"><span class="attr">files</span> = /etc/supervisor/*.conf</span><br></pre></td></tr></table></figure></p>
+<p>接下来在 <code>/etc/supervisor/</code> 放入需要 <code>Supervisor</code> 管理的各服务的配置文件，一般一个服务一个配置文件，当然也可以写到一起，比如逻辑上有关联的一组服务可以放到一个配置文件，这样方便管理，下面以一个实例来介绍下要通过 <code>Supervisor</code> 管理服务，相应的配置文件该如何编写（使用 <code>Supervisor</code> 管理 <code>cesi</code> 服务的配置）：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; cesi.conf</span></span><br><span class="line"><span class="section">[program:cesi-5000]</span> <span class="comment">; program 表示 Supervisor 管理的服务实例，cesi-5000 是自己命名</span></span><br><span class="line">                    <span class="comment">;的服务名称，名字可以随便其，我为了方便管理统一命名为：服务名称-端口</span></span><br><span class="line"><span class="attr">directory</span> = /home/ec2-user/cesi ; 程序的启动目录</span><br><span class="line"><span class="attr">command</span> = python cesi/web.py ; 启动服务的命令</span><br><span class="line"><span class="attr">autostart</span> = <span class="literal">true</span>     ; 在 supervisord 启动的时候也自动启动</span><br><span class="line"><span class="attr">startsecs</span> = <span class="number">5</span>        ; 启动 <span class="number">5</span> 秒后没有异常退出，就当作已经正常启动了</span><br><span class="line"><span class="attr">autorestart</span> = <span class="literal">true</span>   ; 程序异常退出后自动重启</span><br><span class="line"><span class="attr">startretries</span> = <span class="number">3</span>     ; 启动失败自动重试次数，默认是 <span class="number">3</span></span><br><span class="line"><span class="attr">user</span> = ec2-user      ; 用哪个用户启动</span><br><span class="line"><span class="attr">redirect_stderr</span> = <span class="literal">true</span>  ; 把 stderr 重定向到 stdout，默认 <span class="literal">false</span></span><br><span class="line"><span class="attr">stdout_logfile_maxbytes</span> = <span class="number">50</span>MB  ; stdout 日志文件大小，默认 <span class="number">50</span>MB</span><br><span class="line"><span class="attr">stdout_logfile_backups</span> = <span class="number">7</span> ; stdout 日志文件备份数</span><br><span class="line"><span class="comment">; stdout 日志文件，需要注意当指定目录不存在时无法正常启动，所以需要手动创建目录（supervisord 会自动创建日志文件）</span></span><br><span class="line"><span class="attr">stdout_logfile</span> = /home/ec2-user/cesi/stdout.log</span><br></pre></td></tr></table></figure></p>
+<p>将上述配置保存为 <code>cesi.conf</code>，放到 <code>/etc/supervisor/</code>。</p>
+<p>前面已经对 <code>echo_supervisord_conf</code> 生成的默认配置文件做了微调，接下来启动 <code>Supervisor</code> 服务端（建议用 root 用户启动）:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo supervisord -c /etc/supervisord.conf</span><br></pre></td></tr></table></figure></p>
+<p>如果不指定 <code>-c</code> 参数，会通过如下顺序来搜索配置文件：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$PWD</span>/supervisord.conf</span><br><span class="line"><span class="variable">$PWD</span>/etc/supervisord.conf</span><br><span class="line">/etc/supervisord.conf</span><br><span class="line">/etc/supervisor/supervisord.conf</span><br></pre></td></tr></table></figure></p>
+<h5 id="2-2-Supervisor-客户端-supervisorctl"><a href="#2-2-Supervisor-客户端-supervisorctl" class="headerlink" title="2.2 Supervisor 客户端 supervisorctl"></a>2.2 Supervisor 客户端 <code>supervisorctl</code></h5><p><code>supervisorctl</code> 有两种使用方式：<br>一种是直接执行 <code>supervisorctl</code> ，这样会进入交互式的 <code>Shell</code>， 然后在该交互式 <code>Shell</code> 中输入管理命令，举例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw supervisor]<span class="comment"># supervisorctl</span></span><br><span class="line">cesi-5000                        RUNNING   pid 6538, uptime 1 day, 1:21:02</span><br><span class="line">zipkinstage-9411                 RUNNING   pid 30919, uptime 1 day, 19:51:43</span><br><span class="line">supervisor&gt; status</span><br><span class="line">cesi-5000                        RUNNING   pid 6538, uptime 1 day, 1:21:09</span><br><span class="line">zipkinstage-9411                 RUNNING   pid 30919, uptime 1 day, 19:51:50</span><br></pre></td></tr></table></figure></p>
+<p>另一种是 <code>supervisorctl [action]</code> 的方式，这样不会陷入交互式 <code>Shell</code>，直接会返回命令的执行结果，其中 <code>action</code> 就是管理服务进程的各个命令，举例（查看目前所管理的服务的进程状态）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw supervisor]<span class="comment"># supervisorctl status</span></span><br><span class="line">cesi-5000                        RUNNING   pid 6538, uptime 1 day, 1:24:53</span><br><span class="line">zipkinstage-9411                 RUNNING   pid 30919, uptime 1 day, 19:55:34</span><br></pre></td></tr></table></figure></p>
+<p>其中常用的 <code>action</code> 有如下（更多选项参数见 <a href="http://supervisord.org/running.html#supervisord-command-line-options" target="_blank" rel="noopener">这里</a>）：</p>
+<blockquote>
+<p><code>supervisorctl status</code> ： 查看所管理的服务状态；<br><code>supervisorctl start &lt;program_name&gt;</code>：启动一个服务；<br><code>supervisorctl restart &lt;program_name&gt;</code>：重启一个服务（注意：重启服务不会重新加载配置文件）；<br><code>supervisorctl stop &lt;program_name&gt;</code>：关闭一个服务；<br><code>supervisorctl update</code>：重新加载配置文件，并重启配置有变动的服务；<br><code>supervisorctl reread</code>：重新加载配置文件，但不会重启配置有变动的服务；<br><code>supervisorctl reload</code>：重启 <code>Supervisor</code> 服务端；<br><code>supervisorctl clear &lt;program_name&gt;</code>：清理一个服务的 <code>stdout log</code>；</p>
+</blockquote>
+<h3 id="安装配置-CeSi"><a href="#安装配置-CeSi" class="headerlink" title="安装配置 CeSi"></a>安装配置 CeSi</h3><h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p><a href="https://github.com/gamegos/cesi" target="_blank" rel="noopener">CeSi</a> 是 <code>Supervisor</code> 官方推荐的集中化管理 <code>Supervisor</code> 实例的 <code>Web UI</code>，该工具是用 <code>Python</code> 编写，基于 <code>Flask</code>  <code>Web</code> 框架 。</p>
+<p><code>Superviosr</code> 自带的 <code>Web UI</code> 不支持跨机器管理<code>Supervisor</code> 进程，功能比较简单，通过 <code>CeSi</code> 可以集中管理各个服务器节点的进程，在 Web 界面就可以轻松管理各个服务的启动、关闭、重启等，很方便使用。</p>
+<h4 id="2-安装"><a href="#2-安装" class="headerlink" title="2. 安装"></a>2. 安装</h4><p>安装 <code>CeSi</code> 有三个依赖：<code>Python</code>，<code>Flask</code>，<code>sqlite3</code><br>一般的 Linux 发行版都默认安装了 <code>Python</code>，所以 <code>Python</code> 不需要再次安装；<br>从 <code>Python 2.5</code> 开始 <code>sqlite3</code> 已经在标准库内置了，所以也不需要安装 <code>sqlite3</code> 模块了；<br>另外很多 Linux 发行版已经自带 <code>sqlite3</code>，所以无需另外安装；<br>只需要安装 <code>flask web</code> 框架即可；</p>
+<p><a href="https://github.com/gamegos/cesi" target="_blank" rel="noopener">CeSi</a> 已经有了新的版本，在 GitHub 仓库的 <code>v2_api</code> 分支下，提供了比之前版本更加美观的界面，以下为 <a href="https://github.com/gamegos/cesi" target="_blank" rel="noopener">CeSi</a> 一键安装配置脚本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line">sudo pip install flask</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/gamegos/cesi.git</span><br><span class="line"><span class="built_in">cd</span> cesi</span><br><span class="line"><span class="comment"># 使用最新版, 最新版的 Web UI 做了很大改动</span></span><br><span class="line">git checkout -b v2_api origin/v2_api</span><br><span class="line">sudo cp cesi.conf.sample /etc/cesi.conf</span><br><span class="line">sudo ln -s /etc/cesi.conf cesi.conf</span><br><span class="line"><span class="comment">#创建用户信息表：</span></span><br><span class="line">sqlite3 userinfo.db &lt; userinfo.sql</span><br><span class="line"><span class="comment">#CeSi log 目录</span></span><br><span class="line">sudo mkdir -p /var/logs/cesi</span><br><span class="line">sudo chmod 777 -R /var/logs</span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意</strong>：<code>CeSi</code> 的配置文件路径必须是 <code>/etc/cesi.conf</code> ，否则启动会报错，简单看下 <code>CeSi</code> 的源码就知道为什么了。在这里我在仓库目录弄了个软连接指向了 <code>/etc/cesi.conf</code>，完全是为了编辑方便弄的。 </p>
+<h4 id="3-配置"><a href="#3-配置" class="headerlink" title="3. 配置"></a>3. 配置</h4><p><code>CeSi</code> 的配置非常简单，和 <code>Supervisor</code> 的配置文件类似，也是 <code>INI</code> 格式，关于配置文件的各项说明在 <code>cesi.conf.sample</code> 配置样例中已经通过注释的形式给了明确的说明，稍微看下就能明白，以下为我目前使用的配置（为了减小篇幅，去掉了注释）：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[node:node1]</span> <span class="comment">;各 Supervisor 节点的配置</span></span><br><span class="line"><span class="attr">username</span> = ; 如果 Supervisor 节点没有设置账号密码，这里就保持为空，但不能不写</span><br><span class="line"><span class="attr">password</span> =</span><br><span class="line"><span class="attr">host</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">port</span> = <span class="number">9001</span></span><br><span class="line"><span class="section">[node:node2]</span></span><br><span class="line"><span class="attr">username</span> =</span><br><span class="line"><span class="attr">password</span> =</span><br><span class="line"><span class="attr">host</span> = node2.d.com</span><br><span class="line"><span class="attr">port</span> = <span class="number">9001</span></span><br><span class="line"><span class="section">[node:node3]</span></span><br><span class="line"><span class="attr">username</span> =</span><br><span class="line"><span class="attr">password</span> =</span><br><span class="line"><span class="attr">host</span> = node3.d.com</span><br><span class="line"><span class="attr">port</span> = <span class="number">9001</span></span><br><span class="line"></span><br><span class="line"><span class="section">[cesi]</span> <span class="comment">; CeSi 自身的配置</span></span><br><span class="line"><span class="attr">database</span> = userinfo.db</span><br><span class="line"><span class="attr">activity_log</span> = /var/logs/cesi/activity.log ;log目录没有的话需要提前建好</span><br><span class="line"><span class="attr">host</span> = <span class="number">0.0</span>.<span class="number">0.0</span></span><br><span class="line"><span class="attr">port</span> = <span class="number">5000</span> ; CeSi 启动端口</span><br><span class="line"><span class="attr">name</span> = CeSI</span><br><span class="line"><span class="attr">theme</span> = superhero</span><br></pre></td></tr></table></figure></p>
+<h4 id="4-启动"><a href="#4-启动" class="headerlink" title="4. 启动"></a>4. 启动</h4><p><code>CeSi</code> 的启动非常简单，直接通过 <code>Python</code> 启动即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python cesi/web.py</span><br></pre></td></tr></table></figure></p>
+<p>为了方便管理，我把 <code>CeSi</code> 也通过 <code>Supervisor</code> 来管理，以下为对应的 <code>Supervisor</code> 配置：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;cesi.conf</span></span><br><span class="line"><span class="section">[program:cesi-5000]</span></span><br><span class="line"><span class="attr">directory</span> = /home/ec2-user/cesi ; 程序的启动目录</span><br><span class="line"><span class="attr">command</span> = python cesi/web.py</span><br><span class="line"><span class="attr">autostart</span> = <span class="literal">true</span>     ; 在 supervisord 启动的时候也自动启动</span><br><span class="line"><span class="attr">startsecs</span> = <span class="number">5</span>        ; 启动 <span class="number">5</span> 秒后没有异常退出，就当作已经正常启动了</span><br><span class="line"><span class="attr">autorestart</span> = <span class="literal">true</span>   ; 程序异常退出后自动重启</span><br><span class="line"><span class="attr">startretries</span> = <span class="number">3</span>     ; 启动失败自动重试次数，默认是 <span class="number">3</span></span><br><span class="line"><span class="attr">user</span> = ec2-user      ; 用哪个用户启动</span><br><span class="line"><span class="attr">redirect_stderr</span> = <span class="literal">true</span>  ; 把 stderr 重定向到 stdout，默认 <span class="literal">false</span></span><br><span class="line"><span class="attr">stdout_logfile_maxbytes</span> = <span class="number">50</span>MB  ; stdout 日志文件大小，默认 <span class="number">50</span>MB</span><br><span class="line"><span class="attr">stdout_logfile_backups</span> = <span class="number">7</span> ; stdout 日志文件备份数</span><br><span class="line"><span class="comment">; stdout 日志文件，需要注意当指定目录不存在时无法正常启动，所以需要手动创建目录（supervisord 会自动创建日志文件）</span></span><br><span class="line"><span class="attr">stdout_logfile</span> = /home/ec2-user/cesi/stdout.log</span><br></pre></td></tr></table></figure></p>
+<p>启动完成后，做个 <code>Nginx</code> 反向代理即可通过浏览器访问，最终效果如下：<br><img src="/images/cesi-ui.png" alt="cesi-ui"></p>
+<h3 id="Supervisor-服务设置开机自启动"><a href="#Supervisor-服务设置开机自启动" class="headerlink" title="Supervisor 服务设置开机自启动"></a>Supervisor 服务设置开机自启动</h3><p>以下为在 <code>RedHat7</code>下配置 <code>Supervisor</code> 开机自启动过程，编写 <code>Unit</code> 文件，使用 <code>systemd</code> 管理 <code>Supervisor</code>：</p>
+<ol>
+<li><p>编写 <code>Unit</code> 文件：<code>supervisord.service</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#supervisord.service</span></span><br><span class="line"></span><br><span class="line">[Unit]</span><br><span class="line">Description=Supervisor daemon</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/bin/supervisord -c /etc/supervisord.conf</span><br><span class="line">ExecStop=/bin/supervisorctl shutdown</span><br><span class="line">ExecReload=/bin/supervisorctl -c /etc/supervisord.conf reload</span><br><span class="line">KillMode=process</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=42s</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将上述文件拷贝到 <code>/usr/lib/systemd/system/</code> 目录下</p>
+</li>
+<li><p>将 <code>supervisor.service</code> 注册到系统中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw ~]<span class="comment"># systemctl enable supervisord.service</span></span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/supervisord.service to /usr/lib/systemd/system/supervisord.service.</span><br></pre></td></tr></table></figure>
+<p> 可以看出注册过程就是在 <code>/etc/systemd/system/multi-user.target.wants/</code> 目录下创建一个软链接指向第二步中的中拷贝到 <code>/usr/lib/systemd/system/</code> 的文件。</p>
+</li>
+</ol>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="http://supervisord.org/index.html" target="_blank" rel="noopener">http://supervisord.org/index.html</a><br><a href="http://www.bjhee.com/supervisor.html" target="_blank" rel="noopener">http://www.bjhee.com/supervisor.html</a><br><a href="https://www.jianshu.com/p/03619bf7d7f5" target="_blank" rel="noopener">https://www.jianshu.com/p/03619bf7d7f5</a><br><a href="http://liyangliang.me/posts/2015/06/using-supervisor" target="_blank" rel="noopener">http://liyangliang.me/posts/2015/06/using-supervisor</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/15/Redis-慢查询分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/15/Redis-慢查询分析/" itemprop="url">Redis 慢查询分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-15T13:37:47+08:00">
+                2018-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>和很多关系型数据库（例如：<code>MySQL</code>）一样， Redis 也提供了慢查询日志记录，Redis 会把命令执行时间超过 <code>slowlog-log-slower-than</code> 的都记录在 Reids 内部的一个列表（<code>list</code>）中，该列表的长度最大为 <code>slowlog-max-len</code> 。需要注意的是，慢查询记录的只是命令的<strong>执行时间</strong>，不包括网络传输和排队时间：</p>
+<p><img src="/images/redis-cmd-exec.png" alt="Alt text"></p>
+<h3 id="慢查询分析配置"><a href="#慢查询分析配置" class="headerlink" title="慢查询分析配置"></a>慢查询分析配置</h3><p>关于 Redis 慢查询的配置有两个，分别是 <code>slowlog-log-slower-than</code> 和 <code>slowlog-max-len</code>。</p>
+<ol>
+<li><p><code>slowlog-log-slower-than</code>，用来控制慢查询的阈值，所有执行时间超过该值的命令都会被记录下来。该值的单位为微秒，默认值为 <code>10000</code>，如果设置为 <code>0</code>，那么所有的记录都会被记录下来，如果设置为小于 <code>0</code> 的值，那么对于任何命令都不会记录，即关闭了慢查询。可以通过在配置文件中设置，或者用 <code>config set</code> 命令来设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config <span class="built_in">set</span> slowlog-log-slower-than 10000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>slowlog-max-len</code>，用来设置存储慢查询记录列表的大小，默认值为 <code>128</code>，当该列表满了时，如果有新的记录进来，那么 Redis 会把队最旧的记录清理掉，然后存储新的记录。在生产环境我们可以适当调大，比如调成 <code>1000</code>，这样就可以缓冲更多的记录，方便故障的排查。配置方法和 <code>slowlog-log-slower-than</code> 类似，可以在配置文件中指定，也可以在命令行执行 <code>config set</code> 来设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config <span class="built_in">set</span> slowlog-max-len 1000</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="查看慢查询日志"><a href="#查看慢查询日志" class="headerlink" title="查看慢查询日志"></a>查看慢查询日志</h3><p>尽管 Redis 把慢查询日志记录到了内部的列表，但我们不能直接操作该列表，Redis 专门提供了一组命令来查询慢查询日志：</p>
+<ol>
+<li><p>获取慢查询日志：<br><code>slowlog get [n]</code><br>下面操作返回当前 Redis 的所有慢查询记录，可以通过参数 <code>n</code> 指定查看条数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; slowlog get</span><br><span class="line"> 1) 1) (<span class="built_in">integer</span>) 456</span><br><span class="line">    2) (<span class="built_in">integer</span>) 1531632044</span><br><span class="line">    3) (<span class="built_in">integer</span>) 3</span><br><span class="line">    4) 1) <span class="string">"get"</span></span><br><span class="line">       2) <span class="string">"m"</span></span><br><span class="line">    5) <span class="string">"127.0.0.1:50106"</span></span><br><span class="line">    6) <span class="string">""</span></span><br><span class="line"> 2) 1) (<span class="built_in">integer</span>) 455</span><br><span class="line">    2) (<span class="built_in">integer</span>) 1531632037</span><br><span class="line">    3) (<span class="built_in">integer</span>) 14</span><br><span class="line">    4) 1) <span class="string">"keys"</span></span><br><span class="line">       2) <span class="string">"*"</span></span><br><span class="line">    5) <span class="string">"127.0.0.1:50106"</span></span><br><span class="line">    6) <span class="string">""</span></span><br></pre></td></tr></table></figure>
+<p> 结果说明：<br><code>1)</code> 慢查询记录 id；<br><code>2)</code> 发起命令的时间戳；<br><code>3)</code> 命令耗时，单位为微秒；<br><code>4)</code> 该条记录的命令及参数；<br><code>5)</code> 客户端网络套接字（ip: port）;<br><code>6)</code> “”</p>
+</li>
+<li><p>获取当前慢查询日志记录数<br><code>slowlog len</code></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.1</span><span class="selector-pseudo">:6379</span>&gt; <span class="selector-tag">slowlog</span> <span class="selector-tag">len</span></span><br><span class="line">(<span class="selector-tag">integer</span>) 458</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>慢查询日志重置<br><code>slowlog reset</code><br>实际上是对慢查询列表做清理操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; slowlog len</span><br><span class="line">(<span class="built_in">integer</span>) 461</span><br><span class="line">127.0.0.1:6379&gt; slowlog reset</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; slowlog len</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/14/Redis-数据库管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/14/Redis-数据库管理/" itemprop="url">Redis 数据库管理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-14T22:45:25+08:00">
+                2018-07-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Redis-数据库管理"><a href="#Redis-数据库管理" class="headerlink" title="Redis 数据库管理"></a>Redis 数据库管理</h2><h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><p>Redis 提供了几个面向数据库的操作，分别是 <code>dbsize</code>, <code>select</code>, <code>flushdb/flushall</code>。<br>其实在一个 Redis 实例内部也是有多个数据库的，与 <code>MySQL</code> 等其他关系型数据库不同的是，Redis 内部的数据库使用数字索引来标识，而不是像 <code>MySQL</code> 那样一个实例中的数据库是通过数据库名称来标识。<br>在 Redis 中数据库默认有 <code>16</code> 个，数据库标识分别是 <code>0</code>, <code>1</code>, …, <code>15</code>，我们默认使用的是 <code>0</code> 号数据库，不同数据库之间是隔离的，可以拥有同名的键。</p>
+<p><img src="/images/redis-db.png" alt=""></p>
+<h3 id="各数据库管理命令介绍"><a href="#各数据库管理命令介绍" class="headerlink" title="各数据库管理命令介绍"></a>各数据库管理命令介绍</h3><h4 id="1-dbsize-查看当前数据库-key-的个数"><a href="#1-dbsize-查看当前数据库-key-的个数" class="headerlink" title="1. dbsize 查看当前数据库 key 的个数"></a>1. <code>dbsize</code> 查看当前数据库 key 的个数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> score 99</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; dbsize</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br></pre></td></tr></table></figure>
+<h4 id="2-select-切换数据"><a href="#2-select-切换数据" class="headerlink" title="2. select 切换数据"></a>2. <code>select</code> 切换数据</h4><p><code>select</code> 命令格式为：<code>select index</code>，<code>index</code> 为数据库的标识。举例如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> score 99</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; select 8  // 切换到 8 号数据库</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; get name  //可以看出不同 db 是隔离的</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379[8]&gt; <span class="built_in">set</span> name tom</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; get name</span><br><span class="line"><span class="string">"tom"</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="3-flushdb-flushall-清理数据库"><a href="#3-flushdb-flushall-清理数据库" class="headerlink" title="3. flushdb/flushall 清理数据库"></a>3. <code>flushdb/flushall</code> 清理数据库</h4><p><code>flushdb</code> 和 <code>flushall</code> 的区别为：<code>flushdb</code> 清空当前数据库，而 <code>flushall</code> 清空所有数据库。举例如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379&gt; select 8</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379[8]&gt; flushdb</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379[8]&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br><span class="line">127.0.0.1:6379[8]&gt; select 0</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"score"</span></span><br><span class="line">2) <span class="string">"name"</span></span><br><span class="line">127.0.0.1:6379&gt; flushall</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">(empty list or <span class="built_in">set</span>)</span><br></pre></td></tr></table></figure></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>目前 Redis 对多数据库的支持开始弱化了，因为 Redis 是单线程架构，同一时间只有一个 <code>CPU</code> 为 Redis 服务，多个数据库同时存在不仅不会利用系统的多核优势，反而会由于单实例资源共享问题互相会有影响，导致出现问题时排错非常困难，Redis 实例如果一旦阻塞，那么所有的数据库都会受到影响。所以这是一个很鸡肋的功能，Redis 官方对其支持也在逐步弱化。<br>更合理的方式是一台机器启动多个 Redis 实例，互相隔离，充分利用 <code>CPU</code> 的多核优势。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/11/Redis-基础/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -305,7 +973,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -540,7 +1208,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -739,7 +1407,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -891,7 +1559,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1057,7 +1725,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1200,7 +1868,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1338,654 +2006,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/如何-dump-jvm-内存及线程栈/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/19/如何-dump-jvm-内存及线程栈/" itemprop="url">如何 dump jvm 内存及线程栈</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-19T23:28:46+08:00">
-                2018-05-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>目前很多企业的后台服务都是 java 服务，在故障出现时能及时 dump jvm 内存和线程栈对于故障的分析及定位是非常重要的。接下来介绍如何进行 dump 操作，并分享一个简单脚本实现服务器线程数超过一定阀值时自动 dump 线程数最高的 java 进程的内存及线程栈。</p>
-<h4 id="1-dump-jvm-内存"><a href="#1-dump-jvm-内存" class="headerlink" title="1. dump jvm 内存"></a>1. dump jvm 内存</h4><p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=dump_file_name pid</span><br></pre></td></tr></table></figure></p>
-<p>举例：dump pid 为 <code>4738</code> 的 java 进程的内存到 <code>app_mem_dump.bin</code> 文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=app_mem_dump.bin 4738</span><br></pre></td></tr></table></figure></p>
-<h4 id="2-dump-jvm-线程栈"><a href="#2-dump-jvm-线程栈" class="headerlink" title="2. dump jvm 线程栈"></a>2. dump jvm 线程栈</h4><p>命令格式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack pid &gt; dump_file_name</span><br></pre></td></tr></table></figure></p>
-<p>举例：dump pid 为 <code>4738</code> 的 java 进程的线程栈到 <code>app_thread_dump.txt</code> 文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack 4738 &gt; app_thread_dump.txt</span><br></pre></td></tr></table></figure></p>
-<h3 id="脚本分享"><a href="#脚本分享" class="headerlink" title="脚本分享"></a>脚本分享</h3><p>当服务器线程数超过 2500 时自动 dump 线程数最高的 java 进程的内存及线程栈。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># 服务器线程数达到 2500 以上时 dump 线程数最多的 java 进程的线程及内存</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">cur_thread_num=`ps -efL | wc -l`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$cur_thread_num</span> -le 2500 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">cur_date=`date +<span class="string">"%Y-%m-%d_%H-%M-%S"</span>`</span><br><span class="line"><span class="built_in">cd</span> ./dumpfile</span><br><span class="line"><span class="comment"># 服务器当前线程 dump 到文件:按照线程数由大到小排序显示</span></span><br><span class="line">ps -efL --sort -nlwp &gt; server_thread_dump_<span class="variable">$cur_date</span></span><br><span class="line"><span class="comment"># dump 线程数最多的 jvm 的线程及内存</span></span><br><span class="line">most_thread_num_pid=`cat server_thread_dump_<span class="variable">$cur_date</span> | sed -n <span class="string">'2p'</span> | awk <span class="string">'&#123;print $2&#125;'</span>`</span><br><span class="line">nohup jstack -l <span class="variable">$most_thread_num_pid</span> &gt; java_app_thread_dump_<span class="variable">$&#123;cur_date&#125;</span>_pid_<span class="variable">$&#123;most_thread_num_pid&#125;</span> &amp;</span><br><span class="line">nohup jmap -dump:format=b,file=java_app_mem_dump_<span class="variable">$&#123;cur_date&#125;</span>_pid_<span class="variable">$&#123;most_thread_num_pid&#125;</span> <span class="variable">$most_thread_num_pid</span> &amp;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/19/自定义-Zabbix-监控指标及图表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/19/自定义-Zabbix-监控指标及图表/" itemprop="url">自定义 Zabbix 监控指标及图表</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-19T09:11:05+08:00">
-                2018-05-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Zabbix/" itemprop="url" rel="index">
-                    <span itemprop="name">Zabbix</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p> 有时候 Zabbix 监控系统的模版提供的监控指标并不能满足我们的需求，比如我们要监控服务器的线程数、TCP 连接数等，这些指标在 Zabbix 自带的模板中是没有的，这时候我们就需要自定义监控指标来实现可视化监控。本文以监控服务器的 TCP 连接数为例来说明如何自定义监控指标来实现可视化监控。</p>
-<h3 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h3><p><strong>总体思路是：</strong><br>修改 Zabbix Agent 端的配置文件，添加监控指标的键值对 –&gt; 重启 Zabbix Agent –&gt; 在 Zabbix Server 端界面化控制台中的模板添加监控指标，指定配置文件中的键 –&gt; 创建指标的可视化展示。<br>以下分步图文列出如何操作：</p>
-<h4 id="1-修改-Zabbix-Agent-端配置文件，添加监控指标的键值对"><a href="#1-修改-Zabbix-Agent-端配置文件，添加监控指标的键值对" class="headerlink" title="1. 修改 Zabbix Agent 端配置文件，添加监控指标的键值对"></a>1. 修改 Zabbix Agent 端配置文件，添加监控指标的键值对</h4><p><code>vim</code> 打开 Zabbix Agent 端配置文件 <code>/home/zabbix/zabbix/etc/zabbix_agentd.conf</code> ，末尾添加如下内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UnsafeUserParameters=1</span><br><span class="line">UserParameter=tcp.num,netstat -atunp | grep ESTABLISHED | wc -l</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li><code>UnsafeUserParameters</code>: 自定义指标必需要添加该行；</li>
-<li><code>UserParameter</code>: 自定义指标的参数；</li>
-<li><code>tcp.num</code>: 监控指标的键，在 Zabbix Server 端创建监控指标时会用到，可以随意命名，比如 <code>tcp.count</code>；</li>
-<li><code>netstat -atunp | grep ESTABLISHED | wc -l</code>：监控指标的值（注意：该值必须是数值类型，否则报错），获取服务器的 TCP 连接数，键和值之间通过英文逗号分隔；</li>
-</ul>
-<h4 id="2-重启-Zabbix-Agent-端"><a href="#2-重启-Zabbix-Agent-端" class="headerlink" title="2. 重启 Zabbix Agent 端"></a>2. 重启 Zabbix Agent 端</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/zabbix/zabbix/sbin/zabbix_agentd -c /home/zabbix/zabbix/etc/zabbix_agentd.conf</span><br></pre></td></tr></table></figure>
-<h4 id="3-在-Zabbix-Server-端界面化控制台创建监控指标"><a href="#3-在-Zabbix-Server-端界面化控制台创建监控指标" class="headerlink" title="3. 在 Zabbix Server 端界面化控制台创建监控指标"></a>3. 在 Zabbix Server 端界面化控制台创建监控指标</h4><p>为了让所有监控机器都能生效，所以在这里选择 Zabbix Server 自带的系统模板 <code>Template OS Linux</code> 中添加指标：<br><img src="/images/zbx_custom_metrix1.png" alt=""><br><img src="/images/zbx_custom_metrix2.png" alt=""><br><img src="/images/zbx_custom_metrix3.png" alt=""></p>
-<h4 id="4-创建指标的可视化展示"><a href="#4-创建指标的可视化展示" class="headerlink" title="4. 创建指标的可视化展示"></a>4. 创建指标的可视化展示</h4><p>在第三步中已经完成了监控指标的创建，即 Zabbix Server 已经开始收集 Agent 端的数据，但是我们还没有配置相应指标的可视化图表展示，无法看到该指标随时间的推移的变化趋势，接下来我们创建一个梯度图来可视化展示该指标的变化:</p>
-<p><img src="/images/zbx_custom_metrix4.png" alt=""><br><img src="/images/zbx_custom_metrix5.png" alt=""><br><img src="/images/zbx_custom_metrix6.png" alt=""><br><img src="/images/zbx_custom_metrix7.png" alt=""></p>
-<p>到这里该指标的可视化图表已创建完成，可以跳转到控制台首页查看相应 Zabbix Agent 的图表：<br><img src="/images/zbx_custom_metrix8.png" alt=""></p>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>由于 <code>netstat</code> 命令在非 root 用户下使用会有警告信息：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[zabbix@awsuw7-189 ~]$ netstat -atunp | grep ESTABLISHED | wc -l</span><br><span class="line">(Not all processes could be identified, non-owned process info</span><br><span class="line"> will not be shown, you would have to be root to see it all.)</span><br><span class="line">329</span><br></pre></td></tr></table></figure></p>
-<p>这样 Zabbix Agent 配置文件中使用 <code>netstat -atunp | grep ESTABLISHED | wc -l</code> 获取到的 <code>value</code> 会是上面所有的输出（即字符串类型），而不是 <code>wc -l</code> 得到的数值类型，从而导致配置自定义监控指标后会报错：<br><img src="/images/zbx_custom_metrix9.png" alt=""></p>
-<p>解决方法其实比较简单，切换到 root 用户给 <code>netstat</code> 命令添加 <code>s</code> 权限即可解决：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@awsuw7-189 ~]<span class="comment"># chmod u+s /bin/netstat</span></span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/06/Vagrant-Shell-配置器的使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/06/Vagrant-Shell-配置器的使用/" itemprop="url">Vagrant Shell 配置器的使用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-06T22:26:27+08:00">
-                2018-05-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Vagrant/" itemprop="url" rel="index">
-                    <span itemprop="name">Vagrant</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Vagrant-Shell-配置器的使用"><a href="#Vagrant-Shell-配置器的使用" class="headerlink" title="Vagrant Shell 配置器的使用"></a>Vagrant Shell 配置器的使用</h2><blockquote>
-<p><strong>摘要：</strong> 本文翻译自 <a href="https://www.vagrantup.com/docs/" target="_blank" rel="noopener">Vagrant</a> 官方文档 <a href="https://www.vagrantup.com/docs/provisioning/file.html#destination" target="_blank" rel="noopener">Shell Provisioner</a> 部分，主要介绍了 Vagrant Shell 配置器的使用，如何使用内联脚本代码和外部脚本文件来配置虚拟机。</p>
-</blockquote>
-<p><strong>Provisioner name:</strong> “shell”</p>
-<p>Vagrant Shell 配置器允许你向虚拟机上传脚本并执行。</p>
-<p>对于想要快速启动和运行 Vagrant 的新手来说，Shell 配置器非常理想，并为不熟悉 <code>Chef</code> 或 <code>Puppet</code> 等配置管理系统的用户提供了选择。</p>
-<p>对于类 POSIX 机器，shell 配置器使用 SSH 执行脚本。对于 Windows 机器，使用 WinRM 来执行脚本，shell 配置器通过 WinRM 执行 PowerShell 和 Batch （<strong>译者注：批处理</strong>） 脚本。</p>
-<h3 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h3><p>shell 配置器有很多选项，其中 <code>inline</code> 或者 <code>path</code> 选项是必须的：</p>
-<ul>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#inline" target="_blank" rel="noopener">inline</a> (string) - 指定在远程机器执行的 shell 内联命令。更多信息见下面 <a href="https://www.vagrantup.com/docs/provisioning/shell.html#inline-scripts" target="_blank" rel="noopener">inline scripts</a> 章节。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#path" target="_blank" rel="noopener">path</a> (string) - 要上传并执行的 shell 脚本路径。该脚本可以是一个相对于 Vagrantfile 工程的文件或者是一个远程脚本（比如 <a href="https://gist.github.com/" target="_blank" rel="noopener">gist</a>）。</li>
-</ul>
-<p>剩下的这些选项是可选的：</p>
-<ul>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#args" target="_blank" rel="noopener">args</a> (string or array) - 当以单一字符串执行脚本时，传递给脚本的参数。这些参数必须写得好像它们直接在命令行上键入一样，所以在需要时一定要避免字符、引号等。你也可以使用数组来传递参数。在这种情况下，Vagrant 将会为你处理引用。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#env" target="_blank" rel="noopener">env</a> (string) - 传递给脚本作为环境变量的键值对。Vagrant 会处理环境变量值的引用，但是键保持不变。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#binary" target="_blank" rel="noopener">binary</a> (boolean) - Vagrant 会自动用 Unix 换行符来代替 Windows 换行符。如果设置为 false，不会替换。默认值是 “false”。如果 shell 配置器通过 WinRM 来交互，那么默认值是 “true”。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#privileged" target="_blank" rel="noopener">privileged</a> (boolean) - 指定是否以超级用户执行脚本。默认是 “true”。Windows guest 虚拟机使用计划任务作为真正的管理员运行，而不受WinRM限</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#upload_path" target="_blank" rel="noopener">upload_path</a> (string) - 上传脚本的远程路径。脚本将会通过 SCP 上传到 SSH 用户，因此该路径对于 SSH 用户必须是可写的。默认路径是 <code>/tmp/vagrant-shell</code>。在 Windows 下，这个默认路径是 <code>C:\tmp\vagrant-shell</code>。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#keep_color" target="_blank" rel="noopener">keep_color</a> (boolean) -  Vagrant 根据终端输出是否是 stdout 或 stderr 自动地以绿色或者红色输出。如果设置为 true，Vagrant 不会输出颜色，而使用脚本的原生色彩输出。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#name" target="_blank" rel="noopener">name</a> (string) - 该值将显示在终端输出中，以便在许多 shell 配置器存在时让用户识别更容易。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#powershell_args" target="_blank" rel="noopener">powershell_args</a> (string) - 传递给 <code>PowerShell</code> 的额外参数，如果你在 Windows 使用 PowerShell。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#powershell_elevated_interactive" target="_blank" rel="noopener">powershell_elevated_interactive</a> (boolean) - 在 Windows 交互式运行脚本。默认是 “false”。也必须享有特权。一定要启用 Windows 的自动登录，因为用户必须登录才能使用交互模式。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#md5" target="_blank" rel="noopener">md5</a> (string) - 用于验证远程下载的 shell 文件的 MD5 值。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#sha1" target="_blank" rel="noopener">sha1</a> (string) - 用于验证远程下载的 shell 文件的 SHA1 值。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/shell.html#sensitive" target="_blank" rel="noopener">sensitive</a> (boolean) - 将 <code>env</code> 选项中的 Hash 值标记为敏感数据，并将其从输出中隐藏起来。默认值是 “false”。</li>
-</ul>
-<h3 id="内联脚本"><a href="#内联脚本" class="headerlink" title="内联脚本"></a>内联脚本</h3><p>也许最简单的入门方式是使用内联脚本。内联脚本是直接在 Vagrantfile 文件中给定的脚本代码。例如：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>,</span><br><span class="line">    <span class="symbol">inline:</span> <span class="string">"echo Hello, World"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>当配置器运行时，会在虚拟机中运行 <code>echo Hello, World</code>。</p>
-<p>结合少量 Ruby 代码，很容易将 shell 脚本直接嵌入到 Vagrantfile 文件。举例如下：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$script = <span class="string">&lt;&lt;-SCRIPT</span></span><br><span class="line"><span class="string">echo I am provisioning...</span></span><br><span class="line"><span class="string">date &gt; /etc/vagrant_provisioned_at</span></span><br><span class="line"><span class="string">SCRIPT</span></span><br><span class="line"></span><br><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>, <span class="symbol">inline:</span> $script</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>我知道如果你对 Ruby 不熟悉，那么上面的配置可能会看起来非常高级，但是不用害怕，它做的很简单：将 shell 脚本被赋 <code>$shell</code> 变量。这个全局变量包含一个字符串，然后作为内联脚本传递给 Vagrant 配置文件。</p>
-<p>当然，如果在 Vagrantfile 中还有除了基本变量赋值之外的其他 Ruby 代码使你感到不舒服，那么您可以使用一个实际的脚本文件，在下一节中将对此进行说明。</p>
-<p>对于 Windows 虚拟机，内联脚本必须是是 PowerShell。Batch（<strong>译者注：批处理</strong>） 脚本不能作为内联脚本。</p>
-<h3 id="外部脚本"><a href="#外部脚本" class="headerlink" title="外部脚本"></a>外部脚本</h3><p>shell 配置器还可以指定本地主机上的脚本的路径。Vagrant 会将该脚本上传到虚拟机并执行。例如：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>, <span class="symbol">path:</span> <span class="string">"script.sh"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>上面的路径是相对于中 Vagrantfile 的路径。也可以使用绝对路径，以及 <code>~</code> （家目录）和 <code>..</code>  等快捷方式。</p>
-<p>如果你使用远程脚本作为配置器，你也可以将远程脚本的 URL 作为 <code>path</code> 的参数：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>, <span class="symbol">path:</span> <span class="string">"https://example.com/provisioner.sh"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>如果你在 Windows 上运行 Batch（<strong>译者注：批处理</strong>） 或者 PowerShell 脚本，请确保外部路径具有适当的扩展名（”.bat” 或者 “.ps1”），由于 Windows 使用扩展名来决定所执行文件的类型。如果没有扩展名，那么脚本可能无法使用。</p>
-<p>如果运行一个已经在虚拟机存在的脚本文件，你可以使用内联脚本来调用该远程虚拟机脚本：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span>,</span><br><span class="line">    <span class="symbol">inline:</span> <span class="string">"/bin/sh /path/to/the/script/already/on/the/guest.sh"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="脚本参数"><a href="#脚本参数" class="headerlink" title="脚本参数"></a>脚本参数</h3><p>您可以像任何普通的shell脚本一样参数化脚本。这些参数可以指定给 shell 配置器。应该将它们指定为字符串，因为它们将作为命令行的输入，因此确保正确地转义任何字符：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span> <span class="keyword">do</span> <span class="params">|s|</span></span><br><span class="line">    s.inline = <span class="string">"echo $1"</span></span><br><span class="line">    s.args   = <span class="string">"'hello, world!'"</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>如果您不想担心引用，则还可以将参数指定为数组：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.provision <span class="string">"shell"</span> <span class="keyword">do</span> <span class="params">|s|</span></span><br><span class="line">    s.inline = <span class="string">"echo $1"</span></span><br><span class="line">    s.args   = [<span class="string">"hello, world!"</span>]</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/06/Vagrant-文件配置器的使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/06/Vagrant-文件配置器的使用/" itemprop="url">Vagrant 文件配置器的使用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-06T14:13:46+08:00">
-                2018-05-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Vagrant/" itemprop="url" rel="index">
-                    <span itemprop="name">Vagrant</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p><strong>摘要：</strong> 本文翻译自 <a href="https://www.vagrantup.com/docs/" target="_blank" rel="noopener">Vagrant</a> 官方文档 <a href="https://www.vagrantup.com/docs/provisioning/file.html#destination" target="_blank" rel="noopener">File Provisioner</a> 部分，主要介绍了文件配置器的使用，如何使用文件配置器将本地文件上拷贝到 Vagrant 所管理的虚拟机上面。</p>
-</blockquote>
-<p><strong>Provisioner name:</strong> “file”</p>
-<p>Vagrant 文件配置器可以将本地主机的文件或者目录上传到虚拟机。</p>
-<p>文件配置器可以轻松地将本地 <code>~/.gitconfig</code> 复制到虚拟机的 <code>vagrant</code> 用户家目录，这样的话就不需要在每次配置一个新的虚拟机时运行 <code>git config --global</code> 。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># ... other configuration</span></span><br><span class="line"></span><br><span class="line">  config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/.gitconfig"</span>, <span class="symbol">destination:</span> <span class="string">".gitconfig"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>如果你想给虚拟机上传一个目录，可以使用下面的文件配置器来完成。复制时，本地文件夹会被复制到虚拟机的 <code>newfolder</code> 文件夹。注意，如果想在虚拟机保持和本机同样的文件夹名称，请确保目的路径名称和本地路径名称一致。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># ... other configuration</span></span><br><span class="line"></span><br><span class="line">  config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/path/to/host/folder"</span>, <span class="symbol">destination:</span> <span class="string">"$HOME/remote/newfolder"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>首先将 <code>~/path/to/host/folder</code> 拷贝到虚拟机:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">folder</span><br><span class="line">    ├── script.sh</span><br><span class="line">    ├── otherfolder</span><br><span class="line">    │   └── hello.sh</span><br><span class="line">    ├── goodbye.sh</span><br><span class="line">    ├── hello.sh</span><br><span class="line">    └── woot.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 5 files</span><br></pre></td></tr></table></figure></p>
-<p>然后将 <code>~/path/to/host/folder</code> 拷贝到虚拟机的 <code>$HOME/remote/newfolder</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">newfolder</span><br><span class="line">    ├── script.sh</span><br><span class="line">    ├── otherfolder</span><br><span class="line">    │   └── hello.sh</span><br><span class="line">    ├── goodbye.sh</span><br><span class="line">    ├── hello.sh</span><br><span class="line">    └── woot.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 5 files</span><br></pre></td></tr></table></figure></p>
-<p>注意，文件上传不像文件目录同步，上传的文件或者文件夹不是保持同步的。还是以上面的例子来说，如果你更改了本地的 <code>~/.gitconfig</code>，那么虚拟机上的同样的文件并不会更改。</p>
-<p>文件配置器的文件上传是通过 <code>SSH 或 PowerShell</code> 用户来上传。通常情况下用户的权限是有限的，如果你想将文件上传到需要更高权限的位置，我们推荐将它们上传到临时位置，然后使用 <a href="https://www.vagrantup.com/docs/provisioning/shell.html" target="_blank" rel="noopener">shell 配置器</a>将它们移动到目标的位置。</p>
-<h3 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h3><p>文件配置器只有两个选项，并且是必须的：</p>
-<ul>
-<li><a href="https://www.vagrantup.com/docs/provisioning/file.html#source" target="_blank" rel="noopener">source</a>(string) - 要上传的本地文件或者文件夹。</li>
-<li><a href="https://www.vagrantup.com/docs/provisioning/file.html#destination" target="_blank" rel="noopener">destination</a>(string) - 远程虚拟机路径。文件或者文件夹通过 <code>SCP</code> 来上传，因此该目的路径需要对 <code>SSH</code> 用户可写。<code>SSH</code> 用户可以通过 <code>ssh-config</code> 来查看，默认是 <code>vagrant</code>。</li>
-</ul>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>尽管文件配置器支持尾部斜杠或 “globing”，但这会导致在本地和虚拟机之间复制文件时产生一些令人困惑的结果。例如，如下源路径没有尾部斜杠，而目的路径有尾部斜杠：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/pathfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/newlocation/"</span></span><br></pre></td></tr></table></figure></p>
-<p>这意味着 <code>vagrant</code> 会将 <code>~/pathfolder</code> 上传到远程目录 <code>/remote/newlocation</code> 底下，结果看起来会像下面这样：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">newlocation</span><br><span class="line">    ├── pathfolder</span><br><span class="line">    │   └── file.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 2 files</span><br></pre></td></tr></table></figure></p>
-<p>同样的行为也可以通过如下配置来实现：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/pathfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/newlocation/pathfolder"</span></span><br></pre></td></tr></table></figure></p>
-<p>另一个例子是使用 <code>.</code> 号，拷贝本地机器目录里面的文件，不包括上一层目录：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/otherfolder/."</span>, <span class="symbol">destination:</span> <span class="string">"/remote/otherlocation"</span></span><br></pre></td></tr></table></figure></p>
-<p>以上配置将 <code>~/otherfolder</code> 目录下的所有文件拷贝到新的路径 <code>/remote/otherlocation</code>。这个也可以通过指定一个和源文件夹不同的远程文件夹来实现：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"/otherfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/otherlocation"</span></span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2035,7 +2055,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">121</span>
+                  <span class="site-state-item-count">125</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

@@ -81,13 +81,13 @@
 
 <meta name="description" content="Talk is cheap. Show me the code.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="The Spectre">
+<meta property="og:title" content="Jim">
 <meta property="og:url" content="http://yoursite.com/page/4/index.html">
-<meta property="og:site_name" content="The Spectre">
+<meta property="og:site_name" content="Jim">
 <meta property="og:description" content="Talk is cheap. Show me the code.">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="The Spectre">
+<meta name="twitter:title" content="Jim">
 <meta name="twitter:description" content="Talk is cheap. Show me the code.">
 
 
@@ -124,7 +124,7 @@
 
 
 
-  <title>The Spectre</title>
+  <title>Jim</title>
   
 
 
@@ -155,7 +155,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">The Spectre</span>
+        <span class="site-title">Jim</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -296,6 +296,606 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/20/Go-语言-exec-实时获取外部命令的执行输出/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/20/Go-语言-exec-实时获取外部命令的执行输出/" itemprop="url">Go 语言 exec 实时获取外部命令的执行输出</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-20T18:11:47+08:00">
+                2019-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在 Go 语言中调用外部 Linux 命令可以通过标准的 <a href="https://go-zh.org/pkg/os/exec/" target="_blank" rel="noopener">os/exec</a> 包实现，我们一般的使用方式如下：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"os/exec"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	cmd := exec.Command(<span class="string">"ls"</span>, <span class="string">"-al"</span>)</span><br><span class="line">	output, _ := cmd.CombinedOutput()</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(output))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面这种使用方式虽然能获取到外部命令的执行结果输出 output，但是必须得命令执行完成后才将获取到的结果一次性返回。很多时候我们是需要实时知道命令执行的输出，比如我们调用一个外部的服务构建命令： <code>mvn build</code>，这种情况下实时输出命令执行的结果对我们来说很重要。再比如我们 ping 远程 IP，需要知道实时输出，如果直接 ping 完在输出，在使用上来说体验不好。</p>
+<p>要实现外部命令执行结果的实时输出，需要使用 <code>Cmd</code> 结构的 <code>StdoutPipe()</code> 方法创建一个管道连接到命令执行的输出，然后用 for 循环从管道中实时读取命令执行的输出并打印到终端。具体代码如下：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RunCommand</span><span class="params">(name <span class="keyword">string</span>, arg ...<span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	cmd := exec.Command(name, arg...)</span><br><span class="line">    <span class="comment">// 命令的错误输出和标准输出都连接到同一个管道</span></span><br><span class="line">	stdout, err := cmd.StdoutPipe()</span><br><span class="line">	cmd.Stderr = cmd.Stdout</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err = cmd.Start(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 从管道中实时获取输出并打印到终端</span></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		tmp := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">1024</span>)</span><br><span class="line">		_, err := stdout.Read(tmp)</span><br><span class="line">		fmt.Print(<span class="keyword">string</span>(tmp))</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err = cmd.Wait(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/15/Go-语言读写文件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/15/Go-语言读写文件/" itemprop="url">Go 语言读写文件</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-15T21:45:52+08:00">
+                2019-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在这里演示下如何通过 Go 读写文件，Go 读写文件有很 IO 多函数可以使用，在这里使用 os 包的 OpenFile 和 Open 函数打开文件，然后用 bufio 包带缓冲的读写器读写文件。查看 OpenFile 源码，其实 Open 函数底层还是调用了 OpenFile。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//           写文件</span></span><br><span class="line">	outputFile, outputError := os.OpenFile(<span class="string">"file.txt"</span>, os.O_WRONLY|os.O_CREATE|os.O_APPEND, <span class="number">0666</span>)</span><br><span class="line">	<span class="keyword">if</span> outputError != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(outputError)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> outputFile.Close()</span><br><span class="line">	outputWriter := bufio.NewWriter(outputFile)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		outputWriter.WriteString(<span class="string">"hello, world\n"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 一定得记得将缓冲区内容刷新到磁盘文件</span></span><br><span class="line">	outputWriter.Flush()</span><br><span class="line">	<span class="comment">//           读文件</span></span><br><span class="line">	inputFile, inputError := os.Open(<span class="string">"file.txt"</span>)</span><br><span class="line">	<span class="keyword">if</span> inputError != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(inputError)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> inputFile.Close()</span><br><span class="line">	inputReader := bufio.NewReader(inputFile)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		inputString, readerError := inputReader.ReadString(<span class="string">'\n'</span>)</span><br><span class="line">		fmt.Printf(inputString)</span><br><span class="line">		<span class="keyword">if</span> readerError == io.EOF &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/10/自动化测试报表统一平台-ReportPortal-集成-TestNG/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/10/自动化测试报表统一平台-ReportPortal-集成-TestNG/" itemprop="url">自动化测试报表统一平台 ReportPortal 集成 TestNG</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-10T21:39:41+08:00">
+                2019-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DevOps/" itemprop="url" rel="index">
+                    <span itemprop="name">DevOps</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文主要介绍 <a href="https://reportportal.io/" target="_blank" rel="noopener">ReportPortal</a> 如何集成 TestNG 测试框架，用到的工具链有：ReportPortal + TestNG + log4j。ReportPortal 集成 TestNG 的主要原理是通过给 TestNG 配置 ReportPortal 的 listener，在测试开始时该监听器将测试信息实时上报给 ReportPortal 平台。另外我们通过给 log4j 配置 ReportPortal appender，将测试过程中代码日志也上报到 ReportPortal 平台。然后 ReportPortal 将收到的数据进行整合、分析，形成平台数据统一展示。</p>
+<h4 id="ReportPortal-简介"><a href="#ReportPortal-简介" class="headerlink" title="ReportPortal 简介"></a>ReportPortal 简介</h4><p>ReportPortal 是一个统一的自动化测试报告收集、分析、可视化平台，可以集成多种测试框架，比如 TestNG、Selenium 等等。ReportPortal 的主要特性有：</p>
+<ul>
+<li>能轻易和多种测试框架集成；<br><img src="/images/rp_feature1.png" alt="Alt text"></li>
+<li>实时展示测试情况；</li>
+<li>所有的自动化测试结果在一个地方统一查看；</li>
+<li>保留历史测试信息；</li>
+<li>能和 bug 跟踪系统集成，比如 Jira；</li>
+</ul>
+<h4 id="ReportPortal-解决了什么问题"><a href="#ReportPortal-解决了什么问题" class="headerlink" title="ReportPortal 解决了什么问题"></a>ReportPortal 解决了什么问题</h4><p>个人认为 ReportPortal 最大的价值在于报表的统一收集、查看、分析。假如没有 ReportPortal 工具，我们可能需要自己写脚本，或者 Jenkins 插件针对不同的测试框架装不同的插件，然后展示测试报告，但是 Jenkins 收集的测试报告只能在 Jenkins 平台查看。微服务拆分细、导致 Jenkins job 数量比较多，要看每次测试的报告要逐个点开进去查看，没有一个全局的地方查看。另外 Jenkins 本身的插件生态提供的测试报告收集不支持对历史测试报告的统一查询，如果有这种需求，基本不能满足。</p>
+<p>ReportPortal 基本是全测试框架支持的统一报表收集、分析、可视化平台，能轻松解决上述存在的痛点。</p>
+<h4 id="ReportPortal-在-CI-CD-中扮演了什么角色"><a href="#ReportPortal-在-CI-CD-中扮演了什么角色" class="headerlink" title="ReportPortal 在 CI/CD 中扮演了什么角色"></a>ReportPortal 在 CI/CD 中扮演了什么角色</h4><p>CI/CD 我们已经很熟悉了，但是如何将 CI/CD 与 CT 无缝整合，也许 ReportPortal 在 CI/CD 与 CT 的整合中扮演了重要角色。DevOps 的关键在于自动化统一标准、流程，根据 ReportPortal 的特性及本人的试用，发现 ReportPortal 真是对 CI/CD 完美的补充，整个交付流水线更加统一、规范、简洁、无缝衔接。</p>
+<p><img src="/images/rp_role_cicd.png" alt="Alt text"></p>
+<h3 id="ReportPortal-TestNG-log4j-集成详细步骤"><a href="#ReportPortal-TestNG-log4j-集成详细步骤" class="headerlink" title="ReportPortal + TestNG + log4j 集成详细步骤"></a>ReportPortal + TestNG + log4j 集成详细步骤</h3><p>以一个基于 TestNG 测试框架的 java 工程为例说明，配置前 java 工程目录结构：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── pom.xml</span><br><span class="line">├── README.md</span><br><span class="line">├── run.sh</span><br><span class="line">└── src</span><br><span class="line">    ├── main</span><br><span class="line">    │   ├── java</span><br><span class="line">    │   │   └── com</span><br><span class="line">    │   └── resources</span><br><span class="line">    │       ├── config.properties</span><br><span class="line">    │       ├── dev.yml</span><br><span class="line">    │       ├── log4j.properties</span><br><span class="line">    │       ├── log4testng.properties</span><br><span class="line">    │       ├── production.yml</span><br><span class="line">    │       ├── stage.yml</span><br><span class="line">    │       ├── test.yml</span><br><span class="line">    │       └── web.yml</span><br><span class="line">    └── test</span><br><span class="line">        ├── java</span><br><span class="line">        │   └── com</span><br><span class="line">        └── resources</span><br><span class="line">            └── testng.xml</span><br></pre></td></tr></table></figure></p>
+<h4 id="1-配置工程-pom-文件"><a href="#1-配置工程-pom-文件" class="headerlink" title="1. 配置工程 pom 文件"></a>1. 配置工程 pom 文件</h4><h5 id="1-1-配置-ReportPortal-相关依赖远程仓库"><a href="#1-1-配置-ReportPortal-相关依赖远程仓库" class="headerlink" title="1.1 配置 ReportPortal 相关依赖远程仓库"></a>1.1 配置 ReportPortal 相关依赖远程仓库</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">repositories</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">repository</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>bintray<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://dl.bintray.com/epam/reportportal<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">repository</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>jitpack.io<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url</span>&gt;</span>https://jitpack.io<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">repositories</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h5 id="1-2-添加一些依赖配置"><a href="#1-2-添加一些依赖配置" class="headerlink" title="1.2 添加一些依赖配置"></a>1.2 添加一些依赖配置</h5><p><strong>testng 依赖</strong><br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.testng<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>testng<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>6.11<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>ReportPortal agent 的 testng 实现</strong><br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.epam.reportportal<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>agent-java-testng<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.2.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>添加 Rport Portal 的 log 包装以及 log4j 本身的配置</strong><br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.epam.reportportal<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>logger-java-log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.0.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.slf4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>slf4j-log4j12<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.7.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.17<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h5 id="1-3-maven-surefire-plugin-插件配置"><a href="#1-3-maven-surefire-plugin-插件配置" class="headerlink" title="1.3 maven-surefire-plugin 插件配置"></a>1.3 maven-surefire-plugin 插件配置</h5><p>说明：<br>src/test/resources/testng.xml：tesng 执行测试用例时读取的文件，该文件指定执行哪些测试用例等信息；<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-surefire-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span>2.22.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">testFailureIgnore</span>&gt;</span>true<span class="tag">&lt;/<span class="name">testFailureIgnore</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">suiteXmlFiles</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">suiteXmlFilexmlFile</span>&gt;</span>src/test/resources/testng.xml<span class="tag">&lt;/<span class="name">suiteXmlFilexmlFile</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">suiteXmlFiles</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>usedefaultlisteners<span class="tag">&lt;/<span class="name">name</span>&gt;</span> <span class="comment">&lt;!-- disabling default listeners is optional --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h5 id="1-4-maven-compiler-plugin-插件配置"><a href="#1-4-maven-compiler-plugin-插件配置" class="headerlink" title="1.4 maven-compiler-plugin 插件配置"></a>1.4 maven-compiler-plugin 插件配置</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">source</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-TestNG-配置-RportPortal-listener"><a href="#2-TestNG-配置-RportPortal-listener" class="headerlink" title="2. TestNG 配置 RportPortal listener"></a>2. TestNG 配置 RportPortal listener</h3><p>testng  testng.xml  文件添加 RportPortal 的 listener，文件：src/test/resources/testng.xml<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">listeners</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">listener</span> <span class="attr">class-name</span>=<span class="string">"com.epam.reportportal.testng.ReportPortalTestNGListener"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listeners</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="3-工程添加-ReportPortal-resource"><a href="#3-工程添加-ReportPortal-resource" class="headerlink" title="3. 工程添加 ReportPortal resource"></a>3. 工程添加 ReportPortal resource</h3><p>src/test/resources/ 目录添加 ReportPortal 配置文件：reportportal.properties<br><strong>获取 ReportPortal 配置：</strong><br>访问 ReportPortal UI—&gt;点击右上角图标—&gt;点击 Profile—&gt;拷贝右下角框框中 REQUERED 配置。</p>
+<p><strong>将上面获取到的 ReportPortal 配置放到 src/test/resources/ 目录下reportportal.properties 文件：</strong><br>示例文件内容：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rp<span class="selector-class">.endpoint</span> = http:<span class="comment">//reportIp:8080</span></span><br><span class="line">rp<span class="selector-class">.uuid</span> = xxxxx</span><br><span class="line">rp<span class="selector-class">.launch</span> = superadmin_TEST_EXAMPLE</span><br><span class="line">rp<span class="selector-class">.project</span> = superadmin_personal</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-配置-log4j-的-ReportPortal-appender"><a href="#4-配置-log4j-的-ReportPortal-appender" class="headerlink" title="4. 配置 log4j 的 ReportPortal appender"></a>4. 配置 log4j 的 ReportPortal appender</h3><p>src/test/resources/ 目录添加 log4j.xml 文件，主要是配置 log4j 的 ReportPortal appender，内容如下:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span> <span class="meta">?&gt;</span></span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE log4j:configuration SYSTEM "log4j.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">log4j:configuration</span> <span class="attr">debug</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">xmlns:log4j</span>=<span class="string">'http://jakarta.apache.org/log4j/'</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"ReportPortalAppender"</span> <span class="attr">class</span>=<span class="string">"com.epam.ta.reportportal.log4j.appender.ReportPortalAppender"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">layout</span> <span class="attr">class</span>=<span class="string">"org.apache.log4j.PatternLayout"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"ConversionPattern"</span> <span class="attr">value</span>=<span class="string">"[%d&#123;HH:mm:ss&#125;] %-5p (%F:%L) - %m%n"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"com.epam.reportportal.apache"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">"OFF"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">"info"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"ReportPortalAppender"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">log4j:configuration</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>至此相关配置已完成，工程目录结构此时为：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── pom.xml</span><br><span class="line">├── README.md</span><br><span class="line">├── run.sh</span><br><span class="line">└── src</span><br><span class="line">    ├── main</span><br><span class="line">    │   ├── java</span><br><span class="line">    │   │   └── com</span><br><span class="line">    │   └── resources</span><br><span class="line">    │       ├── config.properties</span><br><span class="line">    │       ├── dev.yml</span><br><span class="line">    │       ├── log4j.properties</span><br><span class="line">    │       ├── log4testng.properties</span><br><span class="line">    │       ├── production.yml</span><br><span class="line">    │       ├── stage.yml</span><br><span class="line">    │       ├── test.yml</span><br><span class="line">    │       └── web.yml</span><br><span class="line">    └── test</span><br><span class="line">        ├── java</span><br><span class="line">        │   └── com</span><br><span class="line">        └── resources</span><br><span class="line">            ├── log4j.xml</span><br><span class="line">            ├── reportportal.properties</span><br><span class="line">            └── testng.xml</span><br></pre></td></tr></table></figure></p>
+<h3 id="5-执行-mvn-clean-test-测试"><a href="#5-执行-mvn-clean-test-测试" class="headerlink" title="5. 执行 mvn clean test 测试"></a>5. 执行 <code>mvn clean test</code> 测试</h3><h3 id="6-到-ReportPortal-控制台观察新的-Launches-是否启动"><a href="#6-到-ReportPortal-控制台观察新的-Launches-是否启动" class="headerlink" title="6. 到 ReportPortal 控制台观察新的 Launches 是否启动"></a>6. 到 ReportPortal 控制台观察新的 Launches 是否启动</h3><p>每次测试会在 ReportPortal 平台对应触发一个 Launche，包含本次构建相关信息。<br><img src="/images/rp_launche.png" alt="Alt text"></p>
+<h3 id="7-创建-ReportPortal-Dashboard，可视化测试报告"><a href="#7-创建-ReportPortal-Dashboard，可视化测试报告" class="headerlink" title="7. 创建 ReportPortal Dashboard，可视化测试报告"></a>7. 创建 ReportPortal Dashboard，可视化测试报告</h3><p>创建 ReportPortal 的 Dashboard 很简单，也很灵活，主要思想是 RP 提供了多种图表，然后每个图表配置条件，筛选出想要的 Launches 展示。<br><img src="/images/rp_dashboard.png" alt="Alt text"></p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://reportportal.io/docs" target="_blank" rel="noopener">https://reportportal.io/docs</a><br><a href="https://github.com/reportportal/example-java-TestNG" target="_blank" rel="noopener">https://github.com/reportportal/example-java-TestNG</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/09/Golang-json-编解码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/09/Golang-json-编解码/" itemprop="url">Golang json 编解码</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-09T19:23:03+08:00">
+                2019-07-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="Json-编码"><a href="#Json-编码" class="headerlink" title="Json 编码"></a>Json 编码</h4><p>Json 编码的过程即为将程序的数据结构转化为 json 串的过程，比如 Golang 里面的结构体、Python 中的字典，这些有结构的数据转化为 json 串。在 Golang 中编码 Json 使用 <code>encoding/json</code> 包的 Marshal() 函数，函数原型为：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Marshal</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>举例：将 Book 结构体对象编码为 json 串，然后输出到控制台<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"encoding/json"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Book <span class="keyword">struct</span> &#123;</span><br><span class="line">    Title       <span class="keyword">string</span></span><br><span class="line">    Authors     []<span class="keyword">string</span></span><br><span class="line">    Publisher   <span class="keyword">string</span></span><br><span class="line">    IsPublished <span class="keyword">bool</span></span><br><span class="line">    Price       <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> gobook Book = Book&#123;</span><br><span class="line">        <span class="string">"Go语言编程"</span>,</span><br><span class="line">        []<span class="keyword">string</span>&#123;<span class="string">"XuShiwei"</span>, <span class="string">"HughLv"</span>&#125;,</span><br><span class="line">        <span class="string">"ituring.com.cn"</span>,</span><br><span class="line">        <span class="literal">true</span>,</span><br><span class="line">        <span class="number">9.99</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    b, _ := json.Marshal(gobook)</span><br><span class="line">    fmt.Println(<span class="keyword">string</span>(b))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Json-解码"><a href="#Json-解码" class="headerlink" title="Json 解码"></a>Json 解码</h4><p>Json 解码的过程和编码刚好相反，将普通的 json 字符串转化为有结构的程序数据。比如将 json 串转化为 Golang 的结构体。在Golang 中解码 json 的函数为 <code>encoding/json</code> 包的 <code>Unmarshal()</code> 函数，函数原型为：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Unmarshal</span><span class="params">(data []<span class="keyword">byte</span>, v <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span></span><br></pre></td></tr></table></figure></p>
+<p>举例：将 json 字符串解码成 Golang Book 结构体对象，并打印每个字段的值<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="comment">//"encoding/json"</span></span><br><span class="line">    <span class="string">"encoding/json"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Book <span class="keyword">struct</span> &#123;</span><br><span class="line">    Title       <span class="keyword">string</span></span><br><span class="line">    Authors     []<span class="keyword">string</span></span><br><span class="line">    Publisher   <span class="keyword">string</span></span><br><span class="line">    IsPublished <span class="keyword">bool</span></span><br><span class="line">    Price       <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jsonStr := <span class="string">`&#123;"Title":"Go语言编程","Authors":["XuShiwei","HughLv"],"Publisher":"ituring.com.cn","IsPublished":true,"Price":9.99&#125;`</span></span><br><span class="line">    <span class="keyword">var</span> book Book</span><br><span class="line">    json.Unmarshal([]<span class="keyword">byte</span>(jsonStr), &amp;book)</span><br><span class="line">    fmt.Println(book.Title, book.Authors, book.Publisher, book.IsPublished, book.Price)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/02/使用-iperf-测试-Linux-服务器带宽/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -305,7 +905,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -466,7 +1066,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -627,7 +1227,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -788,7 +1388,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -989,7 +1589,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1134,7 +1734,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1302,636 +1902,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/07/使用-Vagrant-调试-Ansible-Playbook/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/07/使用-Vagrant-调试-Ansible-Playbook/" itemprop="url">使用 Vagrant 调试 Ansible Playbook</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-07T15:09:09+08:00">
-                2019-06-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Ansible/" itemprop="url" rel="index">
-                    <span itemprop="name">Ansible</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p> <img src="/images/vagrant-vbox-ansible.png" alt="Alt text"></p>
-<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>本文主要介绍使用 Vagrant 本地调试 Ansible Playbook 的最佳实践。</p>
-<p>我平时用 ansible 做一些自动化任务，难免要写很多 playbook，如果直接将写的 playbook 在线上或者真实的服务器运行难免会担心出错，而且很可能会导致严重的错误。最好的方法就是先在本地虚拟机测试好，然后跑到真实的环境。我们可以将 Vagrant 和 ansible 结合使用来轻松地在本地调试 playbook。为什么使用这种方式呢？我觉得有如下好处（当然用了之后就知道有多爽了）：</p>
-<ul>
-<li>虚拟机用 Vagrant 管理，随时可以方便地删除、重建，这些操作都是简单的命令行；</li>
-<li>ansible 脚本在本地虚拟机可以随便折腾，哪怕 VM 折腾坏了，可以马上重建 VM；</li>
-<li>所有操作都是基于配置文件，没有界面点触式操作，可以很好地将其工程化，放到 git 仓库统一管理；</li>
-</ul>
-<h3 id="Vagrant-结合-Ansible-的-workflow"><a href="#Vagrant-结合-Ansible-的-workflow" class="headerlink" title="Vagrant 结合 Ansible 的 workflow"></a>Vagrant 结合 Ansible 的 workflow</h3><p>Vagrant 结合 Ansible 的主要工作原理是使用 Vagrant 的 <a href="https://www.vagrantup.com/docs/provisioning/ansible_local.html" target="_blank" rel="noopener">ansible_local</a> 或者 <a href="https://www.vagrantup.com/docs/provisioning/ansible.html" target="_blank" rel="noopener">ansible</a> 配置器(Provisioner)，这两个的唯一区别是前者会在 provision 时自动在 VM 安装 ansible，后者不会自动安装，需要自行安装。我选择用 ansible_local 配置器，懒得装一遍 ansible… 而且在 <code>vagrant destroy</code> 销毁虚拟机后重建时还能得到与之前一致的配置。</p>
-<p>下面介绍下我本地调试 ansible playbook 脚本的 workflow。</p>
-<ol>
-<li><p>使用 Vagrantfile 定义虚拟机</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">  config.vm.hostname= <span class="string">"ansible"</span></span><br><span class="line">  config.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.100"</span></span><br><span class="line">  config.vm.provider <span class="symbol">:virtualbox</span> <span class="keyword">do</span> <span class="params">|vbox|</span></span><br><span class="line">      vbox.name = <span class="string">"ansible_vagrant"</span></span><br><span class="line">      vbox.memory = <span class="string">"512"</span></span><br><span class="line">      vbox.cpus = <span class="number">1</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  <span class="comment"># ansible 相关配置</span></span><br><span class="line">  config.vm.provision <span class="string">"ansible_local"</span> <span class="keyword">do</span> <span class="params">|ansible|</span></span><br><span class="line">    <span class="comment"># ansible 运行时输出详细信息，作用同 ansible-playbook 的 -v 参数</span></span><br><span class="line">    <span class="comment"># ansible.verbose = "v"</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 指定运行哪个 playbook</span></span><br><span class="line">    ansible.playbook = <span class="string">"playbook.yml"</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在 Vagrant 工程目录下编写 playbook，示例：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">Test</span> <span class="string">Playbook...</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  become:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  gather_facts:</span> <span class="literal">no</span></span><br><span class="line"><span class="attr">  vars:</span></span><br><span class="line"><span class="attr">    - ip_list:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.2</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">remove</span> <span class="string">ip</span> <span class="string">list</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      file:</span></span><br><span class="line"><span class="attr">        state:</span> <span class="string">absent</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">/tmp/ip.txt</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">test</span> <span class="string">gen</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      shell:</span> <span class="string">echo</span> <span class="string">"<span class="template-variable">&#123;&#123; item &#125;&#125;</span>"</span> <span class="string">&gt;&gt;</span> <span class="string">/tmp/ip.txt</span></span><br><span class="line"><span class="attr">      with_items:</span> <span class="string">"<span class="template-variable">&#123;&#123; ip_list &#125;&#125;</span>"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>playbook 写完后 执行 <code>vagrant up</code> 启动虚拟机，启动过程中会自动执行 Vagrantfile 中配置的 playbook 文件（在 Vagrant 工程目录下）；</p>
-</li>
-<li>如果 playbook 运行有问题，则继续修改；</li>
-<li>执行 <code>vagrant rsync &amp;&amp; vagrant provision</code> 重新运行 playbook；<blockquote>
-<p>注意：在执行 vagrant provision 之前，一定要先 vagrant rsync 同步下本地主机和 VM 的共享目录，否则本地修改后不会生效。ansible 脚本的运行最终是在 VM 上面，读取的文件都是在 VM 的 /vagrant 目录。</p>
-</blockquote>
-</li>
-<li>如果测试 playbook 还是有问题则返回到第 4 步继续修改并测试；</li>
-<li>如果一切都测试顺利的话，为了保险，最后模拟一下真实的环境：<code>vagrant destroy</code> 销毁 VM，然后 <code>vagrant up</code> 重新创建 VM 并自动运行 ansible playbook。</li>
-</ol>
-<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://linux.cn/article-9502-1.html" target="_blank" rel="noopener">https://linux.cn/article-9502-1.html</a> | 使用 Vagrant 测试 Ansible 剧本<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_intro.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_intro.html</a> | Vagrant 和 Ansible<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_local.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_local.html</a> | Vagrant ansible_local 配置器<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_common.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_common.html</a> | Vagrant ansible 和 ansible_local 配置器通用配置</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/02/Hexo-next-主题加载自定义-js-文件/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/02/Hexo-next-主题加载自定义-js-文件/" itemprop="url">Hexo next 主题加载自定义 js 文件</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-02T09:17:12+08:00">
-                2019-06-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>为什么要配置 hexo next 主题自定义 js 文件呢？主要原因有两点：</p>
-<ul>
-<li><p>不可靠：加载第三方站点的 js 依赖其站点的稳定性，如果第三方站点给挂了或者不维护了，那么加载的地址就失效了，访问直接 404… 比如最近就遇到 next 主题”不蒜子”文章 PV 统计功能用不了了，Chrome 抓包发现 <a href="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js</a> 这个地址 404 了，看了 <a href="http://ibruce.info/" target="_blank" rel="noopener">“不蒜子”官方 blog 通知</a> 才发现原来换成了 <a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js。" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js。</a></p>
-</li>
-<li><p>加载速度慢：比如之前将 gitalk 功能用到的 <a href="https://rawgit.com/qhh0205/78e9e0b1f3114db6737f3ed8cdd51d3a/raw/3894c5be5aa2378336b1f5ee0f296fa0b22d06e9/md5.min.js" target="_blank" rel="noopener">https://rawgit.com/qhh0205/78e9e0b1f3114db6737f3ed8cdd51d3a/raw/3894c5be5aa2378336b1f5ee0f296fa0b22d06e9/md5.min.js</a> 文件嵌入到主题，发现每次打开 blog 网站都加载很慢，Chrome 抓包发现是该文件加载缓慢，一直 pending 很久…</p>
-</li>
-</ul>
-<p>那么解决上面两个问题的办法就是可以将远程加载的 js 文件下载下来，放到本地 netx 主题 source/js/src/ 目录下，让 hexo 生成静态网站时，加载生成静态站点本身的 js。下面举两个例子。</p>
-<h4 id="next-主题-gitalk-评论功能加载自定义-js"><a href="#next-主题-gitalk-评论功能加载自定义-js" class="headerlink" title="next 主题 gitalk 评论功能加载自定义 js"></a>next 主题 gitalk 评论功能加载自定义 js</h4><ol>
-<li>将 <a href="https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js" target="_blank" rel="noopener">https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js</a> 文件下载下来放到 <code>themes/next/source/js/src/</code> 路径下。</li>
-<li>修改 <code>themes/next/layout/_third-party/comments/gitalk.swig</code>，加载 <code>md5.min.js</code> 改为 <code>&lt;script src=&quot;/js/src/md5.min.js&quot;&gt;&lt;/script&gt;</code>：<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> page.comments &amp;&amp; theme.gitalk.enable %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"https://unpkg.com/gitalk/dist/gitalk.css"</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://unpkg.com/gitalk/dist/gitalk.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/js/src/md5.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">   <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="xml">        var gitalk = new Gitalk(&#123;</span></span><br><span class="line"><span class="xml">          clientID: '3840ba8c8d80c18be7e3',</span></span><br><span class="line"><span class="xml">          clientSecret: '1b00f2efe5285973c24da9ed9ac895775eacc8ea',</span></span><br><span class="line"><span class="xml">          repo: '</span><span class="template-variable">&#123;&#123; theme.gitalk.repo &#125;&#125;</span><span class="xml">',</span></span><br><span class="line"><span class="xml">          owner: '</span><span class="template-variable">&#123;&#123; theme.gitalk.githubID &#125;&#125;</span><span class="xml">',</span></span><br><span class="line"><span class="xml">          admin: ['</span><span class="template-variable">&#123;&#123; theme.gitalk.adminUser &#125;&#125;</span><span class="xml">'],</span></span><br><span class="line"><span class="xml">          id: md5(location.pathname),</span></span><br><span class="line"><span class="xml">          distractionFreeMode: '</span><span class="template-variable">&#123;&#123; theme.gitalk.distractionFreeMode &#125;&#125;</span><span class="xml">'</span></span><br><span class="line"><span class="xml">        &#125;)</span></span><br><span class="line"><span class="xml">        gitalk.render('gitalk-container')</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="next-主题-“不蒜子”-PV-统计功能加载自定义-js"><a href="#next-主题-“不蒜子”-PV-统计功能加载自定义-js" class="headerlink" title="next 主题 “不蒜子” PV 统计功能加载自定义 js"></a>next 主题 “不蒜子” PV 统计功能加载自定义 js</h4><ol>
-<li>将 <a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js</a> 文件下载<br>下来放到 <code>themes/next/source/js/src/</code> 路径下。</li>
-<li>修改 <code>themes/next/layout/_third-party/analytics/busuanzi-counter.swig</code>，将原先 <code>&lt;script async src=&quot;https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;</code> 改为 <code>&lt;script async src=&quot;/js/src/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;</code>：<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.enable %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"busuanzi-count"</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">async</span> <span class="attr">src</span>=<span class="string">"/js/src/busuanzi.pure.mini.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.site_uv %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-uv"</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_uv_header &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"busuanzi-value"</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_uv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_uv_footer &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.site_pv %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-pv"</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_pv_header &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"busuanzi-value"</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_pv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_pv_footer &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>配置完成后需要 hexo clean &amp;&amp; hexo g 生效…</p>
-<h4 id="附件"><a href="#附件" class="headerlink" title="附件"></a>附件</h4><p>怕以下两个远程站点 js 丢了，在此备份一下吧…<br><a href="https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js：" target="_blank" rel="noopener">https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js：</a><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">!<span class="function"><span class="keyword">function</span>(<span class="params">n</span>)</span>&#123;<span class="string">"use strict"</span>;<span class="function"><span class="keyword">function</span> <span class="title">t</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">var</span> r=(<span class="number">65535</span>&amp;n)+(<span class="number">65535</span>&amp;t);<span class="keyword">return</span>(n&gt;&gt;<span class="number">16</span>)+(t&gt;&gt;<span class="number">16</span>)+(r&gt;&gt;<span class="number">16</span>)&lt;&lt;<span class="number">16</span>|<span class="number">65535</span>&amp;r&#125;<span class="function"><span class="keyword">function</span> <span class="title">r</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> n&lt;&lt;t|n&gt;&gt;&gt;<span class="number">32</span>-t&#125;<span class="function"><span class="keyword">function</span> <span class="title">e</span>(<span class="params">n,e,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> t(r(t(t(e,n),t(u,f)),c),o)&#125;<span class="function"><span class="keyword">function</span> <span class="title">o</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t&amp;r|~t&amp;o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">u</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t&amp;o|r&amp;~o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">c</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t^r^o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(r^(t|~o),n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">i</span>(<span class="params">n,r</span>)</span>&#123;n[r&gt;&gt;<span class="number">5</span>]|=<span class="number">128</span>&lt;&lt;r%<span class="number">32</span>,n[<span class="number">14</span>+(r+<span class="number">64</span>&gt;&gt;&gt;<span class="number">9</span>&lt;&lt;<span class="number">4</span>)]=r;<span class="keyword">var</span> e,i,a,d,h,l=<span class="number">1732584193</span>,g=<span class="number">-271733879</span>,v=<span class="number">-1732584194</span>,m=<span class="number">271733878</span>;<span class="keyword">for</span>(e=<span class="number">0</span>;e&lt;n.length;e+=<span class="number">16</span>)i=l,a=g,d=v,h=m,g=f(g=f(g=f(g=f(g=c(g=c(g=c(g=c(g=u(g=u(g=u(g=u(g=o(g=o(g=o(g=o(g,v=o(v,m=o(m,l=o(l,g,v,m,n[e],<span class="number">7</span>,<span class="number">-680876936</span>),g,v,n[e+<span class="number">1</span>],<span class="number">12</span>,<span class="number">-389564586</span>),l,g,n[e+<span class="number">2</span>],<span class="number">17</span>,<span class="number">606105819</span>),m,l,n[e+<span class="number">3</span>],<span class="number">22</span>,<span class="number">-1044525330</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">4</span>],<span class="number">7</span>,<span class="number">-176418897</span>),g,v,n[e+<span class="number">5</span>],<span class="number">12</span>,<span class="number">1200080426</span>),l,g,n[e+<span class="number">6</span>],<span class="number">17</span>,<span class="number">-1473231341</span>),m,l,n[e+<span class="number">7</span>],<span class="number">22</span>,<span class="number">-45705983</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">8</span>],<span class="number">7</span>,<span class="number">1770035416</span>),g,v,n[e+<span class="number">9</span>],<span class="number">12</span>,<span class="number">-1958414417</span>),l,g,n[e+<span class="number">10</span>],<span class="number">17</span>,<span class="number">-42063</span>),m,l,n[e+<span class="number">11</span>],<span class="number">22</span>,<span class="number">-1990404162</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">12</span>],<span class="number">7</span>,<span class="number">1804603682</span>),g,v,n[e+<span class="number">13</span>],<span class="number">12</span>,<span class="number">-40341101</span>),l,g,n[e+<span class="number">14</span>],<span class="number">17</span>,<span class="number">-1502002290</span>),m,l,n[e+<span class="number">15</span>],<span class="number">22</span>,<span class="number">1236535329</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">1</span>],<span class="number">5</span>,<span class="number">-165796510</span>),g,v,n[e+<span class="number">6</span>],<span class="number">9</span>,<span class="number">-1069501632</span>),l,g,n[e+<span class="number">11</span>],<span class="number">14</span>,<span class="number">643717713</span>),m,l,n[e],<span class="number">20</span>,<span class="number">-373897302</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">5</span>],<span class="number">5</span>,<span class="number">-701558691</span>),g,v,n[e+<span class="number">10</span>],<span class="number">9</span>,<span class="number">38016083</span>),l,g,n[e+<span class="number">15</span>],<span class="number">14</span>,<span class="number">-660478335</span>),m,l,n[e+<span class="number">4</span>],<span class="number">20</span>,<span class="number">-405537848</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">9</span>],<span class="number">5</span>,<span class="number">568446438</span>),g,v,n[e+<span class="number">14</span>],<span class="number">9</span>,<span class="number">-1019803690</span>),l,g,n[e+<span class="number">3</span>],<span class="number">14</span>,<span class="number">-187363961</span>),m,l,n[e+<span class="number">8</span>],<span class="number">20</span>,<span class="number">1163531501</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">13</span>],<span class="number">5</span>,<span class="number">-1444681467</span>),g,v,n[e+<span class="number">2</span>],<span class="number">9</span>,<span class="number">-51403784</span>),l,g,n[e+<span class="number">7</span>],<span class="number">14</span>,<span class="number">1735328473</span>),m,l,n[e+<span class="number">12</span>],<span class="number">20</span>,<span class="number">-1926607734</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">5</span>],<span class="number">4</span>,<span class="number">-378558</span>),g,v,n[e+<span class="number">8</span>],<span class="number">11</span>,<span class="number">-2022574463</span>),l,g,n[e+<span class="number">11</span>],<span class="number">16</span>,<span class="number">1839030562</span>),m,l,n[e+<span class="number">14</span>],<span class="number">23</span>,<span class="number">-35309556</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">1</span>],<span class="number">4</span>,<span class="number">-1530992060</span>),g,v,n[e+<span class="number">4</span>],<span class="number">11</span>,<span class="number">1272893353</span>),l,g,n[e+<span class="number">7</span>],<span class="number">16</span>,<span class="number">-155497632</span>),m,l,n[e+<span class="number">10</span>],<span class="number">23</span>,<span class="number">-1094730640</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">13</span>],<span class="number">4</span>,<span class="number">681279174</span>),g,v,n[e],<span class="number">11</span>,<span class="number">-358537222</span>),l,g,n[e+<span class="number">3</span>],<span class="number">16</span>,<span class="number">-722521979</span>),m,l,n[e+<span class="number">6</span>],<span class="number">23</span>,<span class="number">76029189</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">9</span>],<span class="number">4</span>,<span class="number">-640364487</span>),g,v,n[e+<span class="number">12</span>],<span class="number">11</span>,<span class="number">-421815835</span>),l,g,n[e+<span class="number">15</span>],<span class="number">16</span>,<span class="number">530742520</span>),m,l,n[e+<span class="number">2</span>],<span class="number">23</span>,<span class="number">-995338651</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e],<span class="number">6</span>,<span class="number">-198630844</span>),g,v,n[e+<span class="number">7</span>],<span class="number">10</span>,<span class="number">1126891415</span>),l,g,n[e+<span class="number">14</span>],<span class="number">15</span>,<span class="number">-1416354905</span>),m,l,n[e+<span class="number">5</span>],<span class="number">21</span>,<span class="number">-57434055</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">12</span>],<span class="number">6</span>,<span class="number">1700485571</span>),g,v,n[e+<span class="number">3</span>],<span class="number">10</span>,<span class="number">-1894986606</span>),l,g,n[e+<span class="number">10</span>],<span class="number">15</span>,<span class="number">-1051523</span>),m,l,n[e+<span class="number">1</span>],<span class="number">21</span>,<span class="number">-2054922799</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">8</span>],<span class="number">6</span>,<span class="number">1873313359</span>),g,v,n[e+<span class="number">15</span>],<span class="number">10</span>,<span class="number">-30611744</span>),l,g,n[e+<span class="number">6</span>],<span class="number">15</span>,<span class="number">-1560198380</span>),m,l,n[e+<span class="number">13</span>],<span class="number">21</span>,<span class="number">1309151649</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">4</span>],<span class="number">6</span>,<span class="number">-145523070</span>),g,v,n[e+<span class="number">11</span>],<span class="number">10</span>,<span class="number">-1120210379</span>),l,g,n[e+<span class="number">2</span>],<span class="number">15</span>,<span class="number">718787259</span>),m,l,n[e+<span class="number">9</span>],<span class="number">21</span>,<span class="number">-343485551</span>),l=t(l,i),g=t(g,a),v=t(v,d),m=t(m,h);<span class="keyword">return</span>[l,g,v,m]&#125;<span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r=<span class="string">""</span>,e=<span class="number">32</span>*n.length;<span class="keyword">for</span>(t=<span class="number">0</span>;t&lt;e;t+=<span class="number">8</span>)r+=<span class="built_in">String</span>.fromCharCode(n[t&gt;&gt;<span class="number">5</span>]&gt;&gt;&gt;t%<span class="number">32</span>&amp;<span class="number">255</span>);<span class="keyword">return</span> r&#125;<span class="function"><span class="keyword">function</span> <span class="title">d</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r=[];<span class="keyword">for</span>(r[(n.length&gt;&gt;<span class="number">2</span>)<span class="number">-1</span>]=<span class="keyword">void</span> <span class="number">0</span>,t=<span class="number">0</span>;t&lt;r.length;t+=<span class="number">1</span>)r[t]=<span class="number">0</span>;<span class="keyword">var</span> e=<span class="number">8</span>*n.length;<span class="keyword">for</span>(t=<span class="number">0</span>;t&lt;e;t+=<span class="number">8</span>)r[t&gt;&gt;<span class="number">5</span>]|=(<span class="number">255</span>&amp;n.charCodeAt(t/<span class="number">8</span>))&lt;&lt;t%<span class="number">32</span>;<span class="keyword">return</span> r&#125;<span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> a(i(d(n),<span class="number">8</span>*n.length))&#125;<span class="function"><span class="keyword">function</span> <span class="title">l</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">var</span> r,e,o=d(n),u=[],c=[];<span class="keyword">for</span>(u[<span class="number">15</span>]=c[<span class="number">15</span>]=<span class="keyword">void</span> <span class="number">0</span>,o.length&gt;<span class="number">16</span>&amp;&amp;(o=i(o,<span class="number">8</span>*n.length)),r=<span class="number">0</span>;r&lt;<span class="number">16</span>;r+=<span class="number">1</span>)u[r]=<span class="number">909522486</span>^o[r],c[r]=<span class="number">1549556828</span>^o[r];<span class="keyword">return</span> e=i(u.concat(d(t)),<span class="number">512</span>+<span class="number">8</span>*t.length),a(i(c.concat(e),<span class="number">640</span>))&#125;<span class="function"><span class="keyword">function</span> <span class="title">g</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r,e=<span class="string">""</span>;<span class="keyword">for</span>(r=<span class="number">0</span>;r&lt;n.length;r+=<span class="number">1</span>)t=n.charCodeAt(r),e+=<span class="string">"0123456789abcdef"</span>.charAt(t&gt;&gt;&gt;<span class="number">4</span>&amp;<span class="number">15</span>)+<span class="string">"0123456789abcdef"</span>.charAt(<span class="number">15</span>&amp;t);<span class="keyword">return</span> e&#125;<span class="function"><span class="keyword">function</span> <span class="title">v</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> <span class="built_in">unescape</span>(<span class="built_in">encodeURIComponent</span>(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">m</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> h(v(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">p</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> g(m(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">s</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> l(v(n),v(t))&#125;<span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> g(s(n,t))&#125;<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params">n,t,r</span>)</span>&#123;<span class="keyword">return</span> t?r?s(t,n):C(t,n):r?m(n):p(n)&#125;<span class="string">"function"</span>==<span class="keyword">typeof</span> define&amp;&amp;define.amd?define(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> A&#125;):<span class="string">"object"</span>==<span class="keyword">typeof</span> <span class="built_in">module</span>&amp;&amp;<span class="built_in">module</span>.exports?<span class="built_in">module</span>.exports=A:n.md5=A&#125;(<span class="keyword">this</span>);</span><br><span class="line"><span class="comment">//# sourceMappingURL=md5.min.js.map</span></span><br></pre></td></tr></table></figure></p>
-<p><a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js</a>:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> bszCaller,bszTag;!<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">var</span> c,d,e,a=!<span class="number">1</span>,b=[];ready=<span class="function"><span class="keyword">function</span>(<span class="params">c</span>)</span>&#123;<span class="keyword">return</span> a||<span class="string">"interactive"</span>===<span class="built_in">document</span>.readyState||<span class="string">"complete"</span>===<span class="built_in">document</span>.readyState?c.call(<span class="built_in">document</span>):b.push(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> c.call(<span class="keyword">this</span>)&#125;),<span class="keyword">this</span>&#125;,d=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">for</span>(<span class="keyword">var</span> a=<span class="number">0</span>,c=b.length;c&gt;a;a++)b[a].apply(<span class="built_in">document</span>);b=[]&#125;,e=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;a||(a=!<span class="number">0</span>,d.call(<span class="built_in">window</span>),<span class="built_in">document</span>.removeEventListener?<span class="built_in">document</span>.removeEventListener(<span class="string">"DOMContentLoaded"</span>,e,!<span class="number">1</span>):<span class="built_in">document</span>.attachEvent&amp;&amp;(<span class="built_in">document</span>.detachEvent(<span class="string">"onreadystatechange"</span>,e),<span class="built_in">window</span>==<span class="built_in">window</span>.top&amp;&amp;(clearInterval(c),c=<span class="literal">null</span>)))&#125;,<span class="built_in">document</span>.addEventListener?<span class="built_in">document</span>.addEventListener(<span class="string">"DOMContentLoaded"</span>,e,!<span class="number">1</span>):<span class="built_in">document</span>.attachEvent&amp;&amp;(<span class="built_in">document</span>.attachEvent(<span class="string">"onreadystatechange"</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;/loaded|complete/.test(<span class="built_in">document</span>.readyState)&amp;&amp;e()&#125;),<span class="built_in">window</span>==<span class="built_in">window</span>.top&amp;&amp;(c=setInterval(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">try</span>&#123;a||<span class="built_in">document</span>.documentElement.doScroll(<span class="string">"left"</span>)&#125;<span class="keyword">catch</span>(b)&#123;<span class="keyword">return</span>&#125;e()&#125;,<span class="number">5</span>)))&#125;(),bszCaller=&#123;<span class="attr">fetch</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>)</span>&#123;<span class="keyword">var</span> c=<span class="string">"BusuanziCallback_"</span>+<span class="built_in">Math</span>.floor(<span class="number">1099511627776</span>*<span class="built_in">Math</span>.random());<span class="built_in">window</span>[c]=<span class="keyword">this</span>.evalCall(b),a=a.replace(<span class="string">"=BusuanziCallback"</span>,<span class="string">"="</span>+c),scriptTag=<span class="built_in">document</span>.createElement(<span class="string">"SCRIPT"</span>),scriptTag.type=<span class="string">"text/javascript"</span>,scriptTag.defer=!<span class="number">0</span>,scriptTag.src=a,<span class="built_in">document</span>.getElementsByTagName(<span class="string">"HEAD"</span>)[<span class="number">0</span>].appendChild(scriptTag)&#125;,<span class="attr">evalCall</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">b</span>)</span>&#123;ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">try</span>&#123;a(b),scriptTag.parentElement.removeChild(scriptTag)&#125;<span class="keyword">catch</span>(c)&#123;bszTag.hides()&#125;&#125;)&#125;&#125;&#125;,bszCaller.fetch(<span class="string">"//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback"</span>,<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;bszTag.texts(a),bszTag.shows()&#125;),bszTag=&#123;<span class="attr">bszs</span>:[<span class="string">"site_pv"</span>,<span class="string">"page_pv"</span>,<span class="string">"site_uv"</span>],<span class="attr">texts</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">b</span>)</span>&#123;<span class="keyword">var</span> c=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_value_"</span>+b);c&amp;&amp;(c.innerHTML=a[b])&#125;)&#125;,<span class="attr">hides</span>:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">var</span> b=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_container_"</span>+a);b&amp;&amp;(b.style.display=<span class="string">"none"</span>)&#125;)&#125;,<span class="attr">shows</span>:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">var</span> b=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_container_"</span>+a);b&amp;&amp;(b.style.display=<span class="string">"inline"</span>)&#125;)&#125;&#125;;</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/31/docker-compose-启动-Redis-服务/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/05/31/docker-compose-启动-Redis-服务/" itemprop="url">docker-compose 启动 Redis 服务</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-31T18:20:16+08:00">
-                2019-05-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Redis/" itemprop="url" rel="index">
-                    <span itemprop="name">Redis</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>使用 docker-compose 以 aof 持久化方式启动单节点 Redis。<br>docker-compose.yml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  redis:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">redis:4.0.13</span> </span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">    command:</span> <span class="bullet">--appendonly</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">6379</span><span class="string">:6379</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./redis_data:/data</span></span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/31/Nginx-root-和-alias-指令的区别/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/05/31/Nginx-root-和-alias-指令的区别/" itemprop="url">Nginx root 和 alias 指令的区别</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-31T12:25:00+08:00">
-                2019-05-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Nginx/" itemprop="url" rel="index">
-                    <span itemprop="name">Nginx</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>nginx 的 root 和 alias 指令都是用于访问服务器本地文件的，两者区别如下：</p>
-<ul>
-<li><p>配置语法及适用范围</p>
-<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">root</span>]</span><br><span class="line">语法：root path</span><br><span class="line">默认值：root html</span><br><span class="line">配置段：http、server、location、<span class="keyword">if</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">alias</span>]</span><br><span class="line">语法：<span class="keyword">alias</span> path</span><br><span class="line">配置段：location</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>root 的处理结果是：root 路径＋location 路径；</p>
-</li>
-<li>alias 的处理结果是：使用 alias 路径替换 location 路径；</li>
-<li>alias 后面的路径结尾必须是 ‘/‘，而 root 可有可无；</li>
-</ul>
-<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><h5 id="当-location-配置为如下时："><a href="#当-location-配置为如下时：" class="headerlink" title="当 location 配置为如下时："></a>当 location 配置为如下时：</h5><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ^~ <span class="regexp">/documents/</span> &#123;</span><br><span class="line">    root <span class="regexp">/var/</span>www-html<span class="regexp">/documents/</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>请求：GET /documents/a.js  —&gt; 相当于请求本地路径：/var/www-html/documents/documents/a.js</p>
-<p>请求：GET /documents/html/index.html  —&gt; 相当于请求本地路径：/var/www-html/documents/documents/html/index.html</p>
-<h5 id="当-location-配置为如下时：-1"><a href="#当-location-配置为如下时：-1" class="headerlink" title="当 location 配置为如下时："></a>当 location 配置为如下时：</h5><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ^~ <span class="regexp">/documents/</span> &#123;</span><br><span class="line">  alias <span class="regexp">/var/</span>www-html<span class="regexp">/documents/</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>请求：GET /documents/a.js  —&gt; 相当于请求本地路径：/var/www-html/documents/a.js</p>
-<p>请求：GET /documents/html/index.html  —&gt; 相当于请求本地路径：/var/www-html/documents/html/index.html</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1981,7 +1951,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">121</span>
+                  <span class="site-state-item-count">125</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

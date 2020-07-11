@@ -81,13 +81,13 @@
 
 <meta name="description" content="Talk is cheap. Show me the code.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="The Spectre">
+<meta property="og:title" content="Jim">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="The Spectre">
+<meta property="og:site_name" content="Jim">
 <meta property="og:description" content="Talk is cheap. Show me the code.">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="The Spectre">
+<meta name="twitter:title" content="Jim">
 <meta name="twitter:description" content="Talk is cheap. Show me the code.">
 
 
@@ -124,7 +124,7 @@
 
 
 
-  <title>The Spectre</title>
+  <title>Jim</title>
   
 
 
@@ -155,7 +155,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">The Spectre</span>
+        <span class="site-title">Jim</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -296,6 +296,623 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/11/Golang-项目配置文件读取之-viper-实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/07/11/Golang-项目配置文件读取之-viper-实践/" itemprop="url">Golang 项目配置文件读取之 viper 实践</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-11T20:53:43+08:00">
+                2020-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在我们做一个工程化项目的时候，经常涉及到配置文件的读取，<a href="https://github.com/spf13/viper" target="_blank" rel="noopener">viper</a> 包很好地满足这一需求，而且在 Golang 生态中是流行度最高的。导入方式：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import <span class="string">"github.com/spf13/viper"</span></span><br></pre></td></tr></table></figure></p>
+<p>这里分享下我对 viper 包的使用关键实践：</p>
+<p>首先，在代码工程中单独定义一个包（我一般起名为 config 或者 configloader），这个包专门用来读取加载配置文件，并做相关校验，包里面我定义 3 个函数和 1 个全局变量：</p>
+<ul>
+<li>var viperConfig *viper.Viper:  全局配置变量；</li>
+<li>func Init(configDir string) error: 初始化加载配置文件；</li>
+<li>func GetConfig() *viper.Viper: 获取配置文件，供其他包调用，拿到配置文件实例；</li>
+<li>func validateConfig(v *viper.Viper) error: 校验配置文件；</li>
+</ul>
+<p>接下来在工程入口处引用上面这个配置包的 Init 函数做配置文件的初始化和加载，加载的结果就是实例化一个 <em>viper.Viper 全局变量，在其他包中用的时候调用这个配置包的 func GetConfig() </em>viper.Vipe 函数即可拿到这个全局变量，即配置文件内容。</p>
+<p>示例代码（代码仅供参考，截取字自前做的爬虫程序部分代码）：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> configloader</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/spf13/viper"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"example.com/pkg/util/fs"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// viperConfig 全局配置变量</span></span><br><span class="line"><span class="keyword">var</span> viperConfig *viper.Viper</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化配置文件相关设置，在 main 包中调用进行初始化加载</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Init</span><span class="params">(configDir <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> configDir == <span class="string">""</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"config directory is empty"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> !fs.PathExists(configDir) &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"no such config directory: %s"</span>, configDir)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	viper.SetConfigName(<span class="string">"spider"</span>)  <span class="comment">// name of config file (without extension)</span></span><br><span class="line">	viper.AddConfigPath(configDir) <span class="comment">// path to look for the config file in</span></span><br><span class="line">	err := viper.ReadInConfig()    <span class="comment">// Find and read the config file</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;                <span class="comment">// Handle errors reading the config file</span></span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"Fatal error config file: %s \n"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	viperConfig = viper.GetViper()</span><br><span class="line">	<span class="keyword">if</span> err = validateConfig(viperConfig); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid configuration, error msg: %s"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GetConfig 获取全局配置</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetConfig</span><span class="params">()</span> *<span class="title">viper</span>.<span class="title">Viper</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> viperConfig</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">validateConfig</span><span class="params">(v *viper.Viper)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		urlListFile     = v.GetString(<span class="string">"urlListFile"</span>)</span><br><span class="line">		outputDirectory = v.GetString(<span class="string">"outputDirectory"</span>)</span><br><span class="line">		maxDepth        = v.GetInt(<span class="string">"maxDepth"</span>)</span><br><span class="line">		crawlInterval   = v.GetInt(<span class="string">"crawlInterval"</span>)</span><br><span class="line">		crawlTimeout    = v.GetInt(<span class="string">"crawlTimeout"</span>)</span><br><span class="line">		targetUrl       = v.GetString(<span class="string">"targetUrl"</span>)</span><br><span class="line">		threadCount     = v.GetInt(<span class="string">"threadCount"</span>)</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> urlListFile == <span class="string">""</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid targetUrl: %s, please check configuration"</span>, urlListFile)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> outputDirectory == <span class="string">""</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid targetUrl: %s, please check configuration"</span>, outputDirectory)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> maxDepth &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid maxDepth: %d, please check configuration"</span>, maxDepth)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> crawlInterval &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid crawlInterval: %d, please check configuration"</span>, crawlInterval)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> crawlTimeout &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid crawlTimeout: %d, please check configuration"</span>, crawlTimeout)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> targetUrl == <span class="string">""</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid targetUrl: %s, please check configuration"</span>, targetUrl)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> threadCount &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid threadCount: %d, please check configuration"</span>, threadCount)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/11/通过-swagger-ui-查看-kube-apiserver-apis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/07/11/通过-swagger-ui-查看-kube-apiserver-apis/" itemprop="url">通过 swagger-ui 查看 kube-apiserver apis</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-11T20:49:47+08:00">
+                2020-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>从 k8s v1.14 开始，官方已经废弃了 swagger 接口，使用 openapi 规范，暴露出来的接口是: /openapi/v2，我们要想通过<br>swagger-ui 来查看 apiserver 接口，可以自己本地跑个 swagger-ui 服务，然后访问 kube-apiserver 地址的 openapi 接口地址即可，swagger-ui 来源支持 openapi 数据格式。</p>
+<p>1.本地启动 swagger-ui 服务<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name swagger-ui --restart always -p 7070:8080 -d swaggerapi/swagger-ui:latest</span><br></pre></td></tr></table></figure></p>
+<p>2.访问 swagger-ui 地址 <a href="http://127.0.0.1:7070" target="_blank" rel="noopener">http://127.0.0.1:7070</a>，输入 kube-apiserver 地址的 openapi 接口地址：<a href="http://kube-apiserver-ip:8080/openapi/v2" target="_blank" rel="noopener">http://kube-apiserver-ip:8080/openapi/v2</a> </p>
+<blockquote>
+<p>这里 openapi 地址是 kube-apiserver 的 http 地址，为了方便，如果是 https 比较麻烦，因为涉及到了 apiserver 的认证授权相关东西。所以为了方便本地调试，还是用 http 地址。<br> 注意：直接访问存在跨域问题，需要安装 Chrome 的 Allow CORS 插件实现跨域访问，插件传送门：<a href="https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en" target="_blank" rel="noopener">https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en</a></p>
+</blockquote>
+<p><img src="/images/swagger-ui-kube-apiserver.png" alt=""></p>
+<p>参考文档：<br><a href="https://kubernetes.io/zh/docs/concepts/overview/kubernetes-api/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/concepts/overview/kubernetes-api/</a><br><a href="https://blog.schwarzeni.com/2019/09/16/Minikube%E4%BD%BF%E7%94%A8Swagger%E6%9F%A5%E7%9C%8BAPI/" target="_blank" rel="noopener">https://blog.schwarzeni.com/2019/09/16/Minikube%E4%BD%BF%E7%94%A8Swagger%E6%9F%A5%E7%9C%8BAPI/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/11/Golang-项目中集成日志功能/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/07/11/Golang-项目中集成日志功能/" itemprop="url">Golang 项目中集成日志功能</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-11T20:44:02+08:00">
+                2020-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在一个 web 项目中，日志打印功能是必须的，有了详细的日志能为问题排查带来很大的便利。Golang 有很多开源的日志包可供使用，这里我还是使用非常流行的 <a href="https://github.com/sirupsen/logrus" target="_blank" rel="noopener">logrus</a> 包，结合 <a href="https://github.com/lestrrat-go/file-rotatelogs" target="_blank" rel="noopener">file-rotatelogs</a> 包实现日志的自动切割轮转。</p>
+<p>集成方法：</p>
+<ul>
+<li><p>1.单独定义一个 package 名为 logger，里面只有一个 init.go 文件，初始化日志配置，这个配置是全局的：</p>
+<ul>
+<li>日志输出格式为 json；</li>
+<li>日志自动轮转，保留最近 7 天日志，一天产生一个日志文件，防止服务长时间运行占用系统过多的磁盘资源；</li>
+<li><p>日志在输出到文件的同时并打到 stdout；</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> logger</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"io"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"path"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">	log <span class="string">"github.com/sirupsen/logrus"</span></span><br><span class="line">	rotatelogs <span class="string">"github.com/lestrrat-go/file-rotatelogs"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/demo/pkg/common/config"</span></span><br><span class="line">	<span class="string">"github.com/demo/pkg/utils/fs"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 全局日志配置初始化</span></span><br><span class="line"><span class="comment">// 1.日志同时输出到到文件和标准输出；</span></span><br><span class="line"><span class="comment">// 2.保留最近 7 天日志，一天一个日志文件；</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	logDir := config.GetConfig().GetString(<span class="string">"log_dir"</span>)</span><br><span class="line">	<span class="keyword">if</span> !fs.PathExists(logDir) &#123;</span><br><span class="line">		<span class="keyword">if</span> err := os.MkdirAll(logDir, <span class="number">0755</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	logfile := path.Join(logDir, <span class="string">"app"</span>)</span><br><span class="line">	fsWriter, err := rotatelogs.New(</span><br><span class="line">		logfile+<span class="string">"_%Y-%m-%d.log"</span>,</span><br><span class="line">		rotatelogs.WithMaxAge(time.Duration(<span class="number">168</span>)*time.Hour),</span><br><span class="line">		rotatelogs.WithRotationTime(time.Duration(<span class="number">24</span>)*time.Hour),</span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	multiWriter := io.MultiWriter(fsWriter, os.Stdout)</span><br><span class="line">	log.SetReportCaller(<span class="literal">true</span>)</span><br><span class="line">	log.SetFormatter(&amp;log.JSONFormatter&#123;&#125;)</span><br><span class="line">	log.SetOutput(multiWriter)</span><br><span class="line">	log.SetLevel(log.InfoLevel)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>2.在项目入口 main 包引入该包，初始化全局日志配置</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    _ <span class="string">"github.com/demo/pkg/logger"</span> <span class="comment">// 引入包时自动执行了 logger 包的 init 函数完成了日志初始化配置</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>3.至此，在项目其他地方如果要打印日志，直接引用 logrus 包即可，在 main 包中已经完成了日志配置，无需在其他使用的地方再次初始化配置；</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> hello</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    log <span class="string">"github.com/sirupsen/logrus"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloLog</span><span class="params">()</span></span> &#123;</span><br><span class="line">    log.Info(<span class="string">"HelloLog func called"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/11/Golang-从-Json-串中快速取出需要的字段/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/07/11/Golang-从-Json-串中快速取出需要的字段/" itemprop="url">Golang 从 Json 串中快速取出需要的字段</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-11T20:38:32+08:00">
+                2020-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在 web 编程中很多情况下接口的数据是 json 格式，在我们拿到接口的 json 数据后如何方便地从中提取出需要的字段呢？我们可以自定义一个结构体，然后通过 Golang 的标准库 json 解析到我们定义的结构体中。但是当 json 格式比较复杂，嵌套层级比较深的时候，还是用这种方法就比较麻烦了。在这里推荐一个包: <a href="https://github.com/thedevsaddam/gojsonq" target="_blank" rel="noopener">gojsonq</a>，可以很简便地从 json 串中提取出需要的字段，无需定义额外的结构体，然后解析，直接链式地从 json 串中提取需要的字段即可，有点类似动态语言：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/thedevsaddam/gojsonq/v2</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><p>Github 地址：<br><a href="https://github.com/thedevsaddam/gojsonq" target="_blank" rel="noopener">https://github.com/thedevsaddam/gojsonq</a></p>
+</li>
+<li><p>Package 简介：<br>A simple Go package to Query over JSON Data. It provides simple, elegant and fast ODM like API to access, query JSON document.</p>
+</li>
+</ul>
+<p>示例一：从如下 json 串中提取 name.first 字段数据<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>:&#123;</span><br><span class="line">        <span class="attr">"first"</span>:<span class="string">"Tom"</span>,</span><br><span class="line">        <span class="attr">"last"</span>:<span class="string">"Hanks"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"age"</span>:<span class="number">61</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Find 方法返回的结果为 interface{} 类型。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> gojsonq <span class="string">"github.com/thedevsaddam/gojsonq/v2"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> json = <span class="string">`&#123;"name":&#123;"first":"Tom","last":"Hanks"&#125;,"age":61&#125;`</span></span><br><span class="line">	name := gojsonq.New().FromString(json).Find(<span class="string">"name.first"</span>)</span><br><span class="line">	<span class="built_in">println</span>(name.(<span class="keyword">string</span>)) <span class="comment">// Tom</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>示例二：从如下 json 串中提取  temperatures 字段数据，并计算平均值<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"city"</span>:<span class="string">"dhaka"</span>,</span><br><span class="line">    <span class="attr">"type"</span>:<span class="string">"weekly"</span>,</span><br><span class="line">    <span class="attr">"temperatures"</span>:[</span><br><span class="line">        <span class="number">30</span>,</span><br><span class="line">        <span class="number">39.9</span>,</span><br><span class="line">        <span class="number">35.4</span>,</span><br><span class="line">        <span class="number">33.5</span>,</span><br><span class="line">        <span class="number">31.6</span>,</span><br><span class="line">        <span class="number">33.2</span>,</span><br><span class="line">        <span class="number">30.7</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>支持列表计算：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">	gojsonq <span class="string">"github.com/thedevsaddam/gojsonq/v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> json = <span class="string">`&#123;"city":"dhaka","type":"weekly","temperatures":[30,39.9,35.4,33.5,31.6,33.2,30.7]&#125;`</span></span><br><span class="line">	avg := gojsonq.New().FromString(json).From(<span class="string">"temperatures"</span>).Avg()</span><br><span class="line">	fmt.Printf(<span class="string">"Average temperature: %.2f"</span>, avg) <span class="comment">// 33.471428571428575</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>示例三：从如下 json 串中提取 data.pageNumber 数组，赋值给 Golang 整型数组</p>
+<p>上面的例子提取简单的数值类型，返回的是 interface{} 类型，可以通过类型断言得到需要的数据。如果提取的是数组类型，是无法通过类型断言来获取 interface{} 类型的值的，可以使用 FindR 拿到结果，然后通过结果的 As 方法将数据解析到我们定义的变量类型中。<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"code"</span>:<span class="string">"0"</span>,</span><br><span class="line">    <span class="attr">"message"</span>:<span class="string">"success"</span>,</span><br><span class="line">    <span class="attr">"data"</span>:&#123;</span><br><span class="line">        <span class="attr">"thumb_up"</span>:<span class="number">0</span>,</span><br><span class="line">        <span class="attr">"system"</span>:<span class="number">0</span>,</span><br><span class="line">        <span class="attr">"im"</span>:<span class="number">0</span>,</span><br><span class="line">        <span class="attr">"avatarUrl"</span>:<span class="string">"https://profile.csdnimg.cn/F/4/B/helloworld"</span>,</span><br><span class="line">        <span class="attr">"invitation"</span>:<span class="number">0</span>,</span><br><span class="line">        <span class="attr">"comment"</span>:<span class="number">0</span>,</span><br><span class="line">        <span class="attr">"follow"</span>:<span class="number">0</span>,</span><br><span class="line">        <span class="attr">"totalCount"</span>:<span class="number">0</span>,</span><br><span class="line">        <span class="attr">"coupon_order"</span>:<span class="number">0</span>,</span><br><span class="line">        <span class="attr">"pageNumbers"</span>:[</span><br><span class="line">            <span class="number">1</span>,</span><br><span class="line">            <span class="number">2</span>,</span><br><span class="line">            <span class="number">3</span>,</span><br><span class="line">            <span class="number">4</span>,</span><br><span class="line">            <span class="number">5</span>,</span><br><span class="line">            <span class="number">6</span></span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"status"</span>:<span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	jsonStr := <span class="string">`&#123;</span></span><br><span class="line"><span class="string">   "code":"0",</span></span><br><span class="line"><span class="string">   "message":"success",</span></span><br><span class="line"><span class="string">   "data":&#123;</span></span><br><span class="line"><span class="string">       "thumb_up":0,</span></span><br><span class="line"><span class="string">       "system":0,</span></span><br><span class="line"><span class="string">       "im":0,</span></span><br><span class="line"><span class="string">       "avatarUrl":"https://profile.csdnimg.cn/F/4/B/helloworld",</span></span><br><span class="line"><span class="string">       "invitation":0,</span></span><br><span class="line"><span class="string">       "comment":0,</span></span><br><span class="line"><span class="string">       "follow":0,</span></span><br><span class="line"><span class="string">       "totalCount":0,</span></span><br><span class="line"><span class="string">       "coupon_order":0,</span></span><br><span class="line"><span class="string">       "pageNumbers":[</span></span><br><span class="line"><span class="string">           1,</span></span><br><span class="line"><span class="string">           2,</span></span><br><span class="line"><span class="string">           3,</span></span><br><span class="line"><span class="string">           4,</span></span><br><span class="line"><span class="string">           5,</span></span><br><span class="line"><span class="string">           6</span></span><br><span class="line"><span class="string">       ]</span></span><br><span class="line"><span class="string">   &#125;,</span></span><br><span class="line"><span class="string">   "status":true</span></span><br><span class="line"><span class="string">   &#125;`</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 保存 json 字符串中 pageNumbers 字段列表数据</span></span><br><span class="line">	pageNumbers := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>)</span><br><span class="line">	result, err := gojsonq.New().FromString(jsonStr).FindR(<span class="string">"data.pageNumbers"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 将提前的数据解析为自定义变量类型</span></span><br><span class="line">	err = result.As(&amp;pageNumbers)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(pageNumbers)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更多功能及示例见官方文档：<br><a href="https://github.com/thedevsaddam/gojsonq/wiki/Queries" target="_blank" rel="noopener">https://github.com/thedevsaddam/gojsonq/wiki/Queries</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/01/kubernetes-源码编译/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -305,7 +922,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -467,7 +1084,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -622,7 +1239,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -800,7 +1417,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -986,7 +1603,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1179,7 +1796,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1319,877 +1936,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/05/Kubernetes-基于-EFK-技术栈的日志收集实践/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/09/05/Kubernetes-基于-EFK-技术栈的日志收集实践/" itemprop="url">Kubernetes 基于 EFK 技术栈的日志收集实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-05T23:54:59+08:00">
-                2019-09-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubernetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>之前写过一篇文章介绍了容器环境下日志管理的原理机制：<a href="https://blog.csdn.net/qianghaohao/article/details/100072538" target="_blank" rel="noopener">从 Docker 到 Kubernetes 日志管理机制详解</a>，文章内容偏理论，本文在该理论的支撑下具体实践 Kubernetes 下基于 EFK 技术栈的日志收集，本文偏实践，要想全面了解 Kubernetes 下日志收集管理机制，最好还是两篇文章顺序阅读。</p>
-<p>本文不仅限于介绍怎么在 Kubernetes 集群部署 EFK 组件，还涉及到其他相关话题：EFK 组件简介、Kubernetes 环境下为什么选用 EFK 优于 ELK 组件、Fluentd 简介、Fluentd 工作机制等等。本文结构如下：</p>
-<ul>
-<li>EFK 组件简介</li>
-<li>Kubernetes 环境下为什么选用 EFK 优于 ELK 组件</li>
-<li>Fluentd 简介</li>
-<li>Fluentd 工作机制</li>
-<li>Fluentd 配置的核心指令</li>
-<li>Kubernetes EFK 日志收集架构</li>
-<li>Kubernetes EFK 日志收集架构实践</li>
-</ul>
-<h3 id="EFK-组件简介"><a href="#EFK-组件简介" class="headerlink" title="EFK 组件简介"></a>EFK 组件简介</h3><p><img src="/images/EFK.png" alt=""><br>顾名思义，EFK 是 Elasticsearch、Fluentd、Kibana 三个开源软件组件的首字母缩写，EFK 是业界主流的容器时代日志收集处理的最佳解决方案。Fluentd 是一个日志收集器，负责从各个服务器节点抓取日志。Elasticsearch 是一个搜索存储引擎，可以存储 Fluentd 收集的日志，并提供查询服务。Kibana 是 Elasticsearch 的一个界面化组件，提供 UI 方式查询 Elasticsearch 存储的数据。三个组件组合起来工作就是 EFK，组件之间数据流是这样：Log 源（比如 Log 文件、k8s Pod 日志、Docker 日志驱动等等）—&gt; Fluentd 收集 —&gt; Elasticsearch 存储 —&gt; Kibana UI 查看。</p>
-<h3 id="Kubernetes-环境下为什么选用-EFK-优于-ELK-组件"><a href="#Kubernetes-环境下为什么选用-EFK-优于-ELK-组件" class="headerlink" title="Kubernetes 环境下为什么选用 EFK 优于 ELK 组件"></a>Kubernetes 环境下为什么选用 EFK 优于 ELK 组件</h3><p>ELK 是 Elasticsearch、Logstash、Kibana 三个开源组件的缩写，可以看出和 EFK 的区别在于第二个字母，一个是 Logstash，一个是 Fluentd。</p>
-<p>我们很早之前使用 ELK 技术栈收集云主机上部署的应用日志，每台虚拟主机部署一个 Logstash 实例收集应用程序目录日志，然后统一传输到一个 Logshtash 中央处理节点，处理后的数据存储到 Elasticsearch。这种方案虽然可以实现日志的统一收集处理，但是 Logstash 比较吃系统资源，基本上资源占用堪比一个 Java 微服务，一个简单的抓取节点就大概需要 1 GB 的内存，我们知道云主机的机器资源是非常昂贵的，所以这种方案对资源浪费比较大，不是很推荐。之前我们基于该 ELK 方案的日志收集大致架构图如下：收集大概 13 个微服务日志，其中 Logstash Server 端平均内存使用能达到 8GB +，显然 Logstash 比较重量级，对系统资源的消耗可见一斑。<br><img src="/images/ELK.png" alt=""><br>从上面的实践案例可以知道 ELK 技术栈的缺陷在于 Log 收集器 Logstash 比较重量级，对系统资源消耗比较大。那么有没有更加轻量级的替代方案呢？答案是有的，比如 Elastic 的 beats 家族的 Filebeat 就可以取代 Logstash 作为日志抓取器，还有 Fluentd 也可以作为 Logstash 替代品，Fluentd 也是本文要讲的重头戏。为什么我们选用 Fluentd 而不用 Filebeat 呢，个人认为 Fluentd 兼具日志抓取、收集、处理、轻量级的特性，拥有丰富的插件生态，是日志解决方案的神器。而 Filebeat 功能重点在于日志的抓取、轻量级，但是对于日志的处理功能不是很强大。</p>
-<p>Fluentd 的轻量级体现在它本身核心代码是用 C 语言编写，更接近操作系统底层语言，所以一般性能是比较高的，据官方介绍 30～40 MB 内存就能处理 13000 日志事件/秒/核，由此可见其性能是多么强大，所以对比 Logstash 而言，用 30 MB 内存就能解决的问题当然选择 Fluentd 了。</p>
-<h3 id="Fluentd-简介"><a href="#Fluentd-简介" class="headerlink" title="Fluentd 简介"></a>Fluentd 简介</h3><p><a href="https://www.fluentd.org/" target="_blank" rel="noopener">Fluentd</a> 是一个开源的日志收集器，它统一了日志的收集和处理逻辑，多种不同来源的日志都可以通过 Fluentd 这个单一的工具统一收集，然后统一存储到单个或多个存储后端。</p>
-<p>像很早之前没有类似 Fluentd 之类的工具的话，为了收集日志可能会有各种五花八门的方法（工具），比如：Shell 脚本分析日志文件、服务器 syslog 收集、rsync 定时同步，scp 拷贝日志文件到统一的存储服务器等等，这么做显然带来的问题是我们要维护各种日志收集端工具，由于各种工具使用上不统一，对整个日志系统的维护人员来说不亚于一场灾难。我们可以用一张图来描述这种复杂、错乱的场景：<br><img src="/images/before-fluentd.png" alt=""><br>针对上述存在的问题，Fluentd 插件式架构很好地解决了该问题，所有数据收集端和存储端都可以通过 Fluentd 使用不同的插件统一起来，这么做带来的最大好处就是大大简化了日志收集的架构，整个架构都以 Fuentd 为核心，不再需要维护人员掌握、维护各种乱七八糟的小工具。上面复杂、错乱的数据收集架构就可以简化为以 Fluentd 为核心的简单架构了：<br><img src="/images/after-fluentd.png" alt=""><br>关于 Fluentd 更多的介绍见官方文档：<a href="https://docs.fluentd.org/" target="_blank" rel="noopener">https://docs.fluentd.org/</a> 。</p>
-<h3 id="Fluentd-工作机制"><a href="#Fluentd-工作机制" class="headerlink" title="Fluentd 工作机制"></a>Fluentd 工作机制</h3><p>Fluentd 和其他日志收集器的工作原理类似，对数据的处理流程也分为三大阶段：收集—&gt;处理、过滤—&gt;输出。这三个处理阶段都有不同的插件支持，可以灵活组合。在 Fluentd 中事件是 整个数据流处理的基本单位，fluentd 的 input 插件每接收到一条日志都会将其封装成一个 fluentd 事件，然后发送给 fluentd 引擎处理，fluentd 引擎根据事件中包含的 tab 匹配不同的 filter 插件进行事件的处理，处理完后发送到 output 插件，output 插件根据事件中的 tag 匹配事件，将匹配到的事件发送到对应的后端。</p>
-<p>Fluentd 事件由三部分组成：</p>
-<ul>
-<li>tag: <code>.</code> 分隔的字符串，供 fluentd 路由引擎路由使用；</li>
-<li>time: 由输入插件指定的事件发生的时间戳，必须符合 Unix 时间格式；</li>
-<li>record: 日志内容；</li>
-</ul>
-<p><img src="/images/fluentd-workflow.png" alt=""></p>
-<h3 id="Fluentd-配置的核心指令"><a href="#Fluentd-配置的核心指令" class="headerlink" title="Fluentd 配置的核心指令"></a>Fluentd 配置的核心指令</h3><p>上面简单介绍了下 Fluentd 对日志数据的处理流程，其是在这个流程中 Fluentd 的行为是通过其配置文件定义的，配置文件由一条条指令组成。下面是 Fluentd 配置文件的 6 大指令，是 Fluentd 配置的核心指令：</p>
-<ul>
-<li><code>source</code> directives determine the input sources.</li>
-<li><code>match</code> directives determine the output destinations.</li>
-<li><code>filter</code> directives determine the event processing pipelines.</li>
-<li><code>system</code> directives set system wide configuration.</li>
-<li><code>label</code> directives group the output and filter for internal<br>routing</li>
-<li><code>@include</code> directives include other files.</li>
-</ul>
-<p>关于每条指令在具体配置文件中如何使用这里不再赘述，详情见：<a href="https://docs.fluentd.org/configuration/config-file" target="_blank" rel="noopener">https://docs.fluentd.org/configuration/config-file</a></p>
-<h3 id="Kubernetes-EFK-日志收集架构"><a href="#Kubernetes-EFK-日志收集架构" class="headerlink" title="Kubernetes EFK 日志收集架构"></a>Kubernetes EFK 日志收集架构</h3><p>之前介绍过 Kubernetes 日志管理机制：再 k8s 每个节点上，kubelet 会为每个容器的日志创建一个软链接，软连接存储路径为：/var/log/containers/，软连接会链接到 /var/log/pods/ 目录下相应 pod 目录的容器日志，被链接的日志文件也是软链接，最终链接到 Docker 容器引擎的日志存储目录：/var/lib/docker/container 下相应容器的日志。所以 /var/log 和 /var/lib/docker/container 目录是整个节点所有容器日志的统一存储地方，这就为 Fluentd 日志收集提供了很大的方便。</p>
-<p>针对上述 k8s 日志管理机制，Kubernetes 官方给出了推荐的日志收集方案：以 DaemonsSet 的方式在 k8s 集群每个节点部署一个节点级的 Fluentd 日志收集器，Fluentd Pod  在启动时挂载了宿主机的 /var/log 和 /var/lib/docker/container 目录，因此可以直接对宿主机目录中的容器日志读取并传输到存储后端：Elasticsearch。然后 Kibana 和 Elasticsearch 对接即可实时查看收集到的日志数据。<br><img src="/images/k8s-efk-arch.png" alt=""></p>
-<h3 id="Kubernetes-EFK-日志收集架构实践"><a href="#Kubernetes-EFK-日志收集架构实践" class="headerlink" title="Kubernetes EFK 日志收集架构实践"></a>Kubernetes EFK 日志收集架构实践</h3><p>上面介绍了 Kubernetes EFK 日志收集架构，本节基于该架构进行实践。我们使用 Kubernetes 官方提供的 EFK 组件 mainfest 文件进行部署，Github 仓库目录为：<br><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch</a></p>
-<p>该目录下存储了 EFK 三大组件的部署 yaml 资源文件，有两点需要说明下：</p>
-<ul>
-<li>Elasticsearch 数据持久化：默认 EmptyDir 的方式，这种方式在 Pod 重新调度后数据会丢失，不过为了实验，所以在这里就不进行修改了，使用默认的即可；</li>
-<li>Kibana deployment 文件需要修改下：去掉 SERVER_BASEPATH 环境变量，要不然部署后访问会 404；</li>
-</ul>
-<h4 id="Kubernetes-EFK-部署"><a href="#Kubernetes-EFK-部署" class="headerlink" title="Kubernetes EFK 部署"></a>Kubernetes EFK 部署</h4><p>进入 fluentd-elasticsearch 目录，执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl  create -f .</span><br></pre></td></tr></table></figure></p>
-<p>查看 Pod 状态，确保每个组件启动成功，一般都会启动成功的，这里基本没什么坑。</p>
-<h4 id="Kibana-对外访问"><a href="#Kibana-对外访问" class="headerlink" title="Kibana 对外访问"></a>Kibana 对外访问</h4><p>接下来将 Kibana 服务从 Kubernetes 集群对外暴露出来，实现对外访问，我们使用 Kong 网关对外暴露服务。具体 Kong 网关在 Kubernetes 的使用在这里不再赘述，如想了解见这里：<a href="https://blog.csdn.net/qianghaohao/article/category/9228448" target="_blank" rel="noopener">Kong 微服务网关在 Kubernetes 的实践</a>。</p>
-<p>Konga 配置 Kibana 服务对外访问：</p>
-<ol>
-<li>创建 kibana-logging Kong Service<br><img src="/images/kibana-konga1.png" alt=""></li>
-<li>创建 Kong 路由到 kibana-logging Kong Service<br><img src="/images/kibana-konga2.png" alt=""><br><img src="/images/kibana-konga3.png" alt=""></li>
-</ol>
-<p>kibnana.kong.com 绑定 host 到集群节点 IP 即可访问查看收集的日志：<br><img src="/images/efk-kibana.png" alt=""></p>
-<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/cluster-administration/logging/</a> | Kubernetes 日志架构<br><a href="https://www.fluentd.org/architecture" target="_blank" rel="noopener">https://www.fluentd.org/architecture</a> | What is fluentd?<br><a href="https://docs.fluentd.org/quickstart/life-of-a-fluentd-event" target="_blank" rel="noopener">https://docs.fluentd.org/quickstart/life-of-a-fluentd-event</a> | Life of a Fluentd event</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/30/Kubernetes-CronJob-的一个应用案例/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/30/Kubernetes-CronJob-的一个应用案例/" itemprop="url">Kubernetes CronJob 的一个应用案例</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-30T11:25:17+08:00">
-                2019-08-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubernetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近 Kubernetes 集群中出现过几次 Redis 故障，具体表现是每次集群重启（云资源按需启动）， Redis Pod 都要老半天才能启动起来，后来逐渐排查定位才发现原来是由于 Redis 开启了 aof 持久化机制。</p>
-<p>我们知道在 AOF 持久化机制下，Resdis 的每一条写命令都会被同步、并且追加的方式持久化的磁盘文件，当 Redis 由于意外故障时，下次重启就会原封不动地执行 AOF 文件中的命令来恢复 Redis。那么显然这种方式会带来一个问题是随着时间的推移 aof 文件体积会越来越大，每次 Redis 重启都要执行一遍 aof 持久化的命令，速度也会越来越慢，从而导致 Redis 启动变慢。</p>
-<p>显然解决方法是怎么把 AOF 文件变小，丢弃没用的记录。Redis 有一条 <code>BGREWRITE</code> 命令就是解决这问题的，这条命令的工作原理是将当前 Redis 中的数据都导出成 Redis 写语句，然后生成新的 aof 文件，替换掉旧的。显然新的 aof 文件体积会原因小于长时间运行的旧的 aof 文件，因为新的 aof 只是当前 Redis 的数据恢复语句，只记录当前的状态。</p>
-<p>由于我们 Redis 是运行在 Kubernetes 集群中，所以借助于 Kubernetes 的 CronJob 机制定期执行 Redis <code>BGREWRITE</code> 命令来重写 aof 文件，从而缩小文件体积。</p>
-<h3 id="Kubernetes-CronJob-简介"><a href="#Kubernetes-CronJob-简介" class="headerlink" title="Kubernetes CronJob 简介"></a>Kubernetes CronJob 简介</h3><p>Kubernetes CronJob 资源用来定义一些需要定时执行的任务，类似于 Linux/Unix 的 Crontab。CronJob 资源创建后会按照写的定时任务规则启动 Pod 执行定义的任务。关于 CronJob 更详细的信息见这里：<a href="https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs</a></p>
-<h3 id="基于-k8s-CronJob-定期-AOF-重写"><a href="#基于-k8s-CronJob-定期-AOF-重写" class="headerlink" title="基于 k8s CronJob 定期 AOF 重写"></a>基于 k8s CronJob 定期 AOF 重写</h3><p>定义 CronJob 资源文件，每两小时进行一次 Redis AOF 重写，资源文件如下：<br>redis-cron.yaml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1beta1</span> <span class="comment">#for API server versions &gt;= 1.8.0 use batch/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CronJob</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">redis-bgrewriteaof-cron</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">redis-bgrewriteaof-cron</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  schedule:</span> <span class="string">"0 */2 * * *"</span></span><br><span class="line"><span class="attr">  successfulJobsHistoryLimit:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  failedJobsHistoryLimit:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">  concurrencyPolicy:</span> <span class="string">Forbid</span></span><br><span class="line"><span class="attr">  startingDeadlineSeconds:</span> <span class="number">120</span></span><br><span class="line"><span class="attr">  jobTemplate:</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      template:</span></span><br><span class="line"><span class="attr">        spec:</span></span><br><span class="line"><span class="attr">          containers:</span></span><br><span class="line"><span class="attr">          - name:</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">            image:</span> <span class="string">docker.io/bitnami/redis:4.0.12</span></span><br><span class="line"><span class="attr">            env:</span></span><br><span class="line"><span class="attr">              - name:</span> <span class="string">REDIS_PASSWORD</span></span><br><span class="line"><span class="attr">                valueFrom:</span></span><br><span class="line"><span class="attr">                  secretKeyRef:</span></span><br><span class="line"><span class="attr">                    name:</span> <span class="string">redis-test</span></span><br><span class="line"><span class="attr">                    key:</span> <span class="string">redis-password</span></span><br><span class="line"><span class="attr">            args:</span> <span class="string">[redis-cli,</span> <span class="bullet">-h,</span> <span class="string">redis-stage-master,</span> <span class="bullet">-a,</span> <span class="string">$(REDIS_PASSWORD),</span> <span class="string">BGREWRITEAOF]</span></span><br><span class="line"><span class="attr">          restartPolicy:</span> <span class="string">OnFailure</span></span><br></pre></td></tr></table></figure></p>
-<p>关于上面资源里面的一些配置项含义在此不做具体介绍，很多都能看懂，具体每个配置项含义看官方文档，都有详细的解释。这里有一点需要「特别注意」的是 redis<br>容器的 <code>args</code> 字段引用环境变量的方法：<br>比如这里引用了 REDIS_PASSWORD 环境变量，需要写成：<code>$(REDIS_PASSWORD)</code> 这样的方式引用，而不能写成：$REDIS_PASSWORD 或者 ${REDIS_PASSWORD}。</p>
-<p>执行 <code>kubectl create</code> 创建定义的 CronJob 资源<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f redis-cron.yaml -n <span class="built_in">test</span></span><br></pre></td></tr></table></figure></p>
-<p>查看 CronJob 执行情况<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get cronjob -n <span class="built_in">test</span></span><br><span class="line">NAME                      SCHEDULE      SUSPEND   ACTIVE    LAST SCHEDULE   AGE</span><br><span class="line">redis-bgrewriteaof-cron   0 */2 * * *   False     0         1h              14h</span><br></pre></td></tr></table></figure></p>
-<p>可以看出最近一小时前已经调度过一次，如果要看调度是否成功可以看对应 Pod 的 log，也可以 <code>kubectl get jobs -n test</code> 查看启动的 Job 的状态。</p>
-<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs</a> | Running Automated Tasks with a CronJob<br><a href="https://redis.io/commands/bgrewriteaof" target="_blank" rel="noopener">https://redis.io/commands/bgrewriteaof</a> | Redis之AOF重写及其实现原理</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/29/数据库升级-DevOps-落地实践/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/29/数据库升级-DevOps-落地实践/" itemprop="url">数据库升级 DevOps 落地实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-29T11:01:48+08:00">
-                2019-08-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DevOps/" itemprop="url" rel="index">
-                    <span itemprop="name">DevOps</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>在我们做持续集成/交付的过程中，应用的发布已经通过 DevOps 流水线基本能满足快速迭代的需求，但是很多企业在落地实践 DevOps 的过程中很容易忽略的一点是关于应用数据库版本、升级的管理，每次上线发布数据库的更新依然通过运维或者 DBA 手工更新，在微服务、容器盛行的背景下，服务多，服务发布速度快，显然靠人工该 DB 是跟不上迭代速度的，从而导致 DB 的更新成了整个软件交付周期的瓶颈。这一点我是深有体会，尤其是每次上线时，多个微服务同时上线，同时还需要进行 DB 升级，这个时候研发人员会给我们 SQL 执行，当然研发人员的数量是远远多于开发人员，所以每次上线运维人员经常陷入被”围堵“的尴尬境地。当然还存在其他种种痛点，大概总结下有如下痛点：</p>
-<ul>
-<li>DB 的升级人工执行跟不上版本发布速度，成为软件交付的瓶颈；</li>
-<li>人工执行 DB 升级错误率比自动化执行更容易出错；</li>
-<li>各个环境 DB 没有统一的版本管理，经常会出现这个 SQL 有没有在某个环境执行的疑问；</li>
-<li>环境之间数据脚本同步经常出现遗漏的情况，由于开发或测试环境操作 DB 的人多，在应用从一个环境升级到另一个环境中经常忘记执行某条 SQL，然后导致各种问题故障。这种问题甚至在应用上线时也会频频出现，然后通知运维或 DBA 执行遗漏 SQL；</li>
-</ul>
-<p>那么在 DevOps 落地实践中如何很好地处理好数据库升级这一环呢，从而解决上述存在的种种痛点，不要让数据库升级成为软件交付的瓶颈，使得数据库的升级流程融入自动化流水线。我调研了下业界关于应用 DB 升级的方案，不少文章或者圈内人士推崇专门的数据库管理工具版本化管理，自动化执行，比如 <a href="https://flywaydb.org/" target="_blank" rel="noopener">Flyway</a>，<a href="https://www.liquibase.org/" target="_blank" rel="noopener">Liquibase</a> 等著名的工具，都是专业的数据库版本管理和自动化工具。</p>
-<p>在本文中主要介绍如何将 Flyway 和其他 DevOps 工具链整合，实现 DB 升级的自动化和管理的版本化，从而解决之前存在的一系列痛点。本文用到的工具链有：Flyway + Jenkins 2.0（Pipeline 脚本）+ Gitlab + MySQL。需要说明的一点是本文并不是一步步讲解各种工具链如何使用和相关介绍，重点在于工具链的整合实践，以及如何恰当地应用。在文末附有完整的 Pipeline 实现脚本，仅供参考！</p>
-<h3 id="数据库升级-DevOps-实践带来了什么收益"><a href="#数据库升级-DevOps-实践带来了什么收益" class="headerlink" title="数据库升级 DevOps 实践带来了什么收益"></a>数据库升级 DevOps 实践带来了什么收益</h3><p>其实在文章开言已经说清楚了，总结起来就两点：</p>
-<ul>
-<li>所有环境数据库版本统一管理；</li>
-<li>数据库升级变更自动化；</li>
-</ul>
-<h3 id="实践方案概要"><a href="#实践方案概要" class="headerlink" title="实践方案概要"></a>实践方案概要</h3><p>数据库升级脚本统一按微服务模块以独立 git 仓库的形式管理起来，每次版本迭代，规划好 SQL 模型定义（DDL），将 db 脚本签入独立的 git 仓库，然后使用专门的数据库版本管理工具自动扫描仓库目录的 db 升级脚本，由于 db 升级脚本文件名称符合一定的命名规范，所以工具可以自动按版本号顺序执行脚本，并且已经执行过的脚步文件再次执行会忽略。关于 DB 升级工具的选择，我们选用 Flyway，功能单一、容易上手，以规约优于配置的思想规范 DB 的版本化管理，我们写的 SQL 脚本文件都必须符合 Flyway 的文件名命名规范，这样才能在升级过程中生效。</p>
-<h3 id="具体实践"><a href="#具体实践" class="headerlink" title="具体实践"></a>具体实践</h3><p>借助的工具链：Flyway + Jenkins 2.0（Pipeline 脚本）+ Gitlab + MySQL(Google Cloud SQL)</p>
-<p><img src="/images/flyway-devops.png" alt=""></p>
-<ol>
-<li>以微服务应用 git 工程名称在 gitlab 一个单独的组创建 db 代码工程；</li>
-<li>在 db 代码工程中创建以数据库命名的目录，存放对应数据库升级的脚本文件，脚本文件名称需要符合 FlywayDB 的命名规范：<br><img src="/images/flyway-file-version.png" alt=""></li>
-<li>db 代码工程分支管理：dev 环境对应 dev 分支，test 环境对应 test 分支，stage 环境对应 stage 分支，生产环境对应 master 分支；</li>
-<li>Jenkins 脚本注册相应代码工程名称和对应 db 名称；</li>
-<li>点击 Jenkins 执行数据库升级；</li>
-</ol>
-<h3 id="强制规约"><a href="#强制规约" class="headerlink" title="强制规约"></a>强制规约</h3><ol>
-<li>gitlab 代码工程名称和 db 工程名称一致，db 工程目录下文件夹以数据库名称命名；</li>
-<li>db 脚本名称符合 FlywayDB 命名规范；</li>
-<li>db 脚本文件版本名统一大于 1.0，比如: 可以是 V1.0.1，但不能是 V0.2.3；</li>
-<li>db 脚本内容为 DDL 语句，不能包含 DML 或者 DCL 语句，这个要严格审核，因为 DML 和 DCL 版本追踪没意义，而且各个环境可能还不兼容，FlywayDB 的本质是数据库 Sechma 版本管理，只关心表结构，表里面的数据不关心。关于数据库 DDL、DML、DCL 相关概念及区别见<a href="https://www.cnblogs.com/zhangmingcheng/p/5295684.html" target="_blank" rel="noopener">这里</a>；</li>
-<li>已经执行过的 db 脚本不能修改后重复执行，并且执行过的 db 脚本文件需要原封不动保留，不能丢失和修改，否则升级会失败，这个一定要注意。如果对已经执行的 db 脚本不满意，有改动需要变更，则新加 db 脚本文件，可以小版本号比原先增 1，相当于临时 fix，但是我们尽量减少这种情况的发生；</li>
-</ol>
-<h3 id="具体-Workflow"><a href="#具体-Workflow" class="headerlink" title="具体 Workflow"></a>具体 Workflow</h3><h4 id="开发人员-Workflow"><a href="#开发人员-Workflow" class="headerlink" title="开发人员 Workflow"></a>开发人员 Workflow</h4><p>开发、测试、预发布环境开发人员点击 Jenkins job 执行数据库升级：</p>
-<ol>
-<li>将 SQL 脚本按照 FlywayDB 规范提交到对应的 db 仓库，提交 MR 到对应分支；</li>
-<li>小组 db 脚本审核人审核没问题后合并 db 代码；</li>
-<li>小组成员点击 Jenkins Job，执行数据库升级<br>3.1 选择环境+服务名称+要升级的数据库名称<br><img src="/images/flyway-devops-workflow-dev1.jpeg" alt=""><br>3.2 运行 Job<br><img src="/images/flyway-devops-workflow-dev2.jpeg" alt=""></li>
-</ol>
-<h4 id="运维人员-Workflow"><a href="#运维人员-Workflow" class="headerlink" title="运维人员 Workflow"></a>运维人员 Workflow</h4><p>运维人员只负责线上 SQL 的升级：</p>
-<ol>
-<li>开发人员告知运维人员本次上线 db 脚本已提交到代码仓库并 merge 到 master 分支；</li>
-<li>运维人员点击 Jenkins Job 执行相应服务的数据库升级：<br>2.1 选择服务名称+要升级的数据库名称<br><img src="/images/flyway-devops-workflow-ops1.jpeg" alt=""><br>2.2 运行 Job，Pipeline 会阻塞在确认节点，做最后的审查<br><img src="/images/flyway-devops-workflow-ops2.jpeg" alt=""><br>2.3 Job 执行完成<br><img src="/images/flyway-devops-workflow-ops3.jpeg" alt=""></li>
-</ol>
-<h4 id="Workflow-举例"><a href="#Workflow-举例" class="headerlink" title="Workflow 举例"></a>Workflow 举例</h4><ol>
-<li><p>新建一个 gitlab 工程，专门存放 db 脚本：<br>服务名称假设为 db-migration-demo，db 名称为 demo，仓库里面存放的 SQL 脚本如下：<br><img src="/images/flyway-devops-example1.png" alt=""></p>
-</li>
-<li><p>git 提交代码，然后点击 Jenkins Job，执行数据库升级<br><img src="/images/flyway-devops-example2.png" alt=""></p>
-</li>
-</ol>
-<h3 id="关于-Pipeline-设计的两个功能点"><a href="#关于-Pipeline-设计的两个功能点" class="headerlink" title="关于 Pipeline 设计的两个功能点"></a>关于 Pipeline 设计的两个功能点</h3><h4 id="1-数据库整库备份策略"><a href="#1-数据库整库备份策略" class="headerlink" title="1. 数据库整库备份策略"></a>1. 数据库整库备份策略</h4><p>数据库 DDL 变更前整库备份一下是有必要的，但是每次变更都整库备份也不合理，因为可能某天上线，数据库升级比较集中，一天内会触发很多次备份，造成了资源的浪费。解决方案是给备份一个时间窗口（比如 2 小时），每次执行前判断下最近两小时是否有备份，如果没有则触发整库备份，这样就能避免每次执行 Job 都会触发整库备份。<br>具体解决方法：<br>获取当前时间减去两小时的时间，然后和上次整库备份的时间戳比较，如果前者大，说明最近两小时内没备份，然后自动触发整库备份，时间戳比较用 Shell 脚本实现：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/bin/bash</span></span><br><span class="line"></span><br><span class="line">t1=`date -d <span class="string">"<span class="variable">$1</span>"</span> +%s`</span><br><span class="line">t2=`date -d <span class="string">"<span class="variable">$2</span>"</span> +%s`</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$t1</span> -ge <span class="variable">$t2</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"true"</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"false"</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="2-每次变更前备份库下的所有表结构，同时记录下-FlywayDB-更改前后状态"><a href="#2-每次变更前备份库下的所有表结构，同时记录下-FlywayDB-更改前后状态" class="headerlink" title="2. 每次变更前备份库下的所有表结构，同时记录下 FlywayDB 更改前后状态"></a>2. 每次变更前备份库下的所有表结构，同时记录下 FlywayDB 更改前后状态</h4><p>表结构备份和 FlywayDB 更改前后状态信息都以制品的方式归到 Jenkins，这样可以随时在 Jenkins 界面查看相关信息，比如查看 Flyway 前后执行状态如何，点开制品页即可看到：<br><img src="/images/flyway-devops-artifact.jpeg" alt=""></p>
-<p><img src="/images/flyway-devops-flywahystate.png" alt=""></p>
-<h3 id="附：Pipeline-脚本实现"><a href="#附：Pipeline-脚本实现" class="headerlink" title="附：Pipeline 脚本实现"></a>附：Pipeline 脚本实现</h3><p>为例减小文章的篇幅，这里只贴下运维人员 Workflow 的 Jenkins pipeline 脚本，研发人员的和这个类似，只是一些小的改动。<br><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">  parameters &#123;</span><br><span class="line">    //服务名称</span><br><span class="line">    choice(name:<span class="string">'serviceName'</span>, choices: [</span><br><span class="line">     <span class="string">'db-migration-demo'</span></span><br><span class="line">     ]</span><br><span class="line">    , description: <span class="string">'服务名称'</span>)</span><br><span class="line">    //数据库</span><br><span class="line">    choice(name:<span class="string">'dbName'</span>, choices: [</span><br><span class="line">     <span class="string">'demo'</span></span><br><span class="line">    ]</span><br><span class="line">    , description: <span class="string">'数据库名称'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  agent &#123;</span><br><span class="line">    kubernetes &#123;</span><br><span class="line">      label <span class="string">"sql-<span class="subst">$&#123;UUID.randomUUID().toString()&#125;</span>"</span></span><br><span class="line">      defaultContainer <span class="string">'jnlp'</span></span><br><span class="line">      yaml <span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">apiVersion: v1</span></span><br><span class="line"><span class="string">kind: Pod</span></span><br><span class="line"><span class="string">metadata:</span></span><br><span class="line"><span class="string">  labels:</span></span><br><span class="line"><span class="string">    some-label: db-imgration</span></span><br><span class="line"><span class="string">spec:</span></span><br><span class="line"><span class="string">  containers:</span></span><br><span class="line"><span class="string">  - name: flyway</span></span><br><span class="line"><span class="string">    image: boxfuse/flyway</span></span><br><span class="line"><span class="string">    command:</span></span><br><span class="line"><span class="string">    - cat</span></span><br><span class="line"><span class="string">    tty: true</span></span><br><span class="line"><span class="string">  - name: mysql-client</span></span><br><span class="line"><span class="string">    image: arey/mysql-client</span></span><br><span class="line"><span class="string">    command:</span></span><br><span class="line"><span class="string">    - cat</span></span><br><span class="line"><span class="string">    tty: true</span></span><br><span class="line"><span class="string">  - name: gcloud</span></span><br><span class="line"><span class="string">    image: google/cloud-sdk:alpine</span></span><br><span class="line"><span class="string">    command:</span></span><br><span class="line"><span class="string">    - cat</span></span><br><span class="line"><span class="string">    tty: true</span></span><br><span class="line"><span class="string">"</span><span class="string">""</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  post &#123;</span><br><span class="line">      failure &#123;</span><br><span class="line">        echo <span class="string">"Database migration failed!"</span></span><br><span class="line">      &#125;</span><br><span class="line">      success &#123;</span><br><span class="line">        echo <span class="string">"Database migration success!"</span></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">  options &#123;</span><br><span class="line">      gitLabConnection(<span class="string">'gitlab-connection'</span>)</span><br><span class="line">      //保持构建的最大个数</span><br><span class="line">      buildDiscarder(logRotator(numToKeepStr: <span class="string">'20'</span>))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  stages &#123;</span><br><span class="line">    stage(<span class="string">'初始化'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">          script &#123;</span><br><span class="line">            currentBuild.description = <span class="string">"production环境<span class="subst">$&#123;params.serviceName&#125;</span>服务<span class="subst">$&#123;params.dbName&#125;</span>库升级..."</span></span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          container(<span class="string">'gcloud'</span>) &#123;</span><br><span class="line">            withCredentials([file(credentialsId: <span class="string">'cloudInfrastructureAccess'</span>, variable: <span class="string">'cloudSQLCredentials'</span>)]) &#123;</span><br><span class="line">              sh <span class="string">"gcloud auth activate-service-account <span class="subst">$&#123;env.cloudInfrastructureAccessSA&#125;</span> --key-file=<span class="subst">$&#123;cloudSQLCredentials&#125;</span> --project=<span class="subst">$&#123;env.gcpProject&#125;</span>"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          </span><br><span class="line">          // 判断是否要进行数据库备份，如果两小时内没有备份则自动触发全量备份</span><br><span class="line">          script &#123;</span><br><span class="line">            isBackup = <span class="string">'false'</span></span><br><span class="line">            // 默认 jenkins 跑在 busybox 容器，获取时间和普通 Linux 发行版有点区别</span><br><span class="line">            date2HoursAgo = sh(returnStdout: true, script: <span class="string">"date -u +'%Y-%m-%d %H' -d@\"</span>\$((<span class="string">`date +%s`</span>-<span class="number">7200</span>))\<span class="string">""</span>).trim()</span><br><span class="line">            container(<span class="string">'gcloud'</span>) &#123;</span><br><span class="line">              latestDBBackupTime = sh(returnStdout: true, script: <span class="string">"gcloud sql backups list --instance=<span class="subst">$&#123;env.prodMySqlInstance&#125;</span> --limit=1 | grep -v 'WINDOW_START_TIME' | awk '&#123;print \$2&#125;' | awk -F ':' '&#123;print \$1&#125;'|sed 's/T/ /g'"</span>).trim()</span><br><span class="line">            &#125;</span><br><span class="line">            withCredentials([file(credentialsId: <span class="string">'time-compare.sh'</span>, variable: <span class="string">'timeCompare'</span>)]) &#123;</span><br><span class="line">              isBackup = sh(returnStdout: true, script: <span class="string">"sh <span class="subst">$&#123;timeCompare&#125;</span> \'$date2HoursAgo\' \'$latestDBBackupTime\'"</span>).trim()</span><br><span class="line">              echo <span class="string">"$date2HoursAgo"</span></span><br><span class="line">              echo <span class="string">"$latestDBBackupTime"</span></span><br><span class="line">              echo <span class="string">"$isBackup"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 如果两小时内没有备份则自动触发全量备份</span><br><span class="line">    stage(<span class="string">'整库智能备份'</span>) &#123;</span><br><span class="line">        <span class="keyword">when</span> &#123;</span><br><span class="line">          expression &#123; isBackup == <span class="string">'true'</span> &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        steps &#123;</span><br><span class="line">          script &#123;</span><br><span class="line">            container(<span class="string">'gcloud'</span>) &#123;</span><br><span class="line">              // 列出最近 <span class="number">10</span> 个备份，便于观察</span><br><span class="line">              sh <span class="string">"gcloud sql backups list --instance=<span class="subst">$&#123;env.prodMysqlInstance&#125;</span> --limit=10"</span></span><br><span class="line">              backupTimestamp = sh(returnStdout: true, script: <span class="string">"date -u +'%Y-%m-%d %H%M%S'"</span>).trim()</span><br><span class="line">              backupDescription=<span class="string">"Flyway backuped at $backupTimestamp (UTC)"</span></span><br><span class="line">              // gcloud 创建 db 备份</span><br><span class="line">              sh <span class="string">"gcloud sql backups create --async --instance=<span class="subst">$&#123;env.prodMysqlInstance&#125;</span> --description=\'$backupDescription\'"</span></span><br><span class="line">              sh <span class="string">"gcloud sql backups list --instance=<span class="subst">$&#123;env.prodMysqlInstance&#125;</span> --limit=10"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    stage(<span class="string">'表结构备份'</span>) &#123;</span><br><span class="line">      steps &#123;</span><br><span class="line">        withCredentials([usernamePassword(credentialsId: <span class="string">"sql-secret-production"</span>, passwordVariable: <span class="string">'sqlPass'</span>, usernameVariable: <span class="string">'sqlUser'</span>)]) &#123;</span><br><span class="line">            container(<span class="string">'mysql-client'</span>) &#123;</span><br><span class="line">              sh <span class="string">"mysqldump -h <span class="subst">$&#123;env.prodMySqlHost&#125;</span> -u$sqlUser -p$sqlPass -d <span class="subst">$&#123;params.dbName&#125;</span> --single-transaction &gt; <span class="subst">$&#123;params.serviceName&#125;</span>-<span class="subst">$&#123;params.dbName&#125;</span>-`TZ=UTC-8 date +%Y%m%d-%H%M%S`-dump.sql"</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        // 表结构备份同步到 gcs 存储桶</span><br><span class="line">        container(<span class="string">'gcloud'</span>) &#123;</span><br><span class="line">          sh <span class="string">"gsutil cp *-dump.sql <span class="subst">$&#123;env.gcsBackupBucket&#125;</span>/db/production/<span class="subst">$&#123;params.serviceName&#125;</span>/"</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // jenkins 归档数据库备份，可在 BlueOcean 页面制品页查看</span><br><span class="line">        archiveArtifacts <span class="string">"*-dump.sql"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stage(<span class="string">'拉取 db 脚本'</span>) &#123;</span><br><span class="line">      steps &#123;</span><br><span class="line">        script &#123;</span><br><span class="line">          checkout([$class: <span class="string">'GitSCM'</span>, branches: [[name: <span class="string">"master"</span>]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: <span class="string">'jenkins-deploy'</span>, url: <span class="string">"<span class="subst">$&#123;env.dbMigrationGitRepoGroup&#125;</span>/<span class="subst">$&#123;params.serviceName&#125;</span>"</span>]]])</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    stage(<span class="string">'flyway migrate'</span>) &#123;</span><br><span class="line">      steps&#123;</span><br><span class="line">        script &#123;</span><br><span class="line">          host = <span class="string">"<span class="subst">$&#123;env.prodMySqlHost&#125;</span>"</span></span><br><span class="line">          timestamp = sh(returnStdout: true, script: <span class="string">"TZ=UTC-8 date +%Y%m%d-%H%M%S"</span>).trim()</span><br><span class="line">          flywayStateFile = <span class="string">"flyway-state-production-<span class="subst">$&#123;params.serviceName&#125;</span>-<span class="subst">$&#123;params.dbName&#125;</span>_<span class="subst">$&#123;timestamp&#125;</span>.txt"</span></span><br><span class="line"></span><br><span class="line">          container(<span class="string">'flyway'</span>) &#123;</span><br><span class="line">            withCredentials([usernamePassword(credentialsId: <span class="string">"sql-secret-production"</span>, passwordVariable: <span class="string">'sqlPass'</span>, usernameVariable: <span class="string">'sqlUser'</span>)])&#123;</span><br><span class="line">              sh <span class="string">"flyway -url=jdbc:mysql://<span class="subst">$&#123;host&#125;</span>/<span class="subst">$&#123;params.dbName&#125;</span>?useSSL=false -user=<span class="subst">$&#123;sqlUser&#125;</span> -password=<span class="subst">$&#123;sqlPass&#125;</span> -locations=filesystem:<span class="subst">$&#123;params.dbName&#125;</span> -baselineOnMigrate=true repair"</span></span><br><span class="line">              sh <span class="string">"echo \"[ flyway 升级前 db 状态 ]\" &gt; $flywayStateFile"</span></span><br><span class="line">              sh <span class="string">"flyway -url=jdbc:mysql://<span class="subst">$&#123;host&#125;</span>/<span class="subst">$&#123;params.dbName&#125;</span>?useSSL=false -user=<span class="subst">$&#123;sqlUser&#125;</span> -password=<span class="subst">$&#123;sqlPass&#125;</span> -locations=filesystem:<span class="subst">$&#123;params.dbName&#125;</span> -baselineOnMigrate=true info \</span></span><br><span class="line"><span class="string">                 | tee -a $flywayStateFile"</span></span><br><span class="line">              try &#123;</span><br><span class="line">                timeout(<span class="keyword">time</span>: <span class="number">8</span>, unit: <span class="string">'HOURS'</span>) &#123;</span><br><span class="line">                  env.isMigrateDB = input message: <span class="string">'确认升级 DB?'</span>,</span><br><span class="line">                  parameters: [choice(name: <span class="string">"isMigrateDB"</span>, choices: <span class="string">'Yes\nNo'</span>, description: <span class="string">"您当前选择要升级的是<span class="subst">$&#123;params.serviceName&#125;</span>服务<span class="subst">$&#123;params.dbName&#125;</span>库，确认升级？"</span>)]</span><br><span class="line">                &#125;</span><br><span class="line">              &#125; catch (err) &#123;</span><br><span class="line">                sh <span class="string">"echo 'Exception!' &amp;&amp; exit 1"</span></span><br><span class="line">              &#125;</span><br><span class="line">              <span class="keyword">if</span> (env.isMigrateDB == <span class="string">'No'</span>) &#123;</span><br><span class="line">                sh <span class="string">"echo '已取消升级!' &amp;&amp; exit 1"</span></span><br><span class="line">              &#125;</span><br><span class="line">              sh <span class="string">"flyway -url=jdbc:mysql://<span class="subst">$&#123;host&#125;</span>/<span class="subst">$&#123;params.dbName&#125;</span>?useSSL=false -user=<span class="subst">$&#123;sqlUser&#125;</span> -password=<span class="subst">$&#123;sqlPass&#125;</span> -locations=filesystem:<span class="subst">$&#123;params.dbName&#125;</span> -baselineOnMigrate=true migrate"</span></span><br><span class="line">              sh <span class="string">"echo \"\n\n[ flyway 升级后 db 状态 ]\" &gt;&gt; $flywayStateFile"</span></span><br><span class="line">              sh <span class="string">"flyway -url=jdbc:mysql://<span class="subst">$&#123;host&#125;</span>/<span class="subst">$&#123;params.dbName&#125;</span>?useSSL=false -user=<span class="subst">$&#123;sqlUser&#125;</span> -password=<span class="subst">$&#123;sqlPass&#125;</span> -locations=filesystem:<span class="subst">$&#123;params.dbName&#125;</span> -baselineOnMigrate=true info \</span></span><br><span class="line"><span class="string">                 | tee -a $flywayStateFile"</span></span><br><span class="line">              archiveArtifacts <span class="string">"$flywayStateFile"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/26/从-Docker-到-Kubernetes-日志管理机制详解/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/26/从-Docker-到-Kubernetes-日志管理机制详解/" itemprop="url">从 Docker 到 Kubernetes 日志管理机制详解</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-26T09:36:40+08:00">
-                2019-08-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubernetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>在容器化时代，容器应用的日志管理和传统应用存在很大的区别，为了顺应容器化应用，Docker 和 Kubernetes 提供了一套完美的日志解决方案。本文从 Docker 到 Kubernetes 逐步介绍在容器化时代日志的管理机制，以及在 Kubernetes 平台下有哪些最佳的日志收集方案。涉及到的话题有 Docker 日志管理机制、Kubernetes 日志管理机制、Kubernetes 集群日志收集方案。本文结构如下：</p>
-<ul>
-<li><p>Docker 日志管理机制</p>
-<ul>
-<li>Docker 的日志种类</li>
-<li>基于日志驱动（loging driver）的日志管理机制</li>
-<li>Docker 日志驱动（loging driver）配置</li>
-<li>Docker 默认的日志驱动 <code>json-file</code></li>
-</ul>
-</li>
-<li><p>Kubernetes 日志管理机制</p>
-<ul>
-<li>应用 Pod 日志</li>
-<li>Kuberntes 集群组件日志</li>
-</ul>
-</li>
-<li><p>Kubernetes 集群日志收集方案</p>
-<ul>
-<li>节点级日志代理方案</li>
-<li>sidecar 容器方案</li>
-<li>应用程序直接将日志传输到日志平台</li>
-</ul>
-</li>
-</ul>
-<h3 id="Docker-日志管理机制"><a href="#Docker-日志管理机制" class="headerlink" title="Docker 日志管理机制"></a>Docker 日志管理机制</h3><h4 id="Docker-的日志种类"><a href="#Docker-的日志种类" class="headerlink" title="Docker 的日志种类"></a>Docker 的日志种类</h4><p>在 Docker 中日志分为两大类：</p>
-<ul>
-<li>Docker 引擎日志；</li>
-<li>容器日志；</li>
-</ul>
-<h5 id="Docker-引擎日志"><a href="#Docker-引擎日志" class="headerlink" title="Docker 引擎日志"></a>Docker 引擎日志</h5><p>Docker 引擎日志就是 docker 服务的日志，即 <code>dockerd</code> 守护进程的日志，在支持 Systemd 的系统中可以通过 <code>journal -u docker</code> 查看日志。</p>
-<p><img src="/images/docker-systemd.png" alt=""></p>
-<h5 id="容器日志"><a href="#容器日志" class="headerlink" title="容器日志"></a>容器日志</h5><p>容器日志指的是每个容器打到 stdout 和 stderr 的日志，而不是容器内部的日志文件。docker 管理所有容器打到 stdout 和 stderr 的日志，其他来源的日志不归 docker 管理。我们通过 <code>docker logs</code> 命令查看容器日志都是读取容器打到 stdout 和 stderr 的日志。</p>
-<h4 id="基于日志驱动（loging-driver）的日志管理机制"><a href="#基于日志驱动（loging-driver）的日志管理机制" class="headerlink" title="基于日志驱动（loging driver）的日志管理机制"></a>基于日志驱动（loging driver）的日志管理机制</h4><p>Docker 提供了一套通用、灵活的日志管理机制，Docker 将所有容器打到 stdout 和 stderr 的日志都统一通过日志驱动重定向到某个地方。</p>
-<p>Docker 支持的日志驱动有很多，比如 local、json-file、syslog、journald 等等，类似插件一样，不同的日志驱动可以将日志重定向到不同的地方，这体现了 Docker 日志管理的灵活性，以热插拔的方式实现日志不同目的地的输出。</p>
-<p>Dokcer 默认的日志日志驱动是 <code>json-file</code>，该驱动将将来自容器的 stdout 和 stderr  日志都统一以 <code>json</code> 的形式存储到本地磁盘。日志存储路径格式为：<code>/var/lib/docker/containers/&lt;容器 id&gt;/&lt;容器 id&gt;-json.log</code>。所以可以看出在 <code>json-file</code> 日志驱动下，Docker 将所有容器日志都统一重定向到了 <code>/var/lib/docker/containers/</code> 目录下，这为日志收集提供了很大的便利。</p>
-<blockquote>
-<p>注意：只有日志驱动为：local、json-file 或者 journald 时，<code>docker logs</code> 命令才能查看到容器打到 stdout/stderr 的日志。</p>
-</blockquote>
-<p><img src="/images/docker-logging-arch.png" alt=""></p>
-<p>下面为官方支持的日志驱动列表：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">驱动</th>
-<th style="text-align:left">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">none</td>
-<td style="text-align:left">运行的容器没有日志，<code>docker logs</code> 也不返回任何输出。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/local/" target="_blank" rel="noopener">local</a></td>
-<td style="text-align:left">日志以自定义格式存储，旨在实现最小开销。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/json-file/" target="_blank" rel="noopener">json-file</a></td>
-<td style="text-align:left">日志格式为JSON。Docker的默认日志记录驱动程序。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/syslog/" target="_blank" rel="noopener">syslog</a></td>
-<td style="text-align:left">将日志消息写入syslog。该 syslog 守护程序必须在主机上运行。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/journald/" target="_blank" rel="noopener">journald</a></td>
-<td style="text-align:left">将日志消息写入journald。该journald守护程序必须在主机上运行。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/gelf/" target="_blank" rel="noopener">gelf</a></td>
-<td style="text-align:left">将日志消息写入Graylog扩展日志格式（GELF）端点，例如Graylog或Logstash。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/fluentd/" target="_blank" rel="noopener">fluentd</a></td>
-<td style="text-align:left">将日志消息写入fluentd（转发输入）。该fluentd守护程序必须在主机上运行。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/awslogs/" target="_blank" rel="noopener">awslogs</a></td>
-<td style="text-align:left">将日志消息写入Amazon CloudWatch Logs。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/splunk/" target="_blank" rel="noopener">splunk</a></td>
-<td style="text-align:left">使 用HTTP 事件收集器将日志消息写入 splunk。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/etwlogs/" target="_blank" rel="noopener">etwlogs</a></td>
-<td style="text-align:left">将日志消息写为 Windows 事件跟踪（ETW）事件。仅适用于Windows平台。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/gcplogs/" target="_blank" rel="noopener">gcplogs</a></td>
-<td style="text-align:left">将日志消息写入 Google Cloud Platform（GCP）Logging。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://docs.docker.com/config/containers/logging/logentries/" target="_blank" rel="noopener">logentries</a></td>
-<td style="text-align:left">将日志消息写入 Rapid7 Logentries。</td>
-</tr>
-</tbody>
-</table>
-<h4 id="Docker-日志驱动（loging-driver）配置"><a href="#Docker-日志驱动（loging-driver）配置" class="headerlink" title="Docker 日志驱动（loging driver）配置"></a>Docker 日志驱动（loging driver）配置</h4><p>上面我们已经知道 Docker 支持多种日志驱动类型，我们可以修改默认的日志驱动配置。日志驱动可以全局配置，也可以给特定容器配置。</p>
-<ul>
-<li><p>查看 Docker 当前的日志驱动配置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker  info |grep  <span class="string">"Logging Driver"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查看单个容器的设置的日志驱动</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect  -f <span class="string">'&#123;&#123;.HostConfig.LogConfig.Type&#125;&#125;'</span>   容器id</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Docker 日志驱动全局配置<br>全局配置意味所有容器都生效，编辑 /etc/docker/daemon.json 文件（如果文件不存在新建一个），添加日志驱动配置。<br>示例：配置 Docker 引擎日志驱动为 <code>syslog</code></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"log-driver"</span>: <span class="string">"syslog"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>给特定容器配置日志驱动<br>在启动容器时指定日志驱动 <code>--log-driver</code> 参数。<br>示例：启动 nginx 容器，日志驱动指定为 journald</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker  run --name nginx -d --<span class="built_in">log</span>-driver journald nginx</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="Docker-默认的日志驱动-json-file"><a href="#Docker-默认的日志驱动-json-file" class="headerlink" title="Docker 默认的日志驱动 json-file"></a>Docker 默认的日志驱动 <code>json-file</code></h4><p>json-file 日志驱动记录所有容器的 STOUT/STDERR 的输出 ，用 JSON 的格式写到文件中，每一条 json 日志中默认包含 <code>log</code>, <code>stream</code>, <code>time</code> 三个字段，示例日志如下：<br>文件路径为：<br><code>/var/lib/docker/containers/40f1851f5eb9e684f0b0db216ea19542529e0a2a2e7d4d8e1d69f3591a573c39/40f1851f5eb9e684f0b0db216ea19542529e0a2a2e7d4d8e1d69f3591a573c39-json.log</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">"log"</span>:<span class="string">"14:C 25 Jul 2019 12:27:04.072 * DB saved on disk\n"</span>,<span class="string">"stream"</span>:<span class="string">"stdout"</span>,<span class="string">"time"</span>:<span class="string">"2019-07-25T12:27:04.072712524Z"</span>&#125;</span><br></pre></td></tr></table></figure></p>
-<p>那么打到磁盘的 json 文件该如何配置轮转，防止撑满磁盘呢？每种 Docker 日志驱动都有相应的配置项日志轮转，比如根据单个文件大小和日志文件数量配置轮转。<code>json-file</code> 日志驱动支持的配置选项如下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">选项</th>
-<th style="text-align:left">描述</th>
-<th style="text-align:left">示例值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">max-size</td>
-<td style="text-align:left">切割之前日志的最大大小。可取值单位为(k,m,g)， 默认为-1（表示无限制）。</td>
-<td style="text-align:left"><code>--log-opt max-size=10m</code></td>
-</tr>
-<tr>
-<td style="text-align:left">max-file</td>
-<td style="text-align:left">可以存在的最大日志文件数。如果切割日志会创建超过阈值的文件数，则会删除最旧的文件。仅在max-size设置时有效。正整数。默认为1。</td>
-<td style="text-align:left"><code>--log-opt max-file=3</code></td>
-</tr>
-<tr>
-<td style="text-align:left">labels</td>
-<td style="text-align:left">适用于启动Docker守护程序时。此守护程序接受的以逗号分隔的与日志记录相关的标签列表。</td>
-<td style="text-align:left"><code>--log-opt labels=production_status,geo</code></td>
-</tr>
-<tr>
-<td style="text-align:left">env</td>
-<td style="text-align:left">适用于启动Docker守护程序时。此守护程序接受的以逗号分隔的与日志记录相关的环境变量列表。</td>
-<td style="text-align:left"><code>--log-opt env=os,customer</code></td>
-</tr>
-<tr>
-<td style="text-align:left">compress</td>
-<td style="text-align:left">切割的日志是否进行压缩。默认是disabled。</td>
-<td style="text-align:left"><code>--log-opt compress=true</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="Kubernetes-日志管理机制"><a href="#Kubernetes-日志管理机制" class="headerlink" title="Kubernetes 日志管理机制"></a>Kubernetes 日志管理机制</h3><p>在 Kubernetes 中日志也主要有两大类：</p>
-<ul>
-<li>应用 Pod 日志；</li>
-<li>Kuberntes 集群组件日志；</li>
-</ul>
-<h5 id="应用-Pod-日志"><a href="#应用-Pod-日志" class="headerlink" title="应用 Pod 日志"></a>应用 Pod 日志</h5><p> Kubernetes Pod 的日志管理是基于 Docker 引擎的，Kubernetes 并不管理日志的轮转策略，日志的存储都是基于 Docker 的日志管理策略。k8s 集群调度的基本单位就是 Pod，而 Pod 是一组容器，所以 k8s 日志管理基于 Docker 引擎这一说法也就不难理解了，最终日志还是要落到一个个容器上面。</p>
-<p><img src="/images/k8s-logging-arch.png" alt=""></p>
-<p>假设 Docker 日志驱动为 <code>json-file</code>，那么在 k8s 每个节点上，kubelet 会为每个容器的日志创建一个软链接，软连接存储路径为：<code>/var/log/containers/</code>，软连接会链接到 <code>/var/log/pods/</code> 目录下相应 pod 目录的容器日志，被链接的日志文件也是软链接，最终链接到 Docker 容器引擎的日志存储目录：<code>/var/lib/docker/container</code> 下相应容器的日志。另外这些软链接文件名称含有 k8s 相关信息，比如：Pod id，名字空间，容器 ID 等信息，这就为日志收集提供了很大的便利。</p>
-<p>举例：我们跟踪一个容器日志文件，证明上述的说明，跟踪一个 kong Pod 日志，Pod 副本数为 1</p>
-<blockquote>
-<p>/var/log/containers/kong-kong-d889cf995-2ntwz_kong_kong-432e47df36d0992a3a8d20ef6912112615ffeb30e6a95c484d15614302f8db03.log<br><code>-------&gt;</code><br>/var/log/pods/kong_kong-kong-d889cf995-2ntwz_a6377053-9ca3-48f9-9f73-49856908b94a/kong/0.log<br><code>-------&gt;</code><br>/var/lib/docker/containers/432e47df36d0992a3a8d20ef6912112615ffeb30e6a95c484d15614302f8db03/432e47df36d0992a3a8d20ef6912112615ffeb30e6a95c484d15614302f8db03-json.log</p>
-</blockquote>
-<p><img src="/images/docker-k8s-logging-arch.png" alt=""></p>
-<h5 id="Kuberntes-集群组件日志"><a href="#Kuberntes-集群组件日志" class="headerlink" title="Kuberntes 集群组件日志"></a>Kuberntes 集群组件日志</h5><p>Kuberntes 集群组件日志分为两类：</p>
-<ul>
-<li>运行在容器中的 Kubernetes scheduler 和 kube-proxy。</li>
-<li>未运行在容器中的 kubelet 和容器 runtime，比如 Docker。</li>
-</ul>
-<p>在使用 systemd 机制的服务器上，kubelet 和容器 runtime 写入日志到 journald。如果没有 systemd，他们写入日志到 /var/log 目录的 .log 文件。容器中的系统组件通常将日志写到 /var/log 目录，在 kubeadm 安装的集群中它们以静态 Pod 的形式运行在集群中，因此日志一般在 <code>/var/log/pods</code> 目录下。</p>
-<h3 id="Kubernetes-集群日志收集方案"><a href="#Kubernetes-集群日志收集方案" class="headerlink" title="Kubernetes 集群日志收集方案"></a>Kubernetes 集群日志收集方案</h3><p> Kubernetes 本身并未提供集群日志收集方案，k8s 官方文档给了三种日志收集的建议方案：</p>
-<ul>
-<li>使用运行在每个节点上的节点级的日志代理</li>
-<li>在应用程序的 pod 中包含专门记录日志 sidecar 容器</li>
-<li>应用程序直接将日志传输到日志平台</li>
-</ul>
-<h4 id="节点级日志代理方案"><a href="#节点级日志代理方案" class="headerlink" title="节点级日志代理方案"></a>节点级日志代理方案</h4><p>从前面的介绍我们已经了解到，k8s 每个节点都将容器日志统一存储到了 <code>/var/log/containers/</code> 目录下，因此可以在每个节点安装一个日志代理，将该目录下的日志实时传输到日志存储平台。</p>
-<p>由于需要每个节点运行一个日志代理，因此日志代理推荐以 DaemonSet 的方式运行在每个节点。官方推荐的日志代理是 fluentd，当然也可以使用其他日志代理，比如 filebeat，logstash 等。</p>
-<p><img src="/images/k8s-logging-arch1.png" alt=""></p>
-<h4 id="sidecar-容器方案"><a href="#sidecar-容器方案" class="headerlink" title="sidecar 容器方案"></a>sidecar 容器方案</h4><p>有两种使用 sidecar 容器的方式：</p>
-<ul>
-<li>sidecar 容器重定向日志流</li>
-<li>sidecar 容器作为日志代理</li>
-</ul>
-<h5 id="sidecar-容器重定向日志流"><a href="#sidecar-容器重定向日志流" class="headerlink" title="sidecar 容器重定向日志流"></a>sidecar 容器重定向日志流</h5><p>这种方式基于节点级日志代理方案，sidecar 容器和应用容器在同一个 Pod 运行，这个容器的作用就是读取应用容器的日志文件，然后将读取的日志内容重定向到 stdout 和 stderr，然后通过节点级日志代理统一收集。这种方式不推荐使用，缺点就是日志重复存储了，导致磁盘使用会成倍增加。比如应用容器的日志本身打到文件存储了一份，sidecar 容器重定向又存储了一份（存储到了 /var/lib/docker/containers/ 目录下）。这种方式的应用场景是应用本身不支持将日志打到 stdout 和 stderr，所以才需要 sidecar 容器重定向下。</p>
-<p><img src="/images/k8s-logging-arch2.png" alt=""></p>
-<h5 id="sidecar-容器作为日志代理"><a href="#sidecar-容器作为日志代理" class="headerlink" title="sidecar 容器作为日志代理"></a>sidecar 容器作为日志代理</h5><p>这种方式不需要节点级日志代理，和应用容器在一起的 sidecar 容器直接作为日志代理方式运行在 Pod 中，sidecar 容器读取应用容器的日志，然后直接实时传输到日志存储平台。很显然这种方式也存在一个缺点，就是每个应用 Pod 都需要有个 sidecar 容器作为日志代理，而日志代理对系统 CPU、和内存都有一定的消耗，在节点 Pod 数很多的时候这个资源消耗其实是不小的。另外还有个问题就是在这种方式下由于应用容器日志不直接打到 stdout 和 stderr，所以是无法使用 <code>kubectl logs</code> 命令查看 Pod 中容器日志。</p>
-<p><img src="/images/k8s-logging-arch3.png" alt=""></p>
-<h4 id="应用程序直接将日志传输到日志平台"><a href="#应用程序直接将日志传输到日志平台" class="headerlink" title="应用程序直接将日志传输到日志平台"></a>应用程序直接将日志传输到日志平台</h4><p>这种方式就是应用程序本身直接将日志打到统一的日志收集平台，比如 Java 应用可以配置日志的 appender，打到不同的地方，很显然这种方式对应用程序有一定的侵入性，而且还要保证日志系统的健壮性，从这个角度看应用和日志系统还有一定的耦合性，所以个人不是很推荐这种方式。</p>
-<p>总结：综合对比上述三种日志收集方案优缺点，更推荐使用节点级日志代理方案，这种方式对应用没有侵入性，而且对系统资源没有额外的消耗，也不影响 kubelet 工具查看 Pod 容器日志。</p>
-<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://juejin.im/entry/5c03f8bb5188251ba905741d" target="_blank" rel="noopener">https://juejin.im/entry/5c03f8bb5188251ba905741d</a> | Docker 日志驱动配置<br><a href="https://www.cnblogs.com/operationhome/p/10907591.html" target="_blank" rel="noopener">https://www.cnblogs.com/operationhome/p/10907591.html</a> | Docker容器日志管理最佳实践<br><a href="https://www.cnblogs.com/cocowool/p/Docker_Kubernetes_Log_Location.html" target="_blank" rel="noopener">https://www.cnblogs.com/cocowool/p/Docker_Kubernetes_Log_Location.html</a> | 谈一下Docker与Kubernetes集群的日志和日志管理<br><a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/cluster-administration/logging/</a> | Kubernetes 日志架构</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2239,7 +1985,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">121</span>
+                  <span class="site-state-item-count">125</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

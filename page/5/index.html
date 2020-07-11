@@ -81,13 +81,13 @@
 
 <meta name="description" content="Talk is cheap. Show me the code.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="The Spectre">
+<meta property="og:title" content="Jim">
 <meta property="og:url" content="http://yoursite.com/page/5/index.html">
-<meta property="og:site_name" content="The Spectre">
+<meta property="og:site_name" content="Jim">
 <meta property="og:description" content="Talk is cheap. Show me the code.">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="The Spectre">
+<meta name="twitter:title" content="Jim">
 <meta name="twitter:description" content="Talk is cheap. Show me the code.">
 
 
@@ -124,7 +124,7 @@
 
 
 
-  <title>The Spectre</title>
+  <title>Jim</title>
   
 
 
@@ -155,7 +155,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">The Spectre</span>
+        <span class="site-title">Jim</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -296,6 +296,636 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/07/使用-Vagrant-调试-Ansible-Playbook/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/06/07/使用-Vagrant-调试-Ansible-Playbook/" itemprop="url">使用 Vagrant 调试 Ansible Playbook</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-07T15:09:09+08:00">
+                2019-06-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Ansible/" itemprop="url" rel="index">
+                    <span itemprop="name">Ansible</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p> <img src="/images/vagrant-vbox-ansible.png" alt="Alt text"></p>
+<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>本文主要介绍使用 Vagrant 本地调试 Ansible Playbook 的最佳实践。</p>
+<p>我平时用 ansible 做一些自动化任务，难免要写很多 playbook，如果直接将写的 playbook 在线上或者真实的服务器运行难免会担心出错，而且很可能会导致严重的错误。最好的方法就是先在本地虚拟机测试好，然后跑到真实的环境。我们可以将 Vagrant 和 ansible 结合使用来轻松地在本地调试 playbook。为什么使用这种方式呢？我觉得有如下好处（当然用了之后就知道有多爽了）：</p>
+<ul>
+<li>虚拟机用 Vagrant 管理，随时可以方便地删除、重建，这些操作都是简单的命令行；</li>
+<li>ansible 脚本在本地虚拟机可以随便折腾，哪怕 VM 折腾坏了，可以马上重建 VM；</li>
+<li>所有操作都是基于配置文件，没有界面点触式操作，可以很好地将其工程化，放到 git 仓库统一管理；</li>
+</ul>
+<h3 id="Vagrant-结合-Ansible-的-workflow"><a href="#Vagrant-结合-Ansible-的-workflow" class="headerlink" title="Vagrant 结合 Ansible 的 workflow"></a>Vagrant 结合 Ansible 的 workflow</h3><p>Vagrant 结合 Ansible 的主要工作原理是使用 Vagrant 的 <a href="https://www.vagrantup.com/docs/provisioning/ansible_local.html" target="_blank" rel="noopener">ansible_local</a> 或者 <a href="https://www.vagrantup.com/docs/provisioning/ansible.html" target="_blank" rel="noopener">ansible</a> 配置器(Provisioner)，这两个的唯一区别是前者会在 provision 时自动在 VM 安装 ansible，后者不会自动安装，需要自行安装。我选择用 ansible_local 配置器，懒得装一遍 ansible… 而且在 <code>vagrant destroy</code> 销毁虚拟机后重建时还能得到与之前一致的配置。</p>
+<p>下面介绍下我本地调试 ansible playbook 脚本的 workflow。</p>
+<ol>
+<li><p>使用 Vagrantfile 定义虚拟机</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  config.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">  config.vm.hostname= <span class="string">"ansible"</span></span><br><span class="line">  config.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.100"</span></span><br><span class="line">  config.vm.provider <span class="symbol">:virtualbox</span> <span class="keyword">do</span> <span class="params">|vbox|</span></span><br><span class="line">      vbox.name = <span class="string">"ansible_vagrant"</span></span><br><span class="line">      vbox.memory = <span class="string">"512"</span></span><br><span class="line">      vbox.cpus = <span class="number">1</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  <span class="comment"># ansible 相关配置</span></span><br><span class="line">  config.vm.provision <span class="string">"ansible_local"</span> <span class="keyword">do</span> <span class="params">|ansible|</span></span><br><span class="line">    <span class="comment"># ansible 运行时输出详细信息，作用同 ansible-playbook 的 -v 参数</span></span><br><span class="line">    <span class="comment"># ansible.verbose = "v"</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 指定运行哪个 playbook</span></span><br><span class="line">    ansible.playbook = <span class="string">"playbook.yml"</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 Vagrant 工程目录下编写 playbook，示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">Test</span> <span class="string">Playbook...</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span></span><br><span class="line"><span class="attr">  become:</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">  gather_facts:</span> <span class="literal">no</span></span><br><span class="line"><span class="attr">  vars:</span></span><br><span class="line"><span class="attr">    - ip_list:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.2</span></span><br><span class="line"><span class="attr">  tasks:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">remove</span> <span class="string">ip</span> <span class="string">list</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      file:</span></span><br><span class="line"><span class="attr">        state:</span> <span class="string">absent</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">/tmp/ip.txt</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">test</span> <span class="string">gen</span> <span class="string">file</span></span><br><span class="line"><span class="attr">      shell:</span> <span class="string">echo</span> <span class="string">"<span class="template-variable">&#123;&#123; item &#125;&#125;</span>"</span> <span class="string">&gt;&gt;</span> <span class="string">/tmp/ip.txt</span></span><br><span class="line"><span class="attr">      with_items:</span> <span class="string">"<span class="template-variable">&#123;&#123; ip_list &#125;&#125;</span>"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>playbook 写完后 执行 <code>vagrant up</code> 启动虚拟机，启动过程中会自动执行 Vagrantfile 中配置的 playbook 文件（在 Vagrant 工程目录下）；</p>
+</li>
+<li>如果 playbook 运行有问题，则继续修改；</li>
+<li>执行 <code>vagrant rsync &amp;&amp; vagrant provision</code> 重新运行 playbook；<blockquote>
+<p>注意：在执行 vagrant provision 之前，一定要先 vagrant rsync 同步下本地主机和 VM 的共享目录，否则本地修改后不会生效。ansible 脚本的运行最终是在 VM 上面，读取的文件都是在 VM 的 /vagrant 目录。</p>
+</blockquote>
+</li>
+<li>如果测试 playbook 还是有问题则返回到第 4 步继续修改并测试；</li>
+<li>如果一切都测试顺利的话，为了保险，最后模拟一下真实的环境：<code>vagrant destroy</code> 销毁 VM，然后 <code>vagrant up</code> 重新创建 VM 并自动运行 ansible playbook。</li>
+</ol>
+<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://linux.cn/article-9502-1.html" target="_blank" rel="noopener">https://linux.cn/article-9502-1.html</a> | 使用 Vagrant 测试 Ansible 剧本<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_intro.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_intro.html</a> | Vagrant 和 Ansible<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_local.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_local.html</a> | Vagrant ansible_local 配置器<br><a href="https://www.vagrantup.com/docs/provisioning/ansible_common.html" target="_blank" rel="noopener">https://www.vagrantup.com/docs/provisioning/ansible_common.html</a> | Vagrant ansible 和 ansible_local 配置器通用配置</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/02/Hexo-next-主题加载自定义-js-文件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/06/02/Hexo-next-主题加载自定义-js-文件/" itemprop="url">Hexo next 主题加载自定义 js 文件</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-02T09:17:12+08:00">
+                2019-06-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>为什么要配置 hexo next 主题自定义 js 文件呢？主要原因有两点：</p>
+<ul>
+<li><p>不可靠：加载第三方站点的 js 依赖其站点的稳定性，如果第三方站点给挂了或者不维护了，那么加载的地址就失效了，访问直接 404… 比如最近就遇到 next 主题”不蒜子”文章 PV 统计功能用不了了，Chrome 抓包发现 <a href="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js</a> 这个地址 404 了，看了 <a href="http://ibruce.info/" target="_blank" rel="noopener">“不蒜子”官方 blog 通知</a> 才发现原来换成了 <a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js。" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js。</a></p>
+</li>
+<li><p>加载速度慢：比如之前将 gitalk 功能用到的 <a href="https://rawgit.com/qhh0205/78e9e0b1f3114db6737f3ed8cdd51d3a/raw/3894c5be5aa2378336b1f5ee0f296fa0b22d06e9/md5.min.js" target="_blank" rel="noopener">https://rawgit.com/qhh0205/78e9e0b1f3114db6737f3ed8cdd51d3a/raw/3894c5be5aa2378336b1f5ee0f296fa0b22d06e9/md5.min.js</a> 文件嵌入到主题，发现每次打开 blog 网站都加载很慢，Chrome 抓包发现是该文件加载缓慢，一直 pending 很久…</p>
+</li>
+</ul>
+<p>那么解决上面两个问题的办法就是可以将远程加载的 js 文件下载下来，放到本地 netx 主题 source/js/src/ 目录下，让 hexo 生成静态网站时，加载生成静态站点本身的 js。下面举两个例子。</p>
+<h4 id="next-主题-gitalk-评论功能加载自定义-js"><a href="#next-主题-gitalk-评论功能加载自定义-js" class="headerlink" title="next 主题 gitalk 评论功能加载自定义 js"></a>next 主题 gitalk 评论功能加载自定义 js</h4><ol>
+<li>将 <a href="https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js" target="_blank" rel="noopener">https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js</a> 文件下载下来放到 <code>themes/next/source/js/src/</code> 路径下。</li>
+<li>修改 <code>themes/next/layout/_third-party/comments/gitalk.swig</code>，加载 <code>md5.min.js</code> 改为 <code>&lt;script src=&quot;/js/src/md5.min.js&quot;&gt;&lt;/script&gt;</code>：<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> page.comments &amp;&amp; theme.gitalk.enable %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"https://unpkg.com/gitalk/dist/gitalk.css"</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://unpkg.com/gitalk/dist/gitalk.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/js/src/md5.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">   <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="xml">        var gitalk = new Gitalk(&#123;</span></span><br><span class="line"><span class="xml">          clientID: '3840ba8c8d80c18be7e3',</span></span><br><span class="line"><span class="xml">          clientSecret: '1b00f2efe5285973c24da9ed9ac895775eacc8ea',</span></span><br><span class="line"><span class="xml">          repo: '</span><span class="template-variable">&#123;&#123; theme.gitalk.repo &#125;&#125;</span><span class="xml">',</span></span><br><span class="line"><span class="xml">          owner: '</span><span class="template-variable">&#123;&#123; theme.gitalk.githubID &#125;&#125;</span><span class="xml">',</span></span><br><span class="line"><span class="xml">          admin: ['</span><span class="template-variable">&#123;&#123; theme.gitalk.adminUser &#125;&#125;</span><span class="xml">'],</span></span><br><span class="line"><span class="xml">          id: md5(location.pathname),</span></span><br><span class="line"><span class="xml">          distractionFreeMode: '</span><span class="template-variable">&#123;&#123; theme.gitalk.distractionFreeMode &#125;&#125;</span><span class="xml">'</span></span><br><span class="line"><span class="xml">        &#125;)</span></span><br><span class="line"><span class="xml">        gitalk.render('gitalk-container')</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="next-主题-“不蒜子”-PV-统计功能加载自定义-js"><a href="#next-主题-“不蒜子”-PV-统计功能加载自定义-js" class="headerlink" title="next 主题 “不蒜子” PV 统计功能加载自定义 js"></a>next 主题 “不蒜子” PV 统计功能加载自定义 js</h4><ol>
+<li>将 <a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js</a> 文件下载<br>下来放到 <code>themes/next/source/js/src/</code> 路径下。</li>
+<li>修改 <code>themes/next/layout/_third-party/analytics/busuanzi-counter.swig</code>，将原先 <code>&lt;script async src=&quot;https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;</code> 改为 <code>&lt;script async src=&quot;/js/src/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;</code>：<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.enable %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"busuanzi-count"</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">async</span> <span class="attr">src</span>=<span class="string">"/js/src/busuanzi.pure.mini.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.site_uv %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-uv"</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_uv_header &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"busuanzi-value"</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_uv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_uv_footer &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.site_pv %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-pv"</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_pv_header &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"busuanzi-value"</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_pv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_pv_footer &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>配置完成后需要 hexo clean &amp;&amp; hexo g 生效…</p>
+<h4 id="附件"><a href="#附件" class="headerlink" title="附件"></a>附件</h4><p>怕以下两个远程站点 js 丢了，在此备份一下吧…<br><a href="https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js：" target="_blank" rel="noopener">https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js：</a><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">!<span class="function"><span class="keyword">function</span>(<span class="params">n</span>)</span>&#123;<span class="string">"use strict"</span>;<span class="function"><span class="keyword">function</span> <span class="title">t</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">var</span> r=(<span class="number">65535</span>&amp;n)+(<span class="number">65535</span>&amp;t);<span class="keyword">return</span>(n&gt;&gt;<span class="number">16</span>)+(t&gt;&gt;<span class="number">16</span>)+(r&gt;&gt;<span class="number">16</span>)&lt;&lt;<span class="number">16</span>|<span class="number">65535</span>&amp;r&#125;<span class="function"><span class="keyword">function</span> <span class="title">r</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> n&lt;&lt;t|n&gt;&gt;&gt;<span class="number">32</span>-t&#125;<span class="function"><span class="keyword">function</span> <span class="title">e</span>(<span class="params">n,e,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> t(r(t(t(e,n),t(u,f)),c),o)&#125;<span class="function"><span class="keyword">function</span> <span class="title">o</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t&amp;r|~t&amp;o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">u</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t&amp;o|r&amp;~o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">c</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t^r^o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(r^(t|~o),n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">i</span>(<span class="params">n,r</span>)</span>&#123;n[r&gt;&gt;<span class="number">5</span>]|=<span class="number">128</span>&lt;&lt;r%<span class="number">32</span>,n[<span class="number">14</span>+(r+<span class="number">64</span>&gt;&gt;&gt;<span class="number">9</span>&lt;&lt;<span class="number">4</span>)]=r;<span class="keyword">var</span> e,i,a,d,h,l=<span class="number">1732584193</span>,g=<span class="number">-271733879</span>,v=<span class="number">-1732584194</span>,m=<span class="number">271733878</span>;<span class="keyword">for</span>(e=<span class="number">0</span>;e&lt;n.length;e+=<span class="number">16</span>)i=l,a=g,d=v,h=m,g=f(g=f(g=f(g=f(g=c(g=c(g=c(g=c(g=u(g=u(g=u(g=u(g=o(g=o(g=o(g=o(g,v=o(v,m=o(m,l=o(l,g,v,m,n[e],<span class="number">7</span>,<span class="number">-680876936</span>),g,v,n[e+<span class="number">1</span>],<span class="number">12</span>,<span class="number">-389564586</span>),l,g,n[e+<span class="number">2</span>],<span class="number">17</span>,<span class="number">606105819</span>),m,l,n[e+<span class="number">3</span>],<span class="number">22</span>,<span class="number">-1044525330</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">4</span>],<span class="number">7</span>,<span class="number">-176418897</span>),g,v,n[e+<span class="number">5</span>],<span class="number">12</span>,<span class="number">1200080426</span>),l,g,n[e+<span class="number">6</span>],<span class="number">17</span>,<span class="number">-1473231341</span>),m,l,n[e+<span class="number">7</span>],<span class="number">22</span>,<span class="number">-45705983</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">8</span>],<span class="number">7</span>,<span class="number">1770035416</span>),g,v,n[e+<span class="number">9</span>],<span class="number">12</span>,<span class="number">-1958414417</span>),l,g,n[e+<span class="number">10</span>],<span class="number">17</span>,<span class="number">-42063</span>),m,l,n[e+<span class="number">11</span>],<span class="number">22</span>,<span class="number">-1990404162</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">12</span>],<span class="number">7</span>,<span class="number">1804603682</span>),g,v,n[e+<span class="number">13</span>],<span class="number">12</span>,<span class="number">-40341101</span>),l,g,n[e+<span class="number">14</span>],<span class="number">17</span>,<span class="number">-1502002290</span>),m,l,n[e+<span class="number">15</span>],<span class="number">22</span>,<span class="number">1236535329</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">1</span>],<span class="number">5</span>,<span class="number">-165796510</span>),g,v,n[e+<span class="number">6</span>],<span class="number">9</span>,<span class="number">-1069501632</span>),l,g,n[e+<span class="number">11</span>],<span class="number">14</span>,<span class="number">643717713</span>),m,l,n[e],<span class="number">20</span>,<span class="number">-373897302</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">5</span>],<span class="number">5</span>,<span class="number">-701558691</span>),g,v,n[e+<span class="number">10</span>],<span class="number">9</span>,<span class="number">38016083</span>),l,g,n[e+<span class="number">15</span>],<span class="number">14</span>,<span class="number">-660478335</span>),m,l,n[e+<span class="number">4</span>],<span class="number">20</span>,<span class="number">-405537848</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">9</span>],<span class="number">5</span>,<span class="number">568446438</span>),g,v,n[e+<span class="number">14</span>],<span class="number">9</span>,<span class="number">-1019803690</span>),l,g,n[e+<span class="number">3</span>],<span class="number">14</span>,<span class="number">-187363961</span>),m,l,n[e+<span class="number">8</span>],<span class="number">20</span>,<span class="number">1163531501</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">13</span>],<span class="number">5</span>,<span class="number">-1444681467</span>),g,v,n[e+<span class="number">2</span>],<span class="number">9</span>,<span class="number">-51403784</span>),l,g,n[e+<span class="number">7</span>],<span class="number">14</span>,<span class="number">1735328473</span>),m,l,n[e+<span class="number">12</span>],<span class="number">20</span>,<span class="number">-1926607734</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">5</span>],<span class="number">4</span>,<span class="number">-378558</span>),g,v,n[e+<span class="number">8</span>],<span class="number">11</span>,<span class="number">-2022574463</span>),l,g,n[e+<span class="number">11</span>],<span class="number">16</span>,<span class="number">1839030562</span>),m,l,n[e+<span class="number">14</span>],<span class="number">23</span>,<span class="number">-35309556</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">1</span>],<span class="number">4</span>,<span class="number">-1530992060</span>),g,v,n[e+<span class="number">4</span>],<span class="number">11</span>,<span class="number">1272893353</span>),l,g,n[e+<span class="number">7</span>],<span class="number">16</span>,<span class="number">-155497632</span>),m,l,n[e+<span class="number">10</span>],<span class="number">23</span>,<span class="number">-1094730640</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">13</span>],<span class="number">4</span>,<span class="number">681279174</span>),g,v,n[e],<span class="number">11</span>,<span class="number">-358537222</span>),l,g,n[e+<span class="number">3</span>],<span class="number">16</span>,<span class="number">-722521979</span>),m,l,n[e+<span class="number">6</span>],<span class="number">23</span>,<span class="number">76029189</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">9</span>],<span class="number">4</span>,<span class="number">-640364487</span>),g,v,n[e+<span class="number">12</span>],<span class="number">11</span>,<span class="number">-421815835</span>),l,g,n[e+<span class="number">15</span>],<span class="number">16</span>,<span class="number">530742520</span>),m,l,n[e+<span class="number">2</span>],<span class="number">23</span>,<span class="number">-995338651</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e],<span class="number">6</span>,<span class="number">-198630844</span>),g,v,n[e+<span class="number">7</span>],<span class="number">10</span>,<span class="number">1126891415</span>),l,g,n[e+<span class="number">14</span>],<span class="number">15</span>,<span class="number">-1416354905</span>),m,l,n[e+<span class="number">5</span>],<span class="number">21</span>,<span class="number">-57434055</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">12</span>],<span class="number">6</span>,<span class="number">1700485571</span>),g,v,n[e+<span class="number">3</span>],<span class="number">10</span>,<span class="number">-1894986606</span>),l,g,n[e+<span class="number">10</span>],<span class="number">15</span>,<span class="number">-1051523</span>),m,l,n[e+<span class="number">1</span>],<span class="number">21</span>,<span class="number">-2054922799</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">8</span>],<span class="number">6</span>,<span class="number">1873313359</span>),g,v,n[e+<span class="number">15</span>],<span class="number">10</span>,<span class="number">-30611744</span>),l,g,n[e+<span class="number">6</span>],<span class="number">15</span>,<span class="number">-1560198380</span>),m,l,n[e+<span class="number">13</span>],<span class="number">21</span>,<span class="number">1309151649</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">4</span>],<span class="number">6</span>,<span class="number">-145523070</span>),g,v,n[e+<span class="number">11</span>],<span class="number">10</span>,<span class="number">-1120210379</span>),l,g,n[e+<span class="number">2</span>],<span class="number">15</span>,<span class="number">718787259</span>),m,l,n[e+<span class="number">9</span>],<span class="number">21</span>,<span class="number">-343485551</span>),l=t(l,i),g=t(g,a),v=t(v,d),m=t(m,h);<span class="keyword">return</span>[l,g,v,m]&#125;<span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r=<span class="string">""</span>,e=<span class="number">32</span>*n.length;<span class="keyword">for</span>(t=<span class="number">0</span>;t&lt;e;t+=<span class="number">8</span>)r+=<span class="built_in">String</span>.fromCharCode(n[t&gt;&gt;<span class="number">5</span>]&gt;&gt;&gt;t%<span class="number">32</span>&amp;<span class="number">255</span>);<span class="keyword">return</span> r&#125;<span class="function"><span class="keyword">function</span> <span class="title">d</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r=[];<span class="keyword">for</span>(r[(n.length&gt;&gt;<span class="number">2</span>)<span class="number">-1</span>]=<span class="keyword">void</span> <span class="number">0</span>,t=<span class="number">0</span>;t&lt;r.length;t+=<span class="number">1</span>)r[t]=<span class="number">0</span>;<span class="keyword">var</span> e=<span class="number">8</span>*n.length;<span class="keyword">for</span>(t=<span class="number">0</span>;t&lt;e;t+=<span class="number">8</span>)r[t&gt;&gt;<span class="number">5</span>]|=(<span class="number">255</span>&amp;n.charCodeAt(t/<span class="number">8</span>))&lt;&lt;t%<span class="number">32</span>;<span class="keyword">return</span> r&#125;<span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> a(i(d(n),<span class="number">8</span>*n.length))&#125;<span class="function"><span class="keyword">function</span> <span class="title">l</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">var</span> r,e,o=d(n),u=[],c=[];<span class="keyword">for</span>(u[<span class="number">15</span>]=c[<span class="number">15</span>]=<span class="keyword">void</span> <span class="number">0</span>,o.length&gt;<span class="number">16</span>&amp;&amp;(o=i(o,<span class="number">8</span>*n.length)),r=<span class="number">0</span>;r&lt;<span class="number">16</span>;r+=<span class="number">1</span>)u[r]=<span class="number">909522486</span>^o[r],c[r]=<span class="number">1549556828</span>^o[r];<span class="keyword">return</span> e=i(u.concat(d(t)),<span class="number">512</span>+<span class="number">8</span>*t.length),a(i(c.concat(e),<span class="number">640</span>))&#125;<span class="function"><span class="keyword">function</span> <span class="title">g</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r,e=<span class="string">""</span>;<span class="keyword">for</span>(r=<span class="number">0</span>;r&lt;n.length;r+=<span class="number">1</span>)t=n.charCodeAt(r),e+=<span class="string">"0123456789abcdef"</span>.charAt(t&gt;&gt;&gt;<span class="number">4</span>&amp;<span class="number">15</span>)+<span class="string">"0123456789abcdef"</span>.charAt(<span class="number">15</span>&amp;t);<span class="keyword">return</span> e&#125;<span class="function"><span class="keyword">function</span> <span class="title">v</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> <span class="built_in">unescape</span>(<span class="built_in">encodeURIComponent</span>(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">m</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> h(v(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">p</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> g(m(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">s</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> l(v(n),v(t))&#125;<span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> g(s(n,t))&#125;<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params">n,t,r</span>)</span>&#123;<span class="keyword">return</span> t?r?s(t,n):C(t,n):r?m(n):p(n)&#125;<span class="string">"function"</span>==<span class="keyword">typeof</span> define&amp;&amp;define.amd?define(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> A&#125;):<span class="string">"object"</span>==<span class="keyword">typeof</span> <span class="built_in">module</span>&amp;&amp;<span class="built_in">module</span>.exports?<span class="built_in">module</span>.exports=A:n.md5=A&#125;(<span class="keyword">this</span>);</span><br><span class="line"><span class="comment">//# sourceMappingURL=md5.min.js.map</span></span><br></pre></td></tr></table></figure></p>
+<p><a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js</a>:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> bszCaller,bszTag;!<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">var</span> c,d,e,a=!<span class="number">1</span>,b=[];ready=<span class="function"><span class="keyword">function</span>(<span class="params">c</span>)</span>&#123;<span class="keyword">return</span> a||<span class="string">"interactive"</span>===<span class="built_in">document</span>.readyState||<span class="string">"complete"</span>===<span class="built_in">document</span>.readyState?c.call(<span class="built_in">document</span>):b.push(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> c.call(<span class="keyword">this</span>)&#125;),<span class="keyword">this</span>&#125;,d=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">for</span>(<span class="keyword">var</span> a=<span class="number">0</span>,c=b.length;c&gt;a;a++)b[a].apply(<span class="built_in">document</span>);b=[]&#125;,e=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;a||(a=!<span class="number">0</span>,d.call(<span class="built_in">window</span>),<span class="built_in">document</span>.removeEventListener?<span class="built_in">document</span>.removeEventListener(<span class="string">"DOMContentLoaded"</span>,e,!<span class="number">1</span>):<span class="built_in">document</span>.attachEvent&amp;&amp;(<span class="built_in">document</span>.detachEvent(<span class="string">"onreadystatechange"</span>,e),<span class="built_in">window</span>==<span class="built_in">window</span>.top&amp;&amp;(clearInterval(c),c=<span class="literal">null</span>)))&#125;,<span class="built_in">document</span>.addEventListener?<span class="built_in">document</span>.addEventListener(<span class="string">"DOMContentLoaded"</span>,e,!<span class="number">1</span>):<span class="built_in">document</span>.attachEvent&amp;&amp;(<span class="built_in">document</span>.attachEvent(<span class="string">"onreadystatechange"</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;/loaded|complete/.test(<span class="built_in">document</span>.readyState)&amp;&amp;e()&#125;),<span class="built_in">window</span>==<span class="built_in">window</span>.top&amp;&amp;(c=setInterval(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">try</span>&#123;a||<span class="built_in">document</span>.documentElement.doScroll(<span class="string">"left"</span>)&#125;<span class="keyword">catch</span>(b)&#123;<span class="keyword">return</span>&#125;e()&#125;,<span class="number">5</span>)))&#125;(),bszCaller=&#123;<span class="attr">fetch</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>)</span>&#123;<span class="keyword">var</span> c=<span class="string">"BusuanziCallback_"</span>+<span class="built_in">Math</span>.floor(<span class="number">1099511627776</span>*<span class="built_in">Math</span>.random());<span class="built_in">window</span>[c]=<span class="keyword">this</span>.evalCall(b),a=a.replace(<span class="string">"=BusuanziCallback"</span>,<span class="string">"="</span>+c),scriptTag=<span class="built_in">document</span>.createElement(<span class="string">"SCRIPT"</span>),scriptTag.type=<span class="string">"text/javascript"</span>,scriptTag.defer=!<span class="number">0</span>,scriptTag.src=a,<span class="built_in">document</span>.getElementsByTagName(<span class="string">"HEAD"</span>)[<span class="number">0</span>].appendChild(scriptTag)&#125;,<span class="attr">evalCall</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">b</span>)</span>&#123;ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">try</span>&#123;a(b),scriptTag.parentElement.removeChild(scriptTag)&#125;<span class="keyword">catch</span>(c)&#123;bszTag.hides()&#125;&#125;)&#125;&#125;&#125;,bszCaller.fetch(<span class="string">"//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback"</span>,<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;bszTag.texts(a),bszTag.shows()&#125;),bszTag=&#123;<span class="attr">bszs</span>:[<span class="string">"site_pv"</span>,<span class="string">"page_pv"</span>,<span class="string">"site_uv"</span>],<span class="attr">texts</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">b</span>)</span>&#123;<span class="keyword">var</span> c=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_value_"</span>+b);c&amp;&amp;(c.innerHTML=a[b])&#125;)&#125;,<span class="attr">hides</span>:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">var</span> b=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_container_"</span>+a);b&amp;&amp;(b.style.display=<span class="string">"none"</span>)&#125;)&#125;,<span class="attr">shows</span>:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">var</span> b=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_container_"</span>+a);b&amp;&amp;(b.style.display=<span class="string">"inline"</span>)&#125;)&#125;&#125;;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/31/docker-compose-启动-Redis-服务/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/31/docker-compose-启动-Redis-服务/" itemprop="url">docker-compose 启动 Redis 服务</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-31T18:20:16+08:00">
+                2019-05-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>使用 docker-compose 以 aof 持久化方式启动单节点 Redis。<br>docker-compose.yml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  redis:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">redis:4.0.13</span> </span><br><span class="line"><span class="attr">    container_name:</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">    command:</span> <span class="bullet">--appendonly</span> <span class="literal">yes</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">6379</span><span class="string">:6379</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./redis_data:/data</span></span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/31/Nginx-root-和-alias-指令的区别/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/31/Nginx-root-和-alias-指令的区别/" itemprop="url">Nginx root 和 alias 指令的区别</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-31T12:25:00+08:00">
+                2019-05-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">Nginx</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>nginx 的 root 和 alias 指令都是用于访问服务器本地文件的，两者区别如下：</p>
+<ul>
+<li><p>配置语法及适用范围</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">root</span>]</span><br><span class="line">语法：root path</span><br><span class="line">默认值：root html</span><br><span class="line">配置段：http、server、location、<span class="keyword">if</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">alias</span>]</span><br><span class="line">语法：<span class="keyword">alias</span> path</span><br><span class="line">配置段：location</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>root 的处理结果是：root 路径＋location 路径；</p>
+</li>
+<li>alias 的处理结果是：使用 alias 路径替换 location 路径；</li>
+<li>alias 后面的路径结尾必须是 ‘/‘，而 root 可有可无；</li>
+</ul>
+<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><h5 id="当-location-配置为如下时："><a href="#当-location-配置为如下时：" class="headerlink" title="当 location 配置为如下时："></a>当 location 配置为如下时：</h5><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ^~ <span class="regexp">/documents/</span> &#123;</span><br><span class="line">    root <span class="regexp">/var/</span>www-html<span class="regexp">/documents/</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>请求：GET /documents/a.js  —&gt; 相当于请求本地路径：/var/www-html/documents/documents/a.js</p>
+<p>请求：GET /documents/html/index.html  —&gt; 相当于请求本地路径：/var/www-html/documents/documents/html/index.html</p>
+<h5 id="当-location-配置为如下时：-1"><a href="#当-location-配置为如下时：-1" class="headerlink" title="当 location 配置为如下时："></a>当 location 配置为如下时：</h5><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ^~ <span class="regexp">/documents/</span> &#123;</span><br><span class="line">  alias <span class="regexp">/var/</span>www-html<span class="regexp">/documents/</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>请求：GET /documents/a.js  —&gt; 相当于请求本地路径：/var/www-html/documents/a.js</p>
+<p>请求：GET /documents/html/index.html  —&gt; 相当于请求本地路径：/var/www-html/documents/html/index.html</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/26/Wireshark-抓包理解-HTTPS-协议/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -305,7 +935,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -551,7 +1181,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -769,7 +1399,7 @@ And more...
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1104,7 +1734,7 @@ And more...
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1260,7 +1890,7 @@ And more...
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1483,7 +2113,7 @@ And more...
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
+      <meta itemprop="name" content="Jim">
     </span>
 
     
@@ -1604,838 +2234,6 @@ And more...
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/27/用-Dnsmasq-搭建一个简单的-DNS-服务器/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/27/用-Dnsmasq-搭建一个简单的-DNS-服务器/" itemprop="url">用 Dnsmasq 搭建一个简单的 DNS 服务器</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-27T22:25:49+08:00">
-                2019-04-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DNS/" itemprop="url" rel="index">
-                    <span itemprop="name">DNS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文主要介绍如何通过 <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html" target="_blank" rel="noopener">Dnsmasq</a> 工具搭建一个简单的 DNS 服务器，搭建完成后就可以马上测试使用了。</p>
-<h3 id="Dnsmasq-简介"><a href="#Dnsmasq-简介" class="headerlink" title="Dnsmasq 简介"></a>Dnsmasq 简介</h3><p><a href="http://www.thekelleys.org.uk/dnsmasq/doc.html" target="_blank" rel="noopener">Dnsmasq</a> 是一个轻量级的 DNS 缓存、DHCP、TFTP、PXE 服务器。</p>
-<p>作为域名解析服务器，dnsmasq 可以通过缓存 DNS 请求来提高对访问过域名的解析速度。</p>
-<p>作为 DHCP 服务器，Dnsmasq 可以用于为局域网电脑分配内网 IP 地址和提供路由。DNS 和 DHCP 两个功能可以同时或分别单独实现。</p>
-<h3 id="Dnsmasq-的应用场景"><a href="#Dnsmasq-的应用场景" class="headerlink" title="Dnsmasq 的应用场景"></a>Dnsmasq 的应用场景</h3><p>我们一般使用 Dnsmasq 的 DNS 功能，总结了下基于该功能有如下使用场景：</p>
-<ul>
-<li><p>作为内部局域网的一个 DNS 缓存服务器。通过 DNS 缓存的功能，可以提高应用程序域名解析的速度。比如 <a href="https://kubernetes.io/" target="_blank" rel="noopener">Kubernetes</a> 的 <a href="https://github.com/kubernetes/dns" target="_blank" rel="noopener">kube-dns</a> 组件中就用 dnsmasq 容器作为 DNS 服务器，用 kube-dns 容器作为 dnsmasq 的上游服务器。dnsmasq 本身具有缓存功能，所以可以大大提高集群中服务名的解析速度，而不需要每次解析请求都访问 kube-dns 容器。</p>
-</li>
-<li><p>实现 DNS 劫持功能。在局域网中，我们有时候可能希望暂时将某个公网域名解析到一个临时的地址，不走公网 DNS。</p>
-</li>
-</ul>
-<h3 id="Dnsmasq-的工作原理"><a href="#Dnsmasq-的工作原理" class="headerlink" title="Dnsmasq 的工作原理"></a>Dnsmasq 的工作原理</h3><p>Dnsmasq 在接受到用户的一个 DNS 请求时，首先会查找 /etc/hosts 这个文件，如果 /etc/hosts 文件没有请求的记录，然后查找 /etc/resolv.conf 中定义的外部 DNS（也叫上游 DNS 服务器，nameserver 配置），外部 DNS 通过递归查询查找到请求后响应给客户端，然后 dnsmasq 将请求结果缓存下来（缓存到内存）供后续的解析请求。</p>
-<p>配置 Dnsmasq 为 DNS 缓存服务器，同时在 /etc/hosts 文件中加入本地内网解析，这样一来每当内网机器查询时就会优先查询 hosts 文件，这就等于将 /etc/hosts 共享给全内网机器使用，从而解决内网机器互相识别的问题。相比逐台机器编辑 hosts 文件或者添加 Bind DNS 记录，仅编辑一个 hosts 文件，这简直太容易了。</p>
-<h3 id="Dnsmasq-安装"><a href="#Dnsmasq-安装" class="headerlink" title="Dnsmasq 安装"></a>Dnsmasq 安装</h3><p>Dnsmasq 的安装特别简单，以 Centos7 下安装为例：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y dnsmasq</span><br></pre></td></tr></table></figure></p>
-<h3 id="Dnsmasq-配置及启动"><a href="#Dnsmasq-配置及启动" class="headerlink" title="Dnsmasq 配置及启动"></a>Dnsmasq 配置及启动</h3><h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>Dnsmasq 的所有的配置都在 <code>/etc/dnsmasq.conf</code> 这一个文件中完成 。官方在配置文件 <code>/etc/dnsmasq.conf</code> 中针对选项和参数等做了比较好的注释说明，我们可以将配置做一次备份，以便以后查阅。默认情况下 dnsmasq.conf 中只开启了最后 include 项，因此可以在 /etc/dnsmasq.conf 的前提下，将自定义的配置放到 /etc/dnsmasq.d 目录下的一个任意名字的配置文件当中。</p>
-<blockquote>
-<p>注意： /etc/dnsmasq.d/*.conf 的优先级大于 /etc/dnsmasq.conf</p>
-</blockquote>
-<p>关于 dnsmasq 的配置项非常多，具体配置项含义在 <code>/etc/dnsmasq.conf</code> 中有详细的说明，本文如下配置实现一个简单的 DNS 服务器（配置文件放到了 <code>/etc/dnsmasq.d/</code> 目录下，命名为 <code>dnsmasq.conf</code>）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#dnsmasq 启动监听的端口号</span></span><br><span class="line">port=53</span><br><span class="line"></span><br><span class="line"><span class="comment">#从不转发格式错误的域名</span></span><br><span class="line">domain-needed</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认情况下Dnsmasq会发送查询到它的任何上游DNS服务器上，如果取消注释，</span></span><br><span class="line"><span class="comment">#则Dnsmasq则会严格按照/etc/resolv.conf中的 DNS Server 顺序进</span></span><br><span class="line"><span class="comment">#行查询，直到第一个成功解析成功为止。</span></span><br><span class="line">strict-order</span><br><span class="line"></span><br><span class="line"><span class="comment"># dnsmasq 缓存大小，默认 150</span></span><br><span class="line">cache-size=8192</span><br><span class="line"></span><br><span class="line"><span class="comment">#address 可以将指定的域解析为一个IP地址，即泛域名解析。</span></span><br><span class="line"><span class="comment"># 将 *.taobao.com 解析到 10.10.10.10</span></span><br><span class="line">address=/taobao.com/10.10.10.10</span><br><span class="line"></span><br><span class="line"><span class="comment">#把所有.cn的域名全部通过 114.114.114.114 这台国内DNS服务器来解析</span></span><br><span class="line">server=/cn/114.114.114.114</span><br></pre></td></tr></table></figure></p>
-<p>为了验证 /etc/hosts 文件解析是否起作用，我们也向 hosts 文件添加几条记录：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">10.4.29.106      ansible</span><br><span class="line">10.4.24.116      www.baidu.com</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>注意：/etc/hosts 文件修改后需要重启 dnsmasq，否则修改不会生效。<br>重启方法：<code>systemctl restart dnsmasq</code></p>
-</blockquote>
-<h4 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置为开机自启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> dnsmasq</span><br><span class="line"><span class="comment"># 启动 dnsmasq 服务</span></span><br><span class="line">systemctl start dnsmasq</span><br></pre></td></tr></table></figure>
-<h3 id="测试使用-Dnsmasq"><a href="#测试使用-Dnsmasq" class="headerlink" title="测试使用 Dnsmasq"></a>测试使用 Dnsmasq</h3><p>我们搭建的 DNS 服务器地址为：<code>192.168.10.200</code></p>
-<p>使用 dig 命令指定 DNS 服务器地址来查看解析是否生效：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dig @192.168.10.200 ansible</span><br><span class="line">dig @192.168.10.200 www.taobao.com</span><br><span class="line">dig @192.168.10.200 ip.cn</span><br></pre></td></tr></table></figure></p>
-<h3 id="验证-Dnsmasq-缓存功能是否生效"><a href="#验证-Dnsmasq-缓存功能是否生效" class="headerlink" title="验证 Dnsmasq 缓存功能是否生效"></a>验证 Dnsmasq 缓存功能是否生效</h3><p>首先使用 dig 查询一个之前未查询过的域名，然后看响应时间是多少：<br>第一次 dig：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dig @192.168.10.200 qhh.me</span><br><span class="line">......                                                                                                                                </span><br><span class="line">;; Query time: 478 msec</span><br><span class="line">;; SERVER: 192.168.10.200<span class="comment">#53(192.168.10.200)</span></span><br><span class="line">;; WHEN: Sat Apr 27 21:45:24 CST 2019</span><br><span class="line">;; MSG SIZE  rcvd: 56</span><br></pre></td></tr></table></figure></p>
-<p>第二次 dig：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dig @192.168.10.200 qhh.me                                                                                                                                   </span><br><span class="line">......</span><br><span class="line">;; Query time: 0 msec</span><br><span class="line">;; SERVER: 192.168.10.200<span class="comment">#53(192.168.10.200)</span></span><br><span class="line">;; WHEN: Sat Apr 27 21:45:32 CST 2019</span><br><span class="line">;; MSG SIZE  rcvd: 67</span><br></pre></td></tr></table></figure></p>
-<p>可以看到两次同样的 dig 查询的时间不一样，第一次 478 ms，第二次 0 ms，说明第二次直接是从缓存中取的数据，没有向上游服务器发起请求。</p>
-<h3 id="Dnsmasq-的缓存在哪里？如何查看？"><a href="#Dnsmasq-的缓存在哪里？如何查看？" class="headerlink" title="Dnsmasq 的缓存在哪里？如何查看？"></a>Dnsmasq 的缓存在哪里？如何查看？</h3><p>dnsmasq 的缓存并不是保存在本地磁盘的某个文件，而是存储在内存中，因此是无法直接查看的。当然作为一个 Geek，想要查看缓存的内容也是有办法的：</p>
-<ol>
-<li><p>dnsmasq 启动参数添加 –log-queries</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vi /usr/lib/systemd/system/dnsmasq.service</span><br><span class="line">ExecStart=/usr/sbin/dnsmasq -k 改为：ExecStart=/usr/sbin/dnsmasq -k --<span class="built_in">log</span>-queries</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>重新加载 Systemd Unit 配置文件</p>
-<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">systemctl daemon-reload</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>重启 dnsmasq</p>
-<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">systemctl restart dnsmasq</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行如下命令 dump 出来缓存内容到 journal 日志</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -SIGUSR1 &lt;PID&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查看 dump 出来的 dns 记录（dnsmasq 当前缓存的内容）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u dnsmasq</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="http://www.thekelleys.org.uk/dnsmasq/doc.html" target="_blank" rel="noopener">http://www.thekelleys.org.uk/dnsmasq/doc.html</a> | dnsmasq 官方文档<br><a href="https://www.hi-linux.com/posts/30947.html" target="_blank" rel="noopener">https://www.hi-linux.com/posts/30947.html</a> | 一篇比较全面的博客<br><a href="https://yq.aliyun.com/articles/582537" target="_blank" rel="noopener">https://yq.aliyun.com/articles/582537</a> | 一篇比较精简的博客<br><a href="http://flux242.blogspot.com/2012/06/dnsmasq-cache-size-tuning.html" target="_blank" rel="noopener">http://flux242.blogspot.com/2012/06/dnsmasq-cache-size-tuning.html</a> | 介绍了 dnsmasq 的基本概念、缓存淘汰机制等相关内容</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/19/使用-kubeadm-搭建-kubernetes-集群/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/19/使用-kubeadm-搭建-kubernetes-集群/" itemprop="url">使用 kubeadm 搭建 kubernetes 集群</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-19T22:50:45+08:00">
-                2019-03-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubenetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubenetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="kubeadm-简介"><a href="#kubeadm-简介" class="headerlink" title="kubeadm 简介"></a>kubeadm 简介</h3><p><a href="https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/" target="_blank" rel="noopener">kubeadm</a> 是 <a href="https://kubernetes.io/" target="_blank" rel="noopener">k8s 官方</a>提供的用于快速部署 k8s 集群的命令行工具，也是官方推荐的最小化部署 k8s 集群的最佳实践，比起直接用二进制部署能省去很多工作，因为该方式部署的集群的各个组件以 docker 容器的方式启动，而各个容器的启动都是通过该工具配自动化启动起来的。</p>
-<p>kubeadm 不仅仅能部署 k8s 集群，还能很方便的管理集群，比如集群的升级、降级、集群初始化配置等管理操作。</p>
-<p>kubeadm 的设计初衷是为新用户提供一种便捷的方式来首次试用 Kubernetes， 同时也方便老用户搭建集群测试他们的应用。</p>
-<p>kubeadm 的使用案例：</p>
-<ul>
-<li>新用户可以从 kubeadm 开始来试用 Kubernetes。</li>
-<li>熟悉 Kubernetes 的用户可以使用 kubeadm 快速搭建集群并测试他们的应用。</li>
-<li>大型的项目可以将 kubeadm 和其他的安装工具一起形成一个比较复杂的系统。</li>
-</ul>
-<h3 id="安装环境要求"><a href="#安装环境要求" class="headerlink" title="安装环境要求"></a>安装环境要求</h3><ul>
-<li>一台或多台运行着下列系统的机器:<ul>
-<li>Ubuntu 16.04+</li>
-<li>Debian 9</li>
-<li>CentOS 7</li>
-<li>RHEL 7</li>
-<li>Fedora 25/26</li>
-<li>HypriotOS v1.0.1+</li>
-<li>Container Linux (针对1800.6.0 版本测试)</li>
-</ul>
-</li>
-<li>每台机器 2 GB 或更多的 RAM (如果少于这个数字将会影响您应用的运行内存)</li>
-<li>2 CPU 核心或更多(节点少于 2 核的话新版本 kubeadm 会报错)</li>
-<li>集群中的所有机器的网络彼此均能相互连接(公网和内网都可以)</li>
-<li>禁用 Swap 交换分区。（Swap 分区必须要禁掉，否则安装会报错）</li>
-</ul>
-<h3 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h3><p>本文使用 kubeadm 部署一个 3 节点的 k8s 集群：1 个 master 节点，2 个 node 节点。各节点详细信息如下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Hostname</th>
-<th style="text-align:left">IP</th>
-<th style="text-align:left">OS 发行版</th>
-<th style="text-align:left">内存（GB）</th>
-<th style="text-align:left">CPU（核）</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">k8s-master</td>
-<td style="text-align:left">192.168.10.100</td>
-<td style="text-align:left">Centos7</td>
-<td style="text-align:left">2</td>
-<td style="text-align:left">2</td>
-</tr>
-<tr>
-<td style="text-align:left">k8s-node-1</td>
-<td style="text-align:left">192.168.10.101</td>
-<td style="text-align:left">Centos7</td>
-<td style="text-align:left">2</td>
-<td style="text-align:left">2</td>
-</tr>
-<tr>
-<td style="text-align:left">k8s-node-2</td>
-<td style="text-align:left">192.168.10.102</td>
-<td style="text-align:left">Centos7</td>
-<td style="text-align:left">2</td>
-<td style="text-align:left">2</td>
-</tr>
-</tbody>
-</table>
-<p><img src="/images/k8s-arch.png" alt=""></p>
-<h3 id="kubeadm-安装-k8s-集群完整流程"><a href="#kubeadm-安装-k8s-集群完整流程" class="headerlink" title="kubeadm 安装 k8s 集群完整流程"></a>kubeadm 安装 k8s 集群完整流程</h3><ul>
-<li>使用 Vagrant 启动 3 台符合上述要求的虚拟机</li>
-<li>调整每台虚拟机的服务器参数</li>
-<li>各节点安装 docker、kubeadm、kubelet、kubectl 工具</li>
-<li>使用 kubeadm 部署 master 节点</li>
-<li>安装 Pod 网络插件（CNI）</li>
-<li>使用 kubeadm 部署 node 节点</li>
-</ul>
-<p>接下来我们依次介绍每步的具体细节：</p>
-<h4 id="使用-Vagrant-启动-3-台符合上述要求的虚拟机"><a href="#使用-Vagrant-启动-3-台符合上述要求的虚拟机" class="headerlink" title="使用 Vagrant 启动 3 台符合上述要求的虚拟机"></a>使用 Vagrant 启动 3 台符合上述要求的虚拟机</h4><p>Vagrant 的使用在这里不具体介绍了，如需了解请点击<a href="https://blog.csdn.net/qianghaohao/article/details/80038096" target="_blank" rel="noopener">这里</a>。<br>本文用到的 Vagrantfile:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- mode: ruby -*-</span></span><br><span class="line"><span class="comment"># vi: set ft=ruby :</span></span><br><span class="line"><span class="comment"># author: qhh0205</span></span><br><span class="line"></span><br><span class="line">$num_nodes = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># k8s 主节点定义及初始化配置</span></span><br><span class="line">  config.vm.define <span class="string">"k8s-master"</span> <span class="keyword">do</span> <span class="params">| k8s_master |</span></span><br><span class="line">    k8s_master.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">    k8s_master.vm.hostname = <span class="string">"k8s-master"</span></span><br><span class="line">    k8s_master.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.100"</span></span><br><span class="line">    k8s_master.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> <span class="params">| v |</span></span><br><span class="line">      v.name = <span class="string">"k8s-master"</span></span><br><span class="line">      v.memory = <span class="string">"2048"</span></span><br><span class="line">      v.cpus = <span class="number">2</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># k8s node 节点定义及初始化配置</span></span><br><span class="line">  (<span class="number">1</span>..$num_nodes).each <span class="keyword">do</span> <span class="params">|i|</span></span><br><span class="line">      config.vm.define <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span> <span class="keyword">do</span> <span class="params">|node|</span></span><br><span class="line">        node.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">        node.vm.hostname = <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span></span><br><span class="line">        node.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.<span class="subst">#&#123;i+<span class="number">100</span>&#125;</span>"</span></span><br><span class="line">        node.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> <span class="params">|v|</span></span><br><span class="line">          v.name = <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span></span><br><span class="line">          v.memory = <span class="string">"2048"</span></span><br><span class="line">          v.cpus = <span class="number">2</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>进入 Vagrantfile 文件所在目录，执行如下命令启动上述定义的 3 台虚拟机：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vagrant up</span><br></pre></td></tr></table></figure></p>
-<h4 id="调整每台虚拟机的服务器参数"><a href="#调整每台虚拟机的服务器参数" class="headerlink" title="调整每台虚拟机的服务器参数"></a>调整每台虚拟机的服务器参数</h4><ol>
-<li><p>禁用 swap 分区：<br>临时禁用：<code>swapoff -a</code><br>永久禁用：<code>sed -i &#39;/swap/s/^/#/g&#39; /etc/fstab</code><br>swap 分区必须禁止掉，否则 <code>kubadm init</code> 自检时会报如下错误：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR Swap]: running with swap on is not supported. Please <span class="built_in">disable</span> swap</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将桥接的 IPv4 流量传递到 iptables 的链：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat &gt; /etc/sysctl.d/k8s.conf &lt;&lt; EOF</span><br><span class="line">net.bridge.bridge-nf-call-ip6tables = 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables = 1</span><br><span class="line">EOF</span><br><span class="line">$ sysctl --system</span><br></pre></td></tr></table></figure>
-<p> 如果不进行这一步的设置，<code>kubadm init</code> 自检时会报如下错误：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables contents are not <span class="built_in">set</span> to 1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>关闭网络防火墙：</p>
-<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="keyword">stop</span> firewalld</span><br><span class="line">systemctl <span class="keyword">disable</span> firewalld</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>禁用 SELinux：<br>临时关闭 selinux（不需要重启主机）: <code>setenforce 0</code><br>永久关闭 selinux（需要重启主机才能生效）：<code>sed -i &#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39; /etc/selinux/config</code></p>
-</li>
-</ol>
-<h4 id="各节点安装-docker、kubeadm、kubelet、kubectl-工具"><a href="#各节点安装-docker、kubeadm、kubelet、kubectl-工具" class="headerlink" title="各节点安装 docker、kubeadm、kubelet、kubectl 工具"></a>各节点安装 docker、kubeadm、kubelet、kubectl 工具</h4><h5 id="安装-Docker"><a href="#安装-Docker" class="headerlink" title="安装 Docker"></a>安装 Docker</h5><p>配置 Docker yum 源（阿里 yum 源）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sS -o /etc/yum.repos.d/docker-ce.repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure></p>
-<p>安装 docker：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install --nogpgcheck -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">yum install --nogpgcheck -y docker-ce</span><br><span class="line">systemctl <span class="built_in">enable</span> docker &amp;&amp; systemctl start docker</span><br></pre></td></tr></table></figure></p>
-<h5 id="安装-kubeadm、kubelet、kubectl-工具"><a href="#安装-kubeadm、kubelet、kubectl-工具" class="headerlink" title="安装 kubeadm、kubelet、kubectl 工具"></a>安装 kubeadm、kubelet、kubectl 工具</h5><p>配置相关工具 yum 源（阿里 yum 源）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt; EOF</span><br><span class="line">[kubernetes]</span><br><span class="line">name=Kubernetes</span><br><span class="line">baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">repo_gpgcheck=1</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure></p>
-<p>安装 kubeadm、kubelet、kubectl：<br>其实 kubeadm、kubelet、kubectl 这三个工具的版本命名是一致的（和 k8s 版本命名一致），我们可以指定安装特定的版本，即安装指定版本的 k8s 集群。</p>
-<p>查看哪些版本可以安装：<br><code>yum --showduplicates list kubeadm|kubelet|kubectl</code></p>
-<p>在这里我们安装 <code>1.13.2</code> 版本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y kubeadm-1.13.2 kubelet-1.13.2 kubectl-1.13.2</span><br><span class="line"><span class="comment"># 设置 kubelet 开机自启动: kubelet 特别重要，如果服务器重启后 kubelet</span></span><br><span class="line"><span class="comment"># 没有启动，那么 k8s 相关组件的容器就无法启动。在这里不需要把 kubelet 启动</span></span><br><span class="line"><span class="comment"># 起来，因为现在还启动不起来，后续执行的 kubeadm 命令会自动把 kubelet 拉起来。</span></span><br><span class="line">systemctl <span class="built_in">enable</span> kubelet</span><br></pre></td></tr></table></figure></p>
-<h4 id="使用-kubeadm-部署-master-节点"><a href="#使用-kubeadm-部署-master-节点" class="headerlink" title="使用 kubeadm 部署 master 节点"></a>使用 kubeadm 部署 master 节点</h4><p>登陆 master 节点执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --kubernetes-version v1.13.2 --image-repository registry.aliyuncs.com/google_containers --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.10.100</span><br></pre></td></tr></table></figure></p>
-<p>参数说明：<br><code>--kubernetes-version</code>:  安装指定版本的 k8s 版本，该参数和 kubeadm 的版本有关，特定版本的 kubeadm 并不能安装所有版本的 k8s，最好还是 kubeadm 的版本和该参数指定的版本一致。</p>
-<p><code>--image-repository</code>: 该参数仅在高版本（具体哪个版本没仔细查，反正在 1.13.x 中是支持的）的 kubeadm 中支持，用来设置 kubeadm 拉取 k8s 各组件镜像的地址，默认拉取的地址是：<a href="k8s.gcr.io">k8s.gcr.io</a>。众所周知 <a href="k8s.gcr.io">k8s.gcr.io</a> 国内是无法访问的，所以在这里改为阿里云镜像仓库。</p>
-<p><code>--pod-network-cidr</code>: 设置 pod ip 的网段 ，网段之所以是 <code>10.244.0.0/16</code>，是因为后面安装 flannel 网络插件时，yaml 文件里面的 ip 段也是这个，两个保持一致，不然可能会使得 Node 间 Cluster IP 不通。这个参数必须得指定，如果这里不设置的话后面安装 flannel 网络插件时会报如下错误：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E0317 17:02:15.077598       1 main.go:289] <span class="builtin-name">Error</span> registering network: failed <span class="keyword">to</span> acquire lease: node <span class="string">"k8s-master"</span> pod cidr <span class="keyword">not</span> assigned</span><br></pre></td></tr></table></figure></p>
-<p><code>--apiserver-advertise-address</code>: API server 用来告知集群中其它成员的地址，这个参数也必须得设置，否则 api-server 容器启动不起来，该参数的值为 master 节点所在的本地 ip 地址。</p>
-<hr>
-<p>题外话：像之前没有 <code>--image-repository</code> 这个参数时，大家为了通过 kubeadm 安装 k8s 都是采用”曲线救国”的方式：先从别的地方把同样的镜像拉到本地（当然镜像的 tag 肯定不是 k8s.gcr.io/xxxx），然后将拉下来的镜像重新打个 tag，tag 命名成和执行 <code>kubeadm init</code> 时真正拉取镜像的名称一致（比如：k8s.gcr.io/kube-controller-manager-amd64:v1.13.2）。这么做显然做了很多不必要的工作，幸好现在有了 <code>--image-repository</code> 这个参数能自定义 kubeadm 拉取 k8s 相关组件的镜像地址了。</p>
-<hr>
-<p>执行上面命令后，如果出现如下输出（截取了部分），则表示 master 节点安装成功了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">[bootstraptoken] creating the <span class="string">"cluster-info"</span> ConfigMap <span class="keyword">in</span> the <span class="string">"kube-public"</span> namespace</span><br><span class="line">[addons] Applied essential addon: CoreDNS</span><br><span class="line">[addons] Applied essential addon: kube-proxy</span><br><span class="line"></span><br><span class="line">Your Kubernetes master has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run <span class="string">"kubectl apply -f [podnetwork].yaml"</span> with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">You can now join any number of machines by running the following on each node</span><br><span class="line">as root:</span><br><span class="line"></span><br><span class="line">  kubeadm join 192.168.10.100:6443 --token jm6o42.9ystvjarc6u09pjp --discovery-token-ca-cert-hash sha256:64405f3a90597e0ebf1f33134649196047ce74df575cb1a7b38c4ed1e2f94421</span><br></pre></td></tr></table></figure></p>
-<p>根据上面输出知道：要开始使用集群普通用户执行下面命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure></p>
-<p>现在就可以使用 kubectl 访问集群了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@k8s-master ~]$ kubectl get node</span><br><span class="line">NAME         STATUS     ROLES    AGE   VERSION</span><br><span class="line">k8s-master   NotReady   master   13m   v1.13.2</span><br></pre></td></tr></table></figure></p>
-<p>可以看出现在 master 节点还是 <code>NotReady</code> 状态，这是因为默认情况下，为了保证 master 的安全，master 是不会被分配工作负载的。你可以取消这个限制通过输入（不建议这样做，我们后面会向集群中添加两 node 工作节点）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl taint nodes --all node-role.kubernetes.io/master-</span><br></pre></td></tr></table></figure></p>
-<h4 id="安装-Pod-网络插件（CNI）"><a href="#安装-Pod-网络插件（CNI）" class="headerlink" title="安装 Pod 网络插件（CNI）"></a>安装 Pod 网络插件（CNI）</h4><p>Pod 网络插件有很多种，具体见这里：<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/，我们选择部署" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/cluster-administration/addons/，我们选择部署</a> <a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">Flannel</a> 网络插件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure></p>
-<h4 id="使用-kubeadm-部署-node-节点"><a href="#使用-kubeadm-部署-node-节点" class="headerlink" title="使用 kubeadm 部署 node 节点"></a>使用 kubeadm 部署 node 节点</h4><p>前面已经将 master 节点部署完了，接下来部署 node 节点就很简单了，在 node节点执行如下命令将自己加到 k8s 集群中（复制 master 节点安装完后的输出）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join 192.168.10.100:6443 --token jm6o42.9ystvjarc6u09pjp --discovery-token-ca-cert-hash sha256:64405f3a90597e0ebf1f33134649196047ce74df575cb1a7b38c4ed1e2f94421</span><br></pre></td></tr></table></figure></p>
-<p>出现如下输出（截取了部分）表示成功将 node 添加到了集群：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run <span class="string">'kubectl get nodes'</span> on the master to see this node join the cluster.</span><br></pre></td></tr></table></figure></p>
-<p>在 master 节点查看 node 状态，如果都为 Ready，则表示集群搭建完成：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@k8s-master ~]$ kubectl get nodes</span><br><span class="line">NAME         STATUS   ROLES    AGE   VERSION</span><br><span class="line">k8s-master   Ready    master   14m   v1.13.2</span><br><span class="line">k8s-node-1   Ready    &lt;none&gt;   3m    v1.13.2</span><br></pre></td></tr></table></figure></p>
-<p>用同样的方法把另一个节点也加入到集群中。</p>
-<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://purewhite.io/2017/12/17/use-kubeadm-setup-k8s/" target="_blank" rel="noopener">https://purewhite.io/2017/12/17/use-kubeadm-setup-k8s/</a><br><a href="https://kubernetes.io/zh/docs/setup/independent/install-kubeadm/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/setup/independent/install-kubeadm/</a><br><a href="https://k8smeetup.github.io/docs/admin/kubeadm/" target="_blank" rel="noopener">https://k8smeetup.github.io/docs/admin/kubeadm/</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/24/dockerignore-文件从入门到实践/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/02/24/dockerignore-文件从入门到实践/" itemprop="url">.dockerignore 文件从入门到实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-24T14:13:51+08:00">
-                2019-02-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Docker/" itemprop="url" rel="index">
-                    <span itemprop="name">Docker</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><code>.dockerignore</code> 文件的作用类似于 git 工程中的 <code>.gitignore</code> 。不同的是 <code>.dockerignore</code> 应用于 docker 镜像的构建，它存在于 docker 构建上下文的根目录，用来排除不需要上传到 docker 服务端的文件或目录。</p>
-<p>docker 在构建镜像时首先从构建上下文找有没有 <code>.dockerignore</code> 文件，如果有的话则在上传上下文到 docker 服务端时忽略掉 <code>.dockerignore</code> 里面的文件列表。这么做显然带来的好处是：</p>
-<ul>
-<li>构建镜像时能避免不需要的大文件上传到服务端，从而拖慢构建的速度、网络带宽的消耗；</li>
-<li>可以避免构建镜像时将一些敏感文件及其他不需要的文件打包到镜像中，从而提高镜像的安全性；</li>
-</ul>
-<h3 id="dockerignore-文件编写方法"><a href="#dockerignore-文件编写方法" class="headerlink" title=".dockerignore 文件编写方法"></a>.dockerignore 文件编写方法</h3><p><code>.dockerignore</code> 文件的写法和 <code>.gitignore</code> 类似，支持正则和通配符，具体规则如下：</p>
-<ul>
-<li>每行为一个条目；</li>
-<li>以 <code>#</code> 开头的行为注释；</li>
-<li>空行被忽略；</li>
-<li>构建上下文路径为所有文件的根路径；</li>
-</ul>
-<p><strong>文件匹配规则具体语法如下：</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">规则</th>
-<th style="text-align:left">行为</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">*/temp*</td>
-<td style="text-align:left">匹配根路径下一级目录下所有以 temp 开头的文件或目录</td>
-</tr>
-<tr>
-<td style="text-align:left">*/*/temp*</td>
-<td style="text-align:left">匹配根路径下两级目录下所有以 temp 开头的文件或目录</td>
-</tr>
-<tr>
-<td style="text-align:left">temp?</td>
-<td style="text-align:left">匹配根路径下以 temp 开头，任意一个字符结尾的文件或目录</td>
-</tr>
-<tr>
-<td style="text-align:left">**/*.go</td>
-<td style="text-align:left">匹配所有路径下以 <code>.go</code> 结尾的文件或目录，即递归搜索所有路径</td>
-</tr>
-<tr>
-<td style="text-align:left">*.md<br>!README.md</td>
-<td style="text-align:left">匹配根路径下所有以 <code>.md</code> 结尾的文件或目录，但 README.md 除外</td>
-</tr>
-</tbody>
-</table>
-<p>⚠️注意事项：<br>如果两个匹配语法规则有包含或者重叠关系，那么以后面的匹配规则为准，比如：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">*.md</span><br><span class="line">!README*.md</span><br><span class="line">README-secret.md</span><br></pre></td></tr></table></figure></p>
-<p>这么写的意思是将根路径下所有以 <code>.md</code> 结尾的文件排除，以 <code>README</code> 开头 <code>.md</code> 结尾的文件保留，但是 <code>README-secret.md</code> 文件排除。</p>
-<p>再来看看下面这种写法（同上面那种写法只是对换了后面两行的位置）：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">*.md</span><br><span class="line">README-secret.md</span><br><span class="line">!README*.md</span><br></pre></td></tr></table></figure></p>
-<p>这么写的意思是将根路径下所有以 <code>.md</code> 结尾和名称为 <code>README-secret.md</code> 的文件排除，但所有以 <code>README</code> 开头 <code>.md</code> 结尾的文件保留。这样的话 <code>README-secret.md</code> 依旧会被保留，并不会被排除，因为 <code>README-secret.md</code> 符合 <code>!README*.md</code> 规则。</p>
-<h3 id="使用案例"><a href="#使用案例" class="headerlink" title="使用案例"></a>使用案例</h3><p>前段时间帮前端同学写了一个 Dockerfile，Dockerfile 放在 git 仓库根路径下，发现 git 工程中有很多真正应用跑起来用不到的文件，如果直接在 Dockerfile 中使用 <code>COPY</code> 或 <code>ADD</code> 指令拷贝文件，那么很显然会把很多不需要的文件拷贝到镜像中，从而会拖慢构建镜像的过程，产生的镜像也比较臃肿。解决方法就是编写 <code>.dockerignore</code> 文件，忽略掉不需要的文件，然后放到 docker 构建上下文的根路径下。<code>.dockerignore</code> 及 <code>Dockerfile</code> 文件内容如下：<br>.dockerignore:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.git</span><br><span class="line">_mockData</span><br><span class="line">deleted</span><br><span class="line">email-templates</span><br><span class="line">script</span><br><span class="line">static</span><br></pre></td></tr></table></figure></p>
-<p>Dockerfile:<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> node:<span class="number">8</span>-alpine</span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> . /app/node</span></span><br><span class="line"><span class="bash">WORKDIR /app/node</span></span><br><span class="line"><span class="bash">RUN yarn install</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">EXPOSE 8026</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">CMD [<span class="string">"yarn"</span>, <span class="string">"run"</span>, <span class="string">"tool-dev"</span>]</span></span><br></pre></td></tr></table></figure></p>
-<p>使用 <code>.dockerignore</code> 前后上传到 docker 服务端的构建上下文大小对比：<br>使用前（<code>73.36MB</code>）：<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@docker]$ docker build -t tool:<span class="number">5.0</span> -f Dockerfile-frontend-tool .</span><br><span class="line">Sending build context to Docker daemon  <span class="number">73.36M</span>B</span><br><span class="line">Step <span class="number">1</span>/<span class="number">6</span> : FROM <span class="keyword">node</span><span class="title">:8-alpine</span></span><br></pre></td></tr></table></figure></p>
-<p>使用后（<code>11.38MB</code>）：<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@docker]$ docker build -t tool:<span class="number">6.0</span> -f Dockerfile-frontend-tool .</span><br><span class="line">Sending build context to Docker daemon  <span class="number">11.38M</span>B</span><br><span class="line">Step <span class="number">1</span>/<span class="number">6</span> : FROM <span class="keyword">node</span><span class="title">:8-alpine</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://docs.docker.com/engine/reference/builder/#dockerignore-file" target="_blank" rel="noopener">https://docs.docker.com/engine/reference/builder/#dockerignore-file</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/17/深入理解-Docker-构建上下文/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Spectre">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/02/17/深入理解-Docker-构建上下文/" itemprop="url">深入理解 Docker 构建上下文</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-17T20:24:50+08:00">
-                2019-02-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Docker/" itemprop="url" rel="index">
-                    <span itemprop="name">Docker</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文通过具体实践深入解读 Docker 构建上下文的含义，解惑或者纠正很大一部分人对 Docker 构建上下文的理解误区。本文主要讨论如下主题：</p>
-<ul>
-<li>对 Docker 构建上下文的理解误区</li>
-<li>理解 Docker 的架构</li>
-<li>理解 docker build 的工作原理</li>
-<li>正确理解 Docker 构建上下文</li>
-</ul>
-<h3 id="对-Docker-构建上下文的理解误区"><a href="#对-Docker-构建上下文的理解误区" class="headerlink" title="对 Docker 构建上下文的理解误区"></a>对 Docker 构建上下文的理解误区</h3><p>我们都知道，构建一个 Docker 镜像非常简单，大家一般都会这么做（当然这么做是完全正确的）：</p>
-<ol>
-<li>跳到 Dockerfile 所在目录;</li>
-<li>执行 <code>docker build</code> 构建命令:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t &lt;imageName:imageTag&gt; .</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>通过上面的工作流，很容易形成这样的理解误区：</p>
-<ul>
-<li><code>docker build</code> 后面的 <code>.</code> 为 Dockerfile 所在的目录；</li>
-<li>Dockerfile 文件名 必须为 Dockerfile；</li>
-</ul>
-<p>其实上面这种理解是错误的，要想准确理解其含义，首先我们需要先了解下 Docker 的架构和 <code>docker build</code> 的工作原理。</p>
-<h3 id="理解-Docker-的架构"><a href="#理解-Docker-的架构" class="headerlink" title="理解 Docker 的架构"></a>理解 Docker 的架构</h3><p>Docker 是一个典型的 C/S 架构的应用，分为 Docker 客户端（即平时敲的 docker 命令） Docker 服务端（dockerd 守护进程）。</p>
-<p>Docker 客户端通过 REST API 和服务端进行交互，docker 客户端每发送一条指令，底层都会转化成 REST API 调用的形式发送给服务端，服务端处理客户端发送的请求并给出响应。</p>
-<p>Docker 镜像的构建、容器创建、容器运行等工作都是 Docker 服务端来完成的，Docker 客户端只是承担发送指令的角色。</p>
-<p>Docker 客户端和服务端可以在同一个宿主机，也可以在不同的宿主机，如果在同一个宿主机的话，Docker 客户端默认通过 UNIX 套接字(<code>/var/run/docker.sock</code>)和服务端通信。</p>
-<p><img src="/images/docker-architecture.png" alt=""></p>
-<h3 id="理解-docker-build-的工作原理"><a href="#理解-docker-build-的工作原理" class="headerlink" title="理解 docker build 的工作原理"></a>理解 docker build 的工作原理</h3><p>理解了 Docker 的架构就很容易理解 <code>docker build</code> 构建镜像的工作原理了。docker build 构建镜像的流程大概如下：</p>
-<ul>
-<li>执行 <code>docker build -t &lt;imageName:imageTag&gt; .</code> ;</li>
-<li>Docker 客户端会将构建命令后面指定的路径(<code>.</code>)下的所有文件打包成一个 tar 包，发送给 Docker 服务端;</li>
-<li>Docker 服务端收到客户端发送的 tar 包，然后解压，根据 Dockerfile 里面的指令进行镜像的分层构建；</li>
-</ul>
-<h3 id="正确理解-Docker-构建上下文"><a href="#正确理解-Docker-构建上下文" class="headerlink" title="正确理解 Docker 构建上下文"></a>正确理解 Docker 构建上下文</h3><p>了解了 Docker 的架构和镜像构建的工作原理后，Docker 构建上下文也就容易理解了。Docker 构建上下文就是 Docker 客户端上传给服务端的 tar 文件解压后的内容，也即 <code>docker build</code>  命令行后面指定路径下的文件。</p>
-<p>Docker 镜像的构建是在远程服务端进行的，所以客户端需要把构建所需要的文件传输给服务端。服务端以客户端发送的文件为上下文，<em>也就是说 Dockerfile 中指令的工作目录就是服务端解压客户端传输的 tar 包的路径</em>。</p>
-<p>关于 <code>docker build</code> 指令的几点重要的说明：</p>
-<ol>
-<li>如果构建镜像时没有明确指定 Dockerfile，那么 Docker 客户端默认在构建镜像时指定的上下文路径下找名字为 Dockerfile 的构建文件；</li>
-<li>Dockerfile 可以不在构建上下文路径下，此时需要构建时通过 <code>-f</code> 参数明确指定使用哪个构建文件，并且名称可以自己任意命名。</li>
-</ol>
-<p>下面通过具体的实例来理解下:</p>
-<p>首先创建一个简单的 demo 工程，工程结构如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">helloworld-app</span><br><span class="line">├── Dockerfile</span><br><span class="line">└── docker</span><br><span class="line">    ├── app-1.0-SNAPSHOT.jar</span><br><span class="line">    ├── hello.txt</span><br><span class="line">    └── html</span><br><span class="line">        └── index.html</span><br></pre></td></tr></table></figure></p>
-<p>Dockerfile 内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM busybox</span><br><span class="line">COPY hello.txt .</span><br><span class="line">COPY html/index.html .</span><br></pre></td></tr></table></figure></p>
-<p>实践1：直接进入 helloworld-app 目录进行镜像构建，以 docker 目录为构建上下文：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker build -t hello-app:1.0 docker</span><br><span class="line">unable to prepare context: unable to evaluate symlinks <span class="keyword">in</span> Dockerfile path: lstat /Users/haohao/opensource/helloworld-app/docker/Dockerfile: no such file or directory</span><br></pre></td></tr></table></figure></p>
-<p>可以看出默认 docker 客户端从 docker 构建上下文路径下找名字为 Dockerfile 的构建文件。</p>
-<p>实践2：明确指定 Dockerfile 文件进行镜像构建，还是以 docker 目录为构建上下文：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ docker build -f Dockerfile -t hello-app:1.0 docker                                                                                 </span><br><span class="line">Sending build context to Docker daemon  96.61MB</span><br><span class="line">Step 1/3 : FROM busybox</span><br><span class="line"> ---&gt; d8233ab899d4</span><br><span class="line">Step 2/3 : COPY hello.txt .</span><br><span class="line"> ---&gt; 3305fc373120</span><br><span class="line">Step 3/3 : COPY html/index.html .</span><br><span class="line"> ---&gt; efdefc4e6eb2</span><br><span class="line">Successfully built efdefc4e6eb2</span><br><span class="line">Successfully tagged hello-app:1.0</span><br></pre></td></tr></table></figure></p>
-<p>从输出结果可以得知：</p>
-<ul>
-<li>构建镜像时客户端会先给服务端发送构建上下路径下的内容（即 docker 目录下的文件）；</li>
-<li>Dockerfile 可以不在构建上下文路径下；</li>
-<li>Dockerfile 中指令的工作目录是服务端解压客户端传输的 tar 包的路径；</li>
-</ul>
-<p>实践3：以当前目录为构建上下文路径：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ls</span><br><span class="line">Dockerfile docker</span><br><span class="line">$ docker build -t hello-app:2.0 .</span><br><span class="line">Sending build context to Docker daemon  96.62MB</span><br><span class="line">Step 1/3 : FROM busybox</span><br><span class="line"> ---&gt; d8233ab899d4</span><br><span class="line">Step 2/3 : COPY hello.txt .</span><br><span class="line">COPY failed: <span class="built_in">stat</span> /var/lib/docker/tmp/docker-builder375982663/hello.txt: no such file or directory</span><br></pre></td></tr></table></figure></p>
-<p>可以看出：</p>
-<ul>
-<li>镜像构建上下文路径并不是  Dockerfile 文件所在的路径；</li>
-<li>Dockerfile 中指令的工作目录是服务端解压客户端传输的 tar 包的路径，因为 COPY 指令失败了，意味着当前目录并没有 hello.txt 文件；</li>
-</ul>
-<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://docs.docker.com/engine/reference/commandline/build/" target="_blank" rel="noopener">https://docs.docker.com/engine/reference/commandline/build/</a><br><a href="https://yeasy.gitbooks.io/docker_practice/content/image/build.html" target="_blank" rel="noopener">https://yeasy.gitbooks.io/docker_practice/content/image/build.html</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2485,7 +2283,7 @@ And more...
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">121</span>
+                  <span class="site-state-item-count">125</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
