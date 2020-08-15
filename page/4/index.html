@@ -296,6 +296,149 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/23/Golang-协程顺序打印/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/23/Golang-协程顺序打印/" itemprop="url">Golang 协程顺序打印</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-23T16:26:55+08:00">
+                2019-07-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="A、B-两个协程分别打印-1、2、3、4-和-A，B，C，D"><a href="#A、B-两个协程分别打印-1、2、3、4-和-A，B，C，D" class="headerlink" title="A、B 两个协程分别打印 1、2、3、4 和 A，B，C，D"></a>A、B 两个协程分别打印 1、2、3、4 和 A，B，C，D</h3><p>实现：定义 A、B 两个 channal，开 A、B 两个协程，A 协程输出[1, 2, 3, 4]、B 协程输出[A, B, C, D]，通过两个独立的 channal 控制顺序，交替输出。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	A := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line">	B := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">	Exit := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		s := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</span><br><span class="line">			<span class="keyword">if</span> ok := &lt;-A; ok &#123;</span><br><span class="line">				fmt.Println(<span class="string">"A: "</span>, s[i])</span><br><span class="line">				B &lt;- <span class="literal">true</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="built_in">close</span>(Exit)</span><br><span class="line">		&#125;()</span><br><span class="line">		s := []<span class="keyword">byte</span>&#123;<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>, <span class="string">'D'</span>&#125;</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(s); i++ &#123;</span><br><span class="line">			<span class="keyword">if</span> ok := &lt;-B; ok &#123;</span><br><span class="line">				fmt.Printf(<span class="string">"B: %c\n"</span>, s[i])</span><br><span class="line">				A &lt;- <span class="literal">true</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	A &lt;- <span class="literal">true</span></span><br><span class="line">	&lt;-Exit</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="A、B-两个协程顺序打印-1-20"><a href="#A、B-两个协程顺序打印-1-20" class="headerlink" title="A、B 两个协程顺序打印 1~20"></a>A、B 两个协程顺序打印 1~20</h3><p>实现：与上面基本一样，定义 A、B 两个 channal，开 A、B 两个协程，A 协程输出奇数、B 协程输出偶数，通过两个独立的 channal 控制顺序，交替输出。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	A := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line">	B := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">	Exit := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++ &#123;</span><br><span class="line">			<span class="keyword">if</span> ok := &lt;-A; ok &#123;</span><br><span class="line">				fmt.Println(<span class="string">"A = "</span>, <span class="number">2</span>*i<span class="number">-1</span>)</span><br><span class="line">				B &lt;- <span class="literal">true</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="built_in">close</span>(Exit)</span><br><span class="line">		&#125;()</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++ &#123;</span><br><span class="line">			<span class="keyword">if</span> ok := &lt;-B; ok &#123;</span><br><span class="line">				fmt.Println(<span class="string">"B : "</span>, <span class="number">2</span>*i)</span><br><span class="line">				A &lt;- <span class="literal">true</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	A &lt;- <span class="literal">true</span></span><br><span class="line">	&lt;-Exit</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/20/Go-语言-exec-实时获取外部命令的执行输出/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1712,196 +1855,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/09/如何在-Centos7-使用-iptables/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/09/如何在-Centos7-使用-iptables/" itemprop="url">如何在 Centos7 使用 iptables</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-09T20:54:15+08:00">
-                2019-06-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="/images/centos-iptables.png" alt="Alt text"></p>
-<p>从 Red Hat Enterprise Linux (RHEL) 7 和 CentOS 7 开始，<a href="https://firewalld.org/" target="_blank" rel="noopener">firewalld</a> 便作为系统默认的防火墙软件，替代之前的 iptables。firewalld 使用 <code>firewall-cmd</code> 命令管理防火墙规则，但是对于习惯了 iptables 的用户来说更倾向于使用传统的 iptables 方式，因为没有学习成本，能马上使用。即便 iptables 不再是 RHEL 7 和 CentOS 7 默认的防火墙管理软件，但是它们并没有完全屏蔽 iptables，通过安装依然可以使用。</p>
-<h4 id="简单说下-iptables-和-firewalld-区别"><a href="#简单说下-iptables-和-firewalld-区别" class="headerlink" title="简单说下 iptables 和 firewalld 区别"></a>简单说下 iptables 和 firewalld 区别</h4><ul>
-<li><a href="https://firewalld.org/" target="_blank" rel="noopener">firewalld</a>  是 Red Hat Enterprise Linux (RHEL) 7 和 CentOS 7 开始开始引进的防火墙管理软件；</li>
-<li>firewalld 可以动态修改单条规则，而不需要像iptables那样，在修改了规则后必须得全部刷新才可以生效；</li>
-<li>firewalld 在使用上要比 iptables 人性化很多，即使不明白“五张表五条链”而且对 TCP/IP 协议不理解也可以实现大部分功能；</li>
-<li>firewalld 需要每个服务都去设置才能放行，因为默认是拒绝。而 iptables 里默认是每个服务是允许，需要拒绝的才去限制；</li>
-<li>firewalld 自身并不具备防火墙的功能，而是和 iptables 一样需要通过内核的 <a href="https://www.netfilter.org/" target="_blank" rel="noopener">netfilter</a> 来实现，也就是说 firewalld 和 iptables一样，他们的作用都是用于维护规则，而真正使用规则干活的是内核的 netfilter，只不过 firewalld 和 iptables 的结构以及使用方法不一样罢了；</li>
-<li>firewalld 底层调用的命令仍然是 iptables；<br>下图是 iptables 和 firewalld 的关系:<br><img src="/images/iptables-firewalld.png" alt="Alt text"></li>
-</ul>
-<hr>
-<p>下面我们介绍下如何在 Centos7 系统下继续使用传统的 iptables 来管理防火墙规则。</p>
-<h4 id="关闭并注销-systemd-管理的-firewalld-服务"><a href="#关闭并注销-systemd-管理的-firewalld-服务" class="headerlink" title="关闭并注销 systemd 管理的 firewalld 服务"></a>关闭并注销 systemd 管理的 firewalld 服务</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> systemctl stop firewalld</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 注销 systmed 管理服务的过程相当于将原先指向相应 service 的软件链接</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 重新指向了 /dev/null</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl mask firewalld</span></span><br></pre></td></tr></table></figure>
-<h4 id="安装并配置-iptables"><a href="#安装并配置-iptables" class="headerlink" title="安装并配置 iptables"></a>安装并配置 iptables</h4><ol>
-<li><p>安装 iptables 命令行工具</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y iptables</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装 iptables 服务（安装后默认归 systemd 管理）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y iptables-services</span><br></pre></td></tr></table></figure>
-<p> 这一步<code>iptables-services</code>安装完后会自动生成 iptables 的规则文件:  <code>/etc/sysconfig/iptables</code></p>
-</li>
-<li><p>设置开机自启动</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl <span class="built_in">enable</span> iptables</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>启动 iptables 防火墙服务<br>启动防火墙后即可用 <code>iptables -L -n</code> 命令查看当前防火墙规则了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl start iptables</span><br><span class="line">$ iptables -L -n</span><br><span class="line">Chain INPUT (policy ACCEPT)</span><br><span class="line">target     prot opt <span class="built_in">source</span>               destination</span><br><span class="line">ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED</span><br><span class="line">ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0</span><br><span class="line">ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0</span><br><span class="line">ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            state NEW tcp dpt:22</span><br><span class="line">REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited</span><br><span class="line"></span><br><span class="line">Chain FORWARD (policy ACCEPT)</span><br><span class="line">target     prot opt <span class="built_in">source</span>               destination</span><br><span class="line">REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>iptables 添加防火墙规则，有两种方法：</p>
-<ul>
-<li><p>通过 iptables 命令行工具添加：<code>iptables -I INPUT ...</code>；<br>这种方式添加的规则不需要重启 iptables 即可立即生效，但是配置在重启服务器后会丢失，想持久保存下来执行如下命令（该命令会自动把命令行配置的规则写入 <code>/etc/sysconfig/iptables</code>，从而实现 iptables 规则的持久化保存）：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ service iptables save</span><br></pre></td></tr></table></figure>
-<p> ⚠️注意 <code>service iptables save</code> 和 <code>iptables-save</code> 命令的区别：</p>
-<ul>
-<li><code>service iptables save</code> 作用是将 <code>iptables</code> 命令编辑的防火墙规则持久化保存下来，保存到 <code>/etc/sysconfig/iptables</code>；</li>
-<li><code>iptables-save</code> 的作用是将内核中当前存在的防火墙规则导出来，和直接 <code>cat /etc/sysconfig/iptables</code> 的效果是一样的；</li>
-</ul>
-</li>
-<li><p>通过编辑 <code>/etc/sysconfig/iptables</code> 文件添加防火墙规则；<br>通过这种方式添加的防火墙规则，需要重启 iptables 服务才能生效，并且服务器重启后配置的规则依然保留：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl restart iptables</span><br></pre></td></tr></table></figure>
-<p>举例：添加/删除 禁止 ping 响应的规则</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">添加禁止 ICMP 回显响应规则：</span><br><span class="line">iptables -A INPUT -i eth1 -p icmp -m icmp --icmp-type 8 -j DROP</span><br><span class="line">删除上面规则：</span><br><span class="line">iptables -D INPUT -i eth1 -p icmp -m icmp --icmp-type 8 -j DROP</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-<li><p>查看防火墙状态</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl status iptables</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h4><p><a href="http://shaozhuqing.com/?p=4787" target="_blank" rel="noopener">http://shaozhuqing.com/?p=4787</a> | iptables 和 firewalld 关系<br><a href="https://blog.51cto.com/xjsunjie/1902993" target="_blank" rel="noopener">https://blog.51cto.com/xjsunjie/1902993</a> | 细说firewalld和iptables<br><a href="https://support.rackspace.com/how-to/use-iptables-with-centos-7/" target="_blank" rel="noopener">https://support.rackspace.com/how-to/use-iptables-with-centos-7/</a> | Use iptables with CentOS 7<br><a href="https://o-my-chenjian.com/2017/02/28/Using-Iptables-On-Centos7/" target="_blank" rel="noopener">https://o-my-chenjian.com/2017/02/28/Using-Iptables-On-Centos7/</a> | 在Centos7上使用Iptables</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1951,7 +1904,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">125</span>
+                  <span class="site-state-item-count">126</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

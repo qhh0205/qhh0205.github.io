@@ -296,6 +296,171 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/15/使用-kind-1-分钟启动一个本地-k8s-开发集群/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/08/15/使用-kind-1-分钟启动一个本地-k8s-开发集群/" itemprop="url">使用 kind 1 分钟启动一个本地 k8s 开发集群</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-15T12:40:50+08:00">
+                2020-08-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="kind-简介"><a href="#kind-简介" class="headerlink" title="kind 简介"></a>kind 简介</h4><p>Github 地址：<a href="https://github.com/kubernetes-sigs/kind" target="_blank" rel="noopener">https://github.com/kubernetes-sigs/kind</a><br><a href="https://github.com/kubernetes-sigs/kind" target="_blank" rel="noopener">kind</a> 是一个快速启动 kubernetes 集群的工具，适合本地 k8s 开发环境搭建，能在 1 分钟之内就启动一个非常轻量级的 k8s 集群。之所以如此之快，得益于其基于其把整个 k8s 集群用到的组件都封装在了 Docker 容器里，构建一个 k8s 集群就是启动一个 Docker 容器，如此简单，正如下面图片描述一样：</p>
+<p><img src="/images/kind-k8s.png" alt="Alt text"></p>
+<p>说说我为什么使用 kind 吧：<br>我之前本地 k8s 开发环境是基于 vagrant + virtualbox 来搭建，但是和 kind 比起来太重量级了，主要有如下痛点：</p>
+<ul>
+<li>资源消耗严重：vagrant + virtualbox + kubernetes 这一套其实本质上还是 k8s 运行在 virtualbox 虚拟机上，这个资源消耗可想而知，我的电脑配置低，经常由于资源消耗太多导致电脑发热、风扇狂转、死机。。。</li>
+<li>使用复杂：vagrant + virtualbox + kubernetes 虽然比直接二进制搭建简化了不少，但是还是有一定的技术门槛的，需要对 vagrant 有一定的了解，而且编写 vagrant 需要有一定的经验才能把集群配置好；</li>
+</ul>
+<h4 id="kind-使用"><a href="#kind-使用" class="headerlink" title="kind 使用"></a>kind 使用</h4><p>kind 的使用非常简单，其实就是一个命令行工具，通过这个工具创建、删除 k8s 集群，下面简单说下使用。</p>
+<p>1.准备工作</p>
+<ul>
+<li>Kind 的主要功能目前需要有 Docker 环境的支持，可参考 <a href="https://docs.docker.com/get-docker/" target="_blank" rel="noopener">Docker 官方文档</a>进行安装；</li>
+<li>安装操作 k8s 的 kubectl 命令行，安装方法可参考<a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl" target="_blank" rel="noopener">官方文档</a>；</li>
+</ul>
+<p>2.安装<br>到 github release 页下载对应操作系统的二进制文件到本地，并放到 PATH 环境变量：<br><a href="https://github.com/kubernetes-sigs/kind/releases" target="_blank" rel="noopener">https://github.com/kubernetes-sigs/kind/releases</a></p>
+<p>3.创建集群<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kind create cluster</span><br></pre></td></tr></table></figure></p>
+<p>完成后就可以直接 kubectl 操作集群了，kubeconfig 已经自动生效了，在 <code>~/.kube/config</code> 路径。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get node</span><br><span class="line">NAME                 STATUS    ROLES     AGE       VERSION</span><br><span class="line">kind-control-plane   Ready     master    53m       v1.18.2</span><br></pre></td></tr></table></figure></p>
+<p>4.获取集群 kubeconfig 文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kind get kubeconfig</span><br></pre></td></tr></table></figure></p>
+<p>5.销毁集群<br><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kind <span class="keyword">delete</span> <span class="keyword">cluster</span></span><br></pre></td></tr></table></figure></p>
+<p>执行 <code>kind --help</code> 获取帮助和其他支持的命令参数。</p>
+<h4 id="kind-配置"><a href="#kind-配置" class="headerlink" title="kind 配置"></a>kind 配置</h4><p>我们可以对要创建的集群进行一些定制化配置，kind 支持的配置见这里：<a href="https://kind.sigs.k8s.io/docs/user/configuration/" target="_blank" rel="noopener">https://kind.sigs.k8s.io/docs/user/configuration/</a><br>配置方法：<br>参照文档，编写配置 kind 配置文件 config.yaml，然后在 kind 创建集群的时候指定配置文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kind create cluster --config=/foo/bar/config.yaml</span><br></pre></td></tr></table></figure></p>
+<p>举例：<br>默认 kind 创建出来的集群 apiserver 监听的地址是：127.0.0.1:[随机端口]，我要改成默认监听的地址是：0.0.0.0:6443，编写如下 config.yaml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Cluster</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kind.x-k8s.io/v1alpha4</span></span><br><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="comment"># WARNING: It is _strongly_ recommended that you keep this the default</span></span><br><span class="line">  <span class="comment"># (127.0.0.1) for security reasons. However it is possible to change this.</span></span><br><span class="line"><span class="attr">  apiServerAddress:</span> <span class="string">"0.0.0.0"</span></span><br><span class="line">  <span class="comment"># By default the API server listens on a random open port.</span></span><br><span class="line">  <span class="comment"># You may choose a specific port but probably don't need to in most cases.</span></span><br><span class="line">  <span class="comment"># Using a random port makes it easier to spin up multiple clusters.</span></span><br><span class="line"><span class="attr">  apiServerPort:</span> <span class="number">6443</span></span><br></pre></td></tr></table></figure></p>
+<p>创建集群时指定上面配置文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kind create cluster --config=config.yaml</span><br></pre></td></tr></table></figure></p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>总而言之，kind 是一个非常轻量级的工具，能以最轻量的方式构建 k8s 集群，其设计理念是是一个 k8s 就是一个 Docker 容器，构建复杂的 k8s 集群变成了启动一个 Docker 容器，如此简单。</p>
+<p>我对 kind 的评价是：快！快！快！ 轻量！轻量！轻量！ 效率！效率！效率！</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/11/Golang-项目配置文件读取之-viper-实践/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1774,168 +1939,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/07/基于-Kubernetes-的-7-大-DevOps-关键实践/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/09/07/基于-Kubernetes-的-7-大-DevOps-关键实践/" itemprop="url">基于 Kubernetes 的 7 大 DevOps 关键实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-07T20:34:38+08:00">
-                2019-09-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DevOps/" itemprop="url" rel="index">
-                    <span itemprop="name">DevOps</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文主要介绍 DevOps 的 7 大关键实践在 Kubernetes 平台下如何落地，结合我们目前基于 Kubernetes 平台的 DevOps 实践谈谈是如何贯彻相关理念的，这里不会对其具体实现细节进行深入讲解，只做一个大致的概括的描述，分享下已有的实践，具体实践细节有时间了会单独整理一篇文章分享。</p>
-<h3 id="DevOps-简介"><a href="#DevOps-简介" class="headerlink" title="DevOps 简介"></a>DevOps 简介</h3><p>DevOps 集文化理念、实践和工具于一身，可以提高企业高速交付应用程序和服务的能力，与使用传统软件开发和基础设施管理流程相比，能够帮助企业更快地发展和改进产品。</p>
-<p><img src="/images/devops.png" alt=""></p>
-<h5 id="Goals"><a href="#Goals" class="headerlink" title="Goals"></a>Goals</h5><p>The goals of DevOps span the entire delivery pipeline. They include:</p>
-<ul>
-<li>Improved deployment frequency;</li>
-<li>Faster time to market;</li>
-<li>Lower failure rate of new releases;</li>
-<li>Shortened lead time between fixes;</li>
-<li>Faster mean time to recovery (in the event of a new release crashing or otherwise disabling the current system).</li>
-</ul>
-<h3 id="DevOps-的-7-大关键实践在Kubernetes-平台下的落地"><a href="#DevOps-的-7-大关键实践在Kubernetes-平台下的落地" class="headerlink" title="DevOps 的 7 大关键实践在Kubernetes 平台下的落地"></a>DevOps 的 7 大关键实践在Kubernetes 平台下的落地</h3><p>下面为基于 Kubernetes 的 CI/CD  流水线整体实践，使用 Kubernetes + Docker + Jenkins + Helm 等云原生工具链来构建 CI/CD 管道，基于 Google Cloud Platform 云平台构建：</p>
-<p><img src="/images/k8s-devops-ci-cd.png" alt=""><br><strong>1. Configuration Management</strong><br>关于配置文件的管理我们统一使用 Kubernetes 提供的 configmap 和 secret 资源对象来实现，对于一般的应用配置使用 configmap 管理，对于敏感数据使用 secret 存储。</p>
-<p><strong>2. Release Management</strong><br>关于发布管理，使用 Helm 工具统一以 Chart 的方式打包并发布应用，维护每个微服务的历史版本，可以按需回滚。应用的镜像版本统一存储到一个 Docker 私服。</p>
-<p><strong>3. Continuous Integration</strong><br>关于持续集成整合了一套完全开源的工具链：Gitlab + Maven + Jenkins + TestNg + SonarQuebe + Allure。Jenkins 运行在 Kubernetes 集群中，所有的工具链都以容器的方式运行，按需定义并使用，无需单独安装维护。<br><img src="/images/k8s-ci-jenkins-pipeline.png" alt=""></p>
-<p><strong>4. Continuous Deployment</strong><br>关于持续部署方面做的不是很好，没有形成完整的 Pipeline，整个自动化 Pipeline 进行到预发布环境，对于生产环境发布，研发人员自助式点击另一个单独的部署 Pipeline Job 进行部署，选择镜像版本进行发布。<br><img src="/images/k8s-cd-jenkins-pipeline.png" alt=""></p>
-<p><strong>5. Infrastructure as Code</strong><br>基础架构即代码的指的是所有软件基础设施的管理维护都以代码的方式管理起来，对于基础设施资源的创建、销毁、变更，不再是人工通过界面化点触式管理，所有这些更改都基于代码的提交变更和一套自动化框架。比如知名的 Terraform 就是一个业界比较流行的 IaC 框架，专门用于代码化管理云基础设施。在 Infrastructure as Code 方面，其实 Kubernetes 完全契合这一点，所有的基础架构及应用服务都可以被抽象成 API 资源对象，我们只需要按需定义 yaml 资源文件即可快速生成相应的资源。比如我们需要一个 Redis 中间件，那么只需要编写一个声明式 yaml 文件，定义需要的配置、版本等信息即可以容器的方式在 k8s 集群中运行起来。最终只需要在 git 代码仓库维护这些 yaml 文件即可。<br><img src="/images/k8s-iac.png" alt=""></p>
-<p><strong>6. Test Automation</strong><br>关于测试自动化，目前主要有三种类型的测试：单元测试、后端接口测试、UI 自动化测试。所有的这些测试都集成在 Jenkins pipeline 中。后端接口测试和 UI 测试除了在自动化 Pipeline 中运行，还会每天定时跑测试，最终的测试报告统一收集到 Reportportal 报表平台。<br><img src="/images/rp_dashboard.png" alt=""></p>
-<p><strong>7. Application Performance Monitoring</strong><br>关于应用监控采用云原生架构下的最佳实践： Prometheus 监控栈<br><img src="/images/prometheus-arch.png" alt=""></p>
-<p>关于日志采集基于 EFK 技术栈<br><img src="/images/k8s-efk-arch.png" alt=""></p>
-<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://www.wikiwand.com/en/DevOps#/Definitions_and_history" target="_blank" rel="noopener">https://www.wikiwand.com/en/DevOps#/Definitions_and_history</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1985,7 +1988,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">125</span>
+                  <span class="site-state-item-count">126</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
