@@ -87,15 +87,15 @@
 <meta property="og:site_name" content="Jim">
 <meta property="og:description" content="从概念上来讲，一个接口类型的值（简称接口值）其实有两个部分：一个具体类型和该类型的一个值。二者称为接口的动态类型和动态值。比如下面声明一个接口变量 w 并赋值，那么 w 接口值可以用如下图表示：  接口的零值接口的零值就是把它的动态类型和动态值都设为 nil，如下图所示：var w io.Writer // 接口的零值  在这种情况下就是一个 nil 接口值，可以用 w == nil 或者 w !">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/images/go-interface-value.png">
+<meta property="og:image" content="http://yoursite.com/images/go-interface-value1.png">
 <meta property="og:image" content="http://yoursite.com/images/go-nil-interface-value.png">
 <meta property="og:image" content="http://yoursite.com/images/go-nil-interface-value.png">
 <meta property="og:image" content="http://yoursite.com/images/go-interface-value-nil.png">
-<meta property="og:updated_time" content="2020-09-06T05:18:52.022Z">
+<meta property="og:updated_time" content="2020-09-06T09:44:26.569Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GO 语言程序设计读书笔记-接口值">
 <meta name="twitter:description" content="从概念上来讲，一个接口类型的值（简称接口值）其实有两个部分：一个具体类型和该类型的一个值。二者称为接口的动态类型和动态值。比如下面声明一个接口变量 w 并赋值，那么 w 接口值可以用如下图表示：  接口的零值接口的零值就是把它的动态类型和动态值都设为 nil，如下图所示：var w io.Writer // 接口的零值  在这种情况下就是一个 nil 接口值，可以用 w == nil 或者 w !">
-<meta name="twitter:image" content="http://yoursite.com/images/go-interface-value.png">
+<meta name="twitter:image" content="http://yoursite.com/images/go-interface-value1.png">
 
 
 
@@ -397,7 +397,7 @@
 
       
         <p>从概念上来讲，一个接口类型的值（简称接口值）其实有两个部分：一个具体类型和该类型的一个值。二者称为接口的动态类型和动态值。比如下面声明一个接口变量 w 并赋值，那么 w 接口值可以用如下图表示：</p>
-<p><img src="/images/go-interface-value.png" alt="Alt text"></p>
+<p><img src="/images/go-interface-value1.png" alt="Alt text"></p>
 <h4 id="接口的零值"><a href="#接口的零值" class="headerlink" title="接口的零值"></a>接口的零值</h4><p>接口的零值就是把它的动态类型和动态值都设为 nil，如下图所示：<br><code>var w io.Writer</code> // 接口的零值</p>
 <p><img src="/images/go-nil-interface-value.png" alt="Alt text"></p>
 <p>在这种情况下就是一个 nil 接口值，可以用 w == nil 或者 w != nil 来检测一个接口值是否时 nil。调用一个 nil 接口的任何方法都会导致崩溃：<br><code>w.Write([]byte(&quot;hello&quot;))</code> // panic：对空指针引用值</p>
