@@ -296,6 +296,164 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/13/构建-Docker-镜像上传到-docker-hub/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/13/构建-Docker-镜像上传到-docker-hub/" itemprop="url">构建 Docker 镜像上传到 docker hub</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-13T20:58:16+08:00">
+                2019-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文演示如何将自己构建的 Docker 镜像推送到 <a href="https://hub.docker.com/" target="_blank" rel="noopener">docker hub</a>来实现镜像的共享。</p>
+<ol>
+<li>注册一个 docker hub 账号<br>举例：账号名为 qhh0205</li>
+<li><p>写一个 Dockerfile<br>举例：该 Dockerfile 安装了指定版本的 ant 和 jmeter，GitHub 仓库地址：<a href="https://github.com/qhh0205/docker-ant-jmeter" target="_blank" rel="noopener">https://github.com/qhh0205/docker-ant-jmeter</a></p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">FROM <span class="symbol">openjdk:</span><span class="number">8</span></span><br><span class="line">MAINTAINER qhh0205 &lt;qhh0205<span class="variable">@gmail</span>.com&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ant default version: 1.10.5</span></span><br><span class="line"><span class="comment"># jmeter default version: 5.0</span></span><br><span class="line"><span class="comment"># Specify version by docker build --build-arg &lt;varname&gt;=&lt;value&gt; ...</span></span><br><span class="line"></span><br><span class="line">ARG ANT_VERSION=<span class="number">1.10</span>.<span class="number">5</span></span><br><span class="line">ENV ANT_HOME=<span class="regexp">/opt/ant</span></span><br><span class="line"></span><br><span class="line">ARG JMETER_VERSION=<span class="number">5.0</span></span><br><span class="line">ENV JMETER_HOME /opt/jmeter</span><br><span class="line"></span><br><span class="line">RUN apt-get -y update &amp;&amp; \</span><br><span class="line">apt-get -y install wget</span><br><span class="line"></span><br><span class="line"><span class="comment"># Installs Ant</span></span><br><span class="line">RUN wget --no-check-certificate --no-cookies <span class="symbol">http:</span>/<span class="regexp">/archive.apache.org/dist</span><span class="regexp">//ant</span><span class="regexp">/binaries/apache</span>-ant-<span class="variable">$&#123;</span>ANT_VERSION&#125;-bin.tar.gz \</span><br><span class="line">&amp;&amp; tar -zvxf apache-ant-<span class="variable">$&#123;</span>ANT_VERSION&#125;-bin.tar.gz -C /opt/ \</span><br><span class="line">&amp;&amp; ln -s /opt/apache-ant-<span class="variable">$&#123;</span>ANT_VERSION&#125; /opt/ant \</span><br><span class="line">&amp;&amp; rm -f apache-ant-<span class="variable">$&#123;</span>ANT_VERSION&#125;-bin.tar.gz</span><br><span class="line"></span><br><span class="line">ENV PATH <span class="variable">$&#123;</span>PATH&#125;<span class="symbol">:/opt/ant/bin</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Installs Jmeter</span></span><br><span class="line">RUN wget --no-check-certificate --no-cookies <span class="symbol">https:</span>/<span class="regexp">/archive.apache.org/dist</span><span class="regexp">//jmeter</span><span class="regexp">/binaries/apache</span>-jmeter-<span class="variable">$&#123;</span>JMETER_VERSION&#125;.tgz \</span><br><span class="line">&amp;&amp; tar -zvxf apache-jmeter-<span class="variable">$&#123;</span>JMETER_VERSION&#125;.tgz -C /opt/ \</span><br><span class="line">&amp;&amp; ln -s /opt/apache-jmeter-<span class="variable">$&#123;</span>JMETER_VERSION&#125; /opt/jmeter \</span><br><span class="line">&amp;&amp; rm -f apache-jmeter-<span class="variable">$&#123;</span>JMETER_VERSION&#125;.tgz</span><br><span class="line"></span><br><span class="line">ENV PATH <span class="variable">$PATH</span><span class="symbol">:/opt/jmeter/bin</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>构建镜像<br>进入 Dockerfile 所在目录，执行构建命令:</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">docker</span> <span class="keyword">build </span>-t qhh0205/ant-jmeter:<span class="number">1</span>.<span class="number">10</span>.<span class="number">5</span>-<span class="number">5</span>.<span class="number">0</span> .</span><br></pre></td></tr></table></figure>
+<p> 参数说明：<br> <code>qhh0205/ant-jmeter:1.10.5-5.0</code>: docker 镜像 tag 名称<br> <code>qhh0205</code>: docker hub 账号名<br> <code>ant-jmeter</code>: dcoker hub 仓库名<br> <code>1.10.5-5.0</code>: 镜像 tag</p>
+</li>
+<li><p>登陆 docker hub 账号</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">docker login</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>上传镜像</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="keyword">push</span> qhh0205/ant-jmeter:<span class="number">1.10</span><span class="meta">.5</span>-<span class="number">5.0</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/10/使用-Ansible-统计服务器资源利用率/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1708,159 +1866,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/14/基于-Kubernetes-的动态-Jenkins-slave-部署/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/14/基于-Kubernetes-的动态-Jenkins-slave-部署/" itemprop="url">基于 Kubernetes 的动态 Jenkins slave 部署</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-14T10:10:36+08:00">
-                2018-10-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DevOps/" itemprop="url" rel="index">
-                    <span itemprop="name">DevOps</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>采用官方 Helm Chart 部署，服务对外暴露方式为 KongIngress.</p>
-<p>官方 Jenkins Chart 仓库：<a href="https://github.com/helm/charts/tree/master/stable/jenkins" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/jenkins</a></p>
-<h3 id="1-创建-jenkins-pv"><a href="#1-创建-jenkins-pv" class="headerlink" title="1. 创建 jenkins pv"></a>1. 创建 jenkins pv</h3><p>pv 底层类型为 nfs<br>jenkins_pv.yaml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">kubectl</span> <span class="string">create</span> <span class="bullet">-f</span> <span class="string">jenkins_pv.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">jenkins-pv</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">jenkins</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  capacity:</span></span><br><span class="line"><span class="attr">    storage:</span> <span class="number">50</span><span class="string">Gi</span></span><br><span class="line"><span class="attr">  accessModes:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">ReadWriteOnce</span></span><br><span class="line"><span class="attr">  persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line"><span class="attr">  nfs:</span></span><br><span class="line"><span class="attr">    path:</span> <span class="string">/data1/nfs/jenkins</span></span><br><span class="line"><span class="attr">    server:</span> <span class="number">10.4</span><span class="number">.37</span><span class="number">.91</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="2-创建-namespace"><a href="#2-创建-namespace" class="headerlink" title="2. 创建 namespace"></a>2. 创建 namespace</h3><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">kubectl create ns jenkins</span></span><br></pre></td></tr></table></figure>
-<h3 id="3-采用-KongIngress-方式对外暴露服务"><a href="#3-采用-KongIngress-方式对外暴露服务" class="headerlink" title="3. 采用 KongIngress 方式对外暴露服务"></a>3. 采用 KongIngress 方式对外暴露服务</h3><p>修改 values.yml 文件:<br>3.1. Master.ServiceType 改为 ClusterIP<br>3.2. HostName 取消注释，值设置为 Jenkins 访问域名：example.com<br>3.3. rbac 设置为 true；<br>3.4. Master.Ingress.Annotations 添加如下内容：<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">ingress.plugin.konghq.com:</span> <span class="string">jenkins-kong-ingress</span></span><br><span class="line"><span class="string">kubernetes.io/ingress.class:</span> <span class="string">nginx</span></span><br></pre></td></tr></table></figure></p>
-<p>3.5. values.yaml Master 节点下添加 Kong Ingress 相关变量<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">KongIngress:</span></span><br><span class="line"><span class="attr">  Name:</span> <span class="string">jenkins-kong-ingress</span></span><br><span class="line"><span class="attr">  Route:</span></span><br><span class="line"><span class="attr">    StripPath:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">    PreserveHost:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  Proxy:</span></span><br><span class="line"><span class="attr">    ConnectTimeout:</span> <span class="number">10000</span></span><br><span class="line"><span class="attr">    Retries:</span> <span class="number">5</span></span><br><span class="line"><span class="attr">    ReadTimeout:</span> <span class="number">60000</span></span><br><span class="line"><span class="attr">    WriteTimeout:</span> <span class="number">60000</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="4-编辑-jenkins-master-ingress-yaml-添加-KongIngress-资源对象"><a href="#4-编辑-jenkins-master-ingress-yaml-添加-KongIngress-资源对象" class="headerlink" title="4. 编辑 jenkins-master-ingress.yaml 添加  KongIngress 资源对象"></a>4. 编辑 jenkins-master-ingress.yaml 添加  KongIngress 资源对象</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">configuration.konghq.com/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">KongIngress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">&#123;&#123;</span> <span class="string">.Values.Master.KongIngress.Name</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="attr">route:</span></span><br><span class="line"><span class="attr">  strip_path:</span> <span class="string">&#123;&#123;</span> <span class="string">.Values.Master.KongIngress.Route.StripPath</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="attr">  preserve_host:</span> <span class="string">&#123;&#123;</span> <span class="string">.Values.Master.KongIngress.Route.PreserveHost</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="attr">proxy:</span></span><br><span class="line"><span class="attr">  connect_timeout:</span> <span class="string">&#123;&#123;</span> <span class="string">.Values.Master.KongIngress.Proxy.ConnectTimeout</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="attr">  retries:</span> <span class="string">&#123;&#123;</span> <span class="string">.Values.Master.KongIngress.Proxy.Retries</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="attr">  read_timeout:</span> <span class="string">&#123;&#123;</span> <span class="string">.Values.Master.KongIngress.Proxy.ReadTimeout</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="attr">  write_timeout:</span> <span class="string">&#123;&#123;</span> <span class="string">.Values.Master.KongIngress.Proxy.WriteTimeout</span> <span class="string">&#125;&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="5-helm-打包"><a href="#5-helm-打包" class="headerlink" title="5. helm 打包"></a>5. helm 打包</h3><figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm <span class="keyword">package</span> <span class="title">jenkins</span></span><br></pre></td></tr></table></figure>
-<h3 id="6-重新生成-chart-索引"><a href="#6-重新生成-chart-索引" class="headerlink" title="6. 重新生成 chart 索引"></a>6. 重新生成 chart 索引</h3><figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm repo <span class="keyword">index</span> .</span><br></pre></td></tr></table></figure>
-<h3 id="7-helm-部署"><a href="#7-helm-部署" class="headerlink" title="7. helm 部署"></a>7. helm 部署</h3><figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">helm</span> <span class="comment">install</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">name</span> <span class="comment">jenkins</span> <span class="comment">helm_local_repo/jenkins</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">namespace</span> <span class="comment">jenkins</span></span><br></pre></td></tr></table></figure>
-<h3 id="8-获取-Jenkins-初始密码"><a href="#8-获取-Jenkins-初始密码" class="headerlink" title="8. 获取 Jenkins 初始密码"></a>8. 获取 Jenkins 初始密码</h3><p> 执行 <code>kubectl get secret jenkins -n jenkins -o yaml</code> 得到 jenkins-admin-password 的 base64 编码值，然后通过 base64 解码，得到密码：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'base64d_str'</span> | base64 -d</span><br></pre></td></tr></table></figure></p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/OoTEtPNEORn_sFYG8rzaqA</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1910,7 +1915,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">126</span>
+                  <span class="site-state-item-count">127</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

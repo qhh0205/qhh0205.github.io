@@ -296,6 +296,164 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/06/GO-语言程序设计读书笔记-接口值/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/09/06/GO-语言程序设计读书笔记-接口值/" itemprop="url">GO 语言程序设计读书笔记-接口值</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-06T13:10:17+08:00">
+                2020-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>从概念上来讲，一个接口类型的值（简称接口值）其实有两个部分：一个具体类型和该类型的一个值。二者称为接口的动态类型和动态值。比如下面声明一个接口变量 w 并赋值，那么 w 接口值可以用如下图表示：</p>
+<p><img src="/images/go-interface-value.png" alt="Alt text"></p>
+<h4 id="接口的零值"><a href="#接口的零值" class="headerlink" title="接口的零值"></a>接口的零值</h4><p>接口的零值就是把它的动态类型和动态值都设为 nil，如下图所示：<br><code>var w io.Writer</code> // 接口的零值</p>
+<p><img src="/images/go-nil-interface-value.png" alt="Alt text"></p>
+<p>在这种情况下就是一个 nil 接口值，可以用 w == nil 或者 w != nil 来检测一个接口值是否时 nil。调用一个 nil 接口的任何方法都会导致崩溃：<br><code>w.Write([]byte(&quot;hello&quot;))</code> // panic：对空指针引用值</p>
+<h4 id="接口值的比较"><a href="#接口值的比较" class="headerlink" title="接口值的比较"></a>接口值的比较</h4><p>接口值可以用 == 和 != 来做比较。如果两个接口值都是 nil 或者二者的动态类型完全一致且二者动态值相等（使用动态类型的==操作符来比较），那么两个接口值相等。因为接口值是可以比较的，所以它们可以作为 map 的键，也可以作为 switch 语句的操作数。</p>
+<p>注意：在比较两个接口值时，如果两个接口值的动态类型一致，但对应的动态值是不可以比较的（比如 slice），那么这个比较会导致代码 panic：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">var</span> x <span class="keyword">interface</span>&#123;&#125; = []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">   fmt.Println(x == x)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>panic 信息:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">panic: runtime error: comparing uncomparable<span class="built_in"> type </span>[]int</span><br><span class="line"></span><br><span class="line">goroutine 1 [running]:</span><br><span class="line">main.main()</span><br><span class="line">	/Users/qianghaohao/go/src/examplecode/main.go:9 +0x82</span><br></pre></td></tr></table></figure></p>
+<h4 id="获取接口值的动态类型"><a href="#获取接口值的动态类型" class="headerlink" title="获取接口值的动态类型"></a>获取接口值的动态类型</h4><p>使用 fmt 包的 %T 可以打印某个接口值的动态类型，有助于问题调试：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">var</span> w io.Writer</span><br><span class="line">   fmt.Printf(<span class="string">"%T\n"</span>, w)  <span class="comment">// &lt;nil&gt;</span></span><br><span class="line"></span><br><span class="line">   w = os.Stdout</span><br><span class="line">   fmt.Printf(<span class="string">"%T\n"</span>, w)  <span class="comment">// os.File</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="keyword">nil</span>&gt;</span><br><span class="line">*os.<span class="keyword">File</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="nil-接口值和动态值为-nil-接口值的区别"><a href="#nil-接口值和动态值为-nil-接口值的区别" class="headerlink" title="nil 接口值和动态值为 nil 接口值的区别"></a>nil 接口值和动态值为 nil 接口值的区别</h4><p><strong>nil 接口值</strong>：接口值的动态类型和动态值都为 nil。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> w io.Writer</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/go-nil-interface-value.png" alt="Alt text"></p>
+<p><strong>动态值为 nil 的接口</strong>：接口值的动态类型有具体类型，动态值为 nil。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> buf *bytes.Buffer</span><br><span class="line"><span class="keyword">var</span> w io.Writer = buf</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/go-interface-value-nil.png" alt="Alt text"></p>
+<p>示例代码分析：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> debug = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">var</span> buf *bytes.Buffer</span><br><span class="line">   <span class="keyword">if</span> debug &#123;</span><br><span class="line">      buf = <span class="built_in">new</span>(bytes.Buffer)</span><br><span class="line">   &#125;</span><br><span class="line">   f(buf)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">(out io.Writer)</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> out != <span class="literal">nil</span> &#123;</span><br><span class="line">      out.Write([]<span class="keyword">byte</span>(<span class="string">"done!\n"</span>))</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当 debug 为 true 时，buf 为执行 bytes.Buffer 对象的一个指针，当调用函数 f 时，将 buf 赋给 out，此时 out 的动态值不是 nil，而是指向 byte.Buffer 对象的指针。out 的动态类型是 *byte.Buffer。随后调用 out.Write 函数，代码正常运行，不会引发 panic。</p>
+<p>当 debug 为 false 时，调用函数 f 时，将 buf 赋值给 out，此时 out 的动态值虽然时 nil，但其动态类型不是 nil，所以 out != nil 表达式为 true，随后调用 out.Write 函数，但是 Write 函数的接收者为 nil，所以在底层拷贝 buffer 时会导致 panic（空指针引用），具体可以看看 Write 函数的底层实现就知道了。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/15/使用-kind-1-分钟启动一个本地-k8s-开发集群/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1746,199 +1904,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/24/MySQL-慢查询日志导入-Elasticsearch-可视化查询分析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/24/MySQL-慢查询日志导入-Elasticsearch-可视化查询分析/" itemprop="url">MySQL 慢查询日志导入 Elasticsearch 可视化查询分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-24T15:59:40+08:00">
-                2019-10-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index">
-                    <span itemprop="name">MySQL</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>当应用程序后台 SQL 查询慢的时候我们一般第一时间会查看数据库慢查询记录，但是慢查询记录是原始文本，直接查询搜索分析比较费时费力，虽然业界有针对 MySQL 慢查询分析的命令行工具（比如：<a href="https://www.percona.com/doc/percona-toolkit/LATEST/pt-query-digest.html" target="_blank" rel="noopener">pt-query-digest</a>），但是使用起来还是不够方便，而且分析结果也是针对整个实例的大概统计，不能及时定位到某个应用（库.表）的慢查询。出于这个目的我们可以将 MySQL 原始慢查询日志结构化导入 Elasticsearch，然后通过 Kibana 可视化查询分析，由于日志结构化解析出来了，所以可以快速查询分析。本文主要介绍如何运用业界主流的开源工具链实现这一需求，整体架构如下：<br><img src="/images/elk-mysql-slow-log.png" alt=""></p>
-<h3 id="工具链集合"><a href="#工具链集合" class="headerlink" title="工具链集合"></a>工具链集合</h3><ol>
-<li><a href="https://www.elastic.co/cn/products/beats/filebeat" target="_blank" rel="noopener">Filebeat</a>：日志收集端，使用 Filebeat 的 <a href="https://www.elastic.co/guide/en/beats/filebeat/master/filebeat-module-mysql.html" target="_blank" rel="noopener">MySQL 模块</a>结构化解析慢查询日志并写入到 Elasticsearch。</li>
-<li><a href="https://www.elastic.co/cn/" target="_blank" rel="noopener">Elasticsearch</a>：存储 Filebeat 发送过来的日志消息；</li>
-<li><a href="https://www.elastic.co/cn/products/kibana" target="_blank" rel="noopener">Kibana</a>：可视化查询分析 Elasticsearch 存储的日志数据；</li>
-<li>docker-compose：容器化快速启动 Elasticsearch + Kibana 组件；</li>
-</ol>
-<h3 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h3><p>docker-compose 启动 Elasticsearch + Kibana 组件，然后使用 Filebeat 自带的 MySQL 模块结构化慢查询日志并传输到 Elasticsearch。</p>
-<h4 id="docker-compose-启动-Elasticsearch-Kibana-组件"><a href="#docker-compose-启动-Elasticsearch-Kibana-组件" class="headerlink" title="docker-compose 启动 Elasticsearch + Kibana 组件"></a>docker-compose 启动 Elasticsearch + Kibana 组件</h4><ul>
-<li>Elasticsearch 7.4.0</li>
-<li>Kibana 7.4.0</li>
-</ul>
-<p>docker-compose.yml<br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"><span class="attr">  esnet:</span></span><br><span class="line"><span class="attr">    driver:</span> <span class="string">bridge</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  elasticsearch:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:7.4.0</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">node.name=es01</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">discovery.seed_hosts=es01</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">cluster.initial_master_nodes=es01</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">cluster.name=docker-cluster</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">bootstrap.memory_lock=true</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"ES_JAVA_OPTS=-Xms4096m -Xmx4096m"</span></span><br><span class="line"><span class="attr">    ulimits:</span></span><br><span class="line"><span class="attr">      memlock:</span></span><br><span class="line"><span class="attr">        soft:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">        hard:</span> <span class="bullet">-1</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"9500:9200"</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">esnet</span></span><br><span class="line"><span class="attr">  kibana:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker.elastic.co/kibana/kibana:7.4.0</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"ELASTICSEARCH_HOSTS=http://elasticsearch:9200"</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"5601:5601"</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">esnet</span></span><br></pre></td></tr></table></figure></p>
-<p>启动：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure></p>
-<h4 id="安装配置-Filebeat"><a href="#安装配置-Filebeat" class="headerlink" title="安装配置 Filebeat"></a>安装配置 Filebeat</h4><h5 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.4.0-x86_64.rpm</span><br><span class="line">sudo rpm -vi filebeat-7.4.0-x86_64.rpm</span><br></pre></td></tr></table></figure>
-<h5 id="配置-Filebeat"><a href="#配置-Filebeat" class="headerlink" title="配置 Filebeat"></a>配置 Filebeat</h5><ol>
-<li><p>配置 Filebeat 输出到 Elasticsearch：<br>vim /etc/filebeat/filebeat.yml 填入如下内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">output.elasticsearch:</span><br><span class="line">  <span class="comment"># Array of hosts to connect to.</span></span><br><span class="line">  hosts: [<span class="string">"localhost:9500"</span>]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>激活 filebeat mysql 模块</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filebeat modules <span class="built_in">enable</span> mysql</span><br></pre></td></tr></table></figure>
-<p> 关于 Filebeat mysql 模块介绍见这里：<a href="https://www.elastic.co/guide/en/beats/filebeat/master/filebeat-module-mysql.html" target="_blank" rel="noopener">https://www.elastic.co/guide/en/beats/filebeat/master/filebeat-module-mysql.html</a></p>
-</li>
-<li><p>设置初始化环境</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filebeat setup -e</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>慢查询日志抓取目录路径<br>这里设置为：<code>/data1/web/slow-query/original/*.log</code> 路径<br>vim /etc/filebeat/modules.d/mysql.yml</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">- module:</span> <span class="string">mysql</span></span><br><span class="line"><span class="attr">  error:</span></span><br><span class="line"><span class="attr">    enabled:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">  slowlog:</span></span><br><span class="line"><span class="attr">    enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="string">var.paths:</span> <span class="string">["/data1/web/slow-query/original/*.log"]</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Filebeat MySQL 慢查询日志解析配置<br>由于我们 MySQL 使用云提供商的 SQL 服务，但是云提供商的 MySQL 实例慢查询日志格式和自搭的有略微的区别，不太是很标准，所以需要自定义日志格式解析表达式，正则表达式符合 logstash Grok 语法，可以在这里调试正则表达式：<a href="http://grokdebug.herokuapp.com/。关于" target="_blank" rel="noopener">http://grokdebug.herokuapp.com/。关于</a> Grok 正则语法的学习资料可以看看这两篇文章，这里不做介绍：<a href="https://xiezefan.me/2017/04/09/elk_in_action_grok_start/" target="_blank" rel="noopener">ELK实战 - Grok简易入门</a>，<a href="https://www.elastic.co/guide/en/logstash/current/plugins-filters-grok.html" target="_blank" rel="noopener">Logstash 官网：Grok 过滤器插件</a>。</p>
-<p> 我们目前慢查询日志格式样例：</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Time: 2019-10-23T00:00:22.964315Z</span></span><br><span class="line"><span class="comment"># User@Host: db[db] @  [cloudsqlproxy~192.168.1.11]  thread_id: 87983  server_id: 2945557302</span></span><br><span class="line"><span class="comment"># Query_time: 1.649439  Lock_time: 0.000116 Rows_sent: 1  Rows_examined: 1634</span></span><br><span class="line">use report;</span><br><span class="line">SET timestamp=1571788822;</span><br><span class="line">select * from table <span class="built_in">where</span>  team_id = 71206683786887168  and  definition_id = 142  and  definition_md5 = <span class="string">'acd2e0a2fecb08ceb13c6ae'</span>  and  UNIX_TIMESTAMP(create_time) * 1000 &lt;= 1568851199999  order by create_time desc  <span class="built_in">limit</span> 1;</span><br></pre></td></tr></table></figure>
-<p> 对应的 Grok 正则：<br>说明：在 Grok 中转义一个字符使用一个 <code>\</code> 而不是两个 <code>\</code>，比如要转义 <code>[</code> 需要写成 <code>\[</code>。</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">^<span class="comment"># Time: %&#123;TIMESTAMP_ISO8601:mysql.slowlog.time&#125;\n# User@Host: %&#123;USER:mysql.slowlog.user&#125;\[%&#123;USER:mysql.slowlog.current_user&#125;\] @ %&#123;HOSTNAME:mysql.slowlog.host&#125;? \[([a-zA-Z~]*)?%&#123;IP:mysql.slowlog.ip&#125;?\]%&#123;SPACE&#125;(Id:%&#123;SPACE&#125;%&#123;NUMBER:mysql.slowlog.id:int&#125;)?(%&#123;SPACE&#125;thread_id:%&#123;SPACE&#125;%&#123;NUMBER:mysql.slowlog.thread_id:int&#125;)?(%&#123;SPACE&#125;server_id:%&#123;SPACE&#125;%&#123;NUMBER:mysql.slowlog.server_id&#125;)?\n# Query_time: %&#123;NUMBER:mysql.slowlog.query_time.sec:float&#125;%&#123;SPACE&#125;Lock_time: %&#123;NUMBER:mysql.slowlog.lock_time.sec:float&#125;%&#123;SPACE&#125;Rows_sent: %&#123;NUMBER:mysql.slowlog.rows_sent:int&#125;%&#123;SPACE&#125;Rows_examined: %&#123;NUMBER:mysql.slowlog.rows_examined:float&#125;\n((use|USE) .*;\n)?SET timestamp=%&#123;NUMBER:mysql.slowlog.timestamp&#125;;\n%&#123;GREEDYDATA:mysql.slowlog.query&#125;</span></span><br></pre></td></tr></table></figure>
-<p> 将调试好的 Grok 正则写入下面文件中:<br> 说明: 写入下面 pipeline.json 文件中的正则特殊字符需要两个 <code>\</code> 转义，比如要转义 <code>[</code> 需要写成 <code>\\[</code>。<br> /usr/share/filebeat/module/mysql/slowlog/ingest/pipeline.json</p>
- <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"description"</span>: <span class="string">"Pipeline for parsing MySQL slow logs."</span>,</span><br><span class="line">  <span class="attr">"processors"</span>: [&#123;</span><br><span class="line">    <span class="attr">"grok"</span>: &#123;</span><br><span class="line">      <span class="attr">"field"</span>: <span class="string">"message"</span>,</span><br><span class="line">      <span class="attr">"patterns"</span>:[</span><br><span class="line">        <span class="string">"^# Time: %&#123;TIMESTAMP_ISO8601:mysql.slowlog.time&#125;\n# User@Host: %&#123;USER:mysql.slowlog.user&#125;\\[%&#123;USER:mysql.slowlog.current_user&#125;\\] @ %&#123;HOSTNAME:mysql.slowlog.host&#125;? \\[([a-zA-Z~]*)?%&#123;IP:mysql.slowlog.ip&#125;?\\]%&#123;SPACE&#125;(Id:%&#123;SPACE&#125;%&#123;NUMBER:mysql.slowlog.id:int&#125;)?(%&#123;SPACE&#125;thread_id:%&#123;SPACE&#125;%&#123;NUMBER:mysql.slowlog.thread_id:int&#125;)?(%&#123;SPACE&#125;server_id:%&#123;SPACE&#125;%&#123;NUMBER:mysql.slowlog.server_id&#125;)?\n# Query_time: %&#123;NUMBER:mysql.slowlog.query_time.sec:float&#125;%&#123;SPACE&#125;Lock_time: %&#123;NUMBER:mysql.slowlog.lock_time.sec:float&#125;%&#123;SPACE&#125;Rows_sent: %&#123;NUMBER:mysql.slowlog.rows_sent:int&#125;%&#123;SPACE&#125;Rows_examined: %&#123;NUMBER:mysql.slowlog.rows_examined:float&#125;\n((use|USE) .*;\n)?SET timestamp=%&#123;NUMBER:mysql.slowlog.timestamp&#125;;\n%&#123;GREEDYDATA:mysql.slowlog.query&#125;"</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">"pattern_definitions"</span> : &#123;</span><br><span class="line">        <span class="attr">"GREEDYMULTILINE"</span> : <span class="string">"(.|\n)*"</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"ignore_missing"</span>: <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, &#123;</span><br><span class="line">    <span class="attr">"remove"</span>:&#123;</span><br><span class="line">      <span class="attr">"field"</span>: <span class="string">"message"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, &#123;</span><br><span class="line">    <span class="attr">"date"</span>: &#123;</span><br><span class="line">      <span class="attr">"field"</span>: <span class="string">"mysql.slowlog.time"</span>,</span><br><span class="line">      <span class="attr">"target_field"</span>: <span class="string">"@timestamp"</span>,</span><br><span class="line">      <span class="attr">"formats"</span>: [<span class="string">"ISO8601"</span>],</span><br><span class="line">      <span class="attr">"ignore_failure"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;],</span><br><span class="line">  <span class="attr">"on_failure"</span> : [&#123;</span><br><span class="line">    <span class="attr">"set"</span> : &#123;</span><br><span class="line">      <span class="attr">"field"</span> : <span class="string">"error.message"</span>,</span><br><span class="line">      <span class="attr">"value"</span> : <span class="string">"&#123;&#123; _ingest.on_failure_message &#125;&#125;"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> /usr/share/filebeat/module/mysql/slowlog/config/slowlog.yml 文件调整如下：</p>
- <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">type:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">paths:</span></span><br><span class="line"><span class="string">&#123;&#123;</span> <span class="string">range</span> <span class="string">$i,</span> <span class="string">$path</span> <span class="string">:=</span> <span class="string">.paths</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="bullet"> -</span> <span class="string">&#123;&#123;$path&#125;&#125;</span></span><br><span class="line"><span class="string">&#123;&#123;</span> <span class="string">end</span> <span class="string">&#125;&#125;</span></span><br><span class="line"><span class="attr">exclude_files:</span> <span class="string">['.gz$']</span></span><br><span class="line"><span class="attr">multiline:</span></span><br><span class="line"><span class="attr">  pattern:</span> <span class="string">'^# Time:'</span></span><br><span class="line"><span class="attr">  negate:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  match:</span> <span class="string">after</span></span><br><span class="line"><span class="attr">exclude_lines:</span> <span class="string">['^[\/\w\.]+,</span> <span class="attr">Version:</span> <span class="string">.*</span> <span class="string">started</span> <span class="attr">with:.*']</span> <span class="comment"># Exclude the header</span></span><br></pre></td></tr></table></figure>
-<p> 启动 filebeat 开始日志收集：</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start filebeat</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h4 id="Kibana-可视化查询"><a href="#Kibana-可视化查询" class="headerlink" title="Kibana 可视化查询"></a>Kibana 可视化查询</h4><p>在 Kibana 界面创建 filebeat 索引即可实时查看慢查询日志，举例：查看最近 7 天 10s ～ 20s 的慢查询记录：<br><img src="/images/kibana-mysql-slow-log.png" alt=""></p>
-<h3 id="遇到的问题及解决方法"><a href="#遇到的问题及解决方法" class="headerlink" title="遇到的问题及解决方法"></a>遇到的问题及解决方法</h3><p>Kibana 首次查看上面建立的索引数据可能会报类似下面的错误，主要原因是单条日志事件过长 Kibana 有限制：<br><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Request to Elasticsearch failed: &#123;"error":&#123;"root_cause":[&#123;"type":"illegal_argument_exception","reason":"The length of [error.message] field of [JHzl020BgPENHIlNYRoc] doc of [filebeat-7.4.0-2019.10.16-000001] <span class="keyword">index</span> has exceeded [<span class="number">1000000</span>] - maximum allowed <span class="keyword">to</span> be analyzed <span class="keyword">for</span> highlighting. This maximum can be <span class="keyword">set</span> <span class="keyword">by</span> changing the [<span class="keyword">index</span>.highlight.max_analyzed_offset] <span class="keyword">index</span> level setting. <span class="keyword">For</span> large texts, indexing <span class="keyword">with</span> offsets <span class="keyword">or</span> term vectors <span class="keyword">is</span> recommended!<span class="string">"&#125;],"</span><span class="built_in">type</span><span class="string">":"</span>search_phase_execution_exception<span class="string">","</span>reason<span class="string">":"</span><span class="keyword">all</span> shards failed<span class="string">","</span>phase<span class="string">":"</span>query<span class="string">","</span>grouped<span class="string">":true,"</span>failed_shards<span class="string">":[&#123;"</span>shard<span class="string">":0,"</span><span class="keyword">index</span><span class="string">":"</span>filebeat<span class="number">-7.4</span><span class="number">.0</span><span class="number">-2019.10</span><span class="number">.16</span><span class="number">-000001</span><span class="string">","</span>node<span class="string">":"</span>H_Zq22spSJKz0RWR_alDsA<span class="string">","</span>reason<span class="string">":&#123;"</span><span class="built_in">type</span><span class="string">":"</span>illegal_argument_exception<span class="string">","</span>reason<span class="string">":"</span>The <span class="built_in">length</span> of [error.message] field of [JHzl020BgPENHIlNYRoc] doc of [filebeat<span class="number">-7.4</span><span class="number">.0</span><span class="number">-2019.10</span><span class="number">.16</span><span class="number">-000001</span>] <span class="keyword">index</span> has exceeded [<span class="number">1000000</span>] - maximum allowed <span class="keyword">to</span> be analyzed <span class="keyword">for</span> highlighting. This maximum can be <span class="keyword">set</span> <span class="keyword">by</span> changing the [<span class="keyword">index</span>.highlight.max_analyzed_offset] <span class="keyword">index</span> level setting. <span class="keyword">For</span> large texts, indexing <span class="keyword">with</span> offsets <span class="keyword">or</span> term vectors <span class="keyword">is</span> recommended!<span class="string">"&#125;&#125;],"</span>caused_by<span class="string">":&#123;"</span><span class="built_in">type</span><span class="string">":"</span>illegal_argument_exception<span class="string">","</span>reason<span class="string">":"</span>The <span class="built_in">length</span> of [error.message] field of [JHzl020BgPENHIlNYRoc] doc of [filebeat<span class="number">-7.4</span><span class="number">.0</span><span class="number">-2019.10</span><span class="number">.16</span><span class="number">-000001</span>] <span class="keyword">index</span> has exceeded [<span class="number">1000000</span>] - maximum allowed <span class="keyword">to</span> be analyzed <span class="keyword">for</span> highlighting. This maximum can be <span class="keyword">set</span> <span class="keyword">by</span> changing the [<span class="keyword">index</span>.highlight.max_analyzed_offset] <span class="keyword">index</span> level setting. <span class="keyword">For</span> large texts, indexing <span class="keyword">with</span> offsets <span class="keyword">or</span> term vectors <span class="keyword">is</span> recommended!<span class="string">","</span>caused_by<span class="string">":&#123;"</span><span class="built_in">type</span><span class="string">":"</span>illegal_argument_exception<span class="string">","</span>reason<span class="string">":"</span>The <span class="built_in">length</span> of [error.message] field of [JHzl020BgPENHIlNYRoc] doc of [filebeat<span class="number">-7.4</span><span class="number">.0</span><span class="number">-2019.10</span><span class="number">.16</span><span class="number">-000001</span>] <span class="keyword">index</span> has exceeded [<span class="number">1000000</span>] - maximum allowed <span class="keyword">to</span> be analyzed <span class="keyword">for</span> highlighting. This maximum can be <span class="keyword">set</span> <span class="keyword">by</span> changing the [<span class="keyword">index</span>.highlight.max_analyzed_offset] <span class="keyword">index</span> level setting. <span class="keyword">For</span> large texts, indexing <span class="keyword">with</span> offsets <span class="keyword">or</span> term vectors <span class="keyword">is</span> recommended!<span class="string">"&#125;&#125;&#125;,"</span>status<span class="string">":400&#125;</span></span><br></pre></td></tr></table></figure></p>
-<p>解决方法：<br>打开 Kibana –&gt; Management –&gt; Advanced Settings –&gt; Highlight results 开关关闭。</p>
-<h3 id="关于-Filebeat-的一些使用心得"><a href="#关于-Filebeat-的一些使用心得" class="headerlink" title="关于 Filebeat 的一些使用心得"></a>关于 Filebeat 的一些使用心得</h3><p><strong>1. yum 方式安装的 Filebeat 其日志如何查看？</strong></p>
-<ol>
-<li>journalctl -u filebeat -f</li>
-<li>tail -f  /var/log/filebeat/filebeat</li>
-</ol>
-<p><strong>2. Filebeat 状态清理：清理 registry </strong><br>有时候我们需要清理下 Filebeat 状态，从头开始读取日志，yum 方式安装的 filebeat 直接清理 /var/lib/filebeat/registry 文件夹即可。</p>
-<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><p><a href="https://xiezefan.me/2017/04/09/elk_in_action_grok_start/" target="_blank" rel="noopener">https://xiezefan.me/2017/04/09/elk_in_action_grok_start/</a> | Grok 简易入门<br><a href="https://github.com/elastic/logstash/blob/v1.4.2/patterns/grok-patterns" target="_blank" rel="noopener">https://github.com/elastic/logstash/blob/v1.4.2/patterns/grok-patterns</a> | Grok 本身支持的模式列表<br><a href="https://churrops.io/2018/06/18/elastic-modulo-mysql-do-filebeat-para-capturar-slowlogs-slow-queries/" target="_blank" rel="noopener">https://churrops.io/2018/06/18/elastic-modulo-mysql-do-filebeat-para-capturar-slowlogs-slow-queries/</a><br><a href="https://discuss.elastic.co/t/filebeat-mysql-module-slowlog-error-message-provided-grok-expressions-do-not-match-field-value/135945" target="_blank" rel="noopener">https://discuss.elastic.co/t/filebeat-mysql-module-slowlog-error-message-provided-grok-expressions-do-not-match-field-value/135945</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1988,7 +1953,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">126</span>
+                  <span class="site-state-item-count">127</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

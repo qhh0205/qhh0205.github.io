@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[GO 语言程序设计读书笔记-接口值]]></title>
+    <url>%2F2020%2F09%2F06%2FGO-%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-%E6%8E%A5%E5%8F%A3%E5%80%BC%2F</url>
+    <content type="text"><![CDATA[从概念上来讲，一个接口类型的值（简称接口值）其实有两个部分：一个具体类型和该类型的一个值。二者称为接口的动态类型和动态值。比如下面声明一个接口变量 w 并赋值，那么 w 接口值可以用如下图表示： 接口的零值接口的零值就是把它的动态类型和动态值都设为 nil，如下图所示：var w io.Writer // 接口的零值 在这种情况下就是一个 nil 接口值，可以用 w == nil 或者 w != nil 来检测一个接口值是否时 nil。调用一个 nil 接口的任何方法都会导致崩溃：w.Write([]byte(&quot;hello&quot;)) // panic：对空指针引用值 接口值的比较接口值可以用 == 和 != 来做比较。如果两个接口值都是 nil 或者二者的动态类型完全一致且二者动态值相等（使用动态类型的==操作符来比较），那么两个接口值相等。因为接口值是可以比较的，所以它们可以作为 map 的键，也可以作为 switch 语句的操作数。 注意：在比较两个接口值时，如果两个接口值的动态类型一致，但对应的动态值是不可以比较的（比如 slice），那么这个比较会导致代码 panic：12345678910package mainimport ( "fmt")func main() &#123; var x interface&#123;&#125; = []int&#123;1, 2, 3&#125; fmt.Println(x == x)&#125; panic 信息:12345panic: runtime error: comparing uncomparable type []intgoroutine 1 [running]:main.main() /Users/qianghaohao/go/src/examplecode/main.go:9 +0x82 获取接口值的动态类型使用 fmt 包的 %T 可以打印某个接口值的动态类型，有助于问题调试：1234567func main() &#123; var w io.Writer fmt.Printf("%T\n", w) // &lt;nil&gt; w = os.Stdout fmt.Printf("%T\n", w) // os.File&#125; 输出：12&lt;nil&gt;*os.File nil 接口值和动态值为 nil 接口值的区别nil 接口值：接口值的动态类型和动态值都为 nil。1var w io.Writer 动态值为 nil 的接口：接口值的动态类型有具体类型，动态值为 nil。12var buf *bytes.Buffervar w io.Writer = buf 示例代码分析：123456789101112131415const debug = falsefunc main() &#123; var buf *bytes.Buffer if debug &#123; buf = new(bytes.Buffer) &#125; f(buf)&#125;func f(out io.Writer) &#123; if out != nil &#123; out.Write([]byte("done!\n")) &#125;&#125; 当 debug 为 true 时，buf 为执行 bytes.Buffer 对象的一个指针，当调用函数 f 时，将 buf 赋给 out，此时 out 的动态值不是 nil，而是指向 byte.Buffer 对象的指针。out 的动态类型是 *byte.Buffer。随后调用 out.Write 函数，代码正常运行，不会引发 panic。 当 debug 为 false 时，调用函数 f 时，将 buf 赋值给 out，此时 out 的动态值虽然时 nil，但其动态类型不是 nil，所以 out != nil 表达式为 true，随后调用 out.Write 函数，但是 Write 函数的接收者为 nil，所以在底层拷贝 buffer 时会导致 panic（空指针引用），具体可以看看 Write 函数的底层实现就知道了。]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[使用 kind 1 分钟启动一个本地 k8s 开发集群]]></title>
     <url>%2F2020%2F08%2F15%2F%E4%BD%BF%E7%94%A8-kind-1-%E5%88%86%E9%92%9F%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AA%E6%9C%AC%E5%9C%B0-k8s-%E5%BC%80%E5%8F%91%E9%9B%86%E7%BE%A4%2F</url>
     <content type="text"><![CDATA[kind 简介Github 地址：https://github.com/kubernetes-sigs/kindkind 是一个快速启动 kubernetes 集群的工具，适合本地 k8s 开发环境搭建，能在 1 分钟之内就启动一个非常轻量级的 k8s 集群。之所以如此之快，得益于其基于其把整个 k8s 集群用到的组件都封装在了 Docker 容器里，构建一个 k8s 集群就是启动一个 Docker 容器，如此简单，正如下面图片描述一样： 说说我为什么使用 kind 吧：我之前本地 k8s 开发环境是基于 vagrant + virtualbox 来搭建，但是和 kind 比起来太重量级了，主要有如下痛点： 资源消耗严重：vagrant + virtualbox + kubernetes 这一套其实本质上还是 k8s 运行在 virtualbox 虚拟机上，这个资源消耗可想而知，我的电脑配置低，经常由于资源消耗太多导致电脑发热、风扇狂转、死机。。。 使用复杂：vagrant + virtualbox + kubernetes 虽然比直接二进制搭建简化了不少，但是还是有一定的技术门槛的，需要对 vagrant 有一定的了解，而且编写 vagrant 需要有一定的经验才能把集群配置好； kind 使用kind 的使用非常简单，其实就是一个命令行工具，通过这个工具创建、删除 k8s 集群，下面简单说下使用。 1.准备工作 Kind 的主要功能目前需要有 Docker 环境的支持，可参考 Docker 官方文档进行安装； 安装操作 k8s 的 kubectl 命令行，安装方法可参考官方文档； 2.安装到 github release 页下载对应操作系统的二进制文件到本地，并放到 PATH 环境变量：https://github.com/kubernetes-sigs/kind/releases 3.创建集群1kind create cluster 完成后就可以直接 kubectl 操作集群了，kubeconfig 已经自动生效了，在 ~/.kube/config 路径。123$ kubectl get nodeNAME STATUS ROLES AGE VERSIONkind-control-plane Ready master 53m v1.18.2 4.获取集群 kubeconfig 文件1kind get kubeconfig 5.销毁集群1kind delete cluster 执行 kind --help 获取帮助和其他支持的命令参数。 kind 配置我们可以对要创建的集群进行一些定制化配置，kind 支持的配置见这里：https://kind.sigs.k8s.io/docs/user/configuration/配置方法：参照文档，编写配置 kind 配置文件 config.yaml，然后在 kind 创建集群的时候指定配置文件：1kind create cluster --config=/foo/bar/config.yaml 举例：默认 kind 创建出来的集群 apiserver 监听的地址是：127.0.0.1:[随机端口]，我要改成默认监听的地址是：0.0.0.0:6443，编写如下 config.yaml12345678910kind: ClusterapiVersion: kind.x-k8s.io/v1alpha4networking: # WARNING: It is _strongly_ recommended that you keep this the default # (127.0.0.1) for security reasons. However it is possible to change this. apiServerAddress: "0.0.0.0" # By default the API server listens on a random open port. # You may choose a specific port but probably don't need to in most cases. # Using a random port makes it easier to spin up multiple clusters. apiServerPort: 6443 创建集群时指定上面配置文件：1kind create cluster --config=config.yaml 总结总而言之，kind 是一个非常轻量级的工具，能以最轻量的方式构建 k8s 集群，其设计理念是是一个 k8s 就是一个 Docker 容器，构建复杂的 k8s 集群变成了启动一个 Docker 容器，如此简单。 我对 kind 的评价是：快！快！快！ 轻量！轻量！轻量！ 效率！效率！效率！]]></content>
@@ -1375,14 +1386,14 @@
     <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
   </entry>
   <entry>
-    <title><![CDATA[分类]]></title>
-    <url>%2Fcategories%2Findex.html</url>
-    <content type="text"></content>
-  </entry>
-  <entry>
     <title><![CDATA[About me]]></title>
     <url>%2Fabout%2Findex.html</url>
     <content type="text"><![CDATA[个人博客 GitHub: https://qhh.me CSDN: https://blog.csdn.net/qianghaohao 社交QQ 技术交流群：282939416 本群专注于 Jenkins 持续集成/持续交付、容器、Kubernetes、Golang、Python 相关话题！ 我的 DevOps 技术栈技术图谱地址 https://github.com/qhh0205/my-devops-stack]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[分类]]></title>
+    <url>%2Fcategories%2Findex.html</url>
+    <content type="text"></content>
   </entry>
   <entry>
     <title></title>
