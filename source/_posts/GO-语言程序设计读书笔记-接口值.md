@@ -7,7 +7,7 @@ tags: Go
 
 从概念上来讲，一个接口类型的值（简称接口值）其实有两个部分：一个具体类型和该类型的一个值。二者称为接口的动态类型和动态值。比如下面声明一个接口变量 w 并赋值，那么 w 接口值可以用如下图表示：
 
-![Alt text](/images/go-interface-value.png)
+![Alt text](/images/go-interface-value1.png)
 
 #### 接口的零值
 接口的零值就是把它的动态类型和动态值都设为 nil，如下图所示：
