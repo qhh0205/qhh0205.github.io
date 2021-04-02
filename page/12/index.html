@@ -296,6 +296,290 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/14/Linux设备驱动程序和设备文件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/14/Linux设备驱动程序和设备文件/" itemprop="url">Linux设备驱动程序和设备文件</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-14T18:31:05+08:00">
+                2018-01-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="设备驱动程序"><a href="#设备驱动程序" class="headerlink" title="设备驱动程序"></a>设备驱动程序</h4><p>一个设备驱动程序是一个管理着系统与某种特定硬件之间交互作用的程序。驱动程序在设备可理解的硬件指令和内核使用的固定编程接口之间起转换作用。驱动程序层的存在有助于内核合理地保持设备独立性。<br>在大多数情况下，设备驱动程序是内核的组成部分，它们不是用户进程。不过，一个驱动程序可以从内核里，也可以从用户空间进行访问。对设备的用户级访问往往要通过位于/dev目录下的特殊设备文件。内核把对这些文件操作映射到对驱动程序代码的调用上面。</p>
+<h4 id="设备文件"><a href="#设备文件" class="headerlink" title="设备文件"></a>设备文件</h4><h5 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a><strong>基本概念</strong></h5><p>大多数硬件设备都在/dev目录中有一个对应的设备文件，网络设备除外。在/dev中的每个文件都有与之相关的主设备号和一个次设备号。内核用这些设备号把对一个设备文件的引用映射到相应的驱动程序上。主设备号标明与文件相关的驱动程序（换句话说是设备类型）。次设备号常常是指定某种给定设备类型的特定实例，次设备号有时被称为单元号。<br>用ls -l可以看到一个设备文件的主设备号和次设备号：<br><figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@vps ~]<span class="comment"># ls -l /dev/vda</span></span><br><span class="line">brw-rw----<span class="number"> 1 </span>root disk 253,<span class="number"> 0 </span>Oct<span class="number"> 15 </span>15:21 /dev/vda</span><br></pre></td></tr></table></figure></p>
+<p>设备文件分两种类型：</p>
+<ol>
+<li>块设备文件：<br>一个块设备文件每次读取或者写入一块数据（一组字节，通常是521的倍数），我们熟知的磁盘就是块设备，在/dev中对应的设备文件就是块设备文件。块设备文件在用ls -l查看时文件类型为b。</li>
+<li>字符设备文件：<br>字符设备每次读取或者写入一个字节。磁盘和磁带可以是块设备也可以是字符设备，而终端和打印机不行。字符设备文件在用ls -l查看时文件类型为c。</li>
+</ol>
+<h5 id="创建设备文件"><a href="#创建设备文件" class="headerlink" title="创建设备文件"></a><strong>创建设备文件</strong></h5><p>在Linux下，一般不需要手动创建设备文件，因为在Linux下设备文件的创建有专门的udev系统来管理，当系统有新的设备出现（或者消失），会动态地管理设备文件的创建和删除。守护进程udevd监听内核传来的有关设备状态变化的消息。根据/etc/udev 和/lib/udev两个目录的配置信息，在找到设备或者断开设备的时候，udevd能够自动采取相应措施。在默认情况下，它只创建/dev里的设备文件。手动创建设备文件用mknod命令来创建，语法为：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mknod filename<span class="built_in"> type </span>major minor</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>filename：要创建的设备文件名；</li>
+<li>type：设备类型，c代表一个字符设备，b代表一个块设备；</li>
+<li>major：主设备号；</li>
+<li>minor：次设备号；</li>
+</ul>
+<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><p><a href="https://book.douban.com/subject/10747453/" target="_blank" rel="noopener">Unix/Linux系统管理手册|第13章</a><br><a href="http://blog.csdn.net/liangkaiming/article/details/6234238" target="_blank" rel="noopener">CSDN博客|主设备号和次设备号 </a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/13/本地以Gems包的形式安装Logstash插件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/13/本地以Gems包的形式安装Logstash插件/" itemprop="url">本地以Gems包的形式安装Logstash插件</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T20:56:20+08:00">
+                2018-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ELK/" itemprop="url" rel="index">
+                    <span itemprop="name">ELK</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>Logstash的插件都是独立的gem包，因此可以通过从<a href="https://rubygems.org/" target="_blank" rel="noopener">RubyGems.org</a>来下载需要的插件的gem包来安装Logstash插件。<a href="https://rubygems.org/" target="_blank" rel="noopener">RubyGems.org</a>是一个专门用来托管gem包的网站，类似于yum包的仓库，上面存放各种Ruby gem包供用户下载并使用。</p>
+<h4 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h4><p> 以下通过安装最近刚发布的logstash-filter-dissect v1.1.1插件包为例来说明安装过程，logstash-filter-dissect v1.1.1修复了我提的这个<a href="https://github.com/logstash-plugins/logstash-filter-dissect/issues/41" target="_blank" rel="noopener">issue#41</a>及其他一些bug，具体请看<a href="https://github.com/logstash-plugins/logstash-filter-dissect/blob/v1.1.1/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG</a>。</p>
+<ol>
+<li><p>打开<a href="https://rubygems.org/" target="_blank" rel="noopener">RubyGems.org</a>官网，找到我们需要的logstash-filter-dissect v1.1.1 gem包并下载，下载下来是gem文件:<br><img src="/images/gem-org1.png" alt=""><br><img src="/images/gem-org2.png" alt=""><br><img src="/images/gem-org3.png" alt=""></p>
+</li>
+<li><p>使用bin/logstash-plugin install命令来安装下载的gem包:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除此插件的当前版本</span></span><br><span class="line">bin/logstash-plugin remove logstash-filter-dissect</span><br><span class="line"><span class="comment"># 安装下载的gem包</span></span><br><span class="line">bin/logstash-plugin install ../logstash-filter-dissect-1.1.1.gem</span><br><span class="line"><span class="comment">#查看版本是否是安装的版本</span></span><br><span class="line">bin/logstash-plugin list --verbose | grep dissect</span><br><span class="line"><span class="comment"># logstash-filter-dissect (1.1.1)  可以看到已经安装成功</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/10/从日志文件中获取最近5分钟的内容/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1920,313 +2204,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/09/手动进行主机DNS配置/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/09/手动进行主机DNS配置/" itemprop="url">手动进行主机DNS配置</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T21:07:52+08:00">
-                2017-12-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DNS/" itemprop="url" rel="index">
-                    <span itemprop="name">DNS</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文介绍了如何手动进行主机DNS配置，有时候机器服务提供商不提供DHCP服务，或者由于错误的DNS配置导致服务器无法解析域名，此时就需要检查下服务器的DNS配置并配置正确的nameserver，首先介绍几个和DNS有关的配置文件：</p>
-<ul>
-<li><strong>/etc/hosts：</strong>本地域名到IP的映射文件，一般默认Linux域名与IP的对应解析以此文件优先；</li>
-<li><strong>/etc/resolv.conf：</strong>ISP的DNS服务器IP地址，本文件定义了本机进行域名解析请求的地址；</li>
-<li><strong>/etc/nsswitch.conf：</strong>这个文件则是来决定先要使用/etc/hosts还是/etc/resolv.con的配置。文件中hosts字段定义了优先使用哪个文件来进行DNS解析，其中”files”就是使用/etc/hosts，而后面的”dns”则是使用/etc/resolv.conf的DNS服务器来进行解析：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#hosts:     db files nisplus nis dns</span></span><br><span class="line">hosts:      files dns myhostname</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>一般情况下是不需要自己手动修改主机DNS的配置的，除非机器提供商不提供DHCP服务，或者本机DNS配置有问题，导致无法进行域名解析才需要手动配置，以下是配置方法：</p>
-<blockquote>
-<p>修改/etc/resolv.conf，添加能访问通的DNS服务器地址，以下示例修改成Google的DNS服务器地址：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nameserver 8.8.8.8 <span class="comment">#主DNS地址</span></span><br><span class="line">nameserver 8.8.4.4 <span class="comment">#备用DNS地址,在主的失效时启用备的,当然还可以添加更多的地址</span></span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<p>⚠️注意：尽量不要设置超过3台以上的DNS IP在/etc/resolv.conf中，如果是你的局域网出问题，会导致无法连接到DNS服务器，那么你的主机还是会向每台DNS服务器发出连接请求，每次连接都有timeout时间的等待，会导致浪费非常多的时间。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/python从单元素字典中获取key和value/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/03/python从单元素字典中获取key和value/" itemprop="url">Python从单元素字典中获取key和value</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T22:37:17+08:00">
-                2017-12-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>之前写代码很多时候会遇到这么一种情况:在python的字典中只有一个key/value键值对，想要获取其中的这一个元素还要写个for循环获取。网上搜了一下，发现还有很多简单的方法:</p>
-<ul>
-<li><p>方法一</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">'name'</span>:<span class="string">'haohao'</span>&#125;</span><br><span class="line">(key, value), = d.items()</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>方法二</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">'name'</span>:<span class="string">'haohao'</span>&#125;</span><br><span class="line">key = list(d)[<span class="number">0</span>]</span><br><span class="line">value = list(d.values())[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>方法三</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">'name'</span>:<span class="string">'haohao'</span>&#125;</span><br><span class="line">key, = d</span><br><span class="line">value, = d.values()</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>参考自stackoverflow讨论:<br><a href="https://stackoverflow.com/questions/15366482/how-to-fetch-the-key-value-pair-of-a-dictionary-only-containing-one-item" target="_blank" rel="noopener">https://stackoverflow.com/questions/15366482/how-to-fetch-the-key-value-pair-of-a-dictionary-only-containing-one-item</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2276,7 +2253,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">127</span>
+                  <span class="site-state-item-count">129</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2298,7 +2275,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

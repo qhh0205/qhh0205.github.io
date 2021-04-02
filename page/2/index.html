@@ -296,6 +296,370 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/01/Golang-logrus-日志包及日志切割/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/03/01/Golang-logrus-日志包及日志切割/" itemprop="url">Golang logrus 日志包及日志切割</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-01T11:56:11+08:00">
+                2020-03-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文主要介绍 Golang 中最佳日志解决方案，包括常用日志包 <a href="https://github.com/sirupsen/logrus" target="_blank" rel="noopener">logrus</a> 的基本使用，如何结合 <a href="https://github.com/lestrrat-go/file-rotatelogs" target="_blank" rel="noopener">file-rotatelogs</a> 包实现日志文件的轮转切割两大话题。</p>
+<p>Golang 关于日志处理有很多包可以使用，标准库提供的 log 包功能比较少，不支持日志级别的精确控制，自定义添加日志字段等。在众多的日志包中，更推荐使用第三方的 logrus 包，完全兼容自带的 log 包。logrus 是目前 Github 上 star 数量最多的日志库，logrus 功能强大，性能高效，而且具有高度灵活性，提供了自定义插件的功能。</p>
+<p>很多开源项目，如 docker，prometheus，dejavuzhou/ginbro 等，都是用了 logrus 来记录其日志。</p>
+<h3 id="logrus-特性"><a href="#logrus-特性" class="headerlink" title="logrus 特性"></a>logrus 特性</h3><ul>
+<li>完全兼容 golang 标准库日志模块：logrus 拥有六种日志级别：debug、info、warn、error、fatal 和 panic，这是 golang 标准库日志模块的 API 的超集。<ul>
+<li>logrus.Debug(“Useful debugging information.”)</li>
+<li>logrus.Info(“Something noteworthy happened!”)</li>
+<li>logrus.Warn(“You should probably take a look at this.”)</li>
+<li>logrus.Error(“Something failed but I’m not quitting.”)</li>
+<li>logrus.Fatal(“Bye.”) //log之后会调用os.Exit(1)</li>
+<li>logrus.Panic(“I’m bailing.”) //log之后会panic()</li>
+</ul>
+</li>
+<li>可扩展的 Hook 机制：允许使用者通过 hook 的方式将日志分发到任意地方，如本地文件系统、标准输出、logstash、elasticsearch 或者 mq 等，或者通过 hook 定义日志内容和格式等。</li>
+<li>可选的日志输出格式：logrus 内置了两种日志格式，JSONFormatter 和 TextFormatter，如果这两个格式不满足需求，可以自己动手实现接口 Formatter 接口来定义自己的日志格式。</li>
+<li>Field 机制：logrus 鼓励通过 Field 机制进行精细化的、结构化的日志记录,而不是通过冗长的消息来记录日志。</li>
+<li>logrus 是一个可插拔的、结构化的日志框架。</li>
+<li>Entry: logrus.WithFields 会自动返回一个 *Entry，Entry里面的有些变量会被自动加上<ul>
+<li>time:entry被创建时的时间戳</li>
+<li>msg:在调用.Info()等方法时被添加</li>
+<li>level，当前日志级别</li>
+</ul>
+</li>
+</ul>
+<h3 id="logrus-基本使用"><a href="#logrus-基本使用" class="headerlink" title="logrus 基本使用"></a>logrus 基本使用</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"github.com/sirupsen/logrus"</span></span><br><span class="line">    log <span class="string">"github.com/sirupsen/logrus"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> logger *logrus.Entry</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 设置日志格式为json格式</span></span><br><span class="line">    log.SetFormatter(&amp;log.JSONFormatter&#123;&#125;)</span><br><span class="line">    log.SetOutput(os.Stdout)</span><br><span class="line">    log.SetLevel(log.InfoLevel)</span><br><span class="line">    logger = log.WithFields(log.Fields&#123;<span class="string">"request_id"</span>: <span class="string">"123444"</span>, <span class="string">"user_ip"</span>: <span class="string">"127.0.0.1"</span>&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    logger.Info(<span class="string">"hello, logrus...."</span>)</span><br><span class="line">    logger.Info(<span class="string">"hello, logrus1...."</span>)</span><br><span class="line">    <span class="comment">// log.WithFields(log.Fields&#123;</span></span><br><span class="line">    <span class="comment">//  "animal": "walrus",</span></span><br><span class="line">    <span class="comment">//  "size":   10,</span></span><br><span class="line">    <span class="comment">// &#125;).Info("A group of walrus emerges from the ocean")</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// log.WithFields(log.Fields&#123;</span></span><br><span class="line">    <span class="comment">//  "omg":    true,</span></span><br><span class="line">    <span class="comment">//  "number": 122,</span></span><br><span class="line">    <span class="comment">// &#125;).Warn("The group's number increased tremendously!")</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// log.WithFields(log.Fields&#123;</span></span><br><span class="line">    <span class="comment">//  "omg":    true,</span></span><br><span class="line">    <span class="comment">//  "number": 100,</span></span><br><span class="line">    <span class="comment">// &#125;).Fatal("The ice breaks!")</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="基于-logrus-和-file-rotatelogs-包实现日志切割"><a href="#基于-logrus-和-file-rotatelogs-包实现日志切割" class="headerlink" title="基于 logrus 和 file-rotatelogs 包实现日志切割"></a>基于 logrus 和 file-rotatelogs 包实现日志切割</h3><p>很多时候应用会将日志输出到文件系统，对于访问量大的应用来说日志的自动轮转切割管理是个很重要的问题，如果应用不能妥善处理日志管理，那么会带来很多不必要的维护开销：外部工具切割日志、人工清理日志等手段确保不会将磁盘打满。</p>
+<blockquote>
+<p>file-rotatelogs: When you integrate this to to you app, it automatically write to logs that are rotated from within the app: No more disk-full alerts because you forgot to setup logrotate!</p>
+</blockquote>
+<p><a href="https://github.com/sirupsen/logrus" target="_blank" rel="noopener">logrus</a> 本身不支持日志轮转切割功能，需要配合 <a href="https://github.com/lestrrat-go/file-rotatelogs" target="_blank" rel="noopener">file-rotatelogs</a> 包来实现，防止日志打满磁盘。<a href="https://github.com/lestrrat-go/file-rotatelogs" target="_blank" rel="noopener">file-rotatelogs</a>  实现了 io.Writer 接口，并且提供了文件的切割功能，其实例可以作为 logrus 的目标输出，两者能无缝集成，这也是 <a href="https://github.com/lestrrat-go/file-rotatelogs" target="_blank" rel="noopener">file-rotatelogs</a> 的设计初衷：</p>
+<blockquote>
+<p>It’s normally expected that this library is used with some other logging service, such as the built-in log library, or loggers such as github.com/lestrrat-go/apache-logformat.</p>
+</blockquote>
+<p>示例代码：<br>应用日志文件 /Users/opensource/test/go.log，每隔 1 分钟轮转一个新文件，保留最近 3 分钟的日志文件，多余的自动清理掉。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">	rotatelogs <span class="string">"github.com/lestrrat-go/file-rotatelogs"</span></span><br><span class="line">	log <span class="string">"github.com/sirupsen/logrus"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	path := <span class="string">"/Users/opensource/test/go.log"</span></span><br><span class="line">	<span class="comment">/* 日志轮转相关函数</span></span><br><span class="line"><span class="comment">	`WithLinkName` 为最新的日志建立软连接</span></span><br><span class="line"><span class="comment">	`WithRotationTime` 设置日志分割的时间，隔多久分割一次</span></span><br><span class="line"><span class="comment">	WithMaxAge 和 WithRotationCount二者只能设置一个</span></span><br><span class="line"><span class="comment">	  `WithMaxAge` 设置文件清理前的最长保存时间</span></span><br><span class="line"><span class="comment">	  `WithRotationCount` 设置文件清理前最多保存的个数</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="comment">// 下面配置日志每隔 1 分钟轮转一个新文件，保留最近 3 分钟的日志文件，多余的自动清理掉。</span></span><br><span class="line">	writer, _ := rotatelogs.New(</span><br><span class="line">		path+<span class="string">".%Y%m%d%H%M"</span>,</span><br><span class="line">		rotatelogs.WithLinkName(path),</span><br><span class="line">		rotatelogs.WithMaxAge(time.Duration(<span class="number">180</span>)*time.Second),</span><br><span class="line">		rotatelogs.WithRotationTime(time.Duration(<span class="number">60</span>)*time.Second),</span><br><span class="line">	)</span><br><span class="line">	log.SetOutput(writer)</span><br><span class="line">	<span class="comment">//log.SetFormatter(&amp;log.JSONFormatter&#123;&#125;)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		log.Info(<span class="string">"hello, world!"</span>)</span><br><span class="line">		time.Sleep(time.Duration(<span class="number">2</span>) * time.Second)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Golang-标准日志库-log-使用"><a href="#Golang-标准日志库-log-使用" class="headerlink" title="Golang 标准日志库 log 使用"></a>Golang 标准日志库 <a href="https://golang.org/pkg/log/" target="_blank" rel="noopener">log</a> 使用</h3><p>虽然 Golang 标准日志库功能少，但是可以选择性的了解下，下面为基本使用的代码示例，比较简单：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    log.SetPrefix(<span class="string">"【UserCenter】"</span>)                           <span class="comment">// 设置每行日志的前缀</span></span><br><span class="line">    log.SetFlags(log.LstdFlags | log.Lshortfile | log.LUTC) <span class="comment">// 设置日志的抬头字段</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    log.Println(<span class="string">"log..."</span>)</span><br><span class="line">    log.Fatalln(<span class="string">"Fatal Error..."</span>)</span><br><span class="line">    fmt.Println(<span class="string">"Not print!"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>自定义日志输出<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"io"</span></span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    Info    *log.Logger</span><br><span class="line">    Warning *log.Logger</span><br><span class="line">    Error   *log.Logger</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    errFile, err := os.OpenFile(<span class="string">"errors.log"</span>, os.O_CREATE|os.O_WRONLY|os.O_APPEND, <span class="number">0666</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatalln(<span class="string">"打开日志文件失败："</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Info = log.New(os.Stdout, <span class="string">"Info:"</span>, log.Ldate|log.Ltime|log.Lshortfile)</span><br><span class="line">    Warning = log.New(os.Stdout, <span class="string">"Warning:"</span>, log.Ldate|log.Ltime|log.Lshortfile)</span><br><span class="line">    Error = log.New(io.MultiWriter(os.Stderr, errFile), <span class="string">"Error:"</span>, log.Ldate|log.Ltime|log.Lshortfile)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    Info.Println(<span class="string">"Info log..."</span>)</span><br><span class="line">    Warning.Printf(<span class="string">"Warning log..."</span>)</span><br><span class="line">    Error.Println(<span class="string">"Error log..."</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://mojotv.cn/2018/12/27/golang-logrus-tutorial" target="_blank" rel="noopener">https://mojotv.cn/2018/12/27/golang-logrus-tutorial</a><br><a href="https://github.com/lestrrat-go/file-rotatelogs" target="_blank" rel="noopener">https://github.com/lestrrat-go/file-rotatelogs</a><br><a href="https://www.flysnow.org/2017/05/06/go-in-action-go-log.html" target="_blank" rel="noopener">https://www.flysnow.org/2017/05/06/go-in-action-go-log.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/15/使用-Prometheus-Operator-构建-Kubernetes-监控系统/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/15/使用-Prometheus-Operator-构建-Kubernetes-监控系统/" itemprop="url">使用 Prometheus Operator 构建 Kubernetes 监控系统</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-15T13:34:57+08:00">
+                2019-12-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文主要介绍使用 Prometheus 监控 Kubernetes 的最佳实践，借助 Prometheus Operator 和 Helm 快速完成 Kubernetes 集群的监控。</p>
+<p>Prometheus Operator 是 SRE 的一种实践，一种新的软件类型，大大简化了在 Kubernetes 上部署、管理和运行 Prometheus 和 Alertmanager 集群，同时还保持 Kubernetes 原生配置项，和 Kubernetes 无缝贴合。</p>
+<h4 id="什么是-Prometheus？"><a href="#什么是-Prometheus？" class="headerlink" title="什么是 Prometheus？"></a>什么是 Prometheus？</h4><p><a href="https://prometheus.io/" target="_blank" rel="noopener">Prometheus</a> 是由 SoundCloud 开源的监控告警解决方案，从 2012 年开始编写代码，再到 2015 年 github 上开源以来，已经吸引了 9k+ 关注，以及很多大公司的使用；2016 年 Prometheus 成为继 k8s 后，第二名 CNCF(Cloud Native Computing Foundation) 成员。</p>
+<p>作为新一代开源解决方案，很多理念与 Google SRE 运维之道不谋而合。比如 Operator 的概念：将复杂运维工作固化到 Operator 软件实体中。</p>
+<h4 id="Prometheus-主要功能"><a href="#Prometheus-主要功能" class="headerlink" title="Prometheus 主要功能"></a>Prometheus 主要功能</h4><ul>
+<li>多维 <a href="https://prometheus.io/docs/concepts/data_model/" target="_blank" rel="noopener">数据模型</a>（时序由 metric 名字和 k/v 的 labels 构成）。</li>
+<li>灵活的查询语句（<a href="https://prometheus.io/docs/prometheus/latest/querying/basics/" target="_blank" rel="noopener">PromQL</a>）。</li>
+<li>无依赖存储，支持 local 和 remote 不同模型。</li>
+<li>采用 http 协议，使用 pull 模式，拉取数据，简单易懂。</li>
+<li>监控目标，可以采用服务发现或静态配置的方式。</li>
+<li>支持多种统计数据模型，图形化友好。</li>
+</ul>
+<h4 id="Prometheus-核心组件"><a href="#Prometheus-核心组件" class="headerlink" title="Prometheus 核心组件"></a>Prometheus 核心组件</h4><ul>
+<li>the main <a href="https://github.com/prometheus/prometheus" target="_blank" rel="noopener">Prometheus server</a> which scrapes and stores time series data</li>
+<li><a href="https://prometheus.io/docs/instrumenting/clientlibs/" target="_blank" rel="noopener">client libraries</a> for instrumenting application code</li>
+<li>a <a href="https://github.com/prometheus/pushgateway" target="_blank" rel="noopener">push gateway</a> for supporting short-lived jobs</li>
+<li>special-purpose <a href="https://prometheus.io/docs/instrumenting/exporters/" target="_blank" rel="noopener">exporters</a> for services like HAProxy, StatsD, Graphite, etc.</li>
+<li>an <a href="https://github.com/prometheus/alertmanager" target="_blank" rel="noopener">alertmanager</a> to handle alerts</li>
+<li>various support tools</li>
+</ul>
+<h4 id="Prometheus-架构"><a href="#Prometheus-架构" class="headerlink" title="Prometheus 架构"></a>Prometheus 架构</h4><p><img src="/images/prometheus-arch.png" alt="Alt text"></p>
+<p>从架构图也可以看出 Prometheus 的主要模块包含，Server, Exporters, Pushgateway, PromQL, Alertmanager, WebUI 等。<br>各组件之间的协同逻辑：</p>
+<ol>
+<li>Prometheus server 定期从静态配置的 targets 或者服务发现的 targets 拉取数据。</li>
+<li>当新拉取的数据大于配置内存缓存区的时候，Prometheus 会将数据持久化到磁盘（如果使用 remote storage 将持久化到云端）。</li>
+<li>Prometheus 可以配置 rules，然后定时查询数据，当条件触发的时候，会将 alert 推送到配置的 Alertmanager。</li>
+<li>Alertmanager 收到警告的时候，可以根据配置，聚合，去重，降噪，最后发送警告。</li>
+<li>可以使用 API，Prometheus Console 或者 Grafana 查询和聚合数据。</li>
+</ol>
+<h4 id="什么是-Operator？"><a href="#什么是-Operator？" class="headerlink" title="什么是 Operator？"></a>什么是 Operator？</h4><p><a href="https://coreos.com/blog/introducing-operators.html" target="_blank" rel="noopener">Operator</a> 是 CoreOs 提出的一个概念，也是 SRE 的一种实践，通过开发软件的方式将复杂运维工作固化到 Operator 中。<br>Operator 是一种新的基于 Kubernetes 平台的软件类型，主要解决 Kubernetes 中某些复杂应用的运维部书工作，利用 Kubernetes  的 Resources 和 Controllers 两种资源对象实现 Operator，Resources 描述期望的目标状态，Controllers 负责达成期望目标的具体实现逻辑。<br><img src="/images/prometheus-operator.png" alt="Alt text"></p>
+<h4 id="Prometheus-Operator-介绍"><a href="#Prometheus-Operator-介绍" class="headerlink" title="Prometheus Operator 介绍"></a>Prometheus Operator 介绍</h4><p>Prometheus 是一套开源的系统监控、报警、时间序列数据库的组合，而 <a href="https://coreos.com/operators/prometheus/docs/latest/user-guides/getting-started.html" target="_blank" rel="noopener">Prometheus Operator</a> 是 CoreOS 开源的一套用于管理在 Kubernetes 集群上的 Prometheus 控制器，它是为了简化在 Kubernetes 上部署、管理和运行 Prometheus 和 Alertmanager 集群，同时还保持 Kubernetes 原生配置项，和 Kubernetes 无缝贴合。<br><img src="/images/prometheus-operator-arch.png" alt="Alt text"></p>
+<ul>
+<li><strong>Operator</strong>： Operator 资源会根据自定义资源（Custom Resource Definition / CRDs）来部署和管理 Prometheus Server，同时监控这些自定义资源事件的变化来做相应的处理，是整个系统的控制中心。</li>
+<li><strong>Prometheus</strong>： Prometheus 资源是声明性地描述 Prometheus 部署的期望状态。</li>
+<li><strong>Prometheus Server</strong>： Operator 根据自定义资源 Prometheus 类型中定义的内容而部署的 Prometheus Server 集群，这些自定义资源可以看作是用来管理 Prometheus Server 集群的 StatefulSets 资源。</li>
+<li><strong>ServiceMonitor</strong>： ServiceMonitor 也是一个自定义资源，它描述了一组被 Prometheus 监控的 targets 列表。该资源通过 Labels 来选取对应的 Service Endpoint，让 Prometheus Server 通过选取的 Service 来获取 Metrics 信息。</li>
+<li><strong>Service</strong>： kubernetes 的 service 资源，提供 metrics 接口，供 Prometheus 抓取。</li>
+<li><strong>Alertmanager</strong>： Alertmanager 也是一个自定义资源类型，由 Operator 根据资源描述内容来部署 Alertmanager 集群。</li>
+</ul>
+<h4 id="Helm-部署-Prometheus-Operator"><a href="#Helm-部署-Prometheus-Operator" class="headerlink" title="Helm 部署 Prometheus Operator"></a>Helm 部署 Prometheus Operator</h4><p>使用 GitHub 提供的 <a href="https://github.com/helm/charts/tree/master/stable/prometheus-operator" target="_blank" rel="noopener">prometheus-operator Chart</a> 部署，该 Chart 提供了一套完整的 Prometheus 监控栈，不需要其他任何安装部署操作，一个 Chart 3 分钟搞定一切工作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install --name kube-prometheus stable/prometheus-operator --namespace monitoring</span><br></pre></td></tr></table></figure></p>
+<p>测试访问:<br><strong>Grafana UI</strong><br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">kubectl</span> <span class="selector-tag">port-forward</span> &lt;<span class="selector-tag">grafna</span> <span class="selector-tag">pod</span>&gt; <span class="selector-tag">--address</span> 0<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.0</span> <span class="selector-tag">-n</span> <span class="selector-tag">monitoring</span> 3000<span class="selector-pseudo">:3000</span></span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/prometheus-grafana-k8s.png" alt="Alt text"></p>
+<p><strong>Prometheus UI</strong><br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">kubectl</span> <span class="selector-tag">port-forward</span> &lt;<span class="selector-tag">prometheus</span> <span class="selector-tag">pod</span>&gt; <span class="selector-tag">--address</span> 0<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.0</span> <span class="selector-tag">-n</span> <span class="selector-tag">monitoring</span> 9090<span class="selector-pseudo">:9090</span></span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/prometheus-ui.png" alt="Alt text"></p>
+<h4 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h4><p><a href="https://coreos.com/blog/the-prometheus-operator.html" target="_blank" rel="noopener">https://coreos.com/blog/the-prometheus-operator.html</a><br><a href="https://github.com/coreos/kube-prometheus" target="_blank" rel="noopener">https://github.com/coreos/kube-prometheus</a><br><a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">https://github.com/coreos/prometheus-operator</a><br><a href="https://blog.csdn.net/aixiaoyang168/article/details/81661459" target="_blank" rel="noopener">https://blog.csdn.net/aixiaoyang168/article/details/81661459</a><br><a href="https://blog.51cto.com/3241766/2450776" target="_blank" rel="noopener">https://blog.51cto.com/3241766/2450776</a><br><a href="https://www.chenshaowen.com/blog/quickly-deploy-prometheus-using-helm-and-operator.html" target="_blank" rel="noopener">https://www.chenshaowen.com/blog/quickly-deploy-prometheus-using-helm-and-operator.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/24/MySQL-慢查询日志导入-Elasticsearch-可视化查询分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1992,348 +2356,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/15/Kubernetes-调整-nodePort-端口范围/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/15/Kubernetes-调整-nodePort-端口范围/" itemprop="url">Kubernetes 调整 nodePort 端口范围</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-15T21:16:13+08:00">
-                2019-08-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubernetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>默认情况下，k8s 集群 nodePort 分配的端口范围为：30000-32767，如果我们指定的端口不在这个范围就会报类似下面这样的错误：</p>
-<blockquote>
-<p>Error: release kong failed: Service “kong-kong-admin” is invalid: spec.ports[0].nodePort: Invalid value: 8444: provided port is not in the valid range. The range of valid ports is 30000-32767</p>
-</blockquote>
-<p>解决方法就是调整 kube-apiserver 组件启动参数，指定 nodePort 范围。如果是用 kubeadm 安装的集群，那么 apiserver 是以静态 pod 的形式运行，pod 文件定义在 /etc/kubernetes/manifests/kube-apiserver.yaml。/etc/kubernetes/manifests 目录下是所有静态 pod 文件的定义，kubelet 会监控该目录下文件的变动，只要发生变化，pod 就会重建，响应相应的改动。所以我们修改 /etc/kubernetes/manifests/kube-apiserver.yaml 文件，添加 nodePort 范围参数后会自动生效，无需进行其他操作：<br>vim /etc/kubernetes/manifests/kube-apiserver.yaml<br>在 command 下添加 <code>--service-node-port-range=1-65535</code> 参数，修改后会自动生效，无需其他操作:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    component:</span> <span class="string">kube-apiserver</span></span><br><span class="line"><span class="attr">    tier:</span> <span class="string">control-plane</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">kube-apiserver</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - command:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kube-apiserver</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--service-node-port-range=1-65535</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--advertise-address=192.168.26.10</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--allow-privileged=true</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--authorization-mode=Node,RBAC</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--client-ca-file=/etc/kubernetes/pki/ca.crt</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--enable-admission-plugins=NodeRestriction</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--enable-bootstrap-token-auth=true</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--etcd-cafile=/etc/kubernetes/pki/etcd/ca.crt</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--etcd-certfile=/etc/kubernetes/pki/apiserver-etcd-client.crt</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--etcd-keyfile=/etc/kubernetes/pki/apiserver-etcd-client.key</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--etcd-servers=https://127.0.0.1:2379</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--insecure-port=0</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--kubelet-client-certificate=/etc/kubernetes/pki/apiserver-kubelet-client.crt</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--kubelet-client-key=/etc/kubernetes/pki/apiserver-kubelet-client.key</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--proxy-client-cert-file=/etc/kubernetes/pki/front-proxy-client.crt</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--proxy-client-key-file=/etc/kubernetes/pki/front-proxy-client.key</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--requestheader-allowed-names=front-proxy-client</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.crt</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--requestheader-extra-headers-prefix=X-Remote-Extra-</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--requestheader-group-headers=X-Remote-Group</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--requestheader-username-headers=X-Remote-User</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--secure-port=6443</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--service-account-key-file=/etc/kubernetes/pki/sa.pub</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--service-cluster-ip-range=10.96.0.0/12</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--tls-cert-file=/etc/kubernetes/pki/apiserver.crt</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">--tls-private-key-file=/etc/kubernetes/pki/apiserver.key</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">registry.aliyuncs.com/google_containers/kube-apiserver:v1.15.2</span></span><br><span class="line"><span class="attr">    imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line"><span class="attr">    livenessProbe:</span></span><br><span class="line"><span class="attr">      failureThreshold:</span> <span class="number">8</span></span><br><span class="line"><span class="attr">      httpGet:</span></span><br><span class="line"><span class="attr">        host:</span> <span class="number">192.168</span><span class="number">.26</span><span class="number">.10</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">/healthz</span></span><br><span class="line"><span class="attr">        port:</span> <span class="number">6443</span></span><br><span class="line"><span class="attr">        scheme:</span> <span class="string">HTTPS</span></span><br><span class="line"><span class="attr">      initialDelaySeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">      timeoutSeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">kube-apiserver</span></span><br><span class="line"><span class="attr">    resources:</span></span><br><span class="line"><span class="attr">      requests:</span></span><br><span class="line"><span class="attr">        cpu:</span> <span class="number">250</span><span class="string">m</span></span><br><span class="line"><span class="attr">    volumeMounts:</span></span><br><span class="line"><span class="attr">    - mountPath:</span> <span class="string">/etc/ssl/certs</span></span><br><span class="line"><span class="attr">      name:</span> <span class="string">ca-certs</span></span><br><span class="line"><span class="attr">      readOnly:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">    - mountPath:</span> <span class="string">/etc/pki</span></span><br><span class="line"><span class="attr">      name:</span> <span class="string">etc-pki</span></span><br><span class="line"><span class="attr">      readOnly:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">    - mountPath:</span> <span class="string">/etc/kubernetes/pki</span></span><br><span class="line"><span class="attr">      name:</span> <span class="string">k8s-certs</span></span><br><span class="line"><span class="attr">      readOnly:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  hostNetwork:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  priorityClassName:</span> <span class="string">system-cluster-critical</span></span><br><span class="line"><span class="attr">  volumes:</span></span><br><span class="line"><span class="attr">  - hostPath:</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/etc/ssl/certs</span></span><br><span class="line"><span class="attr">      type:</span> <span class="string">DirectoryOrCreate</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">ca-certs</span></span><br><span class="line"><span class="attr">  - hostPath:</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/etc/pki</span></span><br><span class="line"><span class="attr">      type:</span> <span class="string">DirectoryOrCreate</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">etc-pki</span></span><br><span class="line"><span class="attr">  - hostPath:</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/etc/kubernetes/pki</span></span><br><span class="line"><span class="attr">      type:</span> <span class="string">DirectoryOrCreate</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">k8s-certs</span></span><br><span class="line"><span class="attr">status:</span> <span class="string">&#123;&#125;</span></span><br></pre></td></tr></table></figure></p>
-<p>相关文档：<br><a href="http://www.thinkcode.se/blog/2019/02/20/kubernetes-service-node-port-range" target="_blank" rel="noopener">http://www.thinkcode.se/blog/2019/02/20/kubernetes-service-node-port-range</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/14/基于-docker-compose-容器化构建-Kong-微服务网关平台/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/14/基于-docker-compose-容器化构建-Kong-微服务网关平台/" itemprop="url">基于 docker-compose 容器化构建 Kong 微服务网关平台</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-14T20:05:23+08:00">
-                2019-08-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/微服务网关/" itemprop="url" rel="index">
-                    <span itemprop="name">微服务网关</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文主要介绍如何使用 docker-compose 快速体验 Kong 微服务网关，先简单介绍基本概念，然后做了一个 Demo 测试使用，涉及到的相关话题有：</p>
-<ul>
-<li>Kong 简介；</li>
-<li>Konga 简介；</li>
-<li>基于 docker-compose 容器化构建 Kong 微服务网关平台；</li>
-<li>使用 Konga 可视化创建一个 Service 及路由；</li>
-</ul>
-<h3 id="Kong-简介"><a href="#Kong-简介" class="headerlink" title="Kong 简介"></a>Kong 简介</h3><p><a href="https://konghq.com/kong/" target="_blank" rel="noopener">Kong</a> 是微服务网关模式架构中连接服务消费方和服务提供方的中间件系统，即我们经常所说的微服务网关，网关将各自的业务系统的演进和发展做了天然的隔离，使业务系统更加专注于业务服务本身，同时微服务网关还可以为服务提供和沉淀更多附加功能。微服务网关的主要作用如下：</p>
-<ul>
-<li>请求接入：管理所有请求接入，作为所有 API 接口的请求入口；</li>
-<li>业务聚合：所有微服务后端可以注册在 API 网关，通过 API 网关统一暴露服务；</li>
-<li>拦截策略：可以通过统一的安全、路由、流控等公共服务组件；</li>
-<li>统一管理：提供统一的监控工具，配置管理工具等基础设施；</li>
-</ul>
-<p>Kong 作为完全开源的微服务网关，基于 Nginx 实现，所以其性能表现是毋庸置疑的，另外和其他网关系统类似，也支持插件化扩展，提供了丰富的插件可供使用。Kong 进程启动后会启动多个端口，每个端口功能也不一样：</p>
-<ul>
-<li>8001 端口：http 管理 API；</li>
-<li>8444 端口：https 管理 API；</li>
-<li>8000 端口：接收处理 http 流量；</li>
-<li>8443 端口：接收处理 https 流量；</li>
-</ul>
-<p><img src="/images/kong.png" alt=""></p>
-<p>Kong 的使用特别简单，需要搞懂几个概念就可以快速使用了：</p>
-<ul>
-<li>Service：Service 是要对外暴露的上游服务，类似于 Nginx 反向代理配置的 upstream；</li>
-<li>Route：Route 定义了路由规则，外部流量如何路由到相应的 Service；</li>
-<li>Consumer：类似账号的概念，可以设置不同的 Consumer 对 API 的访问限制；</li>
-</ul>
-<p>关于 Kong 数据持久化<br>Kong 有两种运行模式，以 <a href="https://docs.konghq.com/1.2.x/db-less-and-declarative-config/" target="_blank" rel="noopener">db-less</a> 模式运行时所有路由、Service 等信息都存储在内存中，这些信息都是通过 declarative 配置文件动态生成，然后加在到内存。另一种是以 db 模式运行，需要额外的数据库支持，用于存储路由、Service 等信息，这种方式是生产环境推荐的方式。Kong 支持两种数据库持久化：Postgres 或者 Cassandra。</p>
-<h3 id="Konga-简介"><a href="#Konga-简介" class="headerlink" title="Konga 简介"></a>Konga 简介</h3><p><a href="https://github.com/pantsel/konga" target="_blank" rel="noopener">Konga</a> 是一个第三方开源的针对 Kong 网关的 UI 管理界面，与 Kong 没有关系。通过 Konga 我们可以可视化配置 Kong 相关的配置，在没有可视化界面的情况下只能通过 curl 调用 Kong 提供的 Admin API 来管理 Kong 配置，相对于可视化配置来说复杂度是显而易见的。Konga 支持的主要特性如下：</p>
-<ul>
-<li>管理所有 Kong Admin API 对象；</li>
-<li>多个 Kong 节点管理；</li>
-<li>使用快照备份、恢复 Kong 节点；</li>
-<li>通过健康检查健康节点和 API 状态；</li>
-<li>支持邮寄和 Slack 告警通知；</li>
-<li>多用户管理；</li>
-<li>支持数据库集成（MySQL，postgresSQL，MongoDB，SQL Server）；</li>
-</ul>
-<p>Konga 默认将用户信息和配置信息存在在本地磁盘文件，我们可以选择和数据库集成，将相关信息存储到数据库，这也是生产环境推荐的做法。</p>
-<h3 id="使用-docker-compose-容器化构建-Kong-微服务网关平台"><a href="#使用-docker-compose-容器化构建-Kong-微服务网关平台" class="headerlink" title="使用 docker-compose 容器化构建 Kong 微服务网关平台"></a>使用 docker-compose 容器化构建 Kong 微服务网关平台</h3><p>使用 docker-compose 将 Kong 网关、Konga UI 管理页面、数据库三个服务组合起来，组成一个完整、可用的网关系统，Kong 网关和 Konga 服务共用一个 postgres 数据库。下面为启动整个系统完整的 docker-compose 文件，来自：<a href="https://gist.github.com/pantsel/73d949774bd8e917bfd3d9745d71febf" target="_blank" rel="noopener">https://gist.github.com/pantsel/73d949774bd8e917bfd3d9745d71febf</a> 在其基础上对存在的问题进行了修复：<br>docker-compose.yml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">"3"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"><span class="attr"> kong-net:</span></span><br><span class="line"><span class="attr">  driver:</span> <span class="string">bridge</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line">  <span class="comment"># Postgres: The database used by Kong</span></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line"><span class="attr">  kong-database:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">postgres:9.6</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-net</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="attr">      POSTGRES_USER:</span> <span class="string">kong</span></span><br><span class="line"><span class="attr">      POSTGRES_DB:</span> <span class="string">kong</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"5432:5432"</span></span><br><span class="line"><span class="attr">    healthcheck:</span></span><br><span class="line"><span class="attr">      test:</span> <span class="string">["CMD",</span> <span class="string">"pg_isready"</span><span class="string">,</span> <span class="string">"-U"</span><span class="string">,</span> <span class="string">"kong"</span><span class="string">]</span></span><br><span class="line"><span class="attr">      interval:</span> <span class="number">5</span><span class="string">s</span></span><br><span class="line"><span class="attr">      timeout:</span> <span class="number">5</span><span class="string">s</span></span><br><span class="line"><span class="attr">      retries:</span> <span class="number">5</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line">  <span class="comment"># Kong database migration</span></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line"><span class="attr">  kong-migration:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">kong:latest</span></span><br><span class="line"><span class="attr">    command:</span> <span class="string">"kong migrations bootstrap"</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-net</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">on-failure</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="attr">      KONG_PG_HOST:</span> <span class="string">kong-database</span></span><br><span class="line"><span class="attr">    links:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-database</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-database</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line">  <span class="comment"># Kong: The API Gateway</span></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line"><span class="attr">  kong:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">kong:latest</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-net</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="attr">      KONG_PG_HOST:</span> <span class="string">kong-database</span></span><br><span class="line"><span class="attr">      KONG_PROXY_LISTEN:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">:8000</span></span><br><span class="line"><span class="attr">      KONG_PROXY_LISTEN_SSL:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">:8443</span></span><br><span class="line"><span class="attr">      KONG_ADMIN_LISTEN:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">:8001</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-migration</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-database</span></span><br><span class="line"><span class="attr">    healthcheck:</span></span><br><span class="line"><span class="attr">      test:</span> <span class="string">["CMD",</span> <span class="string">"curl"</span><span class="string">,</span> <span class="string">"-f"</span><span class="string">,</span> <span class="string">"http://kong:8001"</span><span class="string">]</span></span><br><span class="line"><span class="attr">      interval:</span> <span class="number">5</span><span class="string">s</span></span><br><span class="line"><span class="attr">      timeout:</span> <span class="number">2</span><span class="string">s</span></span><br><span class="line"><span class="attr">      retries:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"8001:8001"</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"8000:8000"</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"8443:8443"</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line">  <span class="comment"># Konga database prepare</span></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line"><span class="attr">  konga-prepare:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">pantsel/konga:next</span></span><br><span class="line"><span class="attr">    command:</span> <span class="string">"-c prepare -a postgres -u postgresql://kong@kong-database:5432/konga_db"</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-net</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">on-failure</span></span><br><span class="line"><span class="attr">    links:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-database</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-database</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line">  <span class="comment"># Konga: Kong GUI</span></span><br><span class="line">  <span class="comment">#######################################</span></span><br><span class="line"><span class="attr">  konga:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">pantsel/konga:latest</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">        -</span> <span class="string">kong-net</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="attr">      DB_ADAPTER:</span> <span class="string">postgres</span></span><br><span class="line"><span class="attr">      DB_HOST:</span> <span class="string">kong-database</span></span><br><span class="line"><span class="attr">      DB_USER:</span> <span class="string">kong</span></span><br><span class="line"><span class="attr">      TOKEN_SECRET:</span> <span class="string">km1GUr4RkcQD7DewhJPNXrCuZwcKmqjb</span></span><br><span class="line"><span class="attr">      DB_DATABASE:</span> <span class="string">konga_db</span></span><br><span class="line"><span class="attr">      NODE_ENV:</span> <span class="string">production</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">kong-database</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"1337:1337"</span></span><br></pre></td></tr></table></figure></p>
-<p>docker-compose 一键启动相关服务：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure></p>
-<p>启动后访问 <a href="http://nodeIP:1337" target="_blank" rel="noopener">http://nodeIP:1337</a> 即可看到 Konga 登陆注册页面，首次访问需要注册用户，随便填写用户名称、邮箱等相关信息即可：</p>
-<p><img src="/images/konga1.png" alt=""></p>
-<p>在登陆后页面比较简单，因为还没有连接到 Kong，下面配置连接到要管理的 Kong 节点：<br>Name：随便填写；<br>Kong Admin URL：填写 Kong Admin API 地址；</p>
-<p><img src="/images/konga2.png" alt=""><br>连接到 Kong 节点后即可看到节点更详细的信息：</p>
-<p><img src="/images/konga3.png" alt=""></p>
-<h3 id="使用-Konga-可视化创建一个-Service-及路由"><a href="#使用-Konga-可视化创建一个-Service-及路由" class="headerlink" title="使用 Konga 可视化创建一个 Service 及路由"></a>使用 Konga 可视化创建一个 Service 及路由</h3><p>Kong 官方文档给了一个 Kong 的使用 <a href="https://docs.konghq.com/1.2.x/getting-started/configuring-a-service/" target="_blank" rel="noopener">例子</a>：通过 curl 调用 Kong Admin API 创建一个 Service 和路由，然后通过 curl 测试访问。这里我们演示如何通过 Konga 可视化做同样的配置：</p>
-<p>首先创建一个 Service，指向 <a href="http://mockbin.org" target="_blank" rel="noopener">http://mockbin.org</a> 服务：</p>
-<p><img src="/images/konga4.png" alt=""><br><img src="/images/konga5.png" alt=""></p>
-<p>创建一个对外访问的路由，路由到上一步创建的 Service：</p>
-<p><img src="/images/konga6.png" alt=""><br><img src="/images/konga7.png" alt=""><br><img src="/images/konga8.png" alt=""></p>
-<p>上面配置中 Hosts 即为对外访问的 host 名称，只要将 api.example.com 绑定到网关 IP 地址即可进行访问，会路由到绑定的 Service：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://api.example.com:8000</span><br></pre></td></tr></table></figure></p>
-<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://docs.konghq.com/" target="_blank" rel="noopener">https://docs.konghq.com/</a> | Kong 官方文档<br><a href="https://github.com/pantsel/konga/" target="_blank" rel="noopener">https://github.com/pantsel/konga/</a> | Konga GitHub 仓库<br><a href="https://gist.github.com/pantsel/73d949774bd8e917bfd3d9745d71febf" target="_blank" rel="noopener">https://gist.github.com/pantsel/73d949774bd8e917bfd3d9745d71febf</a> | kong docker-compose</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2383,7 +2405,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">127</span>
+                  <span class="site-state-item-count">129</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2405,7 +2427,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
