@@ -296,6 +296,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/10/Mac-下多版本-JDK-安装及切换/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/04/10/Mac-下多版本-JDK-安装及切换/" itemprop="url">Mac 下多版本 JDK 安装及切换</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-10T19:02:43+08:00">
+                2021-04-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>由于公司项目基于 JDK 1.8，我本地默认安装的是 JDK 10，这样在 idea 中通过 maven 编译的时候各种报错，有点不兼容。为了解决这个问题最好的办法就是再安装一个 1.8 的 JDK 版本了，和公司项目代码版本兼容。本文主要介绍 Mac 下如何安装 JDK 并且多版本如何切换。</p>
+<h3 id="Mac-下-JDK-安装配置"><a href="#Mac-下-JDK-安装配置" class="headerlink" title="Mac 下 JDK 安装配置"></a>Mac 下 JDK 安装配置</h3><p>Mac 下安装 JDK 比较简单，只需要访问 <a href="https://www.oracle.com/index.html" target="_blank" rel="noopener">Oracle 官网</a>，找到对应环境和版本的 JDK 下载安装即可，下载 mac 下的 dmg 安装文件，一路点击下一步即可。<br>JDK 下载页面见这里: <a href="https://www.oracle.com/cn/java/technologies/javase-downloads.html" target="_blank" rel="noopener">https://www.oracle.com/cn/java/technologies/javase-downloads.html</a></p>
+<p>mac 下安装 jdk 1.8 的话只需要下载这个安装包即可：jdk-8u281-macosx-x64.dmg</p>
+<p>同时安装其他版本，只需要下载其他版本的 dmg 安装包安装即可。</p>
+<h3 id="Mac-下多版本-JDK-切换"><a href="#Mac-下多版本-JDK-切换" class="headerlink" title="Mac 下多版本 JDK 切换"></a>Mac 下多版本 JDK 切换</h3><p>1、使用如下命令查看本地安装了哪些 JDK 版本及对应的安装路径：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">haohao@haohaodeMacBook-Pro  ~  /usr/libexec/java_home -V                                                                                                                                                                    ✔  11:03:12</span><br><span class="line">Matching Java Virtual Machines (2):</span><br><span class="line">    10.0.2, x86_64:	<span class="string">"Java SE 10.0.2"</span>	/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home</span><br><span class="line">    1.8.0_281, x86_64:	<span class="string">"Java SE 8"</span>	/Library/Java/JavaVirtualMachines/jdk1.8.0_281.jdk/Contents/Home</span><br><span class="line"></span><br><span class="line">/Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home</span><br></pre></td></tr></table></figure></p>
+<p>可以看出当前系统有两个 JDK 版本和对应的安装路径。</p>
+<p>2、切换到对应的 JDK 版本</p>
+<p>设置 <code>JAVA_HOME</code> 环境变量为 JDK 安装路径，<code>vim ~/.zshrc</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_281.jdk/Contents/Home</span><br></pre></td></tr></table></figure></p>
+<p>source 一下让配置生效: <code>source ~/.zshrc</code></p>
+<p>3、检查版本是否切换成功<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">haohao@haohaodeMacBook-Pro  ~  java -version                                                                                                                                                                                ✔  11:11:27</span><br><span class="line">java version <span class="string">"1.8.0_281"</span></span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_281-b09)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.281-b09, mixed mode)</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/03/Java-JSch-远程执行-Shell-命令/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1706,161 +1857,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/01/Golang-多版本管理神器-gvm/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/03/01/Golang-多版本管理神器-gvm/" itemprop="url">Golang 多版本管理神器 gvm</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-01T11:59:31+08:00">
-                2020-03-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Go/" itemprop="url" rel="index">
-                    <span itemprop="name">Go</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h3><p>最近编译 kubernetes 遇到了点坑，编译各种报错，经搜索调研发现 k8s 的编译对 go 的版本有很严格的要求。比如我的 go1.13.4 就无法编译 kubernetes v1.16.3，必须得 go1.12.xx 版本才能编译。为了解决这种尴尬的场景只能再在主机安装个 go1.12.xx 版本，那么有没有什么优雅的方式来实现本机多版本 Golang 版本的管理呢，能很方便的进行不同版本的切换，这也是本文的目的，推荐一款 Go多版本管理神器 <a href="https://github.com/moovweb/gvm" target="_blank" rel="noopener">gvm</a>，用法类似 Python 的多版本管理工具 <a href="https://github.com/pyenv/pyenv" target="_blank" rel="noopener">pyenv</a>。</p>
-<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><a href="https://github.com/moovweb/gvm" target="_blank" rel="noopener">gvm</a>，即 Go Version Manager，Go 版本管理器，使用 shell 脚本开发，它可以非常轻量的切换 Go 版本。对比其他语言，通常也有类似的工具，如 NodeJS 的 NVM，Python 的 pyenv 等。在使用方法上和 Python 的多版本管理工具 pyenv 非常类似。</p>
-<p>其实不借助类似的版本管理工具安装多个版本 Go 也是可以自己手动实现的，做法很简单，就是下载不同的 Golang 安装包，然后放置到独立的目录，使用时将 GOROOT 和 GOPATH 指向对应版本的目录即可完成版本切换。其实 gvm 原理上就是这么做的，只不过通过工具的形式将这些繁杂的手工操作封装起来，使得开发起来更加优雅，不必再为 Go 的安装、版本管理花费更多的心思。下面为 gvm 的工作原理：</p>
-<p><img src="/images/gvm.png" alt="gvm"></p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash &lt; &lt;(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)</span><br></pre></td></tr></table></figure>
-<p>安装可能遇到的坑:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ gvm  install go1.12.10</span><br><span class="line">Downloading Go <span class="built_in">source</span>...</span><br><span class="line">ERROR: Couldn<span class="string">'t download Go source. Check the logs /Users/jim/.gvm/logs/go-download.log</span></span><br></pre></td></tr></table></figure></p>
-<p>根据提示看 log 报错<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Cloning into <span class="string">'/Users/jim/.gvm/archive/go'</span>...</span><br><span class="line">error: RPC failed; curl 18 transfer closed with outstanding <span class="built_in">read</span> data remaining</span><br><span class="line">fatal: the remote end hung up unexpectedly</span><br><span class="line">fatal: early EOF</span><br><span class="line">fatal: index-pack failed</span><br></pre></td></tr></table></figure></p>
-<p>解决问题：<code>vim ~/.gvm/scripts/install</code><br>修改 GO_SOURCE_URL 变量地址为: GO_SOURCE_URL=git://github.com/golang/go</p>
-<h3 id="使用速记"><a href="#使用速记" class="headerlink" title="使用速记"></a>使用速记</h3><p>1.列出当前已安装的 Go 版本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm list</span><br></pre></td></tr></table></figure></p>
-<p>2.列出当前可以安装的 Go 版本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm listall</span><br></pre></td></tr></table></figure></p>
-<p>3.安装指定版本的 Go<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm install go1.12.10</span><br></pre></td></tr></table></figure></p>
-<p>4.切换到指定的 Go 版本<br>临时切换<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm use go1.12</span><br></pre></td></tr></table></figure></p>
-<p>永久切换<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm use go1.12 --default</span><br></pre></td></tr></table></figure></p>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://juejin.im/post/5d848b66f265da03a7160e89" target="_blank" rel="noopener">https://juejin.im/post/5d848b66f265da03a7160e89</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1910,7 +1906,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">129</span>
+                  <span class="site-state-item-count">130</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

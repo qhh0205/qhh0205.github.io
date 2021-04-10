@@ -296,6 +296,161 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/01/Golang-多版本管理神器-gvm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/03/01/Golang-多版本管理神器-gvm/" itemprop="url">Golang 多版本管理神器 gvm</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-01T11:59:31+08:00">
+                2020-03-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index">
+                    <span itemprop="name">Go</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h3><p>最近编译 kubernetes 遇到了点坑，编译各种报错，经搜索调研发现 k8s 的编译对 go 的版本有很严格的要求。比如我的 go1.13.4 就无法编译 kubernetes v1.16.3，必须得 go1.12.xx 版本才能编译。为了解决这种尴尬的场景只能再在主机安装个 go1.12.xx 版本，那么有没有什么优雅的方式来实现本机多版本 Golang 版本的管理呢，能很方便的进行不同版本的切换，这也是本文的目的，推荐一款 Go多版本管理神器 <a href="https://github.com/moovweb/gvm" target="_blank" rel="noopener">gvm</a>，用法类似 Python 的多版本管理工具 <a href="https://github.com/pyenv/pyenv" target="_blank" rel="noopener">pyenv</a>。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><a href="https://github.com/moovweb/gvm" target="_blank" rel="noopener">gvm</a>，即 Go Version Manager，Go 版本管理器，使用 shell 脚本开发，它可以非常轻量的切换 Go 版本。对比其他语言，通常也有类似的工具，如 NodeJS 的 NVM，Python 的 pyenv 等。在使用方法上和 Python 的多版本管理工具 pyenv 非常类似。</p>
+<p>其实不借助类似的版本管理工具安装多个版本 Go 也是可以自己手动实现的，做法很简单，就是下载不同的 Golang 安装包，然后放置到独立的目录，使用时将 GOROOT 和 GOPATH 指向对应版本的目录即可完成版本切换。其实 gvm 原理上就是这么做的，只不过通过工具的形式将这些繁杂的手工操作封装起来，使得开发起来更加优雅，不必再为 Go 的安装、版本管理花费更多的心思。下面为 gvm 的工作原理：</p>
+<p><img src="/images/gvm.png" alt="gvm"></p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash &lt; &lt;(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)</span><br></pre></td></tr></table></figure>
+<p>安装可能遇到的坑:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ gvm  install go1.12.10</span><br><span class="line">Downloading Go <span class="built_in">source</span>...</span><br><span class="line">ERROR: Couldn<span class="string">'t download Go source. Check the logs /Users/jim/.gvm/logs/go-download.log</span></span><br></pre></td></tr></table></figure></p>
+<p>根据提示看 log 报错<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Cloning into <span class="string">'/Users/jim/.gvm/archive/go'</span>...</span><br><span class="line">error: RPC failed; curl 18 transfer closed with outstanding <span class="built_in">read</span> data remaining</span><br><span class="line">fatal: the remote end hung up unexpectedly</span><br><span class="line">fatal: early EOF</span><br><span class="line">fatal: index-pack failed</span><br></pre></td></tr></table></figure></p>
+<p>解决问题：<code>vim ~/.gvm/scripts/install</code><br>修改 GO_SOURCE_URL 变量地址为: GO_SOURCE_URL=git://github.com/golang/go</p>
+<h3 id="使用速记"><a href="#使用速记" class="headerlink" title="使用速记"></a>使用速记</h3><p>1.列出当前已安装的 Go 版本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm list</span><br></pre></td></tr></table></figure></p>
+<p>2.列出当前可以安装的 Go 版本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm listall</span><br></pre></td></tr></table></figure></p>
+<p>3.安装指定版本的 Go<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm install go1.12.10</span><br></pre></td></tr></table></figure></p>
+<p>4.切换到指定的 Go 版本<br>临时切换<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm use go1.12</span><br></pre></td></tr></table></figure></p>
+<p>永久切换<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gvm use go1.12 --default</span><br></pre></td></tr></table></figure></p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://juejin.im/post/5d848b66f265da03a7160e89" target="_blank" rel="noopener">https://juejin.im/post/5d848b66f265da03a7160e89</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/01/Golang-logrus-日志包及日志切割/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2136,226 +2291,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/17/Kong-微服务网关在-Kubernetes-的实践/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/17/Kong-微服务网关在-Kubernetes-的实践/" itemprop="url">Kong 微服务网关在 Kubernetes 的实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-17T11:44:28+08:00">
-                2019-08-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/微服务网关/" itemprop="url" rel="index">
-                    <span itemprop="name">微服务网关</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文主要介绍将 <a href="https://konghq.com/kong/" target="_blank" rel="noopener">Kong</a> 微服务网关作为 Kubernetes 集群统一入口的最佳实践，之前写过一篇文章使用 <a href="https://github.com/kubernetes/ingress-nginx" target="_blank" rel="noopener">Nginx Ingress Controller</a> 作为集群统一的流量入口：<a href="https://qhh.me/2019/08/12/%E4%BD%BF%E7%94%A8-Kubernetes-Ingress-%E5%AF%B9%E5%A4%96%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1/" target="_blank" rel="noopener">使用 Kubernetes Ingress 对外暴露服务</a>，但是相比于 <a href="https://github.com/Kong/kubernetes-ingress-controller" target="_blank" rel="noopener">Kong Ingress Controller</a> 来说，Kong 支持的功能更加强大，更适合微服务架构：</p>
-<ul>
-<li>拥有庞大的插件生态，能轻易扩展 Kong 支持的功能，比如 API 认证，流控，访问限制等；</li>
-<li>Kong 服务本身和 Admin 管理 API 都集成在一个进程，通过端口区分两者，简化了部署的复杂度；</li>
-<li>Kong 节点的配置统一持久化到数据库，所有节点通过数据库共享数据，在 Ingress 更新后能实时同步到各个节点，而 Nginx Ingress Controller 是通过重新加载机制响应 Ingress 更新，这种方式代价比较大，可能会导致服务的短暂中断；</li>
-<li>Kong 有成熟的第三方管理 UI 和 Admin 管理 API 对接，从而能可视化管理 Kong 配置；</li>
-</ul>
-<p>本文先介绍 Kong 微服务网关在 Kubernetes 的架构，然后进行架构实践，涉及到的话题有：</p>
-<ul>
-<li>Kong 微服务网关在 Kubernetes 的架构；</li>
-<li>helm 部署 Kong（包含 Kong Ingress Controller）；</li>
-<li>部署 Konga；</li>
-<li>示例：通过 Konga 配置对外访问 Kubernetes Dashboard；</li>
-</ul>
-<h3 id="Kong-微服务网关在-Kubernetes-的架构"><a href="#Kong-微服务网关在-Kubernetes-的架构" class="headerlink" title="Kong 微服务网关在 Kubernetes 的架构"></a>Kong 微服务网关在 Kubernetes 的架构</h3><p>Kubernetes 简化了微服务架构，以 Service 为单位，代表一个个微服务，但是 k8s 集群整个网络对外是隔离的，在微服务架构下一般需要一个网关作为所有 API 的入口，在 k8s 中架构微服务同样也需要一个网关，作为集群统一的入口，作为服务消费方和提供方的交互中间件。Kong 可以充当这一网关角色，为集群提供统一的外部流量入口，集群内部 Service 之间通信通过 Service 名称调用：<br><img src="/images/kong-k8s1.png" alt=""><br>那么 Kong 是如何在 k8s 集群上跑起来？具体机制是什么样的？<br>Kong 作为服务接入层，不仅提供了外部流量的接收转发，而且其本身还提供了 Admin 管理 API，通过 Admin 管理 API 实现 Kong 的路由转发等相关配置，这两项功能都是在一个进程中实现。</p>
-<p>在 k8s 中 Kong 以 Pod 形式作为节点运行，Pod 通过 Deployment 或者 DaemenSet 管理。所有 Kong 节点共享一个数据库，因此通过 Admin API 配置，所有节点都能同步感知到变化。既然 Kong 以 Pod 的形式运行在 k8s 集群中，那么其本身需要对外暴露，这样外部流量才能进来，在本地可以 nodePort 或者 hostNetwork 对外提供服务，在云平台一般通过 LoadBalancer 实现。一般的部署最佳实践是将 Kong 的 Admin 管理功能独立出来一个 Pod，专门作为所有其他节点的统一配置管理，不对外提供流量转发服务，只提供配置功能，而其他 Kong 节点专门提供流量转发功能。</p>
-<p>说一说 Kong Ingress Controller：其实没有 Kong Ingress Controller 也完全够用，其存在的意义是为了实现 k8s Ingress 资源对象。我们知道 Ingress 只不过是定义了一些流量路由规则，但是光有这个路由规则没用，需要 Ingress Controller 来将这些路由规则转化成相应代理的实际配置，比如 Kong Ingress Controller 就可以将 Ingress 转化成 Kong 的配置。与 Nginx Ingress Controller 不同，Kong Ingress Controller 不对外提供服务，只作为 k8s Ingress 资源的解析转化服务，将解析转化的结果（Kong 的配置：比如 Service、Route 实体等）通过与 Kong Admin API 写入 Kong 数据库，所以 Kong Ingress Controller 需要和 Kong Admin API 打通。所以当我们需要配置 Kong 的路由时，既可以通过创建 k8s Ingress 实现，也可以通过 Kong Admin API 直接配置。</p>
-<p><img src="/images/kong-k8s2.png" alt=""></p>
-<h3 id="helm-部署-Kong（包含-Kong-Ingress-Controller）"><a href="#helm-部署-Kong（包含-Kong-Ingress-Controller）" class="headerlink" title="helm 部署 Kong（包含 Kong Ingress Controller）"></a>helm 部署 Kong（包含 Kong Ingress Controller）</h3><p>说明：本地集群部署，为了方便 Kong Proxy 和 Kong Admin 没有独立开，共用一个进程，同时提供流量转发和 Admin 管理 API。<br>使用 helm 官方 Chart: <a href="https://github.com/helm/charts/tree/master/stable/kong" target="_blank" rel="noopener">stable/kong</a>，由于我是在本地裸机集群部署，很多云的功能不支持，比如：LoadBalancer、PV、PVC 等，所以需要对 Chart 的 values 文件做一些定制化以符合本地需求：</p>
-<ul>
-<li><p>由于本地裸机集群不支持 LoadBalancer，所以采用 nodePort 方式对外暴露 Kong proxy 和 Kong admin 服务，Chart 默认是 nodePort 方式，在这里自定义下端口：Kong proxy 指定 nodePort 80 和 443 端口，Kong Admin 指定 8001 端口：<code>Values.proxy.http.nodePort: 80</code>  <code>Values.proxy.tls.nodePort: 443</code>, <code>Values.admin.nodePort: 8001</code>；</p>
-<blockquote>
-<p>注意：默认 k8s nodePort 端口范围是 30000~32767，手动分配该范围之外的端口会报错！该限制可以调整，具体见之前文章：<a href="https://qhh.me/2019/08/15/Kubernetes-%E8%B0%83%E6%95%B4-nodePort-%E7%AB%AF%E5%8F%A3%E8%8C%83%E5%9B%B4/" target="_blank" rel="noopener">Kubernetes 调整 nodePort 端口范围</a></p>
-</blockquote>
-</li>
-<li><p>启用 Kong admin 和 Kong proxy  Ingress，部署时会创建相应的 Ingress 资源，实现服务对外访问：<code>Values.admin.ingress.enabled: true</code>, <code>Values.proxy.ingress.enabled: true</code>，另外还得设置对外访问的域名（没有域名的话可以随便起个域名，然后绑 /etc/hosts 访问）：<code>Values.admin.ingress.hosts: [admin.kong.com]</code>,  <code>Values.proxy.ingress.hosts: [proxy.kong.com]</code>；</p>
-</li>
-<li><p>作为练习，为了方便，Kong admin 改用监听 HTTP 8001 端口：<code>Values.admin.useTLS: false</code>, <code>.Values.admin.servicePort: 8001</code>, <code>.Values.admin.containerPort: 8001</code>。另外也需要将 Pod 探针协议也改为 HTTP：<code>Values.livenessProbe.httpGet.scheme: HTTP</code>, <code>Values.readinessProbe.httpGet.scheme: HTTP</code>；</p>
-</li>
-<li><p>Kong proxy Ingress 启用 HTTPS，这样后续 kong 就可以同时支持 HTTP 和 HTTP 代理了，这里展开下具体过程：</p>
-<ol>
-<li><p>创建 TLS 证书：域名为 proxy.kong.com</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -x509 -nodes -days 65536 -newkey rsa:2048 -keyout proxy-kong.key -out proxy-kong.crt -subj <span class="string">"/CN=proxy.kong.com/O=proxy.kong.com"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>使用生成的证书创建 k8s Secret 资源：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret tls proxy-kong-ssl --key proxy-kong.key --cert proxy-kong.crt -n kong</span><br></pre></td></tr></table></figure>
-<p>编辑 values 文件启用 Kong Proxy Ingress tls，引用上面创建的 Secret：<code>Values.proxy.ingress.tls</code>:</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">- hosts:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">proxy.kong.com</span></span><br><span class="line"><span class="attr">      secretName:</span> <span class="string">proxy-kong-ssl</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-<li><p>启用 Kong Ingress Controller，默认是不会部署 Kong Ingress Controller：ingressController.enabled: true；</p>
-</li>
-<li><p>由于本地裸机环境不支持 PV 存储，所以在部署时禁用 Postgres 数据持久化：helm 安装时指定 <code>--set postgresql.persistence.enabled=false</code>，这样 Postgres 存储会使用 emptyDir 方式挂载卷，在 Pod 重启后数据会丢失，本地自己玩的话可以先这么搞。当然要复杂点的话，可以自己再搭个 nfs 支持 PV 资源对象。</p>
-</li>
-</ul>
-<p>定制后的 values 文件在这里：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/kong-values.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/kong-values.yml</a></p>
-<p>helm 部署<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/kong --name kong --<span class="built_in">set</span> postgresql.persistence.enabled=<span class="literal">false</span> -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/kong-values.yml --namespace kong</span><br></pre></td></tr></table></figure></p>
-<p>验证部署<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@master kong]<span class="comment"># kubectl get pod -n kong                          </span></span><br><span class="line">NAME                                   READY   STATUS      RESTARTS   AGE</span><br><span class="line">kong-kong-controller-76d657b78-r6cj7   2/2     Running     1          58s</span><br><span class="line">kong-kong-d889cf995-dw7kj              1/1     Running     0          58s</span><br><span class="line">kong-kong-init-migrations-c6fml        0/1     Completed   0          58s</span><br><span class="line">kong-postgresql-0                      1/1     Running     0          58s</span><br><span class="line"></span><br><span class="line">[root@master kong]<span class="comment"># kubectl get ingress -n kong</span></span><br><span class="line">NAME              HOSTS            ADDRESS   PORTS     AGE</span><br><span class="line">kong-kong-admin   admin.kong.com             80        84s</span><br><span class="line">kong-kong-proxy   prox.kong.com              80, 443   84s</span><br></pre></td></tr></table></figure></p>
-<p>curl 测试<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@master kong]<span class="comment"># curl -I http://admin.kong.com       </span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Content-Type: application/json</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">[root@master kong]<span class="comment"># curl http://proxy.kong.com</span></span><br><span class="line">&#123;<span class="string">"message"</span>:<span class="string">"no Route matched with those values"</span>&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="部署-Konga"><a href="#部署-Konga" class="headerlink" title="部署 Konga"></a>部署 Konga</h3><p>上面已经将整个 Kong 平台运行在了 Kubernetes 集群，并启用了 Kong Ingress Controller，但是目前做 Kong 相关的路由配置只能通过 curl 调 Kong Admin API，配置起来不是很方便。所以需要将针对 Kong 的 UI 管理服务 Konga 部署到集群，并和 Kong 打通，这样就可以可视化做 Kong 的配置了。由于 Konga 的部署很简单，官方也没有 Chart，所以我们通过 yaml 文件创建相关资源。</p>
-<p>为了节省资源，Konga 和 Kong 共用一个 Postgresql，Konga 和 Kong 本身对数据库资源占用很少，所以两个同类服务共用一个数据库是完全合理的。下面为 k8s 资源文件，服务对外暴露方式为 Kong Ingress，域名设为(名字随便起的，绑 host 访问)：konga.kong.com：</p>
-<blockquote>
-<p>数据库密码在前面安装 Kong 时 Chart 创建的 Secret 中，获取方法：<br><code>kubectl get secret kong-postgresql -n kong -o yaml | grep password | awk -F &#39;:&#39; &#39;{print $2}&#39; | tr -d &#39; &#39; | base64 -d</code></p>
-</blockquote>
-<p>konga.yml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">konga</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">konga</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  replicas:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    matchLabels:</span></span><br><span class="line"><span class="attr">      app:</span> <span class="string">konga</span></span><br><span class="line"><span class="attr">  strategy:</span></span><br><span class="line"><span class="attr">    rollingUpdate:</span></span><br><span class="line"><span class="attr">      maxSurge:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">      maxUnavailable:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">    type:</span> <span class="string">RollingUpdate</span></span><br><span class="line"><span class="attr">  template:</span></span><br><span class="line"><span class="attr">    metadata:</span></span><br><span class="line"><span class="attr">      labels:</span></span><br><span class="line"><span class="attr">        app:</span> <span class="string">konga</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      containers:</span></span><br><span class="line"><span class="attr">      - env:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">DB_ADAPTER</span></span><br><span class="line"><span class="attr">          value:</span> <span class="string">postgres</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">DB_URI</span></span><br><span class="line"><span class="attr">          value:</span> <span class="string">"postgresql://kong:K9IV9pHTdS@kong-postgresql:5432/konga_database"</span></span><br><span class="line"><span class="attr">        image:</span> <span class="string">pantsel/konga</span></span><br><span class="line"><span class="attr">        imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">konga</span></span><br><span class="line"><span class="attr">        ports:</span></span><br><span class="line"><span class="attr">        - containerPort:</span> <span class="number">1337</span></span><br><span class="line"><span class="attr">          protocol:</span> <span class="string">TCP</span></span><br><span class="line"><span class="attr">      restartPolicy:</span> <span class="string">Always</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">konga</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  ports:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">http</span></span><br><span class="line"><span class="attr">    port:</span> <span class="number">1337</span></span><br><span class="line"><span class="attr">    targetPort:</span> <span class="number">1337</span></span><br><span class="line"><span class="attr">    protocol:</span> <span class="string">TCP</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">konga</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">konga-ingress</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  rules:</span></span><br><span class="line"><span class="attr">  - host:</span> <span class="string">konga.kong.com</span></span><br><span class="line"><span class="attr">    http:</span></span><br><span class="line"><span class="attr">      paths:</span></span><br><span class="line"><span class="attr">      - path:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">        backend:</span></span><br><span class="line"><span class="attr">          serviceName:</span> <span class="string">konga</span></span><br><span class="line"><span class="attr">          servicePort:</span> <span class="number">1337</span></span><br></pre></td></tr></table></figure></p>
-<p>kubectl 部署 Konga<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f konga.yml -n kong</span><br></pre></td></tr></table></figure></p>
-<p>部署完成后绑定 host 将 konga.kong.com 指向集群节点 IP 即可访问：</p>
-<p><img src="/images/kong-k8s3.png" alt=""></p>
-<p>接下来随便注册个账号，然后配置连接到 Kong Admin 地址，由于都在集群内部，所以直接用 Kong Admin 的 ServiceName + 端口号连就可以：</p>
-<p><img src="/images/kong-k8s4.png" alt=""><br>连接没问题后，主页面会显示 Kong 相关的全局信息：</p>
-<p><img src="/images/kong-k8s5.png" alt=""></p>
-<h3 id="示例：通过-Konga-配置对外访问-Kubernetes-Dashboard"><a href="#示例：通过-Konga-配置对外访问-Kubernetes-Dashboard" class="headerlink" title="示例：通过 Konga 配置对外访问 Kubernetes Dashboard"></a>示例：通过 Konga 配置对外访问 Kubernetes Dashboard</h3><p>之前我们基于 Nginx Ingress Controller 对外暴露 Kubernetes Dashboard，现在我们基于集群中 Kong 平台配置对外访问，通过 Konga 可视化操作。<br>通过 Konga 配置服务对外访问只需要两步：</p>
-<ol>
-<li>创建一个对应服务的 Service（不是 k8s 的 Servide，是 Kong 里面 Service 的概念：反向代理上游服务的抽象）；</li>
-<li>创建对应 Service 的路由；</li>
-</ol>
-<p>下面以配置 Kubernetes dashboard 服务对外访问为例，对外域名设为 dashboard.kube.com (名字随便起的，绑 host 访问)</p>
-<ol>
-<li><p>创建 Kong Service：</p>
-<p> <img src="/images/kong-k8s6.png" alt=""></p>
-</li>
-<li><p>创建服务路由：</p>
-<p> <img src="/images/kong-k8s7.png" alt=""><br> <img src="/images/kong-k8s8.png" alt=""><br> <img src="/images/kong-k8s9.png" alt=""></p>
-</li>
-</ol>
-<p>配置完成，浏览器测试访问：<a href="https://dashboard.kube.com" target="_blank" rel="noopener">https://dashboard.kube.com</a></p>
-<p><img src="/images/kong-k8s-kube-dashboard.png" alt=""></p>
-<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://konghq.com/solutions/kubernetes-ingress/" target="_blank" rel="noopener">https://konghq.com/solutions/kubernetes-ingress/</a> | Kong on Kubernetes<br><a href="https://konghq.com/blog/kubernetes-ingress-controller-for-kong/" target="_blank" rel="noopener">https://konghq.com/blog/kubernetes-ingress-controller-for-kong/</a> | Announcing the Kubernetes Ingress Controller for Kong<br><a href="https://docs.konghq.com/install/kubernetes/" target="_blank" rel="noopener">https://docs.konghq.com/install/kubernetes/</a> | Kong and Kong Enterprise on Kubernetes<br><a href="https://github.com/Kong/kubernetes-ingress-controller" target="_blank" rel="noopener">https://github.com/Kong/kubernetes-ingress-controller</a> | GitHub Kong Ingress Controller</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2405,7 +2340,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">129</span>
+                  <span class="site-state-item-count">130</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
