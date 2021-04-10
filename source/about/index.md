@@ -9,7 +9,7 @@ type: about
 
 ## 社交
 QQ 技术交流群：282939416
->本群专注于 Jenkins 持续集成/持续交付、容器、Kubernetes、Golang、Python 相关话题！
+>本群专注于 容器、Kubernetes、Java、Golang、Python 相关话题！
 
 ## 我的 DevOps 技术栈
 技术图谱地址 https://github.com/qhh0205/my-devops-stack
