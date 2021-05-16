@@ -296,6 +296,153 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/Helm-安装使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/08/Helm-安装使用/" itemprop="url">Helm 安装使用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-08T10:52:59+08:00">
+                2019-08-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>其实 Helm 的安装很简单，之所以单独写这篇文章主要是因为国内网络原因导致 helm 使用存在障碍(防火墙对 google 不友好)，本文重点说如何解决这一问题。</p>
+<h4 id="helm-安装"><a href="#helm-安装" class="headerlink" title="helm 安装"></a>helm 安装</h4><p>官方提供了一件安装脚本，安装最新版：<a href="https://helm.sh/docs/using_helm/#installing-helm" target="_blank" rel="noopener">https://helm.sh/docs/using_helm/#installing-helm</a><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -L <span class="string">https:</span><span class="comment">//git.io/get_helm.sh | bash</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="创建服务账号和角色绑定"><a href="#创建服务账号和角色绑定" class="headerlink" title="创建服务账号和角色绑定"></a>创建服务账号和角色绑定</h4><p>rbac-config.yaml:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">tiller</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">tiller</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line"><span class="attr">  apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line"><span class="attr">  kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">cluster-admin</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="attr">  - kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">tiller</span></span><br><span class="line"><span class="attr">    namespace:</span> <span class="string">kube-system</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f rbac-config.yaml</span><br></pre></td></tr></table></figure>
+<h4 id="helm-init-初始化"><a href="#helm-init-初始化" class="headerlink" title="helm init 初始化"></a>helm init 初始化</h4><p>国内无法访问 gcr.io 仓库，指定阿里云镜像仓库，同时指定前面创建的服务账号：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm init --service-account tiller -<span class="selector-tag">i</span> registry<span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span>/google_containers/tiller:v2.<span class="number">14.3</span></span><br></pre></td></tr></table></figure></p>
+<p>国内也无法访问 helm 默认的 Chart 仓库，所以也改成阿里云 Chart 镜像仓库：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm repo remove stable</span><br><span class="line">helm repo add stable https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/06/Kubeadm-结合-Vagrant-自动化部署最新版-Kubernetes-集群/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1654,172 +1801,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/02/使用-iperf-测试-Linux-服务器带宽/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/02/使用-iperf-测试-Linux-服务器带宽/" itemprop="url">使用 iperf 测试 Linux 服务器带宽</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-02T18:49:34+08:00">
-                2019-07-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="iperf-简介"><a href="#iperf-简介" class="headerlink" title="iperf 简介"></a>iperf 简介</h3><p><a href="https://sourceforge.net/projects/iperf/" target="_blank" rel="noopener">iperf</a> 是一个用于测试网络带宽的命令行工具，可以测试服务器的网络吞吐量。目前发现两个很实用的功能：</p>
-<ol>
-<li>测试服务器网络吞吐量：如果我们需要知道某台服务器的「最大」网络带宽，那么最好在同区域找两台同等配置的机器测试，因为带宽测试结果和两节点的距离有关、也和运营商的限制有关、也和服务器 CPU 核数有关。</li>
-<li>测试到服务端节点网速：如果我们想知道目前客户端到服务器的实际网速是多少，在服务器启动 iperf，客户端连接 iperf 服务端，测试结果就是当前客户端到服务器的真实网速。</li>
-</ol>
-<h3 id="工具安装"><a href="#工具安装" class="headerlink" title="工具安装"></a>工具安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y iperf</span><br></pre></td></tr></table></figure>
-<h3 id="iperf-选项参数"><a href="#iperf-选项参数" class="headerlink" title="iperf 选项参数"></a>iperf 选项参数</h3><h4 id="通用选项"><a href="#通用选项" class="headerlink" title="通用选项"></a>通用选项</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-f &lt;kmKM&gt;    报告输出格式。 [kmKM]   format to report: Kbits, Mbits, KBytes, MBytes</span><br><span class="line">-i &lt;sec&gt;    在周期性报告带宽之间暂停n秒。如周期是10s，则-i指定为2，则每隔2秒报告一次带宽测试情况,则共计报告5次</span><br><span class="line">-p    设置服务端监听的端口，默认是5001</span><br><span class="line">-u    使用UDP协议测试</span><br><span class="line">-w n&lt;K/M&gt;   指定TCP窗口大小</span><br><span class="line">-m    输出MTU大小</span><br><span class="line">-M    设置MTU大小</span><br><span class="line">-o &lt;filename&gt;    结果输出至文件</span><br></pre></td></tr></table></figure>
-<h4 id="服务端选项"><a href="#服务端选项" class="headerlink" title="服务端选项"></a>服务端选项</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-s    iperf服务器模式</span><br><span class="line">-d    以后台模式运行服务端</span><br><span class="line">-U    运行一个单一线程的UDP模式</span><br></pre></td></tr></table></figure>
-<h4 id="客户端选项"><a href="#客户端选项" class="headerlink" title="客户端选项"></a>客户端选项</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-b , --bandwidth n[KM] 指定客户端通过UDP协议发送数据的带宽（bit/s）该参数只对 udp 测试有效。默认是1Mbit/s</span><br><span class="line">-c &lt;ServerIP&gt;  以客户端模式运行iperf，并且连接至服务端主机ServerIP。 eg:  iperf -c &lt;server_ip&gt;</span><br><span class="line">-d    双向测试</span><br><span class="line">-t    指定iperf带宽测试时间，默认是10s。  eg:  iperf -c &lt;server_ip&gt; -t 20</span><br><span class="line">-P    指定客户端并发线程数，默认只运行一个线程。 eg,指定3个线程 : iperf -c &lt;server_ip&gt; -P 3</span><br><span class="line">-T    指定TTL值</span><br></pre></td></tr></table></figure>
-<h3 id="使用方法示例"><a href="#使用方法示例" class="headerlink" title="使用方法示例"></a>使用方法示例</h3><p>准备两台服务器 A 和 B，并分别安装 iperf 命令行工具。</p>
-<ol>
-<li><p>测试 A 服务器的出站带宽：在 B 服务器启动 iperf 服务端，A 服务器使用 iperf 连接 B 服务<br>器 iperf 服务端，这样测试的就是 A 服务器的出口带宽：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">B: iperf -s -i 2  <span class="comment"># 启动服务端</span></span><br><span class="line">A: iperf -c &lt;B_server_ip&gt; -i 2 -t 60  <span class="comment"># 客户端链接</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>测试 A 服务器的入站带宽：在 A 服务器启动 iperf 服务的，B 服务器使用 iperf 连接 A 服务器 iperf 服务端，这样测试的就是 A 服务器的入口带宽。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A: iperf -s -i 2  <span class="comment"># 启动服务端</span></span><br><span class="line">B: iperf -c &lt;A_server_ip&gt; -i 2 -t 60  <span class="comment"># 客户端链接</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="测试结果示例"><a href="#测试结果示例" class="headerlink" title="测试结果示例"></a>测试结果示例</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@com26-83 ~]# iperf -c x.x.x.x -i 2 -t 60</span><br><span class="line">------------------------------------------------------------</span><br><span class="line">Client connecting <span class="keyword">to</span> x.x.x.x, TCP<span class="built_in"> port </span>5001</span><br><span class="line">TCP window size: 22.1 KByte (default)</span><br><span class="line">------------------------------------------------------------</span><br><span class="line">[  3] local 10.2.26.83<span class="built_in"> port </span>48234 connected with x.x.x.x<span class="built_in"> port </span>5001</span><br><span class="line">[ ID] Interval       Transfer     Bandwidth</span><br><span class="line">[  3]  0.0- 2.0 sec   147 KBytes   603 Kbits/sec</span><br><span class="line">[  3]  2.0- 4.0 sec   369 KBytes  1.51 Mbits/sec</span><br><span class="line">[  3]  4.0- 6.0 sec   512 KBytes  2.10 Mbits/sec</span><br><span class="line">[  3]  6.0- 8.0 sec   896 KBytes  3.67 Mbits/sec</span><br><span class="line">[  3]  8.0-10.0 sec  1.62 MBytes  6.82 Mbits/sec</span><br><span class="line">[  3] 10.0-12.0 sec  2.12 MBytes  8.91 Mbits/sec</span><br><span class="line">[  3] 12.0-14.0 sec  3.38 MBytes  14.2 Mbits/sec</span><br><span class="line">[  3] 14.0-16.0 sec  6.00 MBytes  25.2 Mbits/sec</span><br><span class="line">[  3] 16.0-18.0 sec  8.00 MBytes  33.6 Mbits/sec</span><br></pre></td></tr></table></figure>
-<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><p><a href="https://www.cnblogs.com/zdz8207/p/linux-iperf.html" target="_blank" rel="noopener">https://www.cnblogs.com/zdz8207/p/linux-iperf.html</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1864,7 +1850,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">130</span>
+                  <span class="site-state-item-count">131</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
