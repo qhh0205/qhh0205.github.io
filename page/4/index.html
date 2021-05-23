@@ -296,6 +296,168 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/helm-部署-heapster-组件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/08/helm-部署-heapster-组件/" itemprop="url">helm 部署 heapster 组件</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-08T12:30:15+08:00">
+                2019-08-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>之前工作用的 k8s 集群（GKE）都是支持 kubectl top node 查看节点资源使用情况的，最近自己本地新搭的集群发现用不了该命令。网上搜索了下发现是由于缺少集群指标收集组件导致，目前常用的集群指标收集组件是 <a href="https://github.com/kubernetes-retired/heapster" target="_blank" rel="noopener">heapster</a> 和 <a href="https://github.com/kubernetes-incubator/metrics-server/" target="_blank" rel="noopener">metrics-server</a>，看官方介绍 heapster 要逐渐被淘汰了，更推荐 metrics-server。但是为了适配后续要安装的 <a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">kubernetes-dashboard</a>，先使用 heapster 组件。</p>
+<p>heapster 组件是 Kubernetes 官方支持的容器集群监控组件，主要用于收集集群指标数据并存储，收集的数据可以对接可视化图表展示分析，比如 grafana、kubernetes-dashboard。</p>
+<p>除了 <code>kubectl top node</code> 依赖于 heapster 收集的指标，kubernetes-dashboard 也需要 heapster，本文使用 helm 来一键部署 heapster 组件。</p>
+<p>heapster Chart 使用 helm 官方提供的：<a href="https://github.com/helm/charts/tree/master/stable/heapster" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/heapster</a><br>对 values 文件做一些定制：</p>
+<ul>
+<li>使用阿里云镜像仓库，Chart 默认使用 k8s.gcr.io，国内是拉不下来镜像的；</li>
+<li>rbac 服务账号使用 admin，使用默认的 default 账号权限太小，收集指标时报错。</li>
+<li><p>heapster 启动参数 –source 调整成：<code>kubernetes:https://kubernetes.default:443?useServiceAccount=true&amp;kubeletHttps=true&amp;kubeletPort=10250&amp;insecure=true</code>，否则 heapster 会报错：</p>
+<blockquote>
+<p>E0806 22:11:05.017143       1 manager.go:101] Error in scraping containers from kubelet_summary:192.168.26.10:10255: Get <a href="http://192.168.26.10:10255/stats/summary/" target="_blank" rel="noopener">http://192.168.26.10:10255/stats/summary/</a>: dial tcp 192.168.26.10:10255: getsockopt: connection refused</p>
+</blockquote>
+<p>  报错主要原因是 k8s 1.12.0 以后已经取消了 kubelet 10255 端口:</p>
+  <figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">--read-only-port int32    </span></span><br><span class="line"> The read-only <span class="keyword">port</span> <span class="keyword">for</span> the Kubelet <span class="keyword">to</span> serve <span class="keyword">on</span> <span class="keyword">with</span> no authentication/authorization </span><br><span class="line">(set <span class="keyword">to</span> <span class="number">0</span> <span class="keyword">to</span> disable) (<span class="keyword">default</span> <span class="number">10255</span>) (DEPRECATED: </span><br><span class="line">This parameter should be set via the config <span class="keyword">file</span> specified by the Kubelet<span class="symbol">'s</span> <span class="comment">--config flag. </span></span><br><span class="line">See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-<span class="keyword">file</span>/ <span class="keyword">for</span> more information.)</span><br></pre></td></tr></table></figure>
+<p>  详情见：<a href="https://sealyun.com/post/heapster-error/" target="_blank" rel="noopener">https://sealyun.com/post/heapster-error/</a></p>
+</li>
+</ul>
+<p>定制后的 values 文件在这里：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/heapster-values.yml</a> </p>
+<p>创建集群服务账号：admin，heapster 使用 admin 服务账号，确保有足够权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/some-apiserver-rs/admin-sa.yml</span><br></pre></td></tr></table></figure></p>
+<p>接下来使用 helm 安装部署 heapster：<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/heapster --name heapster -<span class="keyword">f</span> http<span class="variable">s:</span>//raw.githubusercontent.<span class="keyword">com</span>/qhh0205/helm-charts/master/kube-component-<span class="built_in">values</span>/heapster-<span class="built_in">values</span>.yml --namespace kube-<span class="built_in">system</span></span><br></pre></td></tr></table></figure></p>
+<p>heapster 安装完后就可以正常使用 kubectl top node 了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl top node</span></span><br><span class="line">NAME     CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%</span><br><span class="line">master   141m         7%     1096Mi          63%</span><br><span class="line">node1    45m          2%     821Mi           47%</span><br></pre></td></tr></table></figure></p>
+<p>如果 heapster pod 有问题一般会报下面错误：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl top node</span></span><br><span class="line">error: metrics not available yet</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/Helm-安装使用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1656,151 +1818,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/09/Golang-json-编解码/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/09/Golang-json-编解码/" itemprop="url">Golang json 编解码</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-09T19:23:03+08:00">
-                2019-07-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Go/" itemprop="url" rel="index">
-                    <span itemprop="name">Go</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="Json-编码"><a href="#Json-编码" class="headerlink" title="Json 编码"></a>Json 编码</h4><p>Json 编码的过程即为将程序的数据结构转化为 json 串的过程，比如 Golang 里面的结构体、Python 中的字典，这些有结构的数据转化为 json 串。在 Golang 中编码 Json 使用 <code>encoding/json</code> 包的 Marshal() 函数，函数原型为：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Marshal</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span></span><br></pre></td></tr></table></figure></p>
-<p>举例：将 Book 结构体对象编码为 json 串，然后输出到控制台<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"encoding/json"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Book <span class="keyword">struct</span> &#123;</span><br><span class="line">    Title       <span class="keyword">string</span></span><br><span class="line">    Authors     []<span class="keyword">string</span></span><br><span class="line">    Publisher   <span class="keyword">string</span></span><br><span class="line">    IsPublished <span class="keyword">bool</span></span><br><span class="line">    Price       <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> gobook Book = Book&#123;</span><br><span class="line">        <span class="string">"Go语言编程"</span>,</span><br><span class="line">        []<span class="keyword">string</span>&#123;<span class="string">"XuShiwei"</span>, <span class="string">"HughLv"</span>&#125;,</span><br><span class="line">        <span class="string">"ituring.com.cn"</span>,</span><br><span class="line">        <span class="literal">true</span>,</span><br><span class="line">        <span class="number">9.99</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    b, _ := json.Marshal(gobook)</span><br><span class="line">    fmt.Println(<span class="keyword">string</span>(b))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="Json-解码"><a href="#Json-解码" class="headerlink" title="Json 解码"></a>Json 解码</h4><p>Json 解码的过程和编码刚好相反，将普通的 json 字符串转化为有结构的程序数据。比如将 json 串转化为 Golang 的结构体。在Golang 中解码 json 的函数为 <code>encoding/json</code> 包的 <code>Unmarshal()</code> 函数，函数原型为：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Unmarshal</span><span class="params">(data []<span class="keyword">byte</span>, v <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span></span><br></pre></td></tr></table></figure></p>
-<p>举例：将 json 字符串解码成 Golang Book 结构体对象，并打印每个字段的值<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="comment">//"encoding/json"</span></span><br><span class="line">    <span class="string">"encoding/json"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Book <span class="keyword">struct</span> &#123;</span><br><span class="line">    Title       <span class="keyword">string</span></span><br><span class="line">    Authors     []<span class="keyword">string</span></span><br><span class="line">    Publisher   <span class="keyword">string</span></span><br><span class="line">    IsPublished <span class="keyword">bool</span></span><br><span class="line">    Price       <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jsonStr := <span class="string">`&#123;"Title":"Go语言编程","Authors":["XuShiwei","HughLv"],"Publisher":"ituring.com.cn","IsPublished":true,"Price":9.99&#125;`</span></span><br><span class="line">    <span class="keyword">var</span> book Book</span><br><span class="line">    json.Unmarshal([]<span class="keyword">byte</span>(jsonStr), &amp;book)</span><br><span class="line">    fmt.Println(book.Title, book.Authors, book.Publisher, book.IsPublished, book.Price)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1850,7 +1867,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">131</span>
+                  <span class="site-state-item-count">132</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

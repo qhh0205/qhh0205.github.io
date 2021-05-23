@@ -296,6 +296,168 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/06/Vagrant-文件配置器的使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/06/Vagrant-文件配置器的使用/" itemprop="url">Vagrant 文件配置器的使用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-06T14:13:46+08:00">
+                2018-05-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vagrant/" itemprop="url" rel="index">
+                    <span itemprop="name">Vagrant</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p><strong>摘要：</strong> 本文翻译自 <a href="https://www.vagrantup.com/docs/" target="_blank" rel="noopener">Vagrant</a> 官方文档 <a href="https://www.vagrantup.com/docs/provisioning/file.html#destination" target="_blank" rel="noopener">File Provisioner</a> 部分，主要介绍了文件配置器的使用，如何使用文件配置器将本地文件上拷贝到 Vagrant 所管理的虚拟机上面。</p>
+</blockquote>
+<p><strong>Provisioner name:</strong> “file”</p>
+<p>Vagrant 文件配置器可以将本地主机的文件或者目录上传到虚拟机。</p>
+<p>文件配置器可以轻松地将本地 <code>~/.gitconfig</code> 复制到虚拟机的 <code>vagrant</code> 用户家目录，这样的话就不需要在每次配置一个新的虚拟机时运行 <code>git config --global</code> 。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># ... other configuration</span></span><br><span class="line"></span><br><span class="line">  config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/.gitconfig"</span>, <span class="symbol">destination:</span> <span class="string">".gitconfig"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>如果你想给虚拟机上传一个目录，可以使用下面的文件配置器来完成。复制时，本地文件夹会被复制到虚拟机的 <code>newfolder</code> 文件夹。注意，如果想在虚拟机保持和本机同样的文件夹名称，请确保目的路径名称和本地路径名称一致。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># ... other configuration</span></span><br><span class="line"></span><br><span class="line">  config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/path/to/host/folder"</span>, <span class="symbol">destination:</span> <span class="string">"$HOME/remote/newfolder"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>首先将 <code>~/path/to/host/folder</code> 拷贝到虚拟机:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">folder</span><br><span class="line">    ├── script.sh</span><br><span class="line">    ├── otherfolder</span><br><span class="line">    │   └── hello.sh</span><br><span class="line">    ├── goodbye.sh</span><br><span class="line">    ├── hello.sh</span><br><span class="line">    └── woot.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 5 files</span><br></pre></td></tr></table></figure></p>
+<p>然后将 <code>~/path/to/host/folder</code> 拷贝到虚拟机的 <code>$HOME/remote/newfolder</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">newfolder</span><br><span class="line">    ├── script.sh</span><br><span class="line">    ├── otherfolder</span><br><span class="line">    │   └── hello.sh</span><br><span class="line">    ├── goodbye.sh</span><br><span class="line">    ├── hello.sh</span><br><span class="line">    └── woot.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 5 files</span><br></pre></td></tr></table></figure></p>
+<p>注意，文件上传不像文件目录同步，上传的文件或者文件夹不是保持同步的。还是以上面的例子来说，如果你更改了本地的 <code>~/.gitconfig</code>，那么虚拟机上的同样的文件并不会更改。</p>
+<p>文件配置器的文件上传是通过 <code>SSH 或 PowerShell</code> 用户来上传。通常情况下用户的权限是有限的，如果你想将文件上传到需要更高权限的位置，我们推荐将它们上传到临时位置，然后使用 <a href="https://www.vagrantup.com/docs/provisioning/shell.html" target="_blank" rel="noopener">shell 配置器</a>将它们移动到目标的位置。</p>
+<h3 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h3><p>文件配置器只有两个选项，并且是必须的：</p>
+<ul>
+<li><a href="https://www.vagrantup.com/docs/provisioning/file.html#source" target="_blank" rel="noopener">source</a>(string) - 要上传的本地文件或者文件夹。</li>
+<li><a href="https://www.vagrantup.com/docs/provisioning/file.html#destination" target="_blank" rel="noopener">destination</a>(string) - 远程虚拟机路径。文件或者文件夹通过 <code>SCP</code> 来上传，因此该目的路径需要对 <code>SSH</code> 用户可写。<code>SSH</code> 用户可以通过 <code>ssh-config</code> 来查看，默认是 <code>vagrant</code>。</li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>尽管文件配置器支持尾部斜杠或 “globing”，但这会导致在本地和虚拟机之间复制文件时产生一些令人困惑的结果。例如，如下源路径没有尾部斜杠，而目的路径有尾部斜杠：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/pathfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/newlocation/"</span></span><br></pre></td></tr></table></figure></p>
+<p>这意味着 <code>vagrant</code> 会将 <code>~/pathfolder</code> 上传到远程目录 <code>/remote/newlocation</code> 底下，结果看起来会像下面这样：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">newlocation</span><br><span class="line">    ├── pathfolder</span><br><span class="line">    │   └── file.sh</span><br><span class="line"></span><br><span class="line">    1 directory, 2 files</span><br></pre></td></tr></table></figure></p>
+<p>同样的行为也可以通过如下配置来实现：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/pathfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/newlocation/pathfolder"</span></span><br></pre></td></tr></table></figure></p>
+<p>另一个例子是使用 <code>.</code> 号，拷贝本地机器目录里面的文件，不包括上一层目录：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"~/otherfolder/."</span>, <span class="symbol">destination:</span> <span class="string">"/remote/otherlocation"</span></span><br></pre></td></tr></table></figure></p>
+<p>以上配置将 <code>~/otherfolder</code> 目录下的所有文件拷贝到新的路径 <code>/remote/otherlocation</code>。这个也可以通过指定一个和源文件夹不同的远程文件夹来实现：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.vm.provision <span class="string">"file"</span>, <span class="symbol">source:</span> <span class="string">"/otherfolder"</span>, <span class="symbol">destination:</span> <span class="string">"/remote/otherlocation"</span></span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/30/用-Plumbum-开发-Python-命令行工具/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1901,196 +2063,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/18/我的-Mac-终端配置（Mac-OSX-iTerm2-Zsh-Oh-My-Zsh）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/18/我的-Mac-终端配置（Mac-OSX-iTerm2-Zsh-Oh-My-Zsh）/" itemprop="url">我的 Mac 终端配置（Mac OSX + iTerm2 + Zsh + Oh-My-Zsh）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-18T09:24:33+08:00">
-                2018-03-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Mac/" itemprop="url" rel="index">
-                    <span itemprop="name">Mac</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><strong>相关工具介绍</strong></p>
-<ol>
-<li><strong>iTerm2</strong>：Mac 下 Terminal 终端的替代品，拥有更多强大的功能，想了解更多请戳 <a href="https://www.iterm2.com/" target="_blank" rel="noopener">iTerm2 官网</a>；</li>
-<li><strong>zsh</strong>：Linux 的一种 shell 外壳，和 bash 属于同类产品；</li>
-<li><strong>Oh-My-Zsh</strong>：用来管理 zsh 的配置，同时还有很多社区贡献的主题配置以及好用的插件可供使用，了解更多请戳 <a href="http://ohmyz.sh/" target="_blank" rel="noopener">Oh-My-Zsh 官网</a> ；</li>
-</ol>
-<p><strong>配置方案总览</strong></p>
-<ol>
-<li><a href="https://www.iterm2.com/" target="_blank" rel="noopener">iTerm2</a> 终端工具；</li>
-<li>iTerm2 <a href="https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/schemes/Solarized%20Dark%20Higher%20Contrast.itermcolors" target="_blank" rel="noopener">Solarized Dark Higher Contrast 配色方案</a>；</li>
-<li><a href="https://github.com/supermarin/powerline-fonts" target="_blank" rel="noopener">Monaco for Powerline 字体</a>；</li>
-<li>zsh （Mac 系统自带，无需安装）；</li>
-<li><a href="http://ohmyz.sh/" target="_blank" rel="noopener">Oh-My-Zsh</a>；</li>
-<li><a href="https://github.com/bhilburn/powerlevel9k" target="_blank" rel="noopener">Oh-My-Zsh powerlevel9k 主题</a>；</li>
-</ol>
-<p><strong>最终效果：</strong><br><img src="https://gist.githubusercontent.com/qhh0205/5570934d25a627dd9e9629a8ceeb415c/raw/8f5b3e5ece35629f04fcf66fbc94338e730c3bcd/z-mac-terminal-config-sample1.png" alt="z-mac-terminal-config-sample1"><br><img src="https://gist.githubusercontent.com/qhh0205/5570934d25a627dd9e9629a8ceeb415c/raw/8f5b3e5ece35629f04fcf66fbc94338e730c3bcd/z-mac-terminal-config-sample2.png" alt="z-mac-terminal-config-sample2"><br><img src="https://gist.githubusercontent.com/qhh0205/5570934d25a627dd9e9629a8ceeb415c/raw/8f5b3e5ece35629f04fcf66fbc94338e730c3bcd/z-mac-terminal-config-sample3.png" alt="z-mac-terminal-config-sample3"></p>
-<h4 id="具体配置步骤"><a href="#具体配置步骤" class="headerlink" title="具体配置步骤"></a>具体配置步骤</h4><h5 id="1-安装-iTerm2-终端工具："><a href="#1-安装-iTerm2-终端工具：" class="headerlink" title="1. 安装 iTerm2 终端工具："></a>1. 安装 iTerm2 终端工具：</h5><p>打开 <a href="https://www.iterm2.com/" target="_blank" rel="noopener">iTerm2 官网</a> 直接点击 Download 下载并安装即可。</p>
-<h5 id="2-安装-iTerm2-Solarized-Dark-Higher-Contrast-配色方案："><a href="#2-安装-iTerm2-Solarized-Dark-Higher-Contrast-配色方案：" class="headerlink" title="2. 安装 iTerm2 Solarized Dark Higher Contrast 配色方案："></a>2. 安装 iTerm2 <a href="https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/schemes/Solarized%20Dark%20Higher%20Contrast.itermcolors" target="_blank" rel="noopener">Solarized Dark Higher Contrast 配色方案</a>：</h5><p>将该配色方案文件（Solarized Dark Higher Contrast.itermcolors）复制出来，保存到本地，文件命名为 SolarizedDarkHigherContrast.itermcolors ，然后双击即可安装。安装完后打开 iTerm2 终端，依次选择菜单栏：<strong>iTerm2 –&gt; Preferences –&gt; Profiles –&gt; Colors –&gt; Colors Presets –&gt;  SolarizedDarkHigherContrast</strong>，至此 iTerm2 Solarized Dark Higher Contrast 配色方案已成功安装。</p>
-<h5 id="3-安装-Monaco-for-Powerline-字体："><a href="#3-安装-Monaco-for-Powerline-字体：" class="headerlink" title="3. 安装  Monaco for Powerline 字体："></a>3. 安装  <a href="https://github.com/supermarin/powerline-fonts" target="_blank" rel="noopener">Monaco for Powerline 字体</a>：</h5><p>将该仓库克隆到本地，然后进入工程目录的 Monaco 目录，双击后缀名为 .otf 的字体文件即可完成该字体的安装。安装该字体的原因主要是为了和 Oh-My-Zsh 的 powerlevel9k 主题相兼容，如果不安装该字体，那么后面安装 powerlevel9kn 主题后会出现乱码。<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 该仓库中包含好几种优化后的字体</span></span><br><span class="line">git <span class="keyword">clone</span> <span class="title">https</span>://github.com/supermarin/powerline-fonts.git</span><br></pre></td></tr></table></figure></p>
-<h5 id="4-安装配置-zsh："><a href="#4-安装配置-zsh：" class="headerlink" title="4. 安装配置 zsh："></a>4. 安装配置 zsh：</h5><p>zsh 一般 Mac 已经自带了，无需额外安装。可以用 cat /etc/shells 查看 zsh 是否安装，如果列出了 /bin/zsh 则表明 zsh 已经安装了。<br>接下来修改 iTerm2 终端的默认 Shell，可以用 echo $SHELL 查看当前 Shell 是什么，如果不是 /bin/zsh 则用如下命令修改 iTerm2 的默认 Shell 为 zsh：<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chsh -s <span class="regexp">/bin/</span>zsh</span><br></pre></td></tr></table></figure></p>
-<h5 id="5-安装-Oh-My-Zsh："><a href="#5-安装-Oh-My-Zsh：" class="headerlink" title="5. 安装  Oh-My-Zsh："></a>5. 安装  <a href="http://ohmyz.sh/" target="_blank" rel="noopener">Oh-My-Zsh</a>：</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh -c <span class="string">"<span class="variable">$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)</span>"</span></span><br></pre></td></tr></table></figure>
-<h5 id="6-安装配置-Oh-My-Zsh-powerlevel9k-主题："><a href="#6-安装配置-Oh-My-Zsh-powerlevel9k-主题：" class="headerlink" title="6. 安装配置 Oh-My-Zsh powerlevel9k 主题："></a>6. 安装配置 <a href="https://github.com/bhilburn/powerlevel9k" target="_blank" rel="noopener">Oh-My-Zsh powerlevel9k 主题</a>：</h5><ul>
-<li><p>克隆该仓库到 oh-my-zsh 用户自定义主题目录</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="regexp">//gi</span>thub.com<span class="regexp">/bhilburn/</span>powerlevel9k.git ~<span class="regexp">/.oh-my-zsh/</span>custom<span class="regexp">/themes/</span>powerlevel9k</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改 ~/.zshrc 配置文件，配置该主题</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ZSH_THEME</span>=<span class="string">"powerlevel9k/powerlevel9k"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改命令提示符<br>默认的命令提示符为 <em>user@userdemackbookPro</em>，这样的提示符配合 powerlevel9k 主题太过冗长，因此我选择将该冗长的提示符去掉，在 ~/.zshrc 配置文件后面追加如下内容：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：DEFAULT_USER 的值必须要是系统用户名才能生效</span></span><br><span class="line"><span class="attr">DEFAULT_USER</span>=<span class="string">"user"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>简单定制下 powerlevel9k 主题<br>powerlevel9k 主题的好处就是可以做很多自定义，只需要简单修改 ~/.zshrc 配置即可生效。更多关于该主题的定制请看 <a href="https://github.com/bhilburn/powerlevel9k#customizing-prompt-segments" target="_blank" rel="noopener">customizing-prompt-segments</a>；<br>默认的 powerlevel9k 主题最右侧显示的元素为：<em>每条命令的执行状态，历史命令条数，当前时间</em>，这样也比较冗余，我在这里将 <em>历史命令条数</em> 这一元素去掉，这样看起来比较简洁。这需要修改 ~/.zshrc 配置文件，在后面追加如下内容，定制该主题的显示元素：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置 oh-my-zsh powerlevel9k 主题左边元素显示</span></span><br><span class="line"><span class="attr">POWERLEVEL9K_LEFT_PROMPT_ELEMENTS</span>=(context dir rbenv vcs)</span><br><span class="line"><span class="comment"># 设置 oh-my-zsh powerlevel9k 主题右边元素显示</span></span><br><span class="line"><span class="attr">POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS</span>=(status root_indicator background_jobs time)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h5 id="7-配置-zsh-命令语法高亮"><a href="#7-配置-zsh-命令语法高亮" class="headerlink" title="7. 配置 zsh 命令语法高亮"></a>7. 配置 zsh 命令语法高亮</h5><p><a href="https://github.com/zsh-users/zsh-syntax-highlighting" target="_blank" rel="noopener">zsh-syntax-highlighting</a> 插件可以使你终端输入的命令有语法高亮效果，安装方法如下（oh-my-zsh 插件管理的方式安装）：<br>1.Clone this repository in oh-my-zsh’s plugins directory:<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="regexp">//gi</span>thub.com<span class="regexp">/zsh-users/</span>zsh-syntax-highlighting.git <span class="variable">$&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;</span><span class="regexp">/plugins/</span>zsh-syntax-highlighting</span><br></pre></td></tr></table></figure></p>
-<p>2.Activate the plugin in ~/.zshrc:<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：zsh-syntax-highlighting 必须放在最后面（官方推荐）</span></span><br><span class="line"><span class="attr">plugins</span>=( [plugins...] zsh-syntax-highlighting)</span><br></pre></td></tr></table></figure></p>
-<p>3.Source ~/.zshrc to take changes into account:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure></p>
-<h5 id="8-安装一些比较实用的-oh-my-zsh-插件"><a href="#8-安装一些比较实用的-oh-my-zsh-插件" class="headerlink" title="8. 安装一些比较实用的 oh-my-zsh 插件"></a>8. 安装一些比较实用的 oh-my-zsh 插件</h5><p>关于 oh-my-zsh 插件的管理是很简单的，有两个插件目录：</p>
-<ul>
-<li><strong>/Users/user/.oh-my-zsh/plugins</strong>: oh-my-zsh 官方插件目录，该目录已经预装了很多实用的插件，只不过没激活而已；</li>
-<li><strong>/Users/user/.oh-my-zsh/custom/plugins</strong>: oh-my-zsh 第三方插件目录；</li>
-</ul>
-<p>需要安装哪个插件，只需要把插件下载到上面任何一个目录即可，然后在 ~/.zshrc 配置文件中的 plugins 变量中添加对应插件的名称即可，以下是我挑选的几个比较好用的插件（都是官方自带的，无需另外下载），~/.zshrc 配置文件如下：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Add wisely, as too many plugins slow down shell startup.</span></span><br><span class="line">plugins=(</span><br><span class="line">   git</span><br><span class="line">   extract</span><br><span class="line">   z</span><br><span class="line">   zsh-syntax-highlighting</span><br><span class="line"> )</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li><strong>git</strong>：oh-my-zsh 默认开启的，没什么好说的；</li>
-<li><strong>extract</strong>：通用的解压缩插件，可以解压缩任何后缀的压缩文件，使用方法很简单：<em>x 文件名</em>；</li>
-<li><strong>z</strong>：很智能的目录跳转插件，能记录之前 cd 过哪些目录，然后模糊匹配跳转，不需要输入全路径即可跳转，使用方法：<em>z dir_pattern</em></li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2140,7 +2112,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">131</span>
+                  <span class="site-state-item-count">132</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
