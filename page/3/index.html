@@ -296,6 +296,199 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/29/数据库升级-DevOps-落地实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/29/数据库升级-DevOps-落地实践/" itemprop="url">数据库升级 DevOps 落地实践</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-29T11:01:48+08:00">
+                2019-08-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DevOps/" itemprop="url" rel="index">
+                    <span itemprop="name">DevOps</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在我们做持续集成/交付的过程中，应用的发布已经通过 DevOps 流水线基本能满足快速迭代的需求，但是很多企业在落地实践 DevOps 的过程中很容易忽略的一点是关于应用数据库版本、升级的管理，每次上线发布数据库的更新依然通过运维或者 DBA 手工更新，在微服务、容器盛行的背景下，服务多，服务发布速度快，显然靠人工该 DB 是跟不上迭代速度的，从而导致 DB 的更新成了整个软件交付周期的瓶颈。这一点我是深有体会，尤其是每次上线时，多个微服务同时上线，同时还需要进行 DB 升级，这个时候研发人员会给我们 SQL 执行，当然研发人员的数量是远远多于开发人员，所以每次上线运维人员经常陷入被”围堵“的尴尬境地。当然还存在其他种种痛点，大概总结下有如下痛点：</p>
+<ul>
+<li>DB 的升级人工执行跟不上版本发布速度，成为软件交付的瓶颈；</li>
+<li>人工执行 DB 升级错误率比自动化执行更容易出错；</li>
+<li>各个环境 DB 没有统一的版本管理，经常会出现这个 SQL 有没有在某个环境执行的疑问；</li>
+<li>环境之间数据脚本同步经常出现遗漏的情况，由于开发或测试环境操作 DB 的人多，在应用从一个环境升级到另一个环境中经常忘记执行某条 SQL，然后导致各种问题故障。这种问题甚至在应用上线时也会频频出现，然后通知运维或 DBA 执行遗漏 SQL；</li>
+</ul>
+<p>那么在 DevOps 落地实践中如何很好地处理好数据库升级这一环呢，从而解决上述存在的种种痛点，不要让数据库升级成为软件交付的瓶颈，使得数据库的升级流程融入自动化流水线。我调研了下业界关于应用 DB 升级的方案，不少文章或者圈内人士推崇专门的数据库管理工具版本化管理，自动化执行，比如 <a href="https://flywaydb.org/" target="_blank" rel="noopener">Flyway</a>，<a href="https://www.liquibase.org/" target="_blank" rel="noopener">Liquibase</a> 等著名的工具，都是专业的数据库版本管理和自动化工具。</p>
+<p>在本文中主要介绍如何将 Flyway 和其他 DevOps 工具链整合，实现 DB 升级的自动化和管理的版本化，从而解决之前存在的一系列痛点。本文用到的工具链有：Flyway + Jenkins 2.0（Pipeline 脚本）+ Gitlab + MySQL。需要说明的一点是本文并不是一步步讲解各种工具链如何使用和相关介绍，重点在于工具链的整合实践，以及如何恰当地应用。在文末附有完整的 Pipeline 实现脚本，仅供参考！</p>
+<h3 id="数据库升级-DevOps-实践带来了什么收益"><a href="#数据库升级-DevOps-实践带来了什么收益" class="headerlink" title="数据库升级 DevOps 实践带来了什么收益"></a>数据库升级 DevOps 实践带来了什么收益</h3><p>其实在文章开言已经说清楚了，总结起来就两点：</p>
+<ul>
+<li>所有环境数据库版本统一管理；</li>
+<li>数据库升级变更自动化；</li>
+</ul>
+<h3 id="实践方案概要"><a href="#实践方案概要" class="headerlink" title="实践方案概要"></a>实践方案概要</h3><p>数据库升级脚本统一按微服务模块以独立 git 仓库的形式管理起来，每次版本迭代，规划好 SQL 模型定义（DDL），将 db 脚本签入独立的 git 仓库，然后使用专门的数据库版本管理工具自动扫描仓库目录的 db 升级脚本，由于 db 升级脚本文件名称符合一定的命名规范，所以工具可以自动按版本号顺序执行脚本，并且已经执行过的脚步文件再次执行会忽略。关于 DB 升级工具的选择，我们选用 Flyway，功能单一、容易上手，以规约优于配置的思想规范 DB 的版本化管理，我们写的 SQL 脚本文件都必须符合 Flyway 的文件名命名规范，这样才能在升级过程中生效。</p>
+<h3 id="具体实践"><a href="#具体实践" class="headerlink" title="具体实践"></a>具体实践</h3><p>借助的工具链：Flyway + Jenkins 2.0（Pipeline 脚本）+ Gitlab + MySQL(Google Cloud SQL)</p>
+<p><img src="/images/flyway-devops.png" alt=""></p>
+<ol>
+<li>以微服务应用 git 工程名称在 gitlab 一个单独的组创建 db 代码工程；</li>
+<li>在 db 代码工程中创建以数据库命名的目录，存放对应数据库升级的脚本文件，脚本文件名称需要符合 FlywayDB 的命名规范：<br><img src="/images/flyway-file-version.png" alt=""></li>
+<li>db 代码工程分支管理：dev 环境对应 dev 分支，test 环境对应 test 分支，stage 环境对应 stage 分支，生产环境对应 master 分支；</li>
+<li>Jenkins 脚本注册相应代码工程名称和对应 db 名称；</li>
+<li>点击 Jenkins 执行数据库升级；</li>
+</ol>
+<h3 id="强制规约"><a href="#强制规约" class="headerlink" title="强制规约"></a>强制规约</h3><ol>
+<li>gitlab 代码工程名称和 db 工程名称一致，db 工程目录下文件夹以数据库名称命名；</li>
+<li>db 脚本名称符合 FlywayDB 命名规范；</li>
+<li>db 脚本文件版本名统一大于 1.0，比如: 可以是 V1.0.1，但不能是 V0.2.3；</li>
+<li>db 脚本内容为 DDL 语句，不能包含 DML 或者 DCL 语句，这个要严格审核，因为 DML 和 DCL 版本追踪没意义，而且各个环境可能还不兼容，FlywayDB 的本质是数据库 Sechma 版本管理，只关心表结构，表里面的数据不关心。关于数据库 DDL、DML、DCL 相关概念及区别见<a href="https://www.cnblogs.com/zhangmingcheng/p/5295684.html" target="_blank" rel="noopener">这里</a>；</li>
+<li>已经执行过的 db 脚本不能修改后重复执行，并且执行过的 db 脚本文件需要原封不动保留，不能丢失和修改，否则升级会失败，这个一定要注意。如果对已经执行的 db 脚本不满意，有改动需要变更，则新加 db 脚本文件，可以小版本号比原先增 1，相当于临时 fix，但是我们尽量减少这种情况的发生；</li>
+</ol>
+<h3 id="具体-Workflow"><a href="#具体-Workflow" class="headerlink" title="具体 Workflow"></a>具体 Workflow</h3><h4 id="开发人员-Workflow"><a href="#开发人员-Workflow" class="headerlink" title="开发人员 Workflow"></a>开发人员 Workflow</h4><p>开发、测试、预发布环境开发人员点击 Jenkins job 执行数据库升级：</p>
+<ol>
+<li>将 SQL 脚本按照 FlywayDB 规范提交到对应的 db 仓库，提交 MR 到对应分支；</li>
+<li>小组 db 脚本审核人审核没问题后合并 db 代码；</li>
+<li>小组成员点击 Jenkins Job，执行数据库升级<br>3.1 选择环境+服务名称+要升级的数据库名称<br><img src="/images/flyway-devops-workflow-dev1.jpeg" alt=""><br>3.2 运行 Job<br><img src="/images/flyway-devops-workflow-dev2.jpeg" alt=""></li>
+</ol>
+<h4 id="运维人员-Workflow"><a href="#运维人员-Workflow" class="headerlink" title="运维人员 Workflow"></a>运维人员 Workflow</h4><p>运维人员只负责线上 SQL 的升级：</p>
+<ol>
+<li>开发人员告知运维人员本次上线 db 脚本已提交到代码仓库并 merge 到 master 分支；</li>
+<li>运维人员点击 Jenkins Job 执行相应服务的数据库升级：<br>2.1 选择服务名称+要升级的数据库名称<br><img src="/images/flyway-devops-workflow-ops1.jpeg" alt=""><br>2.2 运行 Job，Pipeline 会阻塞在确认节点，做最后的审查<br><img src="/images/flyway-devops-workflow-ops2.jpeg" alt=""><br>2.3 Job 执行完成<br><img src="/images/flyway-devops-workflow-ops3.jpeg" alt=""></li>
+</ol>
+<h4 id="Workflow-举例"><a href="#Workflow-举例" class="headerlink" title="Workflow 举例"></a>Workflow 举例</h4><ol>
+<li><p>新建一个 gitlab 工程，专门存放 db 脚本：<br>服务名称假设为 db-migration-demo，db 名称为 demo，仓库里面存放的 SQL 脚本如下：<br><img src="/images/flyway-devops-example1.png" alt=""></p>
+</li>
+<li><p>git 提交代码，然后点击 Jenkins Job，执行数据库升级<br><img src="/images/flyway-devops-example2.png" alt=""></p>
+</li>
+</ol>
+<h3 id="关于-Pipeline-设计的两个功能点"><a href="#关于-Pipeline-设计的两个功能点" class="headerlink" title="关于 Pipeline 设计的两个功能点"></a>关于 Pipeline 设计的两个功能点</h3><h4 id="1-数据库整库备份策略"><a href="#1-数据库整库备份策略" class="headerlink" title="1. 数据库整库备份策略"></a>1. 数据库整库备份策略</h4><p>数据库 DDL 变更前整库备份一下是有必要的，但是每次变更都整库备份也不合理，因为可能某天上线，数据库升级比较集中，一天内会触发很多次备份，造成了资源的浪费。解决方案是给备份一个时间窗口（比如 2 小时），每次执行前判断下最近两小时是否有备份，如果没有则触发整库备份，这样就能避免每次执行 Job 都会触发整库备份。<br>具体解决方法：<br>获取当前时间减去两小时的时间，然后和上次整库备份的时间戳比较，如果前者大，说明最近两小时内没备份，然后自动触发整库备份，时间戳比较用 Shell 脚本实现：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/bin/bash</span></span><br><span class="line"></span><br><span class="line">t1=`date -d <span class="string">"<span class="variable">$1</span>"</span> +%s`</span><br><span class="line">t2=`date -d <span class="string">"<span class="variable">$2</span>"</span> +%s`</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$t1</span> -ge <span class="variable">$t2</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"true"</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"false"</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="2-每次变更前备份库下的所有表结构，同时记录下-FlywayDB-更改前后状态"><a href="#2-每次变更前备份库下的所有表结构，同时记录下-FlywayDB-更改前后状态" class="headerlink" title="2. 每次变更前备份库下的所有表结构，同时记录下 FlywayDB 更改前后状态"></a>2. 每次变更前备份库下的所有表结构，同时记录下 FlywayDB 更改前后状态</h4><p>表结构备份和 FlywayDB 更改前后状态信息都以制品的方式归到 Jenkins，这样可以随时在 Jenkins 界面查看相关信息，比如查看 Flyway 前后执行状态如何，点开制品页即可看到：<br><img src="/images/flyway-devops-artifact.jpeg" alt=""></p>
+<p><img src="/images/flyway-devops-flywahystate.png" alt=""></p>
+<h3 id="附：Pipeline-脚本实现"><a href="#附：Pipeline-脚本实现" class="headerlink" title="附：Pipeline 脚本实现"></a>附：Pipeline 脚本实现</h3><p>为例减小文章的篇幅，这里只贴下运维人员 Workflow 的 Jenkins pipeline 脚本，研发人员的和这个类似，只是一些小的改动。<br><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">  parameters &#123;</span><br><span class="line">    //服务名称</span><br><span class="line">    choice(name:<span class="string">'serviceName'</span>, choices: [</span><br><span class="line">     <span class="string">'db-migration-demo'</span></span><br><span class="line">     ]</span><br><span class="line">    , description: <span class="string">'服务名称'</span>)</span><br><span class="line">    //数据库</span><br><span class="line">    choice(name:<span class="string">'dbName'</span>, choices: [</span><br><span class="line">     <span class="string">'demo'</span></span><br><span class="line">    ]</span><br><span class="line">    , description: <span class="string">'数据库名称'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  agent &#123;</span><br><span class="line">    kubernetes &#123;</span><br><span class="line">      label <span class="string">"sql-<span class="subst">$&#123;UUID.randomUUID().toString()&#125;</span>"</span></span><br><span class="line">      defaultContainer <span class="string">'jnlp'</span></span><br><span class="line">      yaml <span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">apiVersion: v1</span></span><br><span class="line"><span class="string">kind: Pod</span></span><br><span class="line"><span class="string">metadata:</span></span><br><span class="line"><span class="string">  labels:</span></span><br><span class="line"><span class="string">    some-label: db-imgration</span></span><br><span class="line"><span class="string">spec:</span></span><br><span class="line"><span class="string">  containers:</span></span><br><span class="line"><span class="string">  - name: flyway</span></span><br><span class="line"><span class="string">    image: boxfuse/flyway</span></span><br><span class="line"><span class="string">    command:</span></span><br><span class="line"><span class="string">    - cat</span></span><br><span class="line"><span class="string">    tty: true</span></span><br><span class="line"><span class="string">  - name: mysql-client</span></span><br><span class="line"><span class="string">    image: arey/mysql-client</span></span><br><span class="line"><span class="string">    command:</span></span><br><span class="line"><span class="string">    - cat</span></span><br><span class="line"><span class="string">    tty: true</span></span><br><span class="line"><span class="string">  - name: gcloud</span></span><br><span class="line"><span class="string">    image: google/cloud-sdk:alpine</span></span><br><span class="line"><span class="string">    command:</span></span><br><span class="line"><span class="string">    - cat</span></span><br><span class="line"><span class="string">    tty: true</span></span><br><span class="line"><span class="string">"</span><span class="string">""</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  post &#123;</span><br><span class="line">      failure &#123;</span><br><span class="line">        echo <span class="string">"Database migration failed!"</span></span><br><span class="line">      &#125;</span><br><span class="line">      success &#123;</span><br><span class="line">        echo <span class="string">"Database migration success!"</span></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">  options &#123;</span><br><span class="line">      gitLabConnection(<span class="string">'gitlab-connection'</span>)</span><br><span class="line">      //保持构建的最大个数</span><br><span class="line">      buildDiscarder(logRotator(numToKeepStr: <span class="string">'20'</span>))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  stages &#123;</span><br><span class="line">    stage(<span class="string">'初始化'</span>) &#123;</span><br><span class="line">        steps &#123;</span><br><span class="line">          script &#123;</span><br><span class="line">            currentBuild.description = <span class="string">"production环境<span class="subst">$&#123;params.serviceName&#125;</span>服务<span class="subst">$&#123;params.dbName&#125;</span>库升级..."</span></span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          container(<span class="string">'gcloud'</span>) &#123;</span><br><span class="line">            withCredentials([file(credentialsId: <span class="string">'cloudInfrastructureAccess'</span>, variable: <span class="string">'cloudSQLCredentials'</span>)]) &#123;</span><br><span class="line">              sh <span class="string">"gcloud auth activate-service-account <span class="subst">$&#123;env.cloudInfrastructureAccessSA&#125;</span> --key-file=<span class="subst">$&#123;cloudSQLCredentials&#125;</span> --project=<span class="subst">$&#123;env.gcpProject&#125;</span>"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          </span><br><span class="line">          // 判断是否要进行数据库备份，如果两小时内没有备份则自动触发全量备份</span><br><span class="line">          script &#123;</span><br><span class="line">            isBackup = <span class="string">'false'</span></span><br><span class="line">            // 默认 jenkins 跑在 busybox 容器，获取时间和普通 Linux 发行版有点区别</span><br><span class="line">            date2HoursAgo = sh(returnStdout: true, script: <span class="string">"date -u +'%Y-%m-%d %H' -d@\"</span>\$((<span class="string">`date +%s`</span>-<span class="number">7200</span>))\<span class="string">""</span>).trim()</span><br><span class="line">            container(<span class="string">'gcloud'</span>) &#123;</span><br><span class="line">              latestDBBackupTime = sh(returnStdout: true, script: <span class="string">"gcloud sql backups list --instance=<span class="subst">$&#123;env.prodMySqlInstance&#125;</span> --limit=1 | grep -v 'WINDOW_START_TIME' | awk '&#123;print \$2&#125;' | awk -F ':' '&#123;print \$1&#125;'|sed 's/T/ /g'"</span>).trim()</span><br><span class="line">            &#125;</span><br><span class="line">            withCredentials([file(credentialsId: <span class="string">'time-compare.sh'</span>, variable: <span class="string">'timeCompare'</span>)]) &#123;</span><br><span class="line">              isBackup = sh(returnStdout: true, script: <span class="string">"sh <span class="subst">$&#123;timeCompare&#125;</span> \'$date2HoursAgo\' \'$latestDBBackupTime\'"</span>).trim()</span><br><span class="line">              echo <span class="string">"$date2HoursAgo"</span></span><br><span class="line">              echo <span class="string">"$latestDBBackupTime"</span></span><br><span class="line">              echo <span class="string">"$isBackup"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 如果两小时内没有备份则自动触发全量备份</span><br><span class="line">    stage(<span class="string">'整库智能备份'</span>) &#123;</span><br><span class="line">        <span class="keyword">when</span> &#123;</span><br><span class="line">          expression &#123; isBackup == <span class="string">'true'</span> &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        steps &#123;</span><br><span class="line">          script &#123;</span><br><span class="line">            container(<span class="string">'gcloud'</span>) &#123;</span><br><span class="line">              // 列出最近 <span class="number">10</span> 个备份，便于观察</span><br><span class="line">              sh <span class="string">"gcloud sql backups list --instance=<span class="subst">$&#123;env.prodMysqlInstance&#125;</span> --limit=10"</span></span><br><span class="line">              backupTimestamp = sh(returnStdout: true, script: <span class="string">"date -u +'%Y-%m-%d %H%M%S'"</span>).trim()</span><br><span class="line">              backupDescription=<span class="string">"Flyway backuped at $backupTimestamp (UTC)"</span></span><br><span class="line">              // gcloud 创建 db 备份</span><br><span class="line">              sh <span class="string">"gcloud sql backups create --async --instance=<span class="subst">$&#123;env.prodMysqlInstance&#125;</span> --description=\'$backupDescription\'"</span></span><br><span class="line">              sh <span class="string">"gcloud sql backups list --instance=<span class="subst">$&#123;env.prodMysqlInstance&#125;</span> --limit=10"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    stage(<span class="string">'表结构备份'</span>) &#123;</span><br><span class="line">      steps &#123;</span><br><span class="line">        withCredentials([usernamePassword(credentialsId: <span class="string">"sql-secret-production"</span>, passwordVariable: <span class="string">'sqlPass'</span>, usernameVariable: <span class="string">'sqlUser'</span>)]) &#123;</span><br><span class="line">            container(<span class="string">'mysql-client'</span>) &#123;</span><br><span class="line">              sh <span class="string">"mysqldump -h <span class="subst">$&#123;env.prodMySqlHost&#125;</span> -u$sqlUser -p$sqlPass -d <span class="subst">$&#123;params.dbName&#125;</span> --single-transaction &gt; <span class="subst">$&#123;params.serviceName&#125;</span>-<span class="subst">$&#123;params.dbName&#125;</span>-`TZ=UTC-8 date +%Y%m%d-%H%M%S`-dump.sql"</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        // 表结构备份同步到 gcs 存储桶</span><br><span class="line">        container(<span class="string">'gcloud'</span>) &#123;</span><br><span class="line">          sh <span class="string">"gsutil cp *-dump.sql <span class="subst">$&#123;env.gcsBackupBucket&#125;</span>/db/production/<span class="subst">$&#123;params.serviceName&#125;</span>/"</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // jenkins 归档数据库备份，可在 BlueOcean 页面制品页查看</span><br><span class="line">        archiveArtifacts <span class="string">"*-dump.sql"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stage(<span class="string">'拉取 db 脚本'</span>) &#123;</span><br><span class="line">      steps &#123;</span><br><span class="line">        script &#123;</span><br><span class="line">          checkout([$class: <span class="string">'GitSCM'</span>, branches: [[name: <span class="string">"master"</span>]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: <span class="string">'jenkins-deploy'</span>, url: <span class="string">"<span class="subst">$&#123;env.dbMigrationGitRepoGroup&#125;</span>/<span class="subst">$&#123;params.serviceName&#125;</span>"</span>]]])</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    stage(<span class="string">'flyway migrate'</span>) &#123;</span><br><span class="line">      steps&#123;</span><br><span class="line">        script &#123;</span><br><span class="line">          host = <span class="string">"<span class="subst">$&#123;env.prodMySqlHost&#125;</span>"</span></span><br><span class="line">          timestamp = sh(returnStdout: true, script: <span class="string">"TZ=UTC-8 date +%Y%m%d-%H%M%S"</span>).trim()</span><br><span class="line">          flywayStateFile = <span class="string">"flyway-state-production-<span class="subst">$&#123;params.serviceName&#125;</span>-<span class="subst">$&#123;params.dbName&#125;</span>_<span class="subst">$&#123;timestamp&#125;</span>.txt"</span></span><br><span class="line"></span><br><span class="line">          container(<span class="string">'flyway'</span>) &#123;</span><br><span class="line">            withCredentials([usernamePassword(credentialsId: <span class="string">"sql-secret-production"</span>, passwordVariable: <span class="string">'sqlPass'</span>, usernameVariable: <span class="string">'sqlUser'</span>)])&#123;</span><br><span class="line">              sh <span class="string">"flyway -url=jdbc:mysql://<span class="subst">$&#123;host&#125;</span>/<span class="subst">$&#123;params.dbName&#125;</span>?useSSL=false -user=<span class="subst">$&#123;sqlUser&#125;</span> -password=<span class="subst">$&#123;sqlPass&#125;</span> -locations=filesystem:<span class="subst">$&#123;params.dbName&#125;</span> -baselineOnMigrate=true repair"</span></span><br><span class="line">              sh <span class="string">"echo \"[ flyway 升级前 db 状态 ]\" &gt; $flywayStateFile"</span></span><br><span class="line">              sh <span class="string">"flyway -url=jdbc:mysql://<span class="subst">$&#123;host&#125;</span>/<span class="subst">$&#123;params.dbName&#125;</span>?useSSL=false -user=<span class="subst">$&#123;sqlUser&#125;</span> -password=<span class="subst">$&#123;sqlPass&#125;</span> -locations=filesystem:<span class="subst">$&#123;params.dbName&#125;</span> -baselineOnMigrate=true info \</span></span><br><span class="line"><span class="string">                 | tee -a $flywayStateFile"</span></span><br><span class="line">              try &#123;</span><br><span class="line">                timeout(<span class="keyword">time</span>: <span class="number">8</span>, unit: <span class="string">'HOURS'</span>) &#123;</span><br><span class="line">                  env.isMigrateDB = input message: <span class="string">'确认升级 DB?'</span>,</span><br><span class="line">                  parameters: [choice(name: <span class="string">"isMigrateDB"</span>, choices: <span class="string">'Yes\nNo'</span>, description: <span class="string">"您当前选择要升级的是<span class="subst">$&#123;params.serviceName&#125;</span>服务<span class="subst">$&#123;params.dbName&#125;</span>库，确认升级？"</span>)]</span><br><span class="line">                &#125;</span><br><span class="line">              &#125; catch (err) &#123;</span><br><span class="line">                sh <span class="string">"echo 'Exception!' &amp;&amp; exit 1"</span></span><br><span class="line">              &#125;</span><br><span class="line">              <span class="keyword">if</span> (env.isMigrateDB == <span class="string">'No'</span>) &#123;</span><br><span class="line">                sh <span class="string">"echo '已取消升级!' &amp;&amp; exit 1"</span></span><br><span class="line">              &#125;</span><br><span class="line">              sh <span class="string">"flyway -url=jdbc:mysql://<span class="subst">$&#123;host&#125;</span>/<span class="subst">$&#123;params.dbName&#125;</span>?useSSL=false -user=<span class="subst">$&#123;sqlUser&#125;</span> -password=<span class="subst">$&#123;sqlPass&#125;</span> -locations=filesystem:<span class="subst">$&#123;params.dbName&#125;</span> -baselineOnMigrate=true migrate"</span></span><br><span class="line">              sh <span class="string">"echo \"\n\n[ flyway 升级后 db 状态 ]\" &gt;&gt; $flywayStateFile"</span></span><br><span class="line">              sh <span class="string">"flyway -url=jdbc:mysql://<span class="subst">$&#123;host&#125;</span>/<span class="subst">$&#123;params.dbName&#125;</span>?useSSL=false -user=<span class="subst">$&#123;sqlUser&#125;</span> -password=<span class="subst">$&#123;sqlPass&#125;</span> -locations=filesystem:<span class="subst">$&#123;params.dbName&#125;</span> -baselineOnMigrate=true info \</span></span><br><span class="line"><span class="string">                 | tee -a $flywayStateFile"</span></span><br><span class="line">              archiveArtifacts <span class="string">"$flywayStateFile"</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/26/从-Docker-到-Kubernetes-日志管理机制详解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2084,160 +2277,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/08/helm-部署-kubernetes-dashboard/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/08/helm-部署-kubernetes-dashboard/" itemprop="url">helm 部署 kubernetes-dashboard</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-08T12:56:56+08:00">
-                2019-08-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubernetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">kubernetes-dashboard</a> 是 k8s 官方提供的集群 Web UI，可以查看集群详细的信息，比如集群的 api 资源，pod 日志，工作负载，节点资源利用率等等。在部署 kubernetes-dashboard 前需要先安装 <a href="https://github.com/kubernetes-retired/heapster" target="_blank" rel="noopener">heapster</a> ，heapster 用于收集数据，而 dashboard 是展示数据的界面。关于 heapster 的安装见之前文章<a href="https://qhh.me/2019/08/08/helm-%E9%83%A8%E7%BD%B2-heapster-%E7%BB%84%E4%BB%B6/" target="_blank" rel="noopener">「helm 部署 heapster 组件」</a>。如果没有部署 heapster 组件，kubernetes-dashboard 的 pod 会报错：</p>
-<blockquote>
-<p>2019/08/06 10:30:06 Metric client health check failed: the server could not find the requested resource (get services heapster). Retrying in 30 seconds.</p>
-</blockquote>
-<p><img src="/images/kube-dashboard.png" alt=""><br>使用官方提供的 Chart：<a href="https://github.com/helm/charts/tree/master/stable/kubernetes-dashboard" target="_blank" rel="noopener">https://github.com/helm/charts/tree/master/stable/kubernetes-dashboard</a><br>对 values 文件进行一些定制：</p>
-<ul>
-<li>docker 镜像地址改为阿里云镜像地址，国内访问不了默认的镜像地址；</li>
-<li>service 类型改为 NodePort，并指定 nodePort 端口为 30000；</li>
-</ul>
-<p>定制后的 values 文件：<a href="https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml" target="_blank" rel="noopener">https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml</a></p>
-<p>helm 部署:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install stable/kubernetes-dashboard  --name kubernetes-dashboard -f  https://raw.githubusercontent.com/qhh0205/helm-charts/master/kube-component-values/kube-dashboard.yml --namespace kube-system</span><br></pre></td></tr></table></figure></p>
-<p>创建集群服务账号：admin<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/qhh0205/helm-charts/master/some-apiserver-rs/admin-sa.yml</span><br></pre></td></tr></table></figure></p>
-<p>获取 dashboard 访问 token：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret `kubectl get secret -n kube-system | grep admin-token | awk <span class="string">'&#123;print $1&#125;'</span>` -o jsonpath=&#123;.data.token&#125; -n kube-system | base64 -d</span><br></pre></td></tr></table></figure></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2287,7 +2326,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">132</span>
+                  <span class="site-state-item-count">133</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
