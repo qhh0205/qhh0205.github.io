@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://yoursite.com/images/ngx_failover_log4.png">
 <meta property="og:image" content="http://yoursite.com/images/ngx_failover_log5.png">
 <meta property="og:image" content="http://yoursite.com/images/ngx_failover_log6.png">
-<meta property="og:updated_time" content="2019-06-20T03:41:42.504Z">
+<meta property="og:updated_time" content="2021-07-17T15:48:10.598Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nginx upstream 失效转移机制研究">
 <meta name="twitter:description" content="结论经过多次模拟线上的环境测试，Nginx 负载均衡技术默认情况下已经对于 connect refused（状态码表现为 502）和 time out（状态码表现为 504）做了失效转移，使用的是 upstream 模块的 proxy_next_upstream 指令（这个选项默认是启动的）来实现。 对于 http GET 请求，当这个请求转发到上游服务器发生断路，或者读取响应超时则会将同样的请求">
