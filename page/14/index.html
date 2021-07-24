@@ -296,6 +296,193 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/Hexo使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/03/Hexo使用/" itemprop="url">Hexo使用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T13:26:41+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="Hexo相关链接"><a href="#Hexo相关链接" class="headerlink" title="Hexo相关链接"></a>Hexo相关链接</h4><ul>
+<li><a href="https://thief.one/2017/03/03/Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/" target="_blank" rel="noopener">Hexo+github博客搭建</a></li>
+<li><a href="http://theme-next.iissnan.com/theme-settings.html" target="_blank" rel="noopener">Next主题配置</a></li>
+<li><a href="http://whx4j8.github.io/2016/03/16/hexo-next-%E6%B7%BB%E5%8A%A0%E4%B8%BA%E6%96%87%E7%AB%A0%E6%B7%BB%E5%8A%A0%E5%88%86%E7%B1%BB/" target="_blank" rel="noopener">Hexo next为文章添加分类</a></li>
+<li><a href="https://yanyinhong.github.io/2017/05/02/How-to-insert-image-in-hexo-post/" target="_blank" rel="noopener">Hexo文章插入图片</a></li>
+</ul>
+<h4 id="Hexo-文章中插入gif动画"><a href="#Hexo-文章中插入gif动画" class="headerlink" title="Hexo 文章中插入gif动画"></a>Hexo 文章中插入gif动画</h4><p>今天突然看别人的文章时发现文章内有代码动画，感觉挺有意思的，于是自己琢磨了下如何向hexo文章中插入动画。其实在hexo文章中插入git动画的方法和插入图片类似，只不过动画的插入不是使用MD自带的标签，而是hexo特有的标签插件–<a href="https://hexo.io/zh-cn/docs/tag-plugins.html#iframe" target="_blank" rel="noopener">iframe</a>，插入过程记录如下：</p>
+<ol>
+<li>要想在hexo文章中插入gif动画，首先得制作好动画<br>关于gif动画的制作，我的系统为Mac OS，因此使用受广大网友好评的LICEcap软件，该软件确实非常好用，专门录制git动态图，几乎没有学习成本，安装好就可以直接用了。关于如何用LICEcap录制gif图就不做介绍了，因为太简单了。<br><a href="https://www.cockos.com/licecap" target="_blank" rel="noopener">LICEcap下载地址</a></li>
+<li>在Hexo主目录的source文件夹下新建iframe文件夹，将上面录制的gif图放到该目录</li>
+<li><p>用hexo标签插件iframe在文章中引入上面制作的gif动画，引入方式如下：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">语法格式：&#123;% iframe url [width] [height] %&#125;</span><br><span class="line">由于本文是在本地引入，所以url为/iframe/filename.gif，示例如下：</span><br><span class="line">&#123;% iframe /iframe/pyhelloworld.gif %&#125;</span><br><span class="line">不指定宽度和高度则使用默认大小</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>效果如下：</p>
+<iframe src="/iframe/pyhelloworld.gif" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
+</li>
+</ol>
+<h4 id="Hexo-Next主题站点添加搜索功能"><a href="#Hexo-Next主题站点添加搜索功能" class="headerlink" title="Hexo Next主题站点添加搜索功能"></a>Hexo Next主题站点添加搜索功能</h4><ol>
+<li><p>进入Hexo站点目录执行如下命令生成站点索引文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-searchdb --save</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑站点配置文件，新增以下内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: all</span><br><span class="line">  format: html</span><br><span class="line">  <span class="built_in">limit</span>: 10000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑Next主题配置文件，设置local_search配置的enable项为true</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">local_search:</span><br><span class="line">  <span class="built_in">enable</span>: <span class="literal">true</span></span><br><span class="line">  <span class="comment"># if auto, trigger search by changing input</span></span><br><span class="line">  <span class="comment"># if manual, trigger search by pressing enter key or search button</span></span><br><span class="line">  trigger: auto</span><br><span class="line">  <span class="comment"># show top n results per article, show all results by setting to -1</span></span><br><span class="line">  top_n_per_article: 1</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="Hexo-Next主题添加文章及站点访问量统计"><a href="#Hexo-Next主题添加文章及站点访问量统计" class="headerlink" title="Hexo Next主题添加文章及站点访问量统计"></a>Hexo Next主题添加文章及站点访问量统计</h4><p>关于文章访问量统计新版next主题已经支持，内置使用不蒜子统计，是一个第三方服务。由于next主题已经内置支持该统计服务，因此不需要任何其他的配置，只需要修改该主题配置文件，将不蒜子统计功能激活即可。方法如下：<br>修改themes/next/_config.yml主题配置文件，找到busuanzi_count配置项，将不蒜子统计打开，修改后配置如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Show PV/UV of the website/page with busuanzi.</span></span><br><span class="line"><span class="comment"># Get more information on http://ibruce.info/2015/04/04/busuanzi/</span></span><br><span class="line"><span class="comment"># 访问量统计,启用卜算子统计</span></span><br><span class="line">busuanzi_count:</span><br><span class="line"><span class="comment"># count values only if the other configs are false</span></span><br><span class="line"><span class="built_in">enable</span>: <span class="literal">true</span></span><br><span class="line"><span class="comment"># custom uv span for the whole site</span></span><br><span class="line">site_uv: <span class="literal">true</span></span><br><span class="line">site_uv_header: &lt;i class=<span class="string">"fa fa-user"</span>&gt;&lt;/i&gt; 访问人数</span><br><span class="line">site_uv_footer:</span><br><span class="line"><span class="comment"># custom pv span for the whole site</span></span><br><span class="line">site_pv: <span class="literal">true</span></span><br><span class="line">site_pv_header: &lt;i class=<span class="string">"fa fa-eye"</span>&gt;&lt;/i&gt; 总访问量</span><br><span class="line">site_pv_footer: 次</span><br><span class="line"><span class="comment"># custom pv span for one page only</span></span><br><span class="line">page_pv: <span class="literal">true</span></span><br><span class="line">page_pv_header: &lt;i class=<span class="string">"fa fa-file-o"</span>&gt;&lt;/i&gt; 浏览</span><br><span class="line">page_pv_footer: 次</span><br></pre></td></tr></table></figure></p>
+<p>效果如下：</p>
+<ol>
+<li>文章访问量<br><img src="/images/pv.png" alt=""></li>
+<li>站点访问量<br><img src="/images/uv.png" alt=""></li>
+</ol>
+<p>参考链接：<br><a href="http://theme-next.iissnan.com/third-party-services.html#analytics-busuanzi" target="_blank" rel="noopener">http://theme-next.iissnan.com/third-party-services.html#analytics-busuanzi</a></p>
+<h4 id="Hexo环境迁移"><a href="#Hexo环境迁移" class="headerlink" title="Hexo环境迁移"></a>Hexo环境迁移</h4><p>实现方法：在Hexo仓库新建一个hexo分支存放Hexo原始文件，master分支存放hexo生成的静态页面，如果迁移环境后可以直接git clone仓库即可。</p>
+<ol>
+<li><p>将Hexo仓库用git管理起来：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意：不需要再编写.gitignore了，在Hexo工程已经默认有.gitignore文件了，这是hexo默认生成的，也许是hexo本来就推荐用git管理hexo原始文件吧</span></span><br><span class="line">git init</span><br><span class="line">git checkout -b hexo</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">"init"</span></span><br><span class="line">git remote add origin https://github.com/qianghaohao/qianghaohao.github.io.git</span><br><span class="line">git push origin hexo</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在新的环境克隆仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/qianghaohao/qianghaohao.github.io.git</span><br><span class="line"><span class="comment"># 切换到hexo分支即可看到hexo原始文件，此时可以编辑并提交。一般先提交原始文件到hexo分支，然后hexo d部署生成的静态文件到master分支</span></span><br><span class="line">git checkout hexo</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>参考文章：<br><a href="http://m.blog.csdn.net/zk673820543/article/details/52698760" target="_blank" rel="noopener">http://m.blog.csdn.net/zk673820543/article/details/52698760</a></p>
+<h4 id="Hexo-Markdown简明语法手册"><a href="#Hexo-Markdown简明语法手册" class="headerlink" title="Hexo Markdown简明语法手册"></a>Hexo Markdown简明语法手册</h4><p><a href="https://hyxxsfwy.github.io/2016/01/15/Hexo-Markdown-%E7%AE%80%E6%98%8E%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" target="_blank" rel="noopener">Hexo Markdown简明语法手册</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/03/在字符串列表中找出与s最长前缀匹配的字符串/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -939,7 +1126,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">133</span>
+                  <span class="site-state-item-count">134</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

@@ -296,6 +296,168 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/02/Hexo-next-主题加载自定义-js-文件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="haohao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jim">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/06/02/Hexo-next-主题加载自定义-js-文件/" itemprop="url">Hexo next 主题加载自定义 js 文件</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-02T09:17:12+08:00">
+                2019-06-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>为什么要配置 hexo next 主题自定义 js 文件呢？主要原因有两点：</p>
+<ul>
+<li><p>不可靠：加载第三方站点的 js 依赖其站点的稳定性，如果第三方站点给挂了或者不维护了，那么加载的地址就失效了，访问直接 404… 比如最近就遇到 next 主题”不蒜子”文章 PV 统计功能用不了了，Chrome 抓包发现 <a href="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js</a> 这个地址 404 了，看了 <a href="http://ibruce.info/" target="_blank" rel="noopener">“不蒜子”官方 blog 通知</a> 才发现原来换成了 <a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js。" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js。</a></p>
+</li>
+<li><p>加载速度慢：比如之前将 gitalk 功能用到的 <a href="https://rawgit.com/qhh0205/78e9e0b1f3114db6737f3ed8cdd51d3a/raw/3894c5be5aa2378336b1f5ee0f296fa0b22d06e9/md5.min.js" target="_blank" rel="noopener">https://rawgit.com/qhh0205/78e9e0b1f3114db6737f3ed8cdd51d3a/raw/3894c5be5aa2378336b1f5ee0f296fa0b22d06e9/md5.min.js</a> 文件嵌入到主题，发现每次打开 blog 网站都加载很慢，Chrome 抓包发现是该文件加载缓慢，一直 pending 很久…</p>
+</li>
+</ul>
+<p>那么解决上面两个问题的办法就是可以将远程加载的 js 文件下载下来，放到本地 netx 主题 source/js/src/ 目录下，让 hexo 生成静态网站时，加载生成静态站点本身的 js。下面举两个例子。</p>
+<h4 id="next-主题-gitalk-评论功能加载自定义-js"><a href="#next-主题-gitalk-评论功能加载自定义-js" class="headerlink" title="next 主题 gitalk 评论功能加载自定义 js"></a>next 主题 gitalk 评论功能加载自定义 js</h4><ol>
+<li>将 <a href="https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js" target="_blank" rel="noopener">https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js</a> 文件下载下来放到 <code>themes/next/source/js/src/</code> 路径下。</li>
+<li>修改 <code>themes/next/layout/_third-party/comments/gitalk.swig</code>，加载 <code>md5.min.js</code> 改为 <code>&lt;script src=&quot;/js/src/md5.min.js&quot;&gt;&lt;/script&gt;</code>：<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> page.comments &amp;&amp; theme.gitalk.enable %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"https://unpkg.com/gitalk/dist/gitalk.css"</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://unpkg.com/gitalk/dist/gitalk.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/js/src/md5.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">   <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="xml">        var gitalk = new Gitalk(&#123;</span></span><br><span class="line"><span class="xml">          clientID: '3840ba8c8d80c18be7e3',</span></span><br><span class="line"><span class="xml">          clientSecret: '1b00f2efe5285973c24da9ed9ac895775eacc8ea',</span></span><br><span class="line"><span class="xml">          repo: '</span><span class="template-variable">&#123;&#123; theme.gitalk.repo &#125;&#125;</span><span class="xml">',</span></span><br><span class="line"><span class="xml">          owner: '</span><span class="template-variable">&#123;&#123; theme.gitalk.githubID &#125;&#125;</span><span class="xml">',</span></span><br><span class="line"><span class="xml">          admin: ['</span><span class="template-variable">&#123;&#123; theme.gitalk.adminUser &#125;&#125;</span><span class="xml">'],</span></span><br><span class="line"><span class="xml">          id: md5(location.pathname),</span></span><br><span class="line"><span class="xml">          distractionFreeMode: '</span><span class="template-variable">&#123;&#123; theme.gitalk.distractionFreeMode &#125;&#125;</span><span class="xml">'</span></span><br><span class="line"><span class="xml">        &#125;)</span></span><br><span class="line"><span class="xml">        gitalk.render('gitalk-container')</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="next-主题-“不蒜子”-PV-统计功能加载自定义-js"><a href="#next-主题-“不蒜子”-PV-统计功能加载自定义-js" class="headerlink" title="next 主题 “不蒜子” PV 统计功能加载自定义 js"></a>next 主题 “不蒜子” PV 统计功能加载自定义 js</h4><ol>
+<li>将 <a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js</a> 文件下载<br>下来放到 <code>themes/next/source/js/src/</code> 路径下。</li>
+<li>修改 <code>themes/next/layout/_third-party/analytics/busuanzi-counter.swig</code>，将原先 <code>&lt;script async src=&quot;https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;</code> 改为 <code>&lt;script async src=&quot;/js/src/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;</code>：<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.enable %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"busuanzi-count"</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">async</span> <span class="attr">src</span>=<span class="string">"/js/src/busuanzi.pure.mini.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.site_uv %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-uv"</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_uv_header &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"busuanzi-value"</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_uv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_uv_footer &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> theme.busuanzi_count.site_pv %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-pv"</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_pv_header &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"busuanzi-value"</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_pv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">      </span><span class="template-variable">&#123;&#123; theme.busuanzi_count.site_pv_footer &#125;&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">  </span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>配置完成后需要 hexo clean &amp;&amp; hexo g 生效…</p>
+<h4 id="附件"><a href="#附件" class="headerlink" title="附件"></a>附件</h4><p>怕以下两个远程站点 js 丢了，在此备份一下吧…<br><a href="https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js：" target="_blank" rel="noopener">https://github.com/blueimp/JavaScript-MD5/blob/master/js/md5.min.js：</a><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">!<span class="function"><span class="keyword">function</span>(<span class="params">n</span>)</span>&#123;<span class="string">"use strict"</span>;<span class="function"><span class="keyword">function</span> <span class="title">t</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">var</span> r=(<span class="number">65535</span>&amp;n)+(<span class="number">65535</span>&amp;t);<span class="keyword">return</span>(n&gt;&gt;<span class="number">16</span>)+(t&gt;&gt;<span class="number">16</span>)+(r&gt;&gt;<span class="number">16</span>)&lt;&lt;<span class="number">16</span>|<span class="number">65535</span>&amp;r&#125;<span class="function"><span class="keyword">function</span> <span class="title">r</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> n&lt;&lt;t|n&gt;&gt;&gt;<span class="number">32</span>-t&#125;<span class="function"><span class="keyword">function</span> <span class="title">e</span>(<span class="params">n,e,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> t(r(t(t(e,n),t(u,f)),c),o)&#125;<span class="function"><span class="keyword">function</span> <span class="title">o</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t&amp;r|~t&amp;o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">u</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t&amp;o|r&amp;~o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">c</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(t^r^o,n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">n,t,r,o,u,c,f</span>)</span>&#123;<span class="keyword">return</span> e(r^(t|~o),n,t,u,c,f)&#125;<span class="function"><span class="keyword">function</span> <span class="title">i</span>(<span class="params">n,r</span>)</span>&#123;n[r&gt;&gt;<span class="number">5</span>]|=<span class="number">128</span>&lt;&lt;r%<span class="number">32</span>,n[<span class="number">14</span>+(r+<span class="number">64</span>&gt;&gt;&gt;<span class="number">9</span>&lt;&lt;<span class="number">4</span>)]=r;<span class="keyword">var</span> e,i,a,d,h,l=<span class="number">1732584193</span>,g=<span class="number">-271733879</span>,v=<span class="number">-1732584194</span>,m=<span class="number">271733878</span>;<span class="keyword">for</span>(e=<span class="number">0</span>;e&lt;n.length;e+=<span class="number">16</span>)i=l,a=g,d=v,h=m,g=f(g=f(g=f(g=f(g=c(g=c(g=c(g=c(g=u(g=u(g=u(g=u(g=o(g=o(g=o(g=o(g,v=o(v,m=o(m,l=o(l,g,v,m,n[e],<span class="number">7</span>,<span class="number">-680876936</span>),g,v,n[e+<span class="number">1</span>],<span class="number">12</span>,<span class="number">-389564586</span>),l,g,n[e+<span class="number">2</span>],<span class="number">17</span>,<span class="number">606105819</span>),m,l,n[e+<span class="number">3</span>],<span class="number">22</span>,<span class="number">-1044525330</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">4</span>],<span class="number">7</span>,<span class="number">-176418897</span>),g,v,n[e+<span class="number">5</span>],<span class="number">12</span>,<span class="number">1200080426</span>),l,g,n[e+<span class="number">6</span>],<span class="number">17</span>,<span class="number">-1473231341</span>),m,l,n[e+<span class="number">7</span>],<span class="number">22</span>,<span class="number">-45705983</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">8</span>],<span class="number">7</span>,<span class="number">1770035416</span>),g,v,n[e+<span class="number">9</span>],<span class="number">12</span>,<span class="number">-1958414417</span>),l,g,n[e+<span class="number">10</span>],<span class="number">17</span>,<span class="number">-42063</span>),m,l,n[e+<span class="number">11</span>],<span class="number">22</span>,<span class="number">-1990404162</span>),v=o(v,m=o(m,l=o(l,g,v,m,n[e+<span class="number">12</span>],<span class="number">7</span>,<span class="number">1804603682</span>),g,v,n[e+<span class="number">13</span>],<span class="number">12</span>,<span class="number">-40341101</span>),l,g,n[e+<span class="number">14</span>],<span class="number">17</span>,<span class="number">-1502002290</span>),m,l,n[e+<span class="number">15</span>],<span class="number">22</span>,<span class="number">1236535329</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">1</span>],<span class="number">5</span>,<span class="number">-165796510</span>),g,v,n[e+<span class="number">6</span>],<span class="number">9</span>,<span class="number">-1069501632</span>),l,g,n[e+<span class="number">11</span>],<span class="number">14</span>,<span class="number">643717713</span>),m,l,n[e],<span class="number">20</span>,<span class="number">-373897302</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">5</span>],<span class="number">5</span>,<span class="number">-701558691</span>),g,v,n[e+<span class="number">10</span>],<span class="number">9</span>,<span class="number">38016083</span>),l,g,n[e+<span class="number">15</span>],<span class="number">14</span>,<span class="number">-660478335</span>),m,l,n[e+<span class="number">4</span>],<span class="number">20</span>,<span class="number">-405537848</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">9</span>],<span class="number">5</span>,<span class="number">568446438</span>),g,v,n[e+<span class="number">14</span>],<span class="number">9</span>,<span class="number">-1019803690</span>),l,g,n[e+<span class="number">3</span>],<span class="number">14</span>,<span class="number">-187363961</span>),m,l,n[e+<span class="number">8</span>],<span class="number">20</span>,<span class="number">1163531501</span>),v=u(v,m=u(m,l=u(l,g,v,m,n[e+<span class="number">13</span>],<span class="number">5</span>,<span class="number">-1444681467</span>),g,v,n[e+<span class="number">2</span>],<span class="number">9</span>,<span class="number">-51403784</span>),l,g,n[e+<span class="number">7</span>],<span class="number">14</span>,<span class="number">1735328473</span>),m,l,n[e+<span class="number">12</span>],<span class="number">20</span>,<span class="number">-1926607734</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">5</span>],<span class="number">4</span>,<span class="number">-378558</span>),g,v,n[e+<span class="number">8</span>],<span class="number">11</span>,<span class="number">-2022574463</span>),l,g,n[e+<span class="number">11</span>],<span class="number">16</span>,<span class="number">1839030562</span>),m,l,n[e+<span class="number">14</span>],<span class="number">23</span>,<span class="number">-35309556</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">1</span>],<span class="number">4</span>,<span class="number">-1530992060</span>),g,v,n[e+<span class="number">4</span>],<span class="number">11</span>,<span class="number">1272893353</span>),l,g,n[e+<span class="number">7</span>],<span class="number">16</span>,<span class="number">-155497632</span>),m,l,n[e+<span class="number">10</span>],<span class="number">23</span>,<span class="number">-1094730640</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">13</span>],<span class="number">4</span>,<span class="number">681279174</span>),g,v,n[e],<span class="number">11</span>,<span class="number">-358537222</span>),l,g,n[e+<span class="number">3</span>],<span class="number">16</span>,<span class="number">-722521979</span>),m,l,n[e+<span class="number">6</span>],<span class="number">23</span>,<span class="number">76029189</span>),v=c(v,m=c(m,l=c(l,g,v,m,n[e+<span class="number">9</span>],<span class="number">4</span>,<span class="number">-640364487</span>),g,v,n[e+<span class="number">12</span>],<span class="number">11</span>,<span class="number">-421815835</span>),l,g,n[e+<span class="number">15</span>],<span class="number">16</span>,<span class="number">530742520</span>),m,l,n[e+<span class="number">2</span>],<span class="number">23</span>,<span class="number">-995338651</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e],<span class="number">6</span>,<span class="number">-198630844</span>),g,v,n[e+<span class="number">7</span>],<span class="number">10</span>,<span class="number">1126891415</span>),l,g,n[e+<span class="number">14</span>],<span class="number">15</span>,<span class="number">-1416354905</span>),m,l,n[e+<span class="number">5</span>],<span class="number">21</span>,<span class="number">-57434055</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">12</span>],<span class="number">6</span>,<span class="number">1700485571</span>),g,v,n[e+<span class="number">3</span>],<span class="number">10</span>,<span class="number">-1894986606</span>),l,g,n[e+<span class="number">10</span>],<span class="number">15</span>,<span class="number">-1051523</span>),m,l,n[e+<span class="number">1</span>],<span class="number">21</span>,<span class="number">-2054922799</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">8</span>],<span class="number">6</span>,<span class="number">1873313359</span>),g,v,n[e+<span class="number">15</span>],<span class="number">10</span>,<span class="number">-30611744</span>),l,g,n[e+<span class="number">6</span>],<span class="number">15</span>,<span class="number">-1560198380</span>),m,l,n[e+<span class="number">13</span>],<span class="number">21</span>,<span class="number">1309151649</span>),v=f(v,m=f(m,l=f(l,g,v,m,n[e+<span class="number">4</span>],<span class="number">6</span>,<span class="number">-145523070</span>),g,v,n[e+<span class="number">11</span>],<span class="number">10</span>,<span class="number">-1120210379</span>),l,g,n[e+<span class="number">2</span>],<span class="number">15</span>,<span class="number">718787259</span>),m,l,n[e+<span class="number">9</span>],<span class="number">21</span>,<span class="number">-343485551</span>),l=t(l,i),g=t(g,a),v=t(v,d),m=t(m,h);<span class="keyword">return</span>[l,g,v,m]&#125;<span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r=<span class="string">""</span>,e=<span class="number">32</span>*n.length;<span class="keyword">for</span>(t=<span class="number">0</span>;t&lt;e;t+=<span class="number">8</span>)r+=<span class="built_in">String</span>.fromCharCode(n[t&gt;&gt;<span class="number">5</span>]&gt;&gt;&gt;t%<span class="number">32</span>&amp;<span class="number">255</span>);<span class="keyword">return</span> r&#125;<span class="function"><span class="keyword">function</span> <span class="title">d</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r=[];<span class="keyword">for</span>(r[(n.length&gt;&gt;<span class="number">2</span>)<span class="number">-1</span>]=<span class="keyword">void</span> <span class="number">0</span>,t=<span class="number">0</span>;t&lt;r.length;t+=<span class="number">1</span>)r[t]=<span class="number">0</span>;<span class="keyword">var</span> e=<span class="number">8</span>*n.length;<span class="keyword">for</span>(t=<span class="number">0</span>;t&lt;e;t+=<span class="number">8</span>)r[t&gt;&gt;<span class="number">5</span>]|=(<span class="number">255</span>&amp;n.charCodeAt(t/<span class="number">8</span>))&lt;&lt;t%<span class="number">32</span>;<span class="keyword">return</span> r&#125;<span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> a(i(d(n),<span class="number">8</span>*n.length))&#125;<span class="function"><span class="keyword">function</span> <span class="title">l</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">var</span> r,e,o=d(n),u=[],c=[];<span class="keyword">for</span>(u[<span class="number">15</span>]=c[<span class="number">15</span>]=<span class="keyword">void</span> <span class="number">0</span>,o.length&gt;<span class="number">16</span>&amp;&amp;(o=i(o,<span class="number">8</span>*n.length)),r=<span class="number">0</span>;r&lt;<span class="number">16</span>;r+=<span class="number">1</span>)u[r]=<span class="number">909522486</span>^o[r],c[r]=<span class="number">1549556828</span>^o[r];<span class="keyword">return</span> e=i(u.concat(d(t)),<span class="number">512</span>+<span class="number">8</span>*t.length),a(i(c.concat(e),<span class="number">640</span>))&#125;<span class="function"><span class="keyword">function</span> <span class="title">g</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">var</span> t,r,e=<span class="string">""</span>;<span class="keyword">for</span>(r=<span class="number">0</span>;r&lt;n.length;r+=<span class="number">1</span>)t=n.charCodeAt(r),e+=<span class="string">"0123456789abcdef"</span>.charAt(t&gt;&gt;&gt;<span class="number">4</span>&amp;<span class="number">15</span>)+<span class="string">"0123456789abcdef"</span>.charAt(<span class="number">15</span>&amp;t);<span class="keyword">return</span> e&#125;<span class="function"><span class="keyword">function</span> <span class="title">v</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> <span class="built_in">unescape</span>(<span class="built_in">encodeURIComponent</span>(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">m</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> h(v(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">p</span>(<span class="params">n</span>)</span>&#123;<span class="keyword">return</span> g(m(n))&#125;<span class="function"><span class="keyword">function</span> <span class="title">s</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> l(v(n),v(t))&#125;<span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params">n,t</span>)</span>&#123;<span class="keyword">return</span> g(s(n,t))&#125;<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params">n,t,r</span>)</span>&#123;<span class="keyword">return</span> t?r?s(t,n):C(t,n):r?m(n):p(n)&#125;<span class="string">"function"</span>==<span class="keyword">typeof</span> define&amp;&amp;define.amd?define(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> A&#125;):<span class="string">"object"</span>==<span class="keyword">typeof</span> <span class="built_in">module</span>&amp;&amp;<span class="built_in">module</span>.exports?<span class="built_in">module</span>.exports=A:n.md5=A&#125;(<span class="keyword">this</span>);</span><br><span class="line"><span class="comment">//# sourceMappingURL=md5.min.js.map</span></span><br></pre></td></tr></table></figure></p>
+<p><a href="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" target="_blank" rel="noopener">https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js</a>:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> bszCaller,bszTag;!<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">var</span> c,d,e,a=!<span class="number">1</span>,b=[];ready=<span class="function"><span class="keyword">function</span>(<span class="params">c</span>)</span>&#123;<span class="keyword">return</span> a||<span class="string">"interactive"</span>===<span class="built_in">document</span>.readyState||<span class="string">"complete"</span>===<span class="built_in">document</span>.readyState?c.call(<span class="built_in">document</span>):b.push(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> c.call(<span class="keyword">this</span>)&#125;),<span class="keyword">this</span>&#125;,d=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">for</span>(<span class="keyword">var</span> a=<span class="number">0</span>,c=b.length;c&gt;a;a++)b[a].apply(<span class="built_in">document</span>);b=[]&#125;,e=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;a||(a=!<span class="number">0</span>,d.call(<span class="built_in">window</span>),<span class="built_in">document</span>.removeEventListener?<span class="built_in">document</span>.removeEventListener(<span class="string">"DOMContentLoaded"</span>,e,!<span class="number">1</span>):<span class="built_in">document</span>.attachEvent&amp;&amp;(<span class="built_in">document</span>.detachEvent(<span class="string">"onreadystatechange"</span>,e),<span class="built_in">window</span>==<span class="built_in">window</span>.top&amp;&amp;(clearInterval(c),c=<span class="literal">null</span>)))&#125;,<span class="built_in">document</span>.addEventListener?<span class="built_in">document</span>.addEventListener(<span class="string">"DOMContentLoaded"</span>,e,!<span class="number">1</span>):<span class="built_in">document</span>.attachEvent&amp;&amp;(<span class="built_in">document</span>.attachEvent(<span class="string">"onreadystatechange"</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;/loaded|complete/.test(<span class="built_in">document</span>.readyState)&amp;&amp;e()&#125;),<span class="built_in">window</span>==<span class="built_in">window</span>.top&amp;&amp;(c=setInterval(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">try</span>&#123;a||<span class="built_in">document</span>.documentElement.doScroll(<span class="string">"left"</span>)&#125;<span class="keyword">catch</span>(b)&#123;<span class="keyword">return</span>&#125;e()&#125;,<span class="number">5</span>)))&#125;(),bszCaller=&#123;<span class="attr">fetch</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>)</span>&#123;<span class="keyword">var</span> c=<span class="string">"BusuanziCallback_"</span>+<span class="built_in">Math</span>.floor(<span class="number">1099511627776</span>*<span class="built_in">Math</span>.random());<span class="built_in">window</span>[c]=<span class="keyword">this</span>.evalCall(b),a=a.replace(<span class="string">"=BusuanziCallback"</span>,<span class="string">"="</span>+c),scriptTag=<span class="built_in">document</span>.createElement(<span class="string">"SCRIPT"</span>),scriptTag.type=<span class="string">"text/javascript"</span>,scriptTag.defer=!<span class="number">0</span>,scriptTag.src=a,<span class="built_in">document</span>.getElementsByTagName(<span class="string">"HEAD"</span>)[<span class="number">0</span>].appendChild(scriptTag)&#125;,<span class="attr">evalCall</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">b</span>)</span>&#123;ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">try</span>&#123;a(b),scriptTag.parentElement.removeChild(scriptTag)&#125;<span class="keyword">catch</span>(c)&#123;bszTag.hides()&#125;&#125;)&#125;&#125;&#125;,bszCaller.fetch(<span class="string">"//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback"</span>,<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;bszTag.texts(a),bszTag.shows()&#125;),bszTag=&#123;<span class="attr">bszs</span>:[<span class="string">"site_pv"</span>,<span class="string">"page_pv"</span>,<span class="string">"site_uv"</span>],<span class="attr">texts</span>:<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">b</span>)</span>&#123;<span class="keyword">var</span> c=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_value_"</span>+b);c&amp;&amp;(c.innerHTML=a[b])&#125;)&#125;,<span class="attr">hides</span>:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">var</span> b=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_container_"</span>+a);b&amp;&amp;(b.style.display=<span class="string">"none"</span>)&#125;)&#125;,<span class="attr">shows</span>:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">this</span>.bszs.map(<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">var</span> b=<span class="built_in">document</span>.getElementById(<span class="string">"busuanzi_container_"</span>+a);b&amp;&amp;(b.style.display=<span class="string">"inline"</span>)&#125;)&#125;&#125;;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/31/docker-compose-启动-Redis-服务/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2092,258 +2254,6 @@ And more...
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/19/使用-kubeadm-搭建-kubernetes-集群/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="haohao">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jim">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/19/使用-kubeadm-搭建-kubernetes-集群/" itemprop="url">使用 kubeadm 搭建 kubernetes 集群</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-19T22:50:45+08:00">
-                2019-03-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kubenetes/" itemprop="url" rel="index">
-                    <span itemprop="name">Kubenetes</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="kubeadm-简介"><a href="#kubeadm-简介" class="headerlink" title="kubeadm 简介"></a>kubeadm 简介</h3><p><a href="https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/" target="_blank" rel="noopener">kubeadm</a> 是 <a href="https://kubernetes.io/" target="_blank" rel="noopener">k8s 官方</a>提供的用于快速部署 k8s 集群的命令行工具，也是官方推荐的最小化部署 k8s 集群的最佳实践，比起直接用二进制部署能省去很多工作，因为该方式部署的集群的各个组件以 docker 容器的方式启动，而各个容器的启动都是通过该工具配自动化启动起来的。</p>
-<p>kubeadm 不仅仅能部署 k8s 集群，还能很方便的管理集群，比如集群的升级、降级、集群初始化配置等管理操作。</p>
-<p>kubeadm 的设计初衷是为新用户提供一种便捷的方式来首次试用 Kubernetes， 同时也方便老用户搭建集群测试他们的应用。</p>
-<p>kubeadm 的使用案例：</p>
-<ul>
-<li>新用户可以从 kubeadm 开始来试用 Kubernetes。</li>
-<li>熟悉 Kubernetes 的用户可以使用 kubeadm 快速搭建集群并测试他们的应用。</li>
-<li>大型的项目可以将 kubeadm 和其他的安装工具一起形成一个比较复杂的系统。</li>
-</ul>
-<h3 id="安装环境要求"><a href="#安装环境要求" class="headerlink" title="安装环境要求"></a>安装环境要求</h3><ul>
-<li>一台或多台运行着下列系统的机器:<ul>
-<li>Ubuntu 16.04+</li>
-<li>Debian 9</li>
-<li>CentOS 7</li>
-<li>RHEL 7</li>
-<li>Fedora 25/26</li>
-<li>HypriotOS v1.0.1+</li>
-<li>Container Linux (针对1800.6.0 版本测试)</li>
-</ul>
-</li>
-<li>每台机器 2 GB 或更多的 RAM (如果少于这个数字将会影响您应用的运行内存)</li>
-<li>2 CPU 核心或更多(节点少于 2 核的话新版本 kubeadm 会报错)</li>
-<li>集群中的所有机器的网络彼此均能相互连接(公网和内网都可以)</li>
-<li>禁用 Swap 交换分区。（Swap 分区必须要禁掉，否则安装会报错）</li>
-</ul>
-<h3 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h3><p>本文使用 kubeadm 部署一个 3 节点的 k8s 集群：1 个 master 节点，2 个 node 节点。各节点详细信息如下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Hostname</th>
-<th style="text-align:left">IP</th>
-<th style="text-align:left">OS 发行版</th>
-<th style="text-align:left">内存（GB）</th>
-<th style="text-align:left">CPU（核）</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">k8s-master</td>
-<td style="text-align:left">192.168.10.100</td>
-<td style="text-align:left">Centos7</td>
-<td style="text-align:left">2</td>
-<td style="text-align:left">2</td>
-</tr>
-<tr>
-<td style="text-align:left">k8s-node-1</td>
-<td style="text-align:left">192.168.10.101</td>
-<td style="text-align:left">Centos7</td>
-<td style="text-align:left">2</td>
-<td style="text-align:left">2</td>
-</tr>
-<tr>
-<td style="text-align:left">k8s-node-2</td>
-<td style="text-align:left">192.168.10.102</td>
-<td style="text-align:left">Centos7</td>
-<td style="text-align:left">2</td>
-<td style="text-align:left">2</td>
-</tr>
-</tbody>
-</table>
-<p><img src="/images/k8s-arch.png" alt=""></p>
-<h3 id="kubeadm-安装-k8s-集群完整流程"><a href="#kubeadm-安装-k8s-集群完整流程" class="headerlink" title="kubeadm 安装 k8s 集群完整流程"></a>kubeadm 安装 k8s 集群完整流程</h3><ul>
-<li>使用 Vagrant 启动 3 台符合上述要求的虚拟机</li>
-<li>调整每台虚拟机的服务器参数</li>
-<li>各节点安装 docker、kubeadm、kubelet、kubectl 工具</li>
-<li>使用 kubeadm 部署 master 节点</li>
-<li>安装 Pod 网络插件（CNI）</li>
-<li>使用 kubeadm 部署 node 节点</li>
-</ul>
-<p>接下来我们依次介绍每步的具体细节：</p>
-<h4 id="使用-Vagrant-启动-3-台符合上述要求的虚拟机"><a href="#使用-Vagrant-启动-3-台符合上述要求的虚拟机" class="headerlink" title="使用 Vagrant 启动 3 台符合上述要求的虚拟机"></a>使用 Vagrant 启动 3 台符合上述要求的虚拟机</h4><p>Vagrant 的使用在这里不具体介绍了，如需了解请点击<a href="https://blog.csdn.net/qianghaohao/article/details/80038096" target="_blank" rel="noopener">这里</a>。<br>本文用到的 Vagrantfile:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- mode: ruby -*-</span></span><br><span class="line"><span class="comment"># vi: set ft=ruby :</span></span><br><span class="line"><span class="comment"># author: qhh0205</span></span><br><span class="line"></span><br><span class="line">$num_nodes = <span class="number">2</span></span><br><span class="line"></span><br><span class="line">Vagrant.configure(<span class="string">"2"</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  <span class="comment"># k8s 主节点定义及初始化配置</span></span><br><span class="line">  config.vm.define <span class="string">"k8s-master"</span> <span class="keyword">do</span> <span class="params">| k8s_master |</span></span><br><span class="line">    k8s_master.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">    k8s_master.vm.hostname = <span class="string">"k8s-master"</span></span><br><span class="line">    k8s_master.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.100"</span></span><br><span class="line">    k8s_master.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> <span class="params">| v |</span></span><br><span class="line">      v.name = <span class="string">"k8s-master"</span></span><br><span class="line">      v.memory = <span class="string">"2048"</span></span><br><span class="line">      v.cpus = <span class="number">2</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># k8s node 节点定义及初始化配置</span></span><br><span class="line">  (<span class="number">1</span>..$num_nodes).each <span class="keyword">do</span> <span class="params">|i|</span></span><br><span class="line">      config.vm.define <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span> <span class="keyword">do</span> <span class="params">|node|</span></span><br><span class="line">        node.vm.box = <span class="string">"Centos7"</span></span><br><span class="line">        node.vm.hostname = <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span></span><br><span class="line">        node.vm.network <span class="string">"private_network"</span>, <span class="symbol">ip:</span> <span class="string">"192.168.10.<span class="subst">#&#123;i+<span class="number">100</span>&#125;</span>"</span></span><br><span class="line">        node.vm.provider <span class="string">"virtualbox"</span> <span class="keyword">do</span> <span class="params">|v|</span></span><br><span class="line">          v.name = <span class="string">"k8s-node-<span class="subst">#&#123;i&#125;</span>"</span></span><br><span class="line">          v.memory = <span class="string">"2048"</span></span><br><span class="line">          v.cpus = <span class="number">2</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>进入 Vagrantfile 文件所在目录，执行如下命令启动上述定义的 3 台虚拟机：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vagrant up</span><br></pre></td></tr></table></figure></p>
-<h4 id="调整每台虚拟机的服务器参数"><a href="#调整每台虚拟机的服务器参数" class="headerlink" title="调整每台虚拟机的服务器参数"></a>调整每台虚拟机的服务器参数</h4><ol>
-<li><p>禁用 swap 分区：<br>临时禁用：<code>swapoff -a</code><br>永久禁用：<code>sed -i &#39;/swap/s/^/#/g&#39; /etc/fstab</code><br>swap 分区必须禁止掉，否则 <code>kubadm init</code> 自检时会报如下错误：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR Swap]: running with swap on is not supported. Please <span class="built_in">disable</span> swap</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将桥接的 IPv4 流量传递到 iptables 的链：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat &gt; /etc/sysctl.d/k8s.conf &lt;&lt; EOF</span><br><span class="line">net.bridge.bridge-nf-call-ip6tables = 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables = 1</span><br><span class="line">EOF</span><br><span class="line">$ sysctl --system</span><br></pre></td></tr></table></figure>
-<p> 如果不进行这一步的设置，<code>kubadm init</code> 自检时会报如下错误：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables contents are not <span class="built_in">set</span> to 1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>关闭网络防火墙：</p>
-<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="keyword">stop</span> firewalld</span><br><span class="line">systemctl <span class="keyword">disable</span> firewalld</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>禁用 SELinux：<br>临时关闭 selinux（不需要重启主机）: <code>setenforce 0</code><br>永久关闭 selinux（需要重启主机才能生效）：<code>sed -i &#39;s/SELINUX=enforcing/SELINUX=disabled/g&#39; /etc/selinux/config</code></p>
-</li>
-</ol>
-<h4 id="各节点安装-docker、kubeadm、kubelet、kubectl-工具"><a href="#各节点安装-docker、kubeadm、kubelet、kubectl-工具" class="headerlink" title="各节点安装 docker、kubeadm、kubelet、kubectl 工具"></a>各节点安装 docker、kubeadm、kubelet、kubectl 工具</h4><h5 id="安装-Docker"><a href="#安装-Docker" class="headerlink" title="安装 Docker"></a>安装 Docker</h5><p>配置 Docker yum 源（阿里 yum 源）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sS -o /etc/yum.repos.d/docker-ce.repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure></p>
-<p>安装 docker：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install --nogpgcheck -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">yum install --nogpgcheck -y docker-ce</span><br><span class="line">systemctl <span class="built_in">enable</span> docker &amp;&amp; systemctl start docker</span><br></pre></td></tr></table></figure></p>
-<h5 id="安装-kubeadm、kubelet、kubectl-工具"><a href="#安装-kubeadm、kubelet、kubectl-工具" class="headerlink" title="安装 kubeadm、kubelet、kubectl 工具"></a>安装 kubeadm、kubelet、kubectl 工具</h5><p>配置相关工具 yum 源（阿里 yum 源）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt; EOF</span><br><span class="line">[kubernetes]</span><br><span class="line">name=Kubernetes</span><br><span class="line">baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">repo_gpgcheck=1</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure></p>
-<p>安装 kubeadm、kubelet、kubectl：<br>其实 kubeadm、kubelet、kubectl 这三个工具的版本命名是一致的（和 k8s 版本命名一致），我们可以指定安装特定的版本，即安装指定版本的 k8s 集群。</p>
-<p>查看哪些版本可以安装：<br><code>yum --showduplicates list kubeadm|kubelet|kubectl</code></p>
-<p>在这里我们安装 <code>1.13.2</code> 版本：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y kubeadm-1.13.2 kubelet-1.13.2 kubectl-1.13.2</span><br><span class="line"><span class="comment"># 设置 kubelet 开机自启动: kubelet 特别重要，如果服务器重启后 kubelet</span></span><br><span class="line"><span class="comment"># 没有启动，那么 k8s 相关组件的容器就无法启动。在这里不需要把 kubelet 启动</span></span><br><span class="line"><span class="comment"># 起来，因为现在还启动不起来，后续执行的 kubeadm 命令会自动把 kubelet 拉起来。</span></span><br><span class="line">systemctl <span class="built_in">enable</span> kubelet</span><br></pre></td></tr></table></figure></p>
-<h4 id="使用-kubeadm-部署-master-节点"><a href="#使用-kubeadm-部署-master-节点" class="headerlink" title="使用 kubeadm 部署 master 节点"></a>使用 kubeadm 部署 master 节点</h4><p>登陆 master 节点执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --kubernetes-version v1.13.2 --image-repository registry.aliyuncs.com/google_containers --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.10.100</span><br></pre></td></tr></table></figure></p>
-<p>参数说明：<br><code>--kubernetes-version</code>:  安装指定版本的 k8s 版本，该参数和 kubeadm 的版本有关，特定版本的 kubeadm 并不能安装所有版本的 k8s，最好还是 kubeadm 的版本和该参数指定的版本一致。</p>
-<p><code>--image-repository</code>: 该参数仅在高版本（具体哪个版本没仔细查，反正在 1.13.x 中是支持的）的 kubeadm 中支持，用来设置 kubeadm 拉取 k8s 各组件镜像的地址，默认拉取的地址是：<a href="k8s.gcr.io">k8s.gcr.io</a>。众所周知 <a href="k8s.gcr.io">k8s.gcr.io</a> 国内是无法访问的，所以在这里改为阿里云镜像仓库。</p>
-<p><code>--pod-network-cidr</code>: 设置 pod ip 的网段 ，网段之所以是 <code>10.244.0.0/16</code>，是因为后面安装 flannel 网络插件时，yaml 文件里面的 ip 段也是这个，两个保持一致，不然可能会使得 Node 间 Cluster IP 不通。这个参数必须得指定，如果这里不设置的话后面安装 flannel 网络插件时会报如下错误：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E0317 17:02:15.077598       1 main.go:289] <span class="builtin-name">Error</span> registering network: failed <span class="keyword">to</span> acquire lease: node <span class="string">"k8s-master"</span> pod cidr <span class="keyword">not</span> assigned</span><br></pre></td></tr></table></figure></p>
-<p><code>--apiserver-advertise-address</code>: API server 用来告知集群中其它成员的地址，这个参数也必须得设置，否则 api-server 容器启动不起来，该参数的值为 master 节点所在的本地 ip 地址。</p>
-<hr>
-<p>题外话：像之前没有 <code>--image-repository</code> 这个参数时，大家为了通过 kubeadm 安装 k8s 都是采用”曲线救国”的方式：先从别的地方把同样的镜像拉到本地（当然镜像的 tag 肯定不是 k8s.gcr.io/xxxx），然后将拉下来的镜像重新打个 tag，tag 命名成和执行 <code>kubeadm init</code> 时真正拉取镜像的名称一致（比如：k8s.gcr.io/kube-controller-manager-amd64:v1.13.2）。这么做显然做了很多不必要的工作，幸好现在有了 <code>--image-repository</code> 这个参数能自定义 kubeadm 拉取 k8s 相关组件的镜像地址了。</p>
-<hr>
-<p>执行上面命令后，如果出现如下输出（截取了部分），则表示 master 节点安装成功了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">[bootstraptoken] creating the <span class="string">"cluster-info"</span> ConfigMap <span class="keyword">in</span> the <span class="string">"kube-public"</span> namespace</span><br><span class="line">[addons] Applied essential addon: CoreDNS</span><br><span class="line">[addons] Applied essential addon: kube-proxy</span><br><span class="line"></span><br><span class="line">Your Kubernetes master has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run <span class="string">"kubectl apply -f [podnetwork].yaml"</span> with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">You can now join any number of machines by running the following on each node</span><br><span class="line">as root:</span><br><span class="line"></span><br><span class="line">  kubeadm join 192.168.10.100:6443 --token jm6o42.9ystvjarc6u09pjp --discovery-token-ca-cert-hash sha256:64405f3a90597e0ebf1f33134649196047ce74df575cb1a7b38c4ed1e2f94421</span><br></pre></td></tr></table></figure></p>
-<p>根据上面输出知道：要开始使用集群普通用户执行下面命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure></p>
-<p>现在就可以使用 kubectl 访问集群了：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@k8s-master ~]$ kubectl get node</span><br><span class="line">NAME         STATUS     ROLES    AGE   VERSION</span><br><span class="line">k8s-master   NotReady   master   13m   v1.13.2</span><br></pre></td></tr></table></figure></p>
-<p>可以看出现在 master 节点还是 <code>NotReady</code> 状态，这是因为默认情况下，为了保证 master 的安全，master 是不会被分配工作负载的。你可以取消这个限制通过输入（不建议这样做，我们后面会向集群中添加两 node 工作节点）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl taint nodes --all node-role.kubernetes.io/master-</span><br></pre></td></tr></table></figure></p>
-<h4 id="安装-Pod-网络插件（CNI）"><a href="#安装-Pod-网络插件（CNI）" class="headerlink" title="安装 Pod 网络插件（CNI）"></a>安装 Pod 网络插件（CNI）</h4><p>Pod 网络插件有很多种，具体见这里：<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/，我们选择部署" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/cluster-administration/addons/，我们选择部署</a> <a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">Flannel</a> 网络插件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure></p>
-<h4 id="使用-kubeadm-部署-node-节点"><a href="#使用-kubeadm-部署-node-节点" class="headerlink" title="使用 kubeadm 部署 node 节点"></a>使用 kubeadm 部署 node 节点</h4><p>前面已经将 master 节点部署完了，接下来部署 node 节点就很简单了，在 node节点执行如下命令将自己加到 k8s 集群中（复制 master 节点安装完后的输出）：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join 192.168.10.100:6443 --token jm6o42.9ystvjarc6u09pjp --discovery-token-ca-cert-hash sha256:64405f3a90597e0ebf1f33134649196047ce74df575cb1a7b38c4ed1e2f94421</span><br></pre></td></tr></table></figure></p>
-<p>出现如下输出（截取了部分）表示成功将 node 添加到了集群：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run <span class="string">'kubectl get nodes'</span> on the master to see this node join the cluster.</span><br></pre></td></tr></table></figure></p>
-<p>在 master 节点查看 node 状态，如果都为 Ready，则表示集群搭建完成：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[vagrant@k8s-master ~]$ kubectl get nodes</span><br><span class="line">NAME         STATUS   ROLES    AGE   VERSION</span><br><span class="line">k8s-master   Ready    master   14m   v1.13.2</span><br><span class="line">k8s-node-1   Ready    &lt;none&gt;   3m    v1.13.2</span><br></pre></td></tr></table></figure></p>
-<p>用同样的方法把另一个节点也加入到集群中。</p>
-<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://purewhite.io/2017/12/17/use-kubeadm-setup-k8s/" target="_blank" rel="noopener">https://purewhite.io/2017/12/17/use-kubeadm-setup-k8s/</a><br><a href="https://kubernetes.io/zh/docs/setup/independent/install-kubeadm/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/setup/independent/install-kubeadm/</a><br><a href="https://k8smeetup.github.io/docs/admin/kubeadm/" target="_blank" rel="noopener">https://k8smeetup.github.io/docs/admin/kubeadm/</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2393,7 +2303,7 @@ And more...
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">133</span>
+                  <span class="site-state-item-count">134</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
